@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LoadMoreListView">
+        <attr name="loadMoreMode">
+            <flag name="click" value="0x0" />
+            <flag name="scroll" value="0x1" />
+        </attr>
+        <attr name="loadMoreView" format="string" />
+        <attr name="noLoadMoreHideView" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="MaskImageView">
+        <attr name="maskColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="CountDownRingView">
+        <attr name="circleColor" format="color" />
+        <attr name="circleWidth" format="dimension" />
+        <attr name="backgroundColor" format="color" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@color/common_white">
+
+    <ImageView
+        android:id="@+id/game_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="12dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="54dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/play_btn"
+        android:layout_toRightOf="@+id/game_icon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/game_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#393e54"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/play_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#8f90a3"
+            android:textSize="13dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/play_btn"
+        android:layout_width="100dp"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="12dp"
+        android:background="@drawable/blue_btn"
+        android:textColor="#ffffff" />
+</RelativeLayout>
