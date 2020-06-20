@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,12 +24,13 @@ import com.bumptech.glide.Glide;
 import com.kuaipan.game.demo.utils.UnitFormatUtils;
 import com.kuaipan.game.demo.view.CountDownRingView;
 import com.kuaipan.game.demo.view.FloatMenuView;
-import com.yd.yunapp.gameboxlib.APICallback;
-import com.yd.yunapp.gameboxlib.APIConstants;
-import com.yd.yunapp.gameboxlib.DeviceControl;
-import com.yd.yunapp.gameboxlib.GameBoxManager;
-import com.yd.yunapp.gameboxlib.GameInfo;
-import com.yd.yunapp.gameboxlib.QueueRankInfo;
+
+import kptech.game.kit.APICallback;
+import kptech.game.kit.APIConstants;
+import kptech.game.kit.DeviceControl;
+import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameInfo;
+import kptech.game.kit.QueueRankInfo;
 
 
 public class GameRunningActivity extends Activity implements APICallback<String>,
@@ -86,9 +89,12 @@ public class GameRunningActivity extends Activity implements APICallback<String>
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setFullScreen();
         setContentView(R.layout.activity_cloudphone_running);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
         initView();
+
+        GameBoxManager.getInstance(this).setUniqueId("111");
         startCloudPhone();
     }
 
@@ -338,10 +344,45 @@ public class GameRunningActivity extends Activity implements APICallback<String>
     }
 
     @Override
-    public void onNoOpsTimeout(int type, long timeout) {
+    public boolean onNoOpsTimeout(int type, long timeout) {
         Log.d(TAG, "onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
         exitPlay();
         Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout),
                 Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    @Override
+    public void onScreenChange(int value) {
+
+    }
+
+
+    private void setFullScreen() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            return;
+        }
+        try {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            if (android.os.Build.VERSION.SDK_INT < 16) {
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            this.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//                    BaseActivity.this.getWindow().getDecorView().requestFocus();
+                }
+            });
+        } catch (Exception e) {
+            Log.w("PlayActivity", e);
+        }
     }
 }

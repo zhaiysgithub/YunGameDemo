@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     defaultConfig {
-        applicationId "com.zmeng.newspaper"
+        applicationId "com.kptech.game.demo"
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 1
@@ -16,23 +16,22 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('../xiaobaobao.keystore')
+            storeFile file('../release.keystore')
             storePassword "123456"
-            keyAlias "xiaobaobao.keystore"
+            keyAlias "release"
             keyPassword "123456"
 
         }
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
     repositories {
@@ -51,5 +50,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.2'
     implementation 'com.github.bumptech.glide:glide:4.0.0'
 
-    implementation (name:'GameBox_SDK_RELEASE_V1.3.0_26',ext:'aar')
+//    implementation project(path: ':KpGameKit')
+
+    implementation (name:'KpGameKit-release-v1.0.0_1',ext:'aar')
 }

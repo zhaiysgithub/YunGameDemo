@@ -20,14 +20,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#game
--keep class kptech.game.kit.** { *; }
-
-#messager
 -keep class kptech.cloud.kit.msg.** { *; }
 
-#bd game
+-keep class kptech.game.kit.** { *; }
+
 -keepattributes SourceFile,LineNumberTable,Signature
+
 -keepclasseswithmembernames class * {
     native <methods>;
 }

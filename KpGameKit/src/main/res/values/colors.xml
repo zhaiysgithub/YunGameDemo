@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="down_float_dark_alpha_80">#cc000000</color>
+    <color name="down_notify_common_white">#ffffff</color>
+    <color name="down_notify_common_dark">#ff1a1a1a</color>
+    <color name="down_notify_progress_bg_color">#f16f14</color>
+    <color name="colorAccent">#FF4081</color>
+</resources>

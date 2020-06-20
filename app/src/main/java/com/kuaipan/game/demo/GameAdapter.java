@@ -13,11 +13,19 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.yd.yunapp.gameboxlib.GameInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+
+import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameInfo;
+import kptech.game.kit.data.RequestLoginTask;
+import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.view.LoginActivity;
+import kptech.game.kit.view.LoginDialog;
+import kptech.game.kit.view.RemindDialog;
 
 public class GameAdapter extends BaseAdapter {
 
@@ -80,9 +88,31 @@ public class GameAdapter extends BaseAdapter {
                 Intent intent = new Intent(mActivity, GameRunningActivity.class);
                 intent.putExtra(GameRunningActivity.EXTRA_GAME, game);
                 mActivity.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+////                LoginActivity.showRemindDialog(mActivity);
+
+//                LoginDialog.showLoginDialog(mActivity);
+
+                //处理登录，判断是联运登录，还是本地登录
+//                new RequestLoginTask(new RequestLoginTask.ICallback() {
+//                    @Override
+//                    public void onResult(HashMap<String, String> map) {
+//
+//
+//                    }
+//                }).execute("2222");
+//
+//                FloatMenuDialog mMenuDialog = new FloatMenuDialog(mActivity);
+//                mMenuDialog.show();
+
+//                LoginDialog dialog = new LoginDialog(mActivity);
+//                dialog.show();
+
+//                MsgManager.showKpLogin(mActivity);
             }
         });
     }
+
+
 
     class GameViewHodler extends RecyclerView.ViewHolder {
         TextView name;

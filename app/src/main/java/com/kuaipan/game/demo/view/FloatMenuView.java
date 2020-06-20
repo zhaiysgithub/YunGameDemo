@@ -14,8 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.kuaipan.game.demo.R;
-import com.yd.yunapp.gameboxlib.APIConstants;
-import com.yd.yunapp.gameboxlib.DeviceControl;
+
+import kptech.game.kit.APIConstants;
+import kptech.game.kit.DeviceControl;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 

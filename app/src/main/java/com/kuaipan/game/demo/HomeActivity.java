@@ -12,11 +12,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kuaipan.game.demo.view.loadmore.LoadMoreListView;
-import com.yd.yunapp.gameboxlib.GameBoxManager;
-import com.yd.yunapp.gameboxlib.GameInfo;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameInfo;
 
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {

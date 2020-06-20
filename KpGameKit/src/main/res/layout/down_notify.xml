@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:id="@+id/notify_layout">
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerInside"
+        />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/down_notify_common_dark"
+                android:text=""
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+
+        <ProgressBar
+            android:id="@+id/pb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:max="100"
+            android:progressBackgroundTint="#c8c7c7"
+            android:progressTint="@color/down_notify_progress_bg_color"
+            android:progress="50" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="正在下载中..."
+                android:textColor="@color/down_notify_common_dark"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tv_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/down_notify_common_dark"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="right">
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/down_notify_close"
+            android:background="@null"/>
+
+        <Button
+            android:id="@+id/bt"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:text="下载"
+            android:textColor="@color/down_notify_common_white"
+            android:background="@drawable/down_notify_float_btn"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</LinearLayout>
