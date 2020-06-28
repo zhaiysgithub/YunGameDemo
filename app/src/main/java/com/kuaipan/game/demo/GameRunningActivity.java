@@ -94,7 +94,9 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
         initView();
 
-        GameBoxManager.getInstance(this).setUniqueId("111");
+        //设置联运帐号，如果不设置则会弹出快盘登录
+//        GameBoxManager.getInstance(this).setUniqueId("111");
+
         startCloudPhone();
     }
 

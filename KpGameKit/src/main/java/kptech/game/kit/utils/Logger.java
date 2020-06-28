@@ -4,7 +4,11 @@ import android.util.Log;
 
 public class Logger {
     //设为false关闭日志
-    private static final boolean LOG_ENABLE = true;
+    private static boolean LOG_ENABLE = false;
+
+    public static void setLogEnable(boolean b){
+        LOG_ENABLE = b;
+    }
 
     public static void i(String tag, String msg){
         if (LOG_ENABLE){

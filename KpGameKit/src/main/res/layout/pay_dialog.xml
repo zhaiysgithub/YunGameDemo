@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="260dp"
+    android:layout_height="200dp"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center"
+    android:background="@drawable/dialog_bg"
+    android:gravity="center_horizontal"
+    android:padding="10dp"
+    >
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></WebView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/down_notify_close"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:background="@android:color/transparent"/>
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:lineHeight="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text="温馨提示，支付过程会有延时，请不要重复支付！"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="3dip"
+            android:progressDrawable="@drawable/webview_probar_bg"
+            android:visibility="invisible"
+            android:layout_marginTop="20dp"
+            />
+
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:background="@drawable/dialog_btn_bg"
+            android:textSize="16sp"
+            android:textColor="#ffffff"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="微信支付"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

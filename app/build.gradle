@@ -7,8 +7,8 @@ android {
         applicationId "com.kptech.game.demo"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -34,6 +34,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def apkname = "kpgamekitDemo-${variant.versionName}.apk".toLowerCase()
+            apkname = project.hasProperty('APK_NAME') ? APK_NAME : apkname
+            output.outputFileName = new File(apkname)
+            println "apkName:" + apkname
+        }
+    }
+
     repositories {
         flatDir {
             dirs 'libs'
@@ -52,5 +62,5 @@ dependencies {
 
 //    implementation project(path: ':KpGameKit')
 
-    implementation (name:'KpGameKit-release-v1.0.0_1',ext:'aar')
+    implementation (name:'KpGameKit-release-v1.0.1_2',ext:'aar')
 }

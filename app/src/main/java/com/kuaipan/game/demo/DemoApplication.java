@@ -25,8 +25,7 @@ public class DemoApplication extends Application {
         // 配置ak sk 渠道
         GameBoxManager.init(this, YOUR_AK, YOUR_SK, YOUR_CHANNEL);
 
-        // 配置 子渠道 （可选）
-//        GameBoxManager.getInstance(this).setSubChannel("demo_test");
+        GameBoxManager.getInstance(this).setDebug(true);
     }
 
     @Override

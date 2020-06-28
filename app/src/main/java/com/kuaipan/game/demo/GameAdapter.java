@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.kuaipan.game.demo.view.UserDialog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.view.LoginActivity;
 import kptech.game.kit.view.LoginDialog;
+import kptech.game.kit.view.PayDialog;
 import kptech.game.kit.view.RemindDialog;
 
 public class GameAdapter extends BaseAdapter {
@@ -85,9 +87,26 @@ public class GameAdapter extends BaseAdapter {
         holder.playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mActivity, GameRunningActivity.class);
-                intent.putExtra(GameRunningActivity.EXTRA_GAME, game);
-                mActivity.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+//                Intent intent = new Intent(mActivity, GameRunningActivity.class);
+//                intent.putExtra(GameRunningActivity.EXTRA_GAME, game);
+//                mActivity.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+
+
+                UserDialog dialog = new UserDialog(mActivity);
+                dialog.setCallback(new UserDialog.ICallback() {
+                    @Override
+                    public void runGame() {
+                        Intent intent = new Intent(mActivity, GameRunningActivity.class);
+                        intent.putExtra(GameRunningActivity.EXTRA_GAME, game);
+                        mActivity.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+                    }
+                });
+                dialog.show();
+
+
+//                PayDialog dialog = new PayDialog(mActivity);
+//                dialog.show();
+
 ////                LoginActivity.showRemindDialog(mActivity);
 
 //                LoginDialog.showLoginDialog(mActivity);

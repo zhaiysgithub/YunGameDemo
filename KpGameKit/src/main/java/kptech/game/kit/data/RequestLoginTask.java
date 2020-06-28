@@ -23,13 +23,14 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
     }
 
     private String mCmd = null;
-
+    private String uninqueId = null;
     @Override
     protected String doInBackground(String... args) {
         String ret = null;
         mCmd = args[0];
         try {
             if ("uid".equals(mCmd)){
+                uninqueId = args[1];
                 ret = requestUidLogin(args[1]);
             }else if ("kp".equals(mCmd)){
                 ret = requestKpLogin(args[1],args[2]);
@@ -57,7 +58,10 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
                 if (c == 200){
                     JSONObject dObj = jsonObject.getJSONObject("d");
                     String token = dObj.getString("access_token");
+                    String guid = dObj.getString("guid");
+                    map.put("global_id", "uid".equals(mCmd) ? uninqueId : guid);
                     map.put("access_token",token);
+                    map.put("guid", guid);
                 }else {
                     String m = jsonObject.getString("m");
                     map.put("error",m);

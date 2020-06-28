@@ -10,7 +10,7 @@ import java.util.List;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.msg.MsgManager;
-
+import kptech.game.kit.utils.Logger;
 
 
 public class GameBoxManager {
@@ -39,9 +39,20 @@ public class GameBoxManager {
         return box;
     }
 
+    public static void setDebug(Context context){
+        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context).setDebug(true);
+    }
+
     public static void init(Application application, String appKey, String appSecret, String appChannel){
         MsgManager.init(application);
         com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).init(appKey,appSecret,appChannel);
+    }
+
+    public void setDebug(boolean debug){
+        if (manager!=null){
+            manager.setDebug(true);
+        }
+        Logger.setLogEnable(debug);
     }
 
     public void applyCloudDevice(@NonNull final GameInfo inf, @NonNull final APICallback<DeviceControl> callback){
