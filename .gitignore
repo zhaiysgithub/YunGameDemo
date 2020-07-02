@@ -86,4 +86,5 @@ lint/tmp/
 .DS_Store
 .idea/
 bugly/
+app/libs/*.aar
 

@@ -26,18 +26,12 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
 
     @Override
     protected String doInBackground(HashMap... args) {
-        String ret = null;
-        try {
-            ret = requestOrder(args[0]);
-        }catch (Exception e){
-
-        }
-
-        return ret;
+        return requestOrder(args[0]);
     }
 
     @Override
     protected void onPostExecute(String str) {
+
         if (mCallback!=null){
             HashMap<String,String> map = new HashMap();
             if (str == null){
@@ -45,6 +39,13 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
                 mCallback.onResult(map);
                 return;
             }
+
+            if (str.startsWith("Error:")){
+                map.put("error",str.substring(6,str.length()-1));
+                mCallback.onResult(map);
+                return;
+            }
+
             try{
                 JSONObject jsonObject = new JSONObject(str);
                 int c = jsonObject.getInt("c");
@@ -68,7 +69,7 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
     //post请求
     private String requestOrder(HashMap map) {
 
-        String str = "http://kp.you121.top/h5demo/wxjspay/maketrade.php";
+        String str = "https://wxapp.kuaipantech.com/h5demo/wxjspay/maketrade.php";
         try {
             URL url = new URL(str);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
@@ -85,20 +86,9 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
                     + "&globalusername=" + map.get("globalusername")
                     + "&cotype=" + map.get("cotype")  ;
 
-//            HashMap<String, String> map = new HashMap();
-//            map.put("productcode","");
-//            map.put("cp_orderid","");
-//            map.put("guid","");
-//            map.put("globaluserid","");
-//            map.put("globalusername:","");
-//            map.put("cotype:","lianyun");
-//            JSONObject json = new JSONObject(map);
-
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.
             outputStream.flush();
-
-
 
 
             final StringBuffer buffer = new StringBuffer();
@@ -115,6 +105,7 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return "Error:" + e.getMessage();
         }
         return "";
     }

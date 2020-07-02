@@ -33,8 +33,8 @@ import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.data.RequestPayTask;
 
 public class PayDialog extends Dialog {
-    private static final String DEFAULT_REFERER = "http://kp.you121.top";
-    private static final String PAY_URL = "http://kp.you121.top/h5demo/wxjspay/weixin_to_h5.php";
+    private static final String DEFAULT_REFERER = "https://wxapp.kuaipantech.com";
+    private static final String PAY_URL = "https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
 
     public interface ICallback{
         void onResult(int ret, String msg);
@@ -130,6 +130,7 @@ public class PayDialog extends Dialog {
                                 }else {
                                     msg = "error";
                                 }
+                                Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
                                 mWxBtn.setEnabled(true);
                                 mWxBtn.setText("生成订单失败，点击重试");
                                 payState = 0;

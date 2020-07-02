@@ -52,6 +52,7 @@ public class UserDialog extends Dialog {
             @Override
             public void onClick(View view) {
 
+                GameBoxManager.getInstance(mActivity).setUniqueId(null);
                 dismiss();
                 //启动游戏
                 if (mCallback!=null){
