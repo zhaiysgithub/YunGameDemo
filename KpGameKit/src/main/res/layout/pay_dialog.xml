@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="260dp"
-    android:layout_height="200dp"
+    android:layout_height="285dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_centerInParent="true"
     android:layout_gravity="center"
     android:background="@drawable/dialog_bg"
     android:gravity="center_horizontal"
-    android:padding="10dp"
-    >
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <WebView
         android:id="@+id/webview"
@@ -18,51 +18,132 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
         android:background="#ffffff"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
+
         <ImageButton
             android:id="@+id/close"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@mipmap/down_notify_close"
             android:layout_alignParentRight="true"
             android:layout_gravity="right"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:src="@mipmap/down_notify_close" />
 
         <TextView
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:lineHeight="20dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@android:color/black"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:lineHeight="20dp"
+            android:text="温馨提示，支付过程会有延时，请不要重复支付！"
             android:textAlignment="center"
-            android:text="温馨提示，支付过程会有延时，请不要重复支付！"/>
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
         <ProgressBar
             android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="200dp"
             android:layout_height="3dip"
+            android:layout_marginTop="20dp"
             android:progressDrawable="@drawable/webview_probar_bg"
-            android:visibility="invisible"
-            android:layout_marginTop="20dp"
-            />
+            android:visibility="invisible" />
 
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:background="@drawable/dialog_btn_bg"
-            android:textSize="16sp"
-            android:textColor="#ffffff"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:text="微信支付"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/weChatfigure"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icontest">
+            </ImageView>
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/weChatfigure"
+                android:text="微信支付"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+            </TextView>
+            <View
+                android:layout_below="@+id/weChatfigure"
+                android:background="#f5f5f5"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"></View>
+            <ImageView
+                android:id="@+id/treasure"
+               android:layout_below="@+id/weChatfigure"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/alipay">
+            </ImageView>
+            <TextView
+
+                android:layout_toRightOf="@+id/treasure"
+                android:layout_alignTop="@+id/treasure"
+                android:text="支付宝支付"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+            </TextView>
+
+            <RadioGroup
+
+                android:layout_alignTop="@+id/weChatfigure"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                >
+
+                <kptech.game.kit.view.MyRadioButton
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/mWeChat_id"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:checked="true"
+                    android:gravity="center"
+                    app:drawableHeight="30dp"
+                    app:drawableLeft="@drawable/selector_radio"
+                    app:drawableWidth="30dp" />
+
+                <kptech.game.kit.view.MyRadioButton
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/treasure_id"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+
+                    android:drawablePadding="5dp"
+                    android:gravity="center"
+                    app:drawableHeight="30dp"
+                    app:drawableLeft="@drawable/selector_radio"
+                    app:drawableWidth="30dp" />
+            </RadioGroup>
+            <Button
+                android:id="@+id/confirm_the_payment"
+                android:layout_below="@+id/treasure"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/mpaytreasure"
+                android:text="确认支付"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
     </LinearLayout>
 
 

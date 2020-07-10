@@ -37,4 +37,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation files('libs/KpCKit-v1.0.6_6.jar')
+    implementation files('libs/KpCKit-v1.0.6_6.jar')
+    implementation files('libs/alipaySdk-15.7.7-20200702160044.aar')
+//    implementation(name: 'alipaySdk-15.7.7-20200702160044', ext: 'aar')
+
 }
