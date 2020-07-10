@@ -17,6 +17,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -34,9 +35,9 @@ import kptech.game.kit.data.RequestPayTask;
 
 public class PayDialog extends Dialog {
     private static final String DEFAULT_REFERER = "https://wxapp.kuaipantech.com";
-    private static final String PAY_URL = "https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
+    private String PAY_URLS = "https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
 
-    public interface ICallback{
+    public interface ICallback {
         void onResult(int ret, String msg);
     }
 
@@ -46,18 +47,19 @@ public class PayDialog extends Dialog {
     private ProgressBar mProBar;
     private WebView webView;
     private PayDialog.ICallback mCallback;
-    private Button mWxBtn;
-//    private String tradenum = "kp_27_20200627152653_407742";
+    private Button confirm_the_payment;//确认支付
+    //    private String tradenum = "kp_27_20200627152653_407742";
     private int payState = 0;
-
     public String guid = "";
     public String productcode = "";
     public String cp_orderid = "";
     public String globaluserid = "";
     public String globalusername = "";
     public String cotype = "lianyun";
+    private boolean choose = true;
+    private MyRadioButton mWeChat_id, mtreasure_id;
 
-    public void setCallback(PayDialog.ICallback callback){
+    public void setCallback(PayDialog.ICallback callback) {
         mCallback = callback;
     }
 
@@ -78,71 +80,32 @@ public class PayDialog extends Dialog {
             @Override
             public void onClick(View view) {
                 dismiss();
-                if (mCallback!=null){
+                if (mCallback != null) {
                     mCallback.onResult(1, "");
                 }
             }
         });
-
-        mWxBtn = findViewById(R.id.btn);
-        mWxBtn.setOnClickListener(new View.OnClickListener() {
+        mWeChat_id = findViewById(R.id.mWeChat_id);
+        mtreasure_id = findViewById(R.id.treasure_id);
+        mWeChat_id.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                if (payState == 0) {
-//                    String url = PAY_URL + "?tradenum=" + tradenum;
-//                    webView.loadUrl(url);
-                    //处理按钮
-                    mWxBtn.setText("生成订单...");
-                    mWxBtn.setEnabled(false);
-                    payState = 1;
-
-                    //生成订单
-                    HashMap<String, String> map = new HashMap();
-                    map.put("productcode",productcode);
-                    map.put("cp_orderid",cp_orderid);
-                    map.put("guid",guid);
-                    map.put("globaluserid",globaluserid);
-                    map.put("globalusername",globalusername);
-                    map.put("cotype",cotype);
-                    new RequestPayTask(new RequestPayTask.ICallback() {
-                        @Override
-                        public void onResult(HashMap<String, String> map) {
-                            //获取订单号
-                            String msg = "";
-                            int code = 0;
-                            if (map == null){
-                                msg = "map null";
-                            }else if (map.containsKey("tradenum")) {
-                                code = 1;
-                                String tradenum = map.get("tradenum");
-
-                                //调用微信
-                                mWxBtn.setText("支付中，请稍等...");
-                                mWxBtn.setEnabled(false);
-                                payState = 2;
-
-                                String url = PAY_URL + "?tradenum=" + tradenum;
-                                webView.loadUrl(url);
-
-                            } else {
-                                if (map.containsKey("error")){
-                                    msg = map.get("error");
-                                }else {
-                                    msg = "error";
-                                }
-                                Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
-                                mWxBtn.setEnabled(true);
-                                mWxBtn.setText("生成订单失败，点击重试");
-                                payState = 0;
-                            }
-                        }
-                    }).execute(map);
-
-                }else if(payState == 2){
-                    dismiss();
-                    if (mCallback!=null){
-                        mCallback.onResult(1, "");
-                    }
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                choose = isChecked;
+            }
+        });
+//        调起支付
+        confirm_the_payment = findViewById(R.id.confirm_the_payment);
+        confirm_the_payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (choose) {
+                    //微信
+                    PAY_URLS = "https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
+                    weChatpay();
+                } else {
+                    //支付宝
+                    PAY_URLS = "https://kppay.kuaipantech.com/alipay_wap/wappay/pay.php";
+                    weChatpay();
                 }
             }
         });
@@ -151,6 +114,68 @@ public class PayDialog extends Dialog {
         webView = findViewById(R.id.webview);
 //        webView.loadUrl(url);
         initView();
+
+    }
+
+
+
+    private void weChatpay() {
+        if (payState == 0) {
+//                    String url = PAY_URL + "?tradenum=" + tradenum;
+//                    webView.loadUrl(url);
+            //处理按钮
+            confirm_the_payment.setText("生成订单...");
+            confirm_the_payment.setEnabled(false);
+            payState = 1;
+
+            //生成订单
+            HashMap<String, String> map = new HashMap();
+            map.put("productcode", productcode);
+            map.put("cp_orderid", cp_orderid);
+            map.put("guid", guid);
+            map.put("globaluserid", globaluserid);
+            map.put("globalusername", globalusername);
+            map.put("cotype", cotype);
+            new RequestPayTask(new RequestPayTask.ICallback() {
+                @Override
+                public void onResult(HashMap<String, String> map) {
+                    //获取订单号
+                    String msg = "";
+                    int code = 0;
+                    if (map == null) {
+                        msg = "map null";
+                    } else if (map.containsKey("tradenum")) {
+                        code = 1;
+                        String tradenum = map.get("tradenum");
+
+                        //调用微信
+                        confirm_the_payment.setText("支付中，请稍等...");
+                        confirm_the_payment.setEnabled(false);
+                        payState = 2;
+
+                        String url = PAY_URLS + "?tradenum=" + tradenum;
+                        webView.loadUrl(url);
+
+                    } else {
+                        if (map.containsKey("error")) {
+                            msg = map.get("error");
+                        } else {
+                            msg = "error";
+                        }
+                        Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
+                        confirm_the_payment.setEnabled(true);
+                        confirm_the_payment.setText("生成订单失败，点击重试");
+                        payState = 0;
+                    }
+                }
+            }).execute(map);
+
+        } else if (payState == 2) {
+            dismiss();
+            if (mCallback != null) {
+                mCallback.onResult(1, "");
+            }
+        }
 
     }
 
@@ -168,9 +193,9 @@ public class PayDialog extends Dialog {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && payState == 2){
-            mWxBtn.setText("支付完成");
-            mWxBtn.setEnabled(true);
+        if (hasFocus && payState == 2) {
+            confirm_the_payment.setText("支付完成");
+            confirm_the_payment.setEnabled(true);
         }
     }
 
@@ -202,6 +227,7 @@ public class PayDialog extends Dialog {
         //复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器， 而是在本WebView中显示
         webView.setWebViewClient(new WebViewClient() {
             String referer = DEFAULT_REFERER;
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return super.shouldOverrideUrlLoading(view, request);
@@ -238,10 +264,9 @@ public class PayDialog extends Dialog {
             public void onProgressChanged(WebView view, int newProgress) {
                 // TODO 自动生成的方法存根
 
-                if(newProgress==100){
+                if (newProgress == 100) {
                     mProBar.setVisibility(View.INVISIBLE);//加载完网页进度条消失
-                }
-                else{
+                } else {
                     mProBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
                     mProBar.setProgress(newProgress);//设置进度值
                 }
