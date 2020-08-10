@@ -16,7 +16,7 @@
     <!--android:src="@mipmap/ic_cloud_phone_running_menu" />-->
     <!--<com.yd.yunapp.gamebox.viewview.FloatMenuBall>>-->
 
-    <com.kuaipan.game.demo.view.FloatingBarView
+    <com.yd.yunapp.gamebox.view.FloatingBarView
         android:id="@+id/menu_icon"
         android:layout_gravity="top|center_horizontal"
         android:layout_width="90dp"

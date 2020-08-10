@@ -14,8 +14,11 @@ public class QueueRankInfo implements Parcelable {
             return new QueueRankInfo[var1];
         }
     };
+    //游戏信息
     public GameInfo gameInf;
+    //当前排名
     public int queueRanking;
+    //预估时间，单位分钟，不准确
     public int queueWaitTime;
 
     public QueueRankInfo() {

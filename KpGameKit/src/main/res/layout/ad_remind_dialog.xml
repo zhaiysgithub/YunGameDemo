@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="@null">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="完整观看视频，获取免费试玩机会1次"
+        android:textColor="#ffffff"
+        android:textSize="15sp"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:lineHeight="25dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:orientation="vertical"
+        android:background="@mipmap/adremind_dialog_bg">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:src="@mipmap/adremind_dialog_img"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:background="@drawable/adremind_dialog_btn"
+            android:layout_gravity="center_horizontal"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:text="增加一次"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/cancel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/adremind_dialog_close_btn"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerInside"
+        android:background="@null"
+        android:layout_marginTop="20dp"
+        />
+
+</LinearLayout>

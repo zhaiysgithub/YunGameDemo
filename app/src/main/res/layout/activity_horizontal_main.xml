@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/common_dark"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        android:gravity="center"
+        android:text="云游戏"
+        android:textColor="#ffffff"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/game_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"/>
+
+
+        <FrameLayout
+            android:id="@+id/loading_containar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/common_dark">
+
+            <LinearLayout
+                android:id="@+id/fail_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:src="@mipmap/ic_load_fail" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:text="加载失败"
+                    android:textColor="@color/common_white"
+                    android:textSize="18dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/loading_ll"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:background="@color/common_dark"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:indeterminate="true"
+                    android:indeterminateBehavior="repeat"
+                    android:indeterminateDrawable="@drawable/loading_progress_rotate"
+                    android:indeterminateOnly="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="正在加载游戏..."
+                    android:textColor="@color/common_white"
+                    android:textSize="13dp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/network_error_tips"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/gb_floating_color_red"
+            android:gravity="center"
+            android:text="网络错误，加载失败"
+            android:textColor="@color/common_white"
+            android:textSize="16dp"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00000000">
+
 
     <include
         android:id="@+id/loading_ll"
@@ -27,28 +28,28 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/cloud_phone_running_tips_bg"
         android:gravity="center"
-        android:paddingBottom="20dp"
         android:paddingLeft="30dp"
-        android:paddingRight="30dp"
         android:paddingTop="20dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="20dp"
         android:textColor="@color/common_white"
         android:textSize="15dp"
         android:visibility="gone" />
 
-    <com.kuaipan.game.demo.view.FloatMenuView
+    <com.yd.yunapp.gamebox.view.FloatMenuView
         android:id="@+id/float_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <com.kuaipan.game.demo.view.CountDownRingView
+    <com.yd.yunapp.gamebox.view.CountDownRingView
         android:id="@+id/time_count"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="end"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
-        android:layout_marginTop="15dp"
         android:gravity="center"
         android:textColor="@color/common_white"
         android:textSize="@dimen/common_text_size_middle"
@@ -62,9 +63,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:layout_marginTop="90dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="90dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone">
@@ -73,7 +74,7 @@
             android:id="@+id/playing_download_close"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="@drawable/download_close_black_bg">
+            android:background="@drawable/download_close_black_bkg">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -94,5 +95,4 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/playing_download_btn" />
     </LinearLayout>
-
 </FrameLayout>

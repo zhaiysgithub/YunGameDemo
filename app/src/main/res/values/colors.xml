@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-
     <color name="common_white">#ffffff</color>
     <color name="common_dark_alpha_80">#cc000000</color>
-    <color name="common_dark">#ff1a1a1a</color>
+    <color name="common_dark">#2196F3</color>
     <color name="common_dark_alpha_60">#99000000</color>
+    <color name="common_10_percent_transparent">#0a000000</color>
 
     <color name="gb_floating_color_green">#40C87F</color>
     <color name="gb_floating_color_yellow">#FFB53D</color>
     <color name="gb_floating_color_red">#F5535B</color>
 </resources>
+

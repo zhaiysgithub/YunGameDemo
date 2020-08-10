@@ -19,7 +19,7 @@
     <!-- 如果有视频相关的广告且使用textureView播放，请务必添加，否则黑屏 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application>
@@ -38,11 +38,7 @@
             android:name="kptech.cloud.kit.msg.MessagerService"
             android:enabled="true"
             android:exported="true" />
-        <service
-            android:name="kptech.cloud.kit.msg.HelpService"
-            android:enabled="true"
-            android:exported="false" />
-        <activity android:name="kptech.game.kit.view.LoginActivity" />
+
     </application>
 
 

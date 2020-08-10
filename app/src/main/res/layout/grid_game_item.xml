@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yd.yunapp.gamebox.view.SquareFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/app_icon"
+            android:layout_width="72dp"
+            android:layout_height="72dp" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="6dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:singleLine="true"
+            android:textColor="@color/common_white"
+            android:textSize="14dp" />
+    </LinearLayout>
+</com.yd.yunapp.gamebox.view.SquareFrameLayout>

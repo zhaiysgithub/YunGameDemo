@@ -29,14 +29,16 @@ import kptech.game.kit.view.LoginDialog;
 import kptech.game.kit.view.PayDialog;
 
 public class MsgManager {
-    private static final String TAG = "Messager";
+    private static final Logger logger = new Logger("MsgManager") ;
 
     private static volatile MsgManager instance = null;
     private static volatile Activity mActivity = null;
-    public static void init(Application application){
-        Messager.setDebug(true);
-        Messager.init(application);
 
+    private static boolean inited = false;
+
+    public static void init(Application application){
+        Messager.init(application);
+        inited = true;
         if (instance == null){
             synchronized(GameBoxManager.class) {
                 if (instance == null) {
@@ -45,6 +47,9 @@ public class MsgManager {
             }
         }
     }
+    public static void setDebug(boolean debug){
+        Messager.setDebug(true);
+    }
 
     private MsgManager(Context context){
         Messager.getInstance().addCallback(mCallback);
@@ -52,6 +57,11 @@ public class MsgManager {
 
 
     public static void start(@NonNull Activity activity, String token){
+        if (!inited){
+            logger.error("kpckit messager not initialized");
+            return;
+        }
+
         mActivity = activity;
 
         String padCode = null;
@@ -80,24 +90,24 @@ public class MsgManager {
     private Messager.ICallback mCallback = new Messager.ICallback() {
         @Override
         public void onMessage(String msg) {
-            Logger.i(TAG, "=========onMessage: " + msg);
+            logger.info("=========onMessage: " + msg);
 
             sendHandle(msg);
         }
 
         @Override
         public void onConnect(int code, String s) {
-            Logger.i(TAG, "onConnect code: " + code +" msg: " + s);
+            logger.info("onConnect code: " + code +" msg: " + s);
         }
 
         @Override
         public void onClose(int code, String s) {
-            Logger.i(TAG, "onClose code: " + code + " msg: " + s);
+            logger.info("onClose code: " + code + " msg: " + s);
         }
 
         @Override
         public void onFailure(int code, String s) {
-            Logger.i(TAG, "onFailure code: " + code + " msg: " + s);
+            logger.error("onFailure code: " + code + " msg: " + s);
         }
     };
 
@@ -120,8 +130,7 @@ public class MsgManager {
                 mHandler.sendMessage(Message.obtain(mHandler,2,map));
             }
         } catch (JSONException e) {
-//            e.printStackTrace();
-            Logger.e(TAG, e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
