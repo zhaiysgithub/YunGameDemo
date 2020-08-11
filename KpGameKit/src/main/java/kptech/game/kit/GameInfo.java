@@ -23,6 +23,7 @@ public class GameInfo implements Parcelable {
     public int totalTime;
     public int usedTime;
     public long size;
+    public int showAd;
 
     public GameInfo() {
     }
@@ -37,6 +38,7 @@ public class GameInfo implements Parcelable {
         this.totalTime = var1.readInt();
         this.usedTime = var1.readInt();
         this.size = var1.readLong();
+        this.showAd = var1.readInt();
     }
 
     public int getEffectTime() {
@@ -57,6 +59,7 @@ public class GameInfo implements Parcelable {
         var1.writeInt(this.totalTime);
         var1.writeInt(this.usedTime);
         var1.writeLong(this.size);
+        var1.writeInt(this.showAd);
     }
 
 

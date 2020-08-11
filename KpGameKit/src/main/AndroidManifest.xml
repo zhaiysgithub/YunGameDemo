@@ -24,15 +24,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application>
 
-        <provider
-            android:name=".provider.FileProviderAdapter"
-            android:authorities="${applicationId}.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/update_file_provider" />
-        </provider>
+        <!--<provider-->
+            <!--android:name=".provider.FileProviderAdapter"-->
+            <!--android:authorities="${applicationId}.fileProvider"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+                <!--android:resource="@xml/update_file_provider" />-->
+        <!--</provider>-->
 
         <service
             android:name="kptech.cloud.kit.msg.MessagerService"

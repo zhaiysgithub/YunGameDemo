@@ -6,6 +6,7 @@ android {
     defaultConfig {
 //        applicationId "com.kptech.game.demo"
         applicationId "com.zmeng.newspaper"
+//        applicationId "com.opos.mobaddemo"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 3
@@ -64,8 +65,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 
     implementation project(path: ':KpGameKit')
-    implementation (name:'ZADSdk-3.3.3230.3',ext:'aar')
-
 
 //    implementation (name:'KpGameKit-release-v1.0.3_3',ext:'aar')
 }

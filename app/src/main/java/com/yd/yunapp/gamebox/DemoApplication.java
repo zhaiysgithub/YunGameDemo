@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.yd.yunapp.gamebox.permission.PermissionHandler;
 
+import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBoxManager;
 
 
@@ -23,17 +24,19 @@ public class DemoApplication extends Application {
     private static final String YOUR_CHANNEL = "test";
     private PermissionHandler mPermissionHandler;
 
+    private static final String APPKEY = "2OL7hDplsNG3SLS-bacc1a1395641317";
+
     @Override
     public void onCreate() {
         super.onCreate();
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);
         // 配置ak sk 渠道
-        GameBoxManager.getInstance(this).init(this, GAME_AK, GAME_SK);
+        GameBoxManager.getInstance(this).init(this, APPKEY);
 
         // 配置 子渠道 （可选）
         GameBoxManager.getInstance(this).setSubChannel("demo_test");
-        // GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, "1212121212121212");
+         GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, "1212121212121212");
         // GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_IMEI, "3434343434343434");
         mPermissionHandler = new PermissionHandlerImpl();
     }

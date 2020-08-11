@@ -1,4 +1,4 @@
-package kptech.game.kit.view;
+package kptech.game.kit.ad.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -128,7 +128,7 @@ public class AdPopupWindow extends PopupWindow  {
         @Override
         public void onAdEmpty(String posId, String info) {
             logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
-
+            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
             dismiss();
         }
     }

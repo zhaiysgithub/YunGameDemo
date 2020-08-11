@@ -1,8 +1,10 @@
 package kptech.game.kit;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 import androidx.annotation.NonNull;
 
@@ -11,12 +13,16 @@ import java.util.List;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.ad.AdManager;
+import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.data.RequestAppInfoTask;
+import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.view.AdRemindDialog;
+import kptech.game.kit.utils.ProferencesUtils;
 
 
 public class GameBoxManager {
+    private static final Logger logger = new Logger("GameBoxManager") ;
 
     // app key. 查看地址： http://yunapp-console.bj.bcebos.com/sandbox_new/#/deviceGroups
     private static final String GAME_AK = "TOphL4quGn1a7dVRisS5ywU0";
@@ -32,11 +38,15 @@ public class GameBoxManager {
 
     private static Application mApplication = null;
 
+    public static String mCorpID = "";
+
     private Context context;
     private static volatile GameBoxManager box = null;
     private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private Messager mManager;
     private String mUniqueId;
+
+    private InitHandler mHandler = new InitHandler();;
 
     private boolean isLibInited = false;
 
@@ -50,22 +60,24 @@ public class GameBoxManager {
         MsgManager.setDebug(debug);
     }
 
-    public static void init(@NonNull Application application, String appKey, String appSecret){
+    public static void init(@NonNull Application application, String appKey){
         mApplication = application;
+        mCorpID = appKey;
+        if (mApplication == null){
+            logger.error("Init application is null");
+            return;
+        }
+        if (mCorpID==null || "".equals(mCorpID.trim())){
+            logger.error("Init appKey is null");
+            return;
+        }
 
-        //请求获取数据
-
-        //根据配置初始化相应模块
-
-
-        //初始化游戏
-        GameBoxManager.getInstance(application).initLibManager(GAME_AK, GAME_SK, GAME_CH);
-        //初始化通讯
-//        MsgManager.init(application);
-        //初始化广告
-        AdManager.init(application,AD_APP_KEY,AD_APP_TOKEN);
-
+        //发送请求
+        InitHandler handler = getInstance(application).mHandler;
+        handler.requestCount = 0;
+        handler.sendEmptyMessage(1);
     }
+
 
     public static GameBoxManager getInstance(Context context) {
         if (box == null) {
@@ -83,25 +95,98 @@ public class GameBoxManager {
         this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
     }
 
+    private class InitHandler extends Handler{
+        public InitHandler(){
+            super(Looper.getMainLooper());
+        }
+
+        public int requestCount = 0;
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            try {
+                switch (msg.what){
+                    case 1:
+                        logger.info("gamebox request config corpId: "+ mCorpID);
+                        requestCount++;
+                        //发送请求获取配置信息
+                        new RequestAppInfoTask(mApplication, new RequestAppInfoTask.ICallback() {
+                            @Override
+                            public void onResult(boolean ret) {
+                                if (ret){
+                                    //获取数据成功，初始化
+                                    mHandler.sendEmptyMessage(2);
+                                }else {
+                                    //重试2次
+                                    if (requestCount > 2){
+                                        logger.error("retry request appinfo");
+                                        //获取数据失败，重试一次
+                                        mHandler.sendEmptyMessage(1);
+                                    }else {
+                                        logger.error(" request appinfo faile");
+
+                                        //使用本地缓存，初始化
+                                        mHandler.sendEmptyMessage(2);
+                                    }
+                                }
+                            }
+                        }).execute(mCorpID);
+                        break;
+
+                    case 2:
+
+                        //初始化游戏信息
+                        if (GameBoxManager.getInstance(mApplication).initLibManager()){
+                            logger.info("gamebox initialized");
+                        }else {
+                            logger.error("gamebox init failure");
+                        }
+
+                        //初始化广告信息
+                        if (AdManager.getInstance().init(mApplication)) {
+                            logger.info("ad initialized");
+                        }else {
+                            logger.error("ad init failure");
+                        }
+
+                        //初始化通讯
+                        MsgManager.init(mApplication);
+
+//                        logger.error("init finished");
+
+                        break;
+                }
+            }catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }
+    }
+
     /**
      * 初始化gameBox
-     * @param appKey
-     * @param appSecret
-     * @param appChannel
      */
-    private void initLibManager(String appKey, String appSecret, String appChannel){
-        mLibManager.init(appKey, appSecret, appChannel);
-        isLibInited = true;
+    private boolean initLibManager(){
+
+        String ak = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_KEY,null);
+        String sk = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_SECRET,null);
+        String ch = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_CHANNEL,null);
+        if (ak!=null && sk != null){
+            mLibManager.setDebug(mDebug);
+
+            //初始化游戏
+            mLibManager.init(ak, sk, ch);
+            isLibInited = true;
+            return true;
+        }
+
+        return false;
     }
 
     private com.yd.yunapp.gameboxlib.GameBoxManager getLibManager(){
         //处理未已初始化
         if (!isLibInited){
-            //初始化
-
-            return mLibManager;
+            logger.error("gamebox not initialized");
+            return null;
         }
-
         return mLibManager;
     }
 
@@ -128,8 +213,13 @@ public class GameBoxManager {
             return;
         }
 
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return;
+        }
+
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
-        getLibManager().applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
+        manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
             @Override
             public void onAPICallback(com.yd.yunapp.gameboxlib.DeviceControl deviceControl, int i) {
 
@@ -142,7 +232,6 @@ public class GameBoxManager {
                 }
             }
         });
-
     }
 
     /**
@@ -156,7 +245,11 @@ public class GameBoxManager {
         if (info == null){
             return false;
         }
-        return getLibManager().joinQueue(info.getLibGameInfo(),checkInterval,new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.QueueRankInfo>(){
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return false;
+        }
+        return manager.joinQueue(info.getLibGameInfo(),checkInterval,new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.QueueRankInfo>(){
             @Override
             public void onAPICallback(com.yd.yunapp.gameboxlib.QueueRankInfo queueRankInfo, int code) {
                 if (callback!=null){
@@ -177,14 +270,19 @@ public class GameBoxManager {
      * @return
      */
     public List<GameInfo> queryGameList(int page, int limit) {
-        List<GameInfo> list = null;
-        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = getLibManager().queryGameList(page,limit);
-        if (gameInfoArr!=null && gameInfoArr.size()>0){
-            list = new ArrayList<>();
-            for (int i = 0; i < gameInfoArr.size(); i++) {
-                list.add(new GameInfo(gameInfoArr.get(i)));
-            }
-        }
+        List<GameInfo> list = RequestTask.queryGameList(mCorpID, page, limit);
+//        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+//        if (manager == null){
+//            return null;
+//        }
+//        List<GameInfo> list = null;
+//        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = getLibManager().queryGameList(page,limit);
+//        if (gameInfoArr!=null && gameInfoArr.size()>0){
+//            list = new ArrayList<>();
+//            for (int i = 0; i < gameInfoArr.size(); i++) {
+//                list.add(new GameInfo(gameInfoArr.get(i)));
+//            }
+//        }
         return list;
     }
 
@@ -194,8 +292,13 @@ public class GameBoxManager {
      * @return
      */
     public GameInfo queryGame(int gid) {
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return null;
+        }
+
         GameInfo inf = null;
-        com.yd.yunapp.gameboxlib.GameInfo gameInfo = getLibManager().queryGame(gid);
+        com.yd.yunapp.gameboxlib.GameInfo gameInfo = manager.queryGame(gid);
         if (gameInfo !=null){
             inf = new GameInfo(gameInfo);
         }
@@ -208,8 +311,13 @@ public class GameBoxManager {
      * @return
      */
     public List<GameInfo> queryGames(String pkg) {
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return null;
+        }
+
         List<GameInfo> list = null;
-        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = getLibManager().queryGames(pkg);
+        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = manager.queryGames(pkg);
         if (gameInfoArr!=null && gameInfoArr.size()>0){
             list = new ArrayList<>();
             for (int i = 0; i < gameInfoArr.size(); i++) {
@@ -225,7 +333,12 @@ public class GameBoxManager {
      * @return
      */
     public GameInfo updateGameInfo(@NonNull GameInfo game) {
-        com.yd.yunapp.gameboxlib.GameInfo gameInfo = getLibManager().updateGameInfo(game.getLibGameInfo());
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return null;
+        }
+
+        com.yd.yunapp.gameboxlib.GameInfo gameInfo = manager.updateGameInfo(game.getLibGameInfo());
         if (gameInfo!=null){
             return new GameInfo(gameInfo);
         }
@@ -233,7 +346,12 @@ public class GameBoxManager {
     }
 
     public void setSubChannel(String channel){
-        getLibManager().setSubChannel(channel);
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return;
+        }
+
+        manager.setSubChannel(channel);
     }
 
     /**
@@ -241,7 +359,12 @@ public class GameBoxManager {
      * @param level
      */
     public void setUserLevel(UserLevel level) {
-        getLibManager().setMemberLevel(UserLevel.getMemberLevel(level));
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return;
+        }
+
+        manager.setMemberLevel(UserLevel.getMemberLevel(level));
     }
 
     /**
@@ -249,7 +372,11 @@ public class GameBoxManager {
      * @return
      */
     public UserLevel getUserLevel() {
-        return UserLevel.getUserLevel(getLibManager().getMemberLevel());
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return UserLevel.NORMAL;
+        }
+        return UserLevel.getUserLevel(manager.getMemberLevel());
     }
 
     /**
@@ -257,14 +384,49 @@ public class GameBoxManager {
      * @param accCount 加速前进数量
      */
     public void accelerateQueue(int accCount) {
-        getLibManager().accelerateQueue(accCount);
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return ;
+        }
+        manager.accelerateQueue(accCount);
     }
 
     /**
      * 退出队列,如果退出试玩，一定要调用此接口，否则肯会内存泄漏
      */
     public void exitQueue() {
-        getLibManager().exitQueue();
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return ;
+        }
+        manager.exitQueue();
+    }
+
+    /**
+     * 设置云手机参数信息，需要在申请设备之前进行设置
+     *
+     * @param key   目前支持imei，androidid
+     * @param value
+     */
+    public void addDeviceMockInfo(@APIConstants.MockInfo String key, String value) {
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return ;
+        }
+        manager.addDeviceMockInfo(key, value);
+    }
+
+    /**
+     * 移除云手机参数信息
+     *
+     * @param key 目前支持imei，androidid设置
+     */
+    public void removeDeviceMockInfo(@APIConstants.MockInfo String key) {
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            return ;
+        }
+        manager.removeDeviceMockInfo(key);
     }
 
     /**

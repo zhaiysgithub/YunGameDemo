@@ -1,28 +1,27 @@
-package kptech.game.kit.view;
+package kptech.game.kit.ad.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.zad.sdk.Oapi.ZadSdkApi;
-import com.zad.sdk.Oapi.callback.ZadInterstitialAdObserver;
 import com.zad.sdk.Oapi.callback.ZadRewardAdObserver;
-import com.zad.sdk.Oapi.work.ZadInterstitialWorker;
 import com.zad.sdk.Oapi.work.ZadRewardWorker;
 
+import java.util.List;
+
 import kptech.game.kit.R;
+import kptech.game.kit.ad.AdInfo;
 import kptech.game.kit.ad.AdManager;
+import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.utils.Logger;
 
 public class AdRemindDialog extends AlertDialog implements View.OnClickListener {
@@ -30,20 +29,27 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
 
     private Activity mActivity;
     private ZadRewardWorker mRewardWorker;
-    private String mAdCode;
-    private String mExtAdCode = "ZM_SDKAD_1_00065";
-    private IRemindDialogCallback mCallback;
-    public interface IRemindDialogCallback {
-        void onSubmit();
-        void onCancel();
-    }
+    private IAdCallback<String> mCallback;
 
-    public AdRemindDialog setAdCode(String adCode) {
-        this.mAdCode = adCode;
+    private String mRewardAdCode;
+    private String mExtAdCode;
+
+    public AdRemindDialog setRewardAdCode(String adCode){
+        this.mRewardAdCode = adCode;
         return this;
     }
 
-    public AdRemindDialog setCallback(IRemindDialogCallback callback) {
+    public AdRemindDialog setExtAdCode(String adCode){
+        this.mExtAdCode = adCode;
+        return this;
+    }
+
+//    public interface IRemindDialogCallback {
+//        void onSubmit();
+//        void onCancel();
+//    }
+
+    public AdRemindDialog setCallback(IAdCallback callback) {
         this.mCallback = callback;
         return this;
     }
@@ -72,12 +78,13 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         if (i == R.id.cancel) {
             dismiss();
             if (mCallback!=null){
-                mCallback.onCancel();
+                mCallback.onCallback("cancel", 0);
             }
         } else if (i == R.id.submit) {
             dismiss();
             //加载广告
             loadRewardAd();
+//            showPopupAd(mActivity, mExtAdCode);
         }
     }
 
@@ -85,7 +92,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (mCallback!=null){
-                mCallback.onSubmit();
+                mCallback.onCallback("success", 1);
             }
         }
     };
@@ -103,7 +110,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
      */
     private void loadRewardAd(){
         //加载广告
-        mRewardWorker = ZadSdkApi.getRewardAdWorker(this.mActivity, new MyRewardObserver(), this.mAdCode);
+        mRewardWorker = ZadSdkApi.getRewardAdWorker(this.mActivity, new MyRewardObserver(), this.mRewardAdCode);
         if (mRewardWorker != null) {
             mRewardWorker.requestProviderAd();
         }
@@ -121,7 +128,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
             logger.info("onAdClosed(),   posId = " + posId + ", info = " + info);
             if (!mRewardVerify){
                 if (mCallback!=null){
-                    mCallback.onCancel();
+                    mCallback.onCallback(" ad closed ", 0);
                 }
                 return;
             }
@@ -161,6 +168,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         @Override
         public void onAdEmpty(String posId, String info) {
             logger.error( "onAdEmpty, posId = " + posId + ", info = " + info);
+            Toast.makeText(mActivity, "未获取到激励视频", Toast.LENGTH_LONG).show();
 
             //没有广告，加截另一种
             if (showPopupAd(mActivity, mExtAdCode)) {
@@ -177,6 +185,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         if (activity == null || code==null){
             return false;
         }
+
         try {
             AdPopupWindow pop = new AdPopupWindow(activity, code);
             pop.setOnDismissListener(new PopupWindow.OnDismissListener() {

@@ -1,5 +1,6 @@
 package com.yd.yunapp.gamebox;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -7,9 +8,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,6 +33,9 @@ import com.yd.yunapp.gamebox.utils.Logger;
 import com.yd.yunapp.gamebox.utils.UnitFormatUtils;
 import com.yd.yunapp.gamebox.view.CountDownRingView;
 import com.yd.yunapp.gamebox.view.FloatMenuView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
@@ -97,7 +106,8 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
         initView();
         mHardwareManager = new HardwareManager(this);
-        startCloudPhone();
+//        startCloudPhone();
+        checkAndRequestPermission();
     }
 
     @SuppressLint("WrongViewCast")
@@ -398,5 +408,63 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         } catch (Exception e) {
             Log.w("PlayActivity", e);
         }
+    }
+
+
+    private static final int CODE_REQUEST_PERMISSION = 1024;
+    private void checkAndRequestPermission() {
+        if (Build.VERSION.SDK_INT < 23) {
+            startCloudPhone();
+            return;
+        }
+
+        List<String> lackedPermission = new ArrayList();
+        if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
+            lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
+        }
+
+        if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+            lackedPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        if (lackedPermission.size() != 0) {
+            String[] requestPermissions = new String[lackedPermission.size()];
+            lackedPermission.toArray(requestPermissions);
+            requestPermissions(requestPermissions, CODE_REQUEST_PERMISSION);
+        } else {
+            startCloudPhone();
+        }
+    }
+
+    private boolean hasAllPermissionsGranted(int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != CODE_REQUEST_PERMISSION) return;
+
+//        if (hasAllPermissionsGranted(grantResults)) {
+//            ZadSdkApi.onPermissionUpdate();
+//            loadSplash();
+//        } else {
+//            Toast.makeText(this, "应用缺少必要的权限！请点击\"权限\"，打开所需要的权限。", Toast.LENGTH_LONG).show();
+//            // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
+//            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//            intent.setData(Uri.parse("package:" + getPackageName()));
+//            startActivity(intent);
+//        }
+
+        startCloudPhone();
     }
 }

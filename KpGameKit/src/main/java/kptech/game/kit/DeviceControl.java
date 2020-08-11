@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 
 import java.util.Map;
 
-import kptech.cloud.kit.msg.Messager;
+import kptech.game.kit.ad.AdManager;
+import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.msg.MsgManager;
-import kptech.game.kit.view.AdRemindDialog;
 
 public class DeviceControl {
     private static final String TAG = "GameControl";
@@ -33,27 +33,26 @@ public class DeviceControl {
      * @param callback
      */
     public void startGame(@NonNull final Activity activity, @IdRes final int res, @NonNull final APICallback<String> callback){
-        //请求网络获取广告显示
+        if (this.mGameInfo == null){
+            if (callback!=null){
+                callback.onAPICallback("gameInfo is null", APIConstants.ERROR_GAME_INF_EMPTY);
+            }
+            return;
+        }
+        //弹出广告窗口
+        boolean showAd = AdManager.getInstance().showGameStartAd(activity, GameBoxManager.mCorpID, this.mGameInfo.pkgName, new IAdCallback<String>() {
+            @Override
+            public void onCallback(String msg, int code) {
+                if (code == 1){
+                    execStartGame(activity, res, callback);
+                }
+            }
+        });
 
-        //显示提醒弹窗
-        new AdRemindDialog(activity)
-                .setAdCode("ZM_SDKAD_1_00066")
-                .setCallback(new AdRemindDialog.IRemindDialogCallback() {
-                    @Override
-                    public void onSubmit() {
-                        //启动游戏
-                        execStartGame(activity, res, callback);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        //关闭
-                        if (callback!=null){
-                            callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
-                        }
-                    }
-                })
-                .show();
+        //不显示广告，直接运行游戏
+        if (!showAd){
+            execStartGame(activity, res, callback);
+        }
     }
 
     private void execStartGame(@NonNull Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
