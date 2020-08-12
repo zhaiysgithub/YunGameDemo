@@ -39,12 +39,20 @@ public class DeviceControl {
             }
             return;
         }
+
+        //连接设备
+        MsgManager.start(activity, mDeviceControl.getDeviceToken());
+
         //弹出广告窗口
         boolean showAd = AdManager.getInstance().showGameStartAd(activity, GameBoxManager.mCorpID, this.mGameInfo.pkgName, new IAdCallback<String>() {
             @Override
             public void onCallback(String msg, int code) {
                 if (code == 1){
                     execStartGame(activity, res, callback);
+                }else {
+                    if (callback!=null){
+                        callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
+                    }
                 }
             }
         });
@@ -56,9 +64,6 @@ public class DeviceControl {
     }
 
     private void execStartGame(@NonNull Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
-        //连接设备
-        MsgManager.start(activity, mDeviceControl.getDeviceToken());
-
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
             public void onAPICallback(String s, int i) {
