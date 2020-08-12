@@ -1,6 +1,7 @@
 package kptech.game.kit.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,9 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-
 import org.json.JSONObject;
 
 import java.util.HashMap;

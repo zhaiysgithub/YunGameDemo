@@ -1,0 +1,69 @@
+// 1.maven-插件
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+// 2.maven-信息
+ext {// ext is a gradle closure allowing the declaration of global properties
+    PUBLISH_GROUP_ID = 'kptech.game.kit'
+    PUBLISH_ARTIFACT_ID = 'gamebox'
+    PUBLISH_PACKAGING = 'aar'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+}
+
+
+// 3.maven-路径
+uploadArchives {
+    repositories.mavenDeployer {
+        //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
+        //注意”file://“ + 路径，有三个斜杠，别漏了
+        repository(url: "file:///Users/zhangqinglou/work/maven")
+        pom.project {
+            groupId project.PUBLISH_GROUP_ID
+            artifactId project.PUBLISH_ARTIFACT_ID
+            version project.PUBLISH_VERSION
+            packaging project.PUBLISH_PACKAGING
+        }
+    }
+}
+
+
+//将第三方aar，导出到maven库
+publishing {
+    publications {
+        ZADSdk(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '3.3.3230.3'
+            artifactId 'ZADSdk'
+            artifact("../app/libs/ZADSdk-3.3.3230.3.aar")
+        }
+        MsaMdid(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '1.0.13'
+            artifactId 'msa_mdid'
+            artifact("../app/libs/msa_mdid_1.0.13.aar")
+        }
+        GDTSDK(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '4.232.1102'
+            artifactId 'GDTSdk'
+            artifact("../app/libs/GDTSDK.unionNormal.4.232.1102.aar")
+        }
+    }
+    repositories {
+        maven {
+            //Maven仓库本地路径
+            url "file:///Users/zhangqinglou/work/maven"
+        }
+    }
+}
+
+//以下代码会生成 jar 包源文件，如果是不开源码，请不要输入这段
+//aar包内包含注释
+//task androidSourcesJar(type: Jar) {
+//    classifier = 'sources'
+//    from android.sourceSets.main.java.sourceFiles
+//}
+//
+//artifacts {
+//    archives androidSourcesJar
+//}

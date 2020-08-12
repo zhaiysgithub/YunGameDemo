@@ -18,8 +18,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://raw.githubusercontent.com/zhangqinglou/KpGameSdk/master" }
-        maven {url "https://raw.githubusercontent.com/ZADmeng/SYzmeng/release" }
+
+        //本地maven库
+        maven { url uri("file:///Users/zhangqinglou/work/maven") }
+
     }
 }
 

@@ -1,9 +1,5 @@
 package kptech.game.kit.data;
 
-import android.widget.ListView;
-
-import com.google.gson.JsonObject;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 

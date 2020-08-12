@@ -24,8 +24,6 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;

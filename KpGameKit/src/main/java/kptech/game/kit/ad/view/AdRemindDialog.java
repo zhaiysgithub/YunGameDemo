@@ -10,13 +10,9 @@ import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.callback.ZadRewardAdObserver;
 import com.zad.sdk.Oapi.work.ZadRewardWorker;
-
-import java.util.List;
 
 import kptech.game.kit.R;
 import kptech.game.kit.ad.AdInfo;
@@ -90,7 +86,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
 
     Handler mHandler = new Handler(){
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             if (mCallback!=null){
                 mCallback.onCallback("success", 1);
             }
@@ -168,7 +164,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         @Override
         public void onAdEmpty(String posId, String info) {
             logger.error( "onAdEmpty, posId = " + posId + ", info = " + info);
-            Toast.makeText(mActivity, "未获取到激励视频", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mActivity, "未获取到激励视频", Toast.LENGTH_LONG).show();
 
             //没有广告，加截另一种
             if (showPopupAd(mActivity, mExtAdCode)) {

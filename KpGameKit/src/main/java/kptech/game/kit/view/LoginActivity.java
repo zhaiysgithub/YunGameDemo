@@ -1,6 +1,7 @@
 package kptech.game.kit.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,19 +23,6 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.ComponentActivity;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-//import com.kuaipan.app.contant.Contants;
-//import com.kuaipan.app.global.LoginUser;
-//import com.kuaipan.app.repository.DataRepository;
-//import com.kuaipan.app.repository.ResponseModel;
-//import com.kuaipan.app.util.DeviceUtil;
-//import com.kuaipan.app.util.LoadingUtils;
-//import com.kuaipan.app.util.NetworkCallback;
-//import com.kuaipan.app.view.TitleBar;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +30,7 @@ import java.util.Map;
 import kptech.game.kit.R;
 import kptech.game.kit.msg.MsgManager;
 
-public class LoginActivity extends ComponentActivity {
+public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
     private static final String RESET_PSW_URL = "https://auth-dev.kuaipantech.com/auth/#/password/update?type=2&access_token=";
     private static final String LOGIN_URL = "https://auth-dev.kuaipantech.com/auth/#/login?app_key=675ef2c4c4234c008e56c4fa837b03d2&type=2";
@@ -98,7 +86,7 @@ public class LoginActivity extends ComponentActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {

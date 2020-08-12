@@ -13,8 +13,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,7 +54,7 @@ public class MsgManager {
     }
 
 
-    public static void start(@NonNull Activity activity, String token){
+    public static void start(Activity activity, String token){
         if (!inited){
             logger.error("kpckit messager not initialized");
             return;
@@ -139,7 +137,7 @@ public class MsgManager {
     private String mGloablId;
     private Handler mHandler = new Handler(){
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
                     //处理登录，判断是联运登录，还是本地登录

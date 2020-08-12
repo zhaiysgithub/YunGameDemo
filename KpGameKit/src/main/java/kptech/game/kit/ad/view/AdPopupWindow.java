@@ -21,8 +21,6 @@ import com.zad.sdk.Oapi.work.ZadInterstitialWorker;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.Logger;
 
-import static com.bun.miitmdid.core.JLibrary.context;
-
 public class AdPopupWindow extends PopupWindow  {
     private static final Logger logger = new Logger("AdRemindDialog") ;
 
@@ -128,7 +126,7 @@ public class AdPopupWindow extends PopupWindow  {
         @Override
         public void onAdEmpty(String posId, String info) {
             logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
-            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
             dismiss();
         }
     }
