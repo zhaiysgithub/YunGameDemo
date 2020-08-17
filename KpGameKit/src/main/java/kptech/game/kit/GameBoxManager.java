@@ -14,6 +14,7 @@ import java.util.List;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.ad.AdManager;
+import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestAppInfoTask;
 import kptech.game.kit.data.RequestTask;
@@ -24,6 +25,7 @@ import kptech.game.kit.utils.ProferencesUtils;
 
 
 public class GameBoxManager {
+
     private static final Logger logger = new Logger("GameBoxManager") ;
 
     // app key. 查看地址： http://yunapp-console.bj.bcebos.com/sandbox_new/#/deviceGroups
@@ -48,7 +50,7 @@ public class GameBoxManager {
     private Messager mManager;
     private String mUniqueId;
 
-    private InitHandler mHandler = new InitHandler();;
+//    private InitHandler mHandler = new InitHandler();;
 
     private boolean isLibInited = false;
 
@@ -62,24 +64,9 @@ public class GameBoxManager {
         MsgManager.setDebug(debug);
     }
 
-    public static void init(@NonNull Application application, String appKey){
-        mApplication = application;
+    public static void setAppKey(String appKey){
         mCorpID = appKey;
-        if (mApplication == null){
-            logger.error("Init application is null");
-            return;
-        }
-        if (mCorpID==null || "".equals(mCorpID.trim())){
-            logger.error("Init appKey is null");
-            return;
-        }
-
-        //发送请求
-        InitHandler handler = getInstance(application).mHandler;
-        handler.requestCount = 0;
-        handler.sendEmptyMessage(1);
     }
-
 
     public static GameBoxManager getInstance(Context context) {
         if (box == null) {
@@ -97,14 +84,42 @@ public class GameBoxManager {
         this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
     }
 
+    public boolean isGameBoxManagerInited(){
+        return this.isLibInited;
+    }
+
+    public synchronized void init(@NonNull Application application, String appKey, IAdCallback<String> callback){
+        mApplication = application;
+        mCorpID = appKey;
+        if (mApplication == null){
+            logger.error("Init application is null");
+            return;
+        }
+        if (mCorpID==null || "".equals(mCorpID.trim())){
+            logger.error("Init appKey is null");
+            return;
+        }
+
+        //发送请求
+
+        InitHandler mHandler = new InitHandler();
+        mHandler.setCallback(callback);
+        mHandler.sendEmptyMessage(1);
+
+    }
+
+
     private class InitHandler extends Handler{
         public InitHandler(){
             super(Looper.getMainLooper());
         }
-
-        public int requestCount = 0;
+        private int requestCount = 0;
+        private IAdCallback<String> callback;
+        private void setCallback(IAdCallback<String> callback){
+            this.callback = callback;
+        }
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(@NonNull final Message msg) {
             try {
                 switch (msg.what){
                     case 1:
@@ -116,18 +131,17 @@ public class GameBoxManager {
                             public void onResult(boolean ret) {
                                 if (ret){
                                     //获取数据成功，初始化
-                                    mHandler.sendEmptyMessage(2);
+                                    InitHandler.this.sendEmptyMessage(2);
                                 }else {
                                     //重试2次
                                     if (requestCount > 2){
                                         logger.error("retry request appinfo");
                                         //获取数据失败，重试一次
-                                        mHandler.sendEmptyMessage(1);
+                                        InitHandler.this.sendEmptyMessage(1);
                                     }else {
                                         logger.error(" request appinfo faile");
-
                                         //使用本地缓存，初始化
-                                        mHandler.sendEmptyMessage(2);
+                                        InitHandler.this.sendEmptyMessage(2);
                                     }
                                 }
                             }
@@ -135,10 +149,12 @@ public class GameBoxManager {
                         break;
 
                     case 2:
+                        int initState = 0;
 
                         //初始化游戏信息
                         if (GameBoxManager.getInstance(mApplication).initLibManager()){
                             logger.info("gamebox initialized");
+                            initState = 1;
                         }else {
                             logger.error("gamebox init failure");
                         }
@@ -153,7 +169,10 @@ public class GameBoxManager {
                         //初始化通讯
                         MsgManager.init(mApplication);
 
-//                        logger.error("init finished");
+                        //回调初始化
+                        if (this.callback != null){
+                            this.callback.onCallback("", initState);
+                        }
 
                         break;
                 }
@@ -221,11 +240,14 @@ public class GameBoxManager {
         }
         //297ebd358f8d1d5f,  //864131034311009 //VM010127052028
         //DeviceInfo{id=0, status=0, deviceId='VM010127052028', token='{"webControlList":[{"webControlCode":"XA-WEBSOCKET-CONTROL-41","webControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9741}]}],"controlList":[{"controlCode":"XA-USER-CONTROL-41","controlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9641}]}],"padList":[{"controlCode":"XA-USER-CONTROL-41","padCode":"VM010127052028","padStatus":"1","padType":"0","videoCode":"GZ-TEST-USER-VIDEO-01"}],"videoList":[{"videoCode":"GZ-TEST-USER-VIDEO-01","videoInfoList":[{"videoUrl":"rtmp://117.48.196.66:110/live","videoProtocol":"2","videoDomain":"live","videoPort":110,"videoContext":"1"},{"videoUrl":"rtmp://117.48.196.66:1936/live","videoProtocol":"","videoDomain":"","videoPort":-1,"videoContext":""}]}],"wssWebControlList":[{"wssWebControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9841}],"wssWebControlCode":"XA-WSS-CONTROL-41"}],"webRtcControlList":[{"webRtcControlInfoList":[{"controlIp":"10.3.98.1","controlPort":9641}],"controlCode":"XA-USER-CONTROL-41","gateway":{"gatewayWssPort":8191,"gatewayIp":"xian.cloud-control.top","gatewayPort":8190}}],"sessionId":"b6d822fcc481462ead6c57741bf6d3f0","userId":11357855}', type=0, usedTime=0, totalTime=86400, gop=50, bitRate=3600, compressionType=VPU, maxDescentFrame=1, maxFrameRate=30, minDescentFrame=1, minFrameRate=20, picQuality=GRADE_LEVEL_HD, resolution=LEVEL_720_1280, sound=true, queueInfo=null}
-//        String ANDROID_ID = Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
-//        String Imei = DeviceUtils.getIMEI(mApplication);
+//        try {
+//            String ANDROID_ID = Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
+//            String Imei = DeviceUtils.getIMEI(mApplication);
 //
-//        manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI, Imei);
-//        manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
+//            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI, Imei);
+//            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
+//        }catch (Exception e){
+//        }
 
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
         manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {

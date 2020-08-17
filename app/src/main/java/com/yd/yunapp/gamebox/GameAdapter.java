@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.activity.GamePlay;
 
 public class GameAdapter extends BaseAdapter {
 
@@ -79,8 +80,8 @@ public class GameAdapter extends BaseAdapter {
         holder.playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mActivity, GameRunningActivity.class);
-                intent.putExtra(GameRunningActivity.EXTRA_GAME, game);
+                Intent intent = new Intent(mActivity, GamePlay.class);
+                intent.putExtra(GamePlay.EXTRA_GAME, game);
                 mActivity.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
             }
         });

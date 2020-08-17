@@ -24,7 +24,7 @@ public class DemoApplication extends Application {
     private static final String YOUR_CHANNEL = "test";
     private PermissionHandler mPermissionHandler;
 
-    private static final String APPKEY = "2OL7hDplsNG3SLS-bacc1a1395641317";
+    private static final String APPKEY = "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b";
 
     @Override
     public void onCreate() {
@@ -32,11 +32,13 @@ public class DemoApplication extends Application {
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);
         // 配置ak sk 渠道
-        GameBoxManager.getInstance(this).init(this, APPKEY);
+//        GameBoxManager.getInstance(this).init(this, APPKEY, null);
+
+        GameBoxManager.setAppKey(APPKEY);
 
         // 配置 子渠道 （可选）
-        GameBoxManager.getInstance(this).setSubChannel("demo_test");
-         GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, "1212121212121212");
+//        GameBoxManager.getInstance(this).setSubChannel("demo_test");
+//         GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, "1212121212121212");
         // GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_IMEI, "3434343434343434");
         mPermissionHandler = new PermissionHandlerImpl();
     }

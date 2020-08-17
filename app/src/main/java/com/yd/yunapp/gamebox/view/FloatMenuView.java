@@ -47,7 +47,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.cloud_phone_float_menu, this);
+        inflate(getContext(), R.layout.view_float_menu, this);
     }
 
     @Override

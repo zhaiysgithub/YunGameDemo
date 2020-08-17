@@ -106,7 +106,7 @@
                 android:layout_alignParentRight="true"
                 >
 
-                <kptech.game.kit.view.MyRadioButton
+                <kptech.game.kit.view.PayRadioButton
                     android:layout_marginTop="5dp"
                     android:id="@+id/mWeChat_id"
                     android:layout_width="30dp"
@@ -117,7 +117,7 @@
                     app:drawableLeft="@drawable/selector_radio"
                     app:drawableWidth="30dp" />
 
-                <kptech.game.kit.view.MyRadioButton
+                <kptech.game.kit.view.PayRadioButton
                     android:layout_marginTop="10dp"
                     android:id="@+id/treasure_id"
                     android:layout_width="30dp"

@@ -4,6 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class GameInfo implements Parcelable {
+    public static int GAME_AD_SHOW_AUTO = 0;    //按服务器配置信息显示
+    public static int GAME_AD_SHOW_ON = 1;    //显示广告
+    public static int GAME_AD_SHOW_OFF = 2;    //关闭广告
+
+
     public static final Creator<GameInfo> CREATOR = new Creator<GameInfo>() {
         public GameInfo createFromParcel(Parcel var1) {
             return new GameInfo(var1);
@@ -23,7 +28,7 @@ public class GameInfo implements Parcelable {
     public int totalTime;
     public int usedTime;
     public long size;
-    public int showAd;
+    public int showAd = GAME_AD_SHOW_AUTO;
 
     public GameInfo() {
     }
@@ -87,5 +92,15 @@ public class GameInfo implements Parcelable {
         this.totalTime = info.totalTime;
         this.usedTime = info.usedTime;
         this.size = info.size;
+    }
+
+    @Override
+    public String toString() {
+        String str = "gid:" + this.gid+",pkgName:" + this.pkgName + ",name:" + this.name
+                +",iconUrl:" + this.iconUrl + ",downloadUrl:" + this.downloadUrl
+                +",playCount:" + this.playCount + ",totalTime:" + this.totalTime
+                +",usedTime:" + this.usedTime + ",size:" + this.size
+                +",showAd:" + this.showAd;
+        return super.toString();
     }
 }

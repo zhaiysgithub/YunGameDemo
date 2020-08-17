@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000">
+
+
+    <include
+        android:id="@+id/loading_ll"
+        layout="@layout/view_loading" />
+
+    <FrameLayout
+        android:id="@+id/play_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/common_white"
+        android:visibility="gone">
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/timeout_tips"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/cloud_phone_running_tips_bg"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingTop="20dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="20dp"
+        android:textColor="@color/common_white"
+        android:textSize="15dp"
+        android:visibility="gone" />
+
+    <kptech.game.kit.view.FloatMenuView
+        android:id="@+id/float_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <kptech.game.kit.view.CountDownRingView
+        android:id="@+id/time_count"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginRight="25dp"
+        android:gravity="center"
+        android:textColor="@color/common_white"
+        android:textSize="@dimen/common_text_size_middle"
+        android:visibility="gone"
+        app:backgroundColor="@color/common_dark_alpha_80"
+        app:circleColor="#00B9FF"
+        app:circleWidth="3dp" />
+
+    <LinearLayout
+        android:id="@+id/playing_download_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/playing_download_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/download_close_black_bkg">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/playing_download_close" />
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="32dp"
+            android:background="@color/common_dark_alpha_80" />
+
+        <ImageView
+            android:id="@+id/playing_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/playing_download_btn" />
+    </LinearLayout>
+</FrameLayout>

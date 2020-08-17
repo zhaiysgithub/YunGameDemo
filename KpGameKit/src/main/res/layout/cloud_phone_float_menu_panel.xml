@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_gravity="center"
+    android:background="@drawable/cloud_phone_float_view_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="21dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/clarity_hd"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:background="@drawable/blue_btn"
+            android:text="超清"
+            android:textColor="@color/common_white" />
+
+        <Button
+            android:id="@+id/clarity_ordianry"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/translucent_btn"
+            android:text="高清"
+            android:textColor="@color/common_white" />
+
+        <Button
+            android:id="@+id/clarity_ls"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/translucent_btn"
+            android:text="流畅"
+            android:textColor="@color/common_white" />
+
+        <Button
+            android:id="@+id/clarity_auto"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/translucent_btn"
+            android:text="自动"
+            android:textColor="@color/common_white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/exit_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/audio"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:gravity="center"
+            android:text="开/关声音"
+            android:textColor="@color/common_white"
+            android:textSize="15dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#54ffffff" />
+
+        <TextView
+            android:id="@+id/play"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:gravity="center"
+            android:text="继续试玩"
+            android:textColor="@color/common_white"
+            android:textSize="15dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#54ffffff" />
+
+        <TextView
+            android:id="@+id/exit_play"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:gravity="center"
+            android:text="退出试玩"
+            android:textColor="@color/common_white"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+</LinearLayout>

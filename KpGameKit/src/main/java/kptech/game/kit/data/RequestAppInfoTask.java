@@ -53,6 +53,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
                 String ch = dObj.has("ch") ? dObj.getString("ch") : null;
                 String paas =  dObj.has("paas") ? dObj.getString("paas") : null;
                 String adJson = dObj.has("adJson") ? dObj.getString("adJson") : null;
+                String adEnable = dObj.has("adEnable") ? dObj.getString("adEnable") : null;
 
                 //缓存数据
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_KEY, ak);
@@ -65,6 +66,9 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
                 }
                 if (adJson != null){
                     ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_ADJSON, adJson);
+                }
+                if (adEnable != null){
+                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_ADENABLE, adEnable);
                 }
 
                 ret = true;

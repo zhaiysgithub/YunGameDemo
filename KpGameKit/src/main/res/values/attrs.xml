@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <declare-styleable name="MyRadioButton">
+    <declare-styleable name="RadioButton">
         
         <attr name="drawableHeight" format="dimension"/>
         <attr name="drawableWidth" format="dimension"/>
@@ -10,6 +10,12 @@
         <attr name="drawableRight" format="reference"/>
         <attr name="drawableBottom" format="reference"/>
         
+    </declare-styleable>
+
+    <declare-styleable name="CountDownRingView">
+        <attr name="circleColor" format="color" />
+        <attr name="circleWidth" format="dimension" />
+        <attr name="backgroundColor" format="color" />
     </declare-styleable>
     
 </resources>

@@ -5,10 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ProxyInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -19,16 +17,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.R;
-import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.data.RequestPayTask;
 
 public class PayDialog extends Dialog {
@@ -55,14 +50,14 @@ public class PayDialog extends Dialog {
     public String globalusername = "";
     public String cotype = "lianyun";
     private boolean choose = true;
-    private MyRadioButton mWeChat_id, mtreasure_id;
+    private PayRadioButton mWeChat_id, mtreasure_id;
 
     public void setCallback(PayDialog.ICallback callback) {
         mCallback = callback;
     }
 
     public PayDialog(Activity context) {
-        super(context, R.style.MyTheme_CustomDialog_LoginDialog);
+        super(context, R.style.MyTheme_CustomDialog);
         this.mActivity = context;
     }
 

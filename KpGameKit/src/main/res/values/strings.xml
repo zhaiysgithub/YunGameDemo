@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KpGameKit</string>
+    <string name="game_play_time_remind">试玩还剩%1$d秒，请下载体验</string>
 </resources>

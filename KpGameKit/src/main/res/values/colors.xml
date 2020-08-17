@@ -5,4 +5,14 @@
     <color name="down_notify_common_dark">#ff1a1a1a</color>
     <color name="down_notify_progress_bg_color">#f16f14</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="common_white">#ffffff</color>
+    <color name="common_dark_alpha_80">#cc000000</color>
+    <color name="common_dark">#2196F3</color>
+    <color name="common_dark_alpha_60">#99000000</color>
+    <color name="common_10_percent_transparent">#0a000000</color>
+
+    <color name="float_menu_color_green">#40C87F</color>
+    <color name="float_menu_color_yellow">#FFB53D</color>
+    <color name="float_menu_color_red">#F5535B</color>
 </resources>

@@ -22,7 +22,6 @@ import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.view.LoginActivity;
 import kptech.game.kit.view.LoginDialog;
 import kptech.game.kit.view.PayDialog;
 

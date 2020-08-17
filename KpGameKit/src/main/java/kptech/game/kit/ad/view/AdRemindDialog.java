@@ -189,7 +189,6 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
                 public void onDismiss() {
                     //进入游戏
                     submit();
-
                 }
             });
             pop.showAtLocation(activity.getWindow().getDecorView(), Gravity.CENTER, 0, 0);

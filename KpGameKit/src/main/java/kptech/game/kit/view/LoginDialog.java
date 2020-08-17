@@ -48,7 +48,7 @@ public class LoginDialog extends Dialog {
     }
 
     public LoginDialog(Activity context) {
-        super(context, R.style.MyTheme_CustomDialog_LoginDialog);
+        super(context, R.style.MyTheme_CustomDialog);
         this.mActivity = context;
     }
 

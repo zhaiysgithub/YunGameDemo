@@ -39,6 +39,10 @@
             android:enabled="true"
             android:exported="true" />
 
+        <activity
+            android:name="kptech.game.kit.activity.GamePlay"
+            android:configChanges="screenSize|keyboardHidden|orientation"
+            android:theme="@style/MyTheme.Activity.GamePlay" />
     </application>
 
 

@@ -44,7 +44,7 @@ public class DeviceControl {
         MsgManager.start(activity, mDeviceControl.getDeviceToken());
 
         //弹出广告窗口
-        boolean showAd = AdManager.getInstance().showGameStartAd(activity, GameBoxManager.mCorpID, this.mGameInfo.pkgName, new IAdCallback<String>() {
+        boolean showAd = AdManager.getInstance().showGameStartAd(activity, GameBoxManager.mCorpID, this.mGameInfo, new IAdCallback<String>() {
             @Override
             public void onCallback(String msg, int code) {
                 if (code == 1){

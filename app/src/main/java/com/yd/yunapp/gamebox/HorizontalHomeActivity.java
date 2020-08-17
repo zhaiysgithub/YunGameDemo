@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.activity.GamePlay;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -54,6 +56,17 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         initView();
     }
 
+    public void startGame(View view){
+        GameInfo info = new GameInfo();
+        info.gid = 1893;
+        info.pkgName = "com.netease.tom.guopan";
+        info.name = "猫和老鼠";
+        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b")
+                .playGame(HorizontalHomeActivity.this,info);
+    }
+
     private void initView() {
         mLoadingContainar = (FrameLayout) findViewById(R.id.loading_containar);
         mNetworkErrorView = (LinearLayout) findViewById(R.id.fail_ll);
@@ -70,9 +83,19 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter = new HorizontalGameAdapter(this);
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
-                Intent intent = new Intent(HorizontalHomeActivity.this, GameRunningActivity.class);
-                intent.putExtra(GameRunningActivity.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
-                HorizontalHomeActivity.this.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+                GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b")
+                        .playGame(HorizontalHomeActivity.this, (GameInfo) mGameAdapter.getItem(pos));
+//                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
+//                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
+//                HorizontalHomeActivity.this.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
+
+//                GameInfo info = new GameInfo();
+//                info.gid = 1893;
+//                info.pkgName = "com.netease.tom.guopan";
+//                info.name = "猫和老鼠";
+//                info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//                GameBox.getInstance(getApplication(),"2OL7hDplsNG3SLS-bacc1a1395641317")
+//                        .playGame(HorizontalHomeActivity.this,info);
             }
         });
         mGameList.setAdapter(mGameAdapter);
