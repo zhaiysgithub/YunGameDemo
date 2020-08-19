@@ -20,7 +20,16 @@ allprojects {
         jcenter()
 
         //本地maven库
-        maven { url uri("file:///Users/zhangqinglou/work/maven") }
+//        maven { url uri("file:///Users/zhangqinglou/work/maven") }
+
+        //快盘maven库
+//        maven {
+//            url "https://raw.githubusercontent.com/kuaipantech/maven/master"
+//        }
+
+        maven {
+            url "http://maven.kuaipantech.com/repository/maven-releases/"
+        }
 
     }
 }

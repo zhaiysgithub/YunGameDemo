@@ -12,10 +12,12 @@
         
     </declare-styleable>
 
-    <declare-styleable name="CountDownRingView">
-        <attr name="circleColor" format="color" />
-        <attr name="circleWidth" format="dimension" />
-        <attr name="backgroundColor" format="color" />
+    <declare-styleable name="round_image_view">
+        <attr name="radius" format="dimension"/>
+        <attr name="left_top_radius" format="dimension"/>
+        <attr name="right_top_radius" format="dimension"/>
+        <attr name="right_bottom_radius" format="dimension"/>
+        <attr name="left_bottom_radius" format="dimension"/>
     </declare-styleable>
     
 </resources>

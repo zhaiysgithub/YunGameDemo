@@ -9,6 +9,7 @@ public class GameInfo implements Parcelable {
     public static int GAME_AD_SHOW_OFF = 2;    //关闭广告
 
 
+
     public static final Creator<GameInfo> CREATOR = new Creator<GameInfo>() {
         public GameInfo createFromParcel(Parcel var1) {
             return new GameInfo(var1);

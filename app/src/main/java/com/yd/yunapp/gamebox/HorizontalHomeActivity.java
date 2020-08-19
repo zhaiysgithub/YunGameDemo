@@ -63,6 +63,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.name = "猫和老鼠";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        info.downloadUrl = "aa";
         GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b")
                 .playGame(HorizontalHomeActivity.this,info);
     }

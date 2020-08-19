@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 5
-        versionName "1.1.0.5"
+        versionName "1.1.1.0"
     }
 
     buildTypes {
@@ -35,9 +35,9 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'kptech.game.kit:msa_mdid:1.0.13'
-    implementation 'kptech.game.kit:ZADSdk:3.3.3230.3'
-    implementation 'kptech.game.kit:GDTSdk:4.232.1102'
+    implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
+    implementation 'kptech.game.kit:ZADSdk:3.3.3230.3@aar'
+    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
 
 //    implementation (name:'ZADSdk-3.3.3230.3',ext:'aar')
 //    implementation(name:'msa_mdid_1.0.13', ext:'aar') // 获取OAID需要
@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
+
 }
 
 

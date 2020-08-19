@@ -4,18 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<com.yd.yunapp.gamebox.viewview.FloatMenuBall>-->
-    <!--android:id="@+id/menu_icon"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<ImageView-->
-    <!--android:layout_width="40dp"-->
-    <!--android:layout_height="40dp"-->
-    <!--android:src="@mipmap/ic_cloud_phone_running_menu" />-->
-    <!--<com.yd.yunapp.gamebox.viewview.FloatMenuBall>>-->
-
     <kptech.game.kit.view.FloatingBarView
         android:id="@+id/menu_icon"
         android:layout_gravity="top|center_horizontal"

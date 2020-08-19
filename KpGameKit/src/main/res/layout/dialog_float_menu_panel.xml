@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="51dp"
             android:gravity="center"
-            android:text="退出试玩"
+            android:text="退出游戏"
             android:textColor="@color/common_white"
             android:textSize="15dp" />
     </LinearLayout>

@@ -9,12 +9,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,6 +24,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,70 +36,52 @@ import kptech.game.kit.DeviceControl;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.QueueRankInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.view.CountDownRingView;
 import kptech.game.kit.view.FloatMenuView;
 
 
-public class GamePlay extends Activity implements APICallback<String>,
-        View.OnClickListener, DeviceControl.PlayListener {
+public class GamePlay extends Activity implements APICallback<String>, DeviceControl.PlayListener, View.OnClickListener {
 
     public static final String EXTRA_CORPID = "extra.corpid";
     public static final String EXTRA_GAME = "extra.game";
+    public static final String EXTRA_TIMEOUT = "extra.timeout";
 
-    private static final String TAG = "GameRunningActivity";
+    private Logger logger = new Logger("GamePlay");
 
-    private Logger logger = new Logger(TAG);
-
-    private static final int MSG_TIME_REMIND = 2;
-    private static final int MSG_TIME_REMIND_DISAPPEAR = 3;
-    private static final int MSG_TIME_UP = 4;
-    private static final int MSG_REMIND_PLAYING_DOWNLOAD = 5;
+    private static final int MSG_SHOW_ERROR = 1;
 
     private TextView mLoadingText;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
-    private TextView mTimeoutWarning;
     private FrameLayout mLoadingLL;
+    private ViewGroup mErrorLL;
+    private TextView mErrorText;
+    private ImageView mGameIcon;
+    private Button mErrorBtn;
 
-//    private View mPlayingDownloadArea;
-//    private Dialog mDownloadDialog;
-    private CountDownRingView mCountView;
     private HardwareManager mHardwareManager;
 
     private long mBackClickTime;
     private DeviceControl mDeviceControl;
+
     private GameInfo mGameInfo;
     private String mCorpID;
+
+    private long fontTimeout = 5 * 60;
+    private long backTimeout = 3 * 60;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
             if (isFinishing()) {
                 return;
             }
             switch (msg.what) {
-                case MSG_TIME_UP:
-                    if (mDeviceControl != null) {
-                        mDeviceControl.stopGame();
-                    }
-//                    showDownloadDialog();
-                    break;
-                case MSG_TIME_REMIND:
-                    mCountView.setVisibility(View.VISIBLE);
-                    mCountView.setCount(msg.arg1);
-                    mCountView.start();
-                    showTimeoutWarning(msg.arg1);
-                    break;
-                case MSG_TIME_REMIND_DISAPPEAR:
-                    disappearTimeoutWarning();
-                    break;
-                case MSG_REMIND_PLAYING_DOWNLOAD:
-//                    mPlayingDownloadArea.setVisibility(View.VISIBLE);
+                case MSG_SHOW_ERROR:
+                    showError((String) msg.obj);
                     break;
             }
         }
@@ -108,32 +94,54 @@ public class GamePlay extends Activity implements APICallback<String>,
         setContentView(R.layout.activity_game_play);
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
+        long[] times = getIntent().getLongArrayExtra(EXTRA_TIMEOUT);
+        if (times!=null && times.length == 2){
+            fontTimeout = times[0] > 60 ? times[0] : 5 * 60;
+            backTimeout = times[1] > 60 ? times[1] : 3 * 60;
+        }
 
         initView();
         mHardwareManager = new HardwareManager(this);
 
         //未获取到游戏信息
         if (mCorpID == null || mGameInfo == null){
-//            Toast.makeText(GamePlay.this,"获取游戏信息失败", Toast.LENGTH_LONG).show();
-            logger.error("获取游戏信息失败");
-            finish();
+            mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "获取游戏信息失败"));
             return;
         }
 
         checkAndRequestPermission();
     }
 
-    @SuppressLint("WrongViewCast")
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_back){
+            finish();
+        }else if(view.getId() == R.id.btn_down){
+            if (view.getTag()!=null && view.getTag() instanceof String){
+                String tag = (String) view.getTag();
+                if ("reload".equals(tag)){
+                    //重试逻辑
+                    reloadGame();
+
+                }else if("down".equals(tag)){
+                    //下载逻辑
+                    Toast.makeText(this, "未获取到下载地址", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     private void initView() {
         mLoadingLL = (FrameLayout) findViewById(R.id.loading_ll);
-        mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
         mLoadingText = (TextView) findViewById(R.id.loading_txt);
+        mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
         mVideoContainer = (FrameLayout) findViewById(R.id.play_container);
-        mTimeoutWarning = (TextView) findViewById(R.id.timeout_tips);
-//        mPlayingDownloadArea = findViewById(R.id.playing_download_area);
-        mCountView = (CountDownRingView) findViewById(R.id.time_count);
-        findViewById(R.id.playing_download_close).setOnClickListener(this);
-        findViewById(R.id.playing_download).setOnClickListener(this);
+        mErrorLL = findViewById(R.id.error_ll);
+        mErrorText = findViewById(R.id.error_text);
+        mGameIcon = findViewById(R.id.game_icon);
+        mErrorBtn = findViewById(R.id.btn_down);
+        findViewById(R.id.btn_back).setOnClickListener(this);
+        findViewById(R.id.btn_down).setOnClickListener(this);
     }
 
     private void checkInitCloudPhoneSDK(){
@@ -150,7 +158,7 @@ public class GamePlay extends Activity implements APICallback<String>,
                         //初始化失败，退出页面
 //                        Toast.makeText(GamePlay.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
                         logger.error("初始化游戏失败,code = " + code + ", msg = " + msg);
-                        exitPlay();
+                        mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "初始化游戏失败,请稍后再试"));
                     }
                 }
             });
@@ -175,11 +183,18 @@ public class GamePlay extends Activity implements APICallback<String>,
                                 startGame();
                             } else {
                                 // 如果界面推出之后才收到回调，请调用这个方法
-                                mDeviceControl.stopGame();
+                                if (mDeviceControl != null) {
+                                    mDeviceControl.stopGame();
+                                }
                             }
                         }else {
                             logger.error("申请试玩设备失败,code = " + code);
-                            exitPlay();
+//                            exitPlay();
+                            if (mDeviceControl != null) {
+                                mDeviceControl.stopGame();
+                            }
+
+                            mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
                         }
                     }
                 });
@@ -201,35 +216,9 @@ public class GamePlay extends Activity implements APICallback<String>,
         });
         mHardwareManager.setDeviceControl(mDeviceControl);
         mDeviceControl.startGame(GamePlay.this, R.id.play_container, GamePlay.this);
-        // setRemind();
-        setNoOpsTimeout();
-    }
 
-    private void setNoOpsTimeout() {
-        mDeviceControl.setNoOpsTimeout(5 * 60, 3 * 60);
-    }
-
-    private void setRemind() {
-        Message message = mHandler.obtainMessage(MSG_TIME_REMIND);
-        if (mGameInfo.getEffectTime() > 30) {
-            message.arg1 = 30;
-            mHandler.sendMessageDelayed(message, (mGameInfo.getEffectTime() - 30) * 1000);
-        } else if (mGameInfo.getEffectTime() > 2) {
-            message.arg1 = mGameInfo.getEffectTime();
-            mHandler.sendMessage(message);
-        }
-
-        // 发送消息，20s后弹出变下边玩按钮
-        // mHandler.sendEmptyMessageDelayed(MSG_REMIND_PLAYING_DOWNLOAD, 20 * 1000);
-        // 发送消息，游戏结束后弹出下载弹窗
-        mHandler.sendEmptyMessageDelayed(MSG_TIME_UP, mGameInfo.getEffectTime() * 1000);
-    }
-
-    private void playSuccess() {
-        mLoadingLL.setVisibility(View.GONE);
-        mVideoContainer.setVisibility(View.VISIBLE);
-        mMenuView.setVisibility(View.VISIBLE);
-        mMenuView.setDeviceControl(mDeviceControl);
+        //设置前后台无操作超时时间
+        mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
     }
 
     @Override
@@ -241,12 +230,29 @@ public class GamePlay extends Activity implements APICallback<String>,
             mDeviceControl.setPlayListener(this);
             playSuccess();
         } else {
-            mDeviceControl.setPlayListener(null);
-            exitPlay();
+            if (mDeviceControl!=null){
+                mDeviceControl.setPlayListener(null);
+                mDeviceControl.stopGame();
+            }
 
             logger.info(msg);
-//            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+            //取消游戏
+            if (code == APIConstants.ERROR_GAME_CANCEL){
+                exitPlay();
+                return;
+            }
+
+            mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
+
         }
+    }
+
+    private void playSuccess() {
+        mLoadingLL.setVisibility(View.GONE);
+        mVideoContainer.setVisibility(View.VISIBLE);
+        mMenuView.setVisibility(View.VISIBLE);
+        mMenuView.setDeviceControl(mDeviceControl);
     }
 
     private void exitPlay() {
@@ -254,109 +260,42 @@ public class GamePlay extends Activity implements APICallback<String>,
         finish();
     }
 
-    @Override
-    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.playing_download:
-//                downloadApp(mGameInfo.pkgName);
-//                mPlayingDownloadArea.setVisibility(View.GONE);
-//                break;
-//            case R.id.playing_download_close:
-//                mPlayingDownloadArea.setVisibility(View.GONE);
-//                break;
-//            default:
-//                break;
-//        }
+    private void showError(String err){
+        mLoadingLL.setVisibility(View.GONE);
+        mVideoContainer.setVisibility(View.GONE);
+        mMenuView.setVisibility(View.GONE);
+        mErrorLL.setVisibility(View.VISIBLE);
+        mErrorText.setText(err);
+        if (this.mGameInfo!=null){
+            mErrorBtn.setVisibility(View.VISIBLE);
+            if (this.mGameInfo.iconUrl!=null){
+                Picasso.with(this).load(this.mGameInfo.iconUrl).into(mGameIcon);
+            }
+            if (this.mGameInfo.downloadUrl != null){
+                //显示下载按钮
+                mErrorBtn.setTag("down");
+                mErrorBtn.setText("下载游戏直接玩");
+            }else {
+                //显示重试按钮
+                mErrorBtn.setTag("reload");
+                mErrorBtn.setText("重新加载游戏");
+            }
+        }else {
+            //隐藏按钮
+            mErrorBtn.setVisibility(View.GONE);
+            mErrorBtn.setTag("hide");
+        }
+
     }
 
-    private void downloadApp(String pkgName) {
-        //TODO 添加下载逻辑
+    private void reloadGame(){
+        mLoadingLL.setVisibility(View.VISIBLE);
+        mVideoContainer.setVisibility(View.GONE);
+        mMenuView.setVisibility(View.GONE);
+        mErrorLL.setVisibility(View.GONE);
+
+        checkAndRequestPermission();
     }
-
-    private void showTimeoutWarning(int second) {
-        mTimeoutWarning.setText(getString(R.string.game_play_time_remind, second));
-        Animator warningIn = ObjectAnimator.ofFloat(mTimeoutWarning, "alpha", 0f, 1f);
-        warningIn.setDuration(200);
-        warningIn.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                mTimeoutWarning.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mHandler.sendEmptyMessageDelayed(MSG_TIME_REMIND_DISAPPEAR, 2000);
-            }
-        });
-        warningIn.start();
-    }
-
-    private void disappearTimeoutWarning() {
-        Animator warningOut = ObjectAnimator.ofFloat(mTimeoutWarning, "alpha", 1f, 0f);
-        warningOut.setDuration(200);
-        warningOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                mTimeoutWarning.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mTimeoutWarning.setVisibility(View.GONE);
-            }
-        });
-
-        warningOut.start();
-    }
-
-//    private void showDownloadDialog() {
-//        if (isFinishing()) {
-//            return;
-//        }
-//
-//        if (mDownloadDialog != null && mDownloadDialog.isShowing()) {
-//            mDownloadDialog.dismiss();
-//        }
-//        mDownloadDialog = new Dialog(this, R.style.MyTheme_CustomDialog);
-//        View contentView = mDownloadDialog.getLayoutInflater().inflate(R.layout.dialog_download, null, false);
-//        mDownloadDialog.setContentView(contentView);
-//        Glide.with(contentView.findViewById(R.id.app_icon)).load(mGameInfo.iconUrl)
-//                .into((ImageView) contentView.findViewById(R.id.app_icon));
-//        ((TextView) contentView.findViewById(R.id.app_name)).setText(mGameInfo.name);
-//        ((TextView) contentView.findViewById(R.id.play_count)).setText(getString(R.string.game_launch_count,
-//                UnitFormatUtils.formatPerson(this, mGameInfo.playCount)));
-//        ((TextView) contentView.findViewById(R.id.message)).setText(getString(R.string.game_end_play_dialog_tips,
-//                mGameInfo.totalTime / 60));
-//        Button okBtn = (Button) contentView.findViewById(R.id.download_btn);
-//        okBtn.setText(
-//                getString(R.string.game_end_play_dialog_download, UnitFormatUtils.formatBytes(mGameInfo.size, false)));
-//        okBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                downloadApp(mGameInfo.pkgName);
-//            }
-//        });
-//        contentView.findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!GameRunningActivity.this.isFinishing()) {
-//                    exitPlay();
-//                }
-//            }
-//        });
-//        mDownloadDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialog) {
-//                exitPlay();
-//            }
-//        });
-//        mDownloadDialog.setCanceledOnTouchOutside(false);
-//        mDownloadDialog.show();
-//    }
 
     @Override
     protected void onDestroy() {
@@ -366,16 +305,13 @@ public class GamePlay extends Activity implements APICallback<String>,
         }
         GameBoxManager.getInstance(GamePlay.this).exitQueue();
         mMenuView.dismissMenuDialog();
-        if (mHardwareManager != null) {
-            mHardwareManager.release();
-        }
     }
 
     @Override
     public void onBackPressed() {
         if ((System.currentTimeMillis() - mBackClickTime) > 3000) {
             mBackClickTime = System.currentTimeMillis();
-            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
         } else {
             exitPlay();
         }
@@ -390,17 +326,18 @@ public class GamePlay extends Activity implements APICallback<String>,
 
     @Override
     public boolean onNoOpsTimeout(int type, long timeout) {
-        Log.d(TAG, "onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
+        logger.error("onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
+
         exitPlay();
         Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout), Toast.LENGTH_LONG).show();
+
         return true;
     }
 
     @Override
     public void onScreenChange(int orientation) {
-        Log.d(TAG, "onScreenChange() orientation = " + orientation);
+        logger.error("onScreenChange() orientation = " + orientation);
     }
-
 
     private void setFullScreen() {
         if (Build.VERSION.SDK_INT < 14) {
@@ -477,5 +414,32 @@ public class GamePlay extends Activity implements APICallback<String>,
 
 //        startCloudPhone();
         checkInitCloudPhoneSDK();
+    }
+
+    private String getErrorText(int code){
+        String error = null;
+        switch (code) {
+            case APIConstants.ERROR_GAME_INF_EMPTY:
+                error = "未获取到游戏信息";
+                break;
+            case APIConstants.ERROR_SDK_INIT_ERROR:
+                error = "初始化游戏失败";
+                break;
+            case APIConstants.ERROR_API_CALL_ERROR:
+                error = "调用服务出错，请稍后再试";
+                break;
+            case APIConstants.ERROR_NO_DEVICE:
+            case APIConstants.WAITING_QUEUE:
+                error = "试玩人数过多，请稍后再试";
+                break;
+            case APIConstants.ERROR_NETWORK_ERROR:
+                error = "网络错误，请检查网络后再试";
+                break;
+            default:
+                error = "服务异常，请稍后再试";
+                break;
+        }
+
+        return error;
     }
 }

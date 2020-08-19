@@ -58,7 +58,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
                 R.color.gb_floating_color_yellow, R.color.gb_floating_color_red});
 
         mMenuDialog = new Dialog(getContext(), R.style.MyTheme_CustomDialog_MenuDialog);
-        mMenuDialogContentView = mMenuDialog.getLayoutInflater().inflate(R.layout.cloud_phone_float_menu_panel,
+        mMenuDialogContentView = mMenuDialog.getLayoutInflater().inflate(R.layout.dialog_float_menu_panel,
                 null, false);
         mMenuDialog.setContentView(mMenuDialogContentView);
         mMenuDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {

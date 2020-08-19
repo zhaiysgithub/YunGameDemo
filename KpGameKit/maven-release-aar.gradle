@@ -16,7 +16,12 @@ uploadArchives {
     repositories.mavenDeployer {
         //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
         //注意”file://“ + 路径，有三个斜杠，别漏了
-        repository(url: "file:///Users/zhangqinglou/work/maven")
+//        repository(url: "file:///Users/zhangqinglou/work/maven")
+        //远程仓库的地址
+        repository(url: "http://maven.kuaipantech.com/repository/maven-releases/") {
+            //nexus登录的用户名和密码
+            authentication(userName: "admin", password: "kpmvn!#%246")
+        }
         pom.project {
             groupId project.PUBLISH_GROUP_ID
             artifactId project.PUBLISH_ARTIFACT_ID
@@ -25,7 +30,6 @@ uploadArchives {
         }
     }
 }
-
 
 //将第三方aar，导出到maven库
 publishing {
@@ -49,10 +53,22 @@ publishing {
             artifact("../app/libs/GDTSDK.unionNormal.4.232.1102.aar")
         }
     }
+//    repositories {
+//        maven {
+//            //Maven仓库本地路径
+//            url "file:///Users/zhangqinglou/work/maven"
+//        }
+//    }
+    //远程仓库的地址
     repositories {
         maven {
-            //Maven仓库本地路径
-            url "file:///Users/zhangqinglou/work/maven"
+            //指定要上传的maven私服仓库
+            url "http://maven.kuaipantech.com/repository/maven-releases/"
+            //认证用户和密码
+            credentials {
+                username 'admin'
+                password 'kpmvn!#%246'
+            }
         }
     }
 }
