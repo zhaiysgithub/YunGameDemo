@@ -89,6 +89,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
     private String requestAppInfo(String corpKey) {
 
         String str = Urls.GET_CONFIG;
+        logger.info("url:" + str);
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
