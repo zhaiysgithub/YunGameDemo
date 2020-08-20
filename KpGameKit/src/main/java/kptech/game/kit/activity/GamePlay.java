@@ -107,7 +107,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mHardwareManager = new HardwareManager(this);
 
         //发送打点事件
-        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_CREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
 
         //未获取到游戏信息
         if (mCorpID == null || mGameInfo == null){

@@ -4,7 +4,7 @@ import kptech.game.kit.APIConstants;
 
 public class EventCode {
     //启动游戏界面
-    public static final String DATA_ACTIVITY_PLAYGAME_CREATE = "DATA_ACTIVITY_PLAYGAME_CREATE";
+    public static final String DATA_ACTIVITY_PLAYGAME_ONCREATE = "DATA_ACTIVITY_PLAYGAME_ONCREATE";
     //关闭游戏界面
     public static final String DATA_ACTIVITY_PLAYGAME_DESTORY = "DATA_ACTIVITY_PLAYGAME_DESTORY";
 
@@ -50,7 +50,7 @@ public class EventCode {
     //取消广告，关闭窗口
     public static final String DATA_AD_DIALOG_CANCEL = "DATA_AD_DIALOG_CANCEL";
 
-    //加载激励视频
+    //广告行为
     public static final String DATA_AD_REWARD_LOADING = "DATA_AD_REWARD_LOADING";
     public static final String DATA_AD_REWARD_EMPTY = "DATA_AD_REWARD_EMPTY";
     public static final String DATA_AD_REWARD_READY = "DATA_AD_REWARD_READY";

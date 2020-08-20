@@ -30,6 +30,8 @@ public class GameInfo implements Parcelable {
     public int usedTime;
     public long size;
     public int showAd = GAME_AD_SHOW_AUTO;
+    //自动本地IMEI\AndroidID到云设备，0不添加，1添加
+    public int addMockInfo = 0;
 
     public GameInfo() {
     }
@@ -45,6 +47,7 @@ public class GameInfo implements Parcelable {
         this.usedTime = var1.readInt();
         this.size = var1.readLong();
         this.showAd = var1.readInt();
+        this.addMockInfo = var1.readInt();
     }
 
     public int getEffectTime() {
@@ -66,6 +69,7 @@ public class GameInfo implements Parcelable {
         var1.writeInt(this.usedTime);
         var1.writeLong(this.size);
         var1.writeInt(this.showAd);
+        var1.writeInt(this.addMockInfo);
     }
 
 

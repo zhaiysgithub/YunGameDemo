@@ -57,8 +57,6 @@ public class GameBox {
             if(intent!=null){
                 logger.info("本地已安装游戏："+gameInfo.pkgName);
                 activity.startActivity(intent);
-
-
                 return;
             }
         }catch (Exception e){

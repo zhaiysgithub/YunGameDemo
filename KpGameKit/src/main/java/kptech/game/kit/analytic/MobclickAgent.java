@@ -1,16 +1,15 @@
 package kptech.game.kit.analytic;
 
-import android.util.Log;
-
 import com.kptech.netqueue.base.Request;
 import com.kptech.netqueue.core.RequestQueue;
 import com.kptech.netqueue.core.SimpleNet;
 import com.kptech.netqueue.requests.StringRequest;
 
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.utils.Logger;
 
 public class MobclickAgent {
-    private static Logger logger = new Logger("MobclickAgent", false);
+    private static Logger logger = new Logger("MobclickAgent", BuildConfig.DEBUG);
 
     public static void sendEvent(Event event) {
         if (event == null){
