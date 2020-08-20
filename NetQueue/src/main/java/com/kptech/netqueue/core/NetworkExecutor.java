@@ -64,7 +64,6 @@ final class NetworkExecutor extends Thread {
                         mReqCache.put(request.getUrl(), response);
                     }
                 }
-
                 // 分发请求结果
                 mResponseDelivery.deliveryResponse(request, response);
             }

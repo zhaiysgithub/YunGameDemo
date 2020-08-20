@@ -18,7 +18,12 @@ import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.callback.ZadInterstitialAdObserver;
 import com.zad.sdk.Oapi.work.ZadInterstitialWorker;
 
+import java.util.HashMap;
+
 import kptech.game.kit.R;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.Logger;
 
 public class AdPopupWindow extends PopupWindow  {
@@ -28,11 +33,13 @@ public class AdPopupWindow extends PopupWindow  {
     private ViewGroup mLayout;
     private LayoutInflater inflater;
     private String mAdCode;
+    private String mGamePkg;
 
-    public AdPopupWindow(Activity activity, String code) {//, int position,
+    public AdPopupWindow(Activity activity, String code, String gamePkg) {//, int position,
         super(activity);
         this.mActivity = activity;
         this.mAdCode = code;
+        this.mGamePkg = gamePkg;
 
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.ad_popup_layout, null);
@@ -88,6 +95,13 @@ public class AdPopupWindow extends PopupWindow  {
      * 加载插屏广告
      */
     private void loadInterstitialAd() {
+        try {
+            //发送打点事件
+            HashMap ext = new HashMap<>();
+            ext.put("extAdCode", this.mAdCode);
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mGamePkg, ext));
+        }catch (Exception e){}
+
         mInterstitialWorker = ZadSdkApi.getInterstitialAdWorker(this.mActivity, new MyInterObserver(), mAdCode);
         if (mInterstitialWorker != null) mInterstitialWorker.requestProviderAd();
     }
@@ -98,11 +112,29 @@ public class AdPopupWindow extends PopupWindow  {
         public void onAdShow(String posId, String info) {
             logger.info("onAdShow : " + info);
             Toast.makeText(mActivity, "您已获得一次试玩机会", Toast.LENGTH_LONG).show();
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("extAdCode", mAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_DISPLAY, mGamePkg, ext));
+            }catch (Exception e){}
         }
 
         @Override
         public void onAdClick(String posId, String info) {
             logger.info("onAdClick : " + info);
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("extAdCode", mAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
+            }catch (Exception e){}
         }
 
         @Override
@@ -114,6 +146,15 @@ public class AdPopupWindow extends PopupWindow  {
                 mLayout.removeAllViews();
                 mLayout.addView(mInterstitialWorker.getAdBeans().get(0).getAdView());
             }
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("extAdCode", mAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_READY, mGamePkg, ext));
+            }catch (Exception e){}
         }
 
         @Override
@@ -121,6 +162,15 @@ public class AdPopupWindow extends PopupWindow  {
             logger.info("onClose, posId = " + posId + ", info = " + info);
 
             dismiss();
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("extAdCode", mAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
+            }catch (Exception e){}
         }
 
         @Override
@@ -128,6 +178,15 @@ public class AdPopupWindow extends PopupWindow  {
             logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
 //            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
             dismiss();
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("extAdCode", mAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mGamePkg, ext));
+            }catch (Exception e){}
         }
     }
 

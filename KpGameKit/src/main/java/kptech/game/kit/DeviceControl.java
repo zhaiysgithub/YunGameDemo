@@ -5,17 +5,30 @@ import android.app.Activity;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.utils.Logger;
 
 public class DeviceControl {
     private static final String TAG = "GameControl";
+    private Logger logger = new Logger(TAG);
 
     private com.yd.yunapp.gameboxlib.DeviceControl mDeviceControl;
     private GameInfo mGameInfo;
+    private JSONObject mDeviceToken;
 
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
@@ -24,6 +37,42 @@ public class DeviceControl {
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control, GameInfo game){
         this.mDeviceControl = control;
         this.mGameInfo = game;
+        //解析deviceToken
+        parseDeviceToken();
+    }
+
+    public String getPadcode(){
+        try {
+            if (mDeviceToken != null && mDeviceToken.has("deviceId")) {
+                String str = mDeviceToken.getString("deviceId");
+                return str;
+            }
+        }catch (Exception e){
+            logger.error("getPadcode, error:"+e.getMessage());
+        }
+        return null;
+    }
+
+    private void parseDeviceToken(){
+        try {
+            String deviceStr = mDeviceControl.getDeviceToken();
+            JSONObject deviceTokenObj = new JSONObject(deviceStr);
+            if (deviceTokenObj!=null && deviceTokenObj.has("token")){
+                String tokenStr = deviceTokenObj.getString("token");
+                JSONObject tokenObject = new JSONObject(tokenStr);
+                deviceTokenObj.put("token", tokenObject);
+
+                if (tokenObject!=null && tokenObject.has("token")){
+                    String subTokenStr = tokenObject.getString("token");
+                    JSONObject subTokenObject = new JSONObject(subTokenStr);
+                    tokenObject.put("token", subTokenObject);
+                }
+            }
+
+            mDeviceToken = deviceTokenObj;
+        }catch (Exception e){
+            logger.error("parseDeviceToken, error:"+e.getMessage());
+        }
     }
 
     /**
@@ -64,12 +113,30 @@ public class DeviceControl {
     }
 
     private void execStartGame(@NonNull Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
+
+        //发送打点事件
+        try {
+            Event event = Event.getEvent(EventCode.DATA_VIDEO_READY_RECVING, mGameInfo.pkgName, getPadcode());
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
+
+
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
-            public void onAPICallback(String s, int i) {
+            public void onAPICallback(String msg, int code) {
                 if (callback!=null){
-                    callback.onAPICallback(s,i);
+                    callback.onAPICallback(msg, code);
                 }
+
+                //发送打点事件
+                try {
+                    Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
+                    HashMap ext = new HashMap<>();
+                    ext.put("code", code);
+                    ext.put("msg", msg);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
             }
         });
     }
@@ -154,6 +221,17 @@ public class DeviceControl {
                 if (listener!=null){
                     return listener.onNoOpsTimeout(type,timeout);
                 }
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_USER_LEAVE, mGameInfo.pkgName, getPadcode());
+                    HashMap ext = new HashMap<>();
+                    ext.put("type", type);
+                    ext.put("timeout", timeout);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
                 return false;
             }
 

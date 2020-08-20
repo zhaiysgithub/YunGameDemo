@@ -10,11 +10,15 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestAppInfoTask;
 import kptech.game.kit.data.RequestTask;
@@ -28,18 +32,6 @@ public class GameBoxManager {
 
     private static final Logger logger = new Logger("GameBoxManager") ;
 
-    // app key. 查看地址： http://yunapp-console.bj.bcebos.com/sandbox_new/#/deviceGroups
-    private static final String GAME_AK = "TOphL4quGn1a7dVRisS5ywU0";
-    // app secret
-    private static final String GAME_SK = "foeGZYkV4NOICn9Qpuq507ElvagTMHybhrKPLX6S";
-    // 渠道值，自定义
-    private static final String GAME_CH = "test";
-
-    private static final String  AD_APP_KEY = "ZM_appSDK_00029";
-    private static final String  AD_APP_TOKEN = "MadXeXeJf7zNzBIH";
-
-    private static final String TAG = "GameManager";
-
     private static Application mApplication = null;
 
     public static String mCorpID = "";
@@ -47,10 +39,7 @@ public class GameBoxManager {
     private Context context;
     private static volatile GameBoxManager box = null;
     private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
-    private Messager mManager;
     private String mUniqueId;
-
-//    private InitHandler mHandler = new InitHandler();;
 
     private boolean isLibInited = false;
 
@@ -100,8 +89,14 @@ public class GameBoxManager {
             return;
         }
 
-        //发送请求
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.DATA_SDK_INIT);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
 
+
+        //发送请求
         InitHandler mHandler = new InitHandler();
         mHandler.setCallback(callback);
         mHandler.sendEmptyMessage(1);
@@ -187,6 +182,7 @@ public class GameBoxManager {
      */
     private boolean initLibManager(){
 
+        boolean ret = false;
         String ak = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_KEY,null);
         String sk = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_SECRET,null);
         String ch = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_CHANNEL,null);
@@ -196,10 +192,22 @@ public class GameBoxManager {
             //初始化游戏
             mLibManager.init(ak, sk, ch);
             isLibInited = true;
-            return true;
+
+            ret = true;
         }
 
-        return false;
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(ret ? EventCode.DATA_SDK_INIT_OK : EventCode.DATA_SDK_INIT_FAILED);
+            HashMap ext = new HashMap();
+            ext.put("ak",ak);
+            ext.put("sk",sk);
+            ext.put("ch",ch);
+            event.setExt(ext);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
+
+        return ret;
     }
 
     private com.yd.yunapp.gameboxlib.GameBoxManager getLibManager(){
@@ -240,27 +248,48 @@ public class GameBoxManager {
         }
         //297ebd358f8d1d5f,  //864131034311009 //VM010127052028
         //DeviceInfo{id=0, status=0, deviceId='VM010127052028', token='{"webControlList":[{"webControlCode":"XA-WEBSOCKET-CONTROL-41","webControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9741}]}],"controlList":[{"controlCode":"XA-USER-CONTROL-41","controlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9641}]}],"padList":[{"controlCode":"XA-USER-CONTROL-41","padCode":"VM010127052028","padStatus":"1","padType":"0","videoCode":"GZ-TEST-USER-VIDEO-01"}],"videoList":[{"videoCode":"GZ-TEST-USER-VIDEO-01","videoInfoList":[{"videoUrl":"rtmp://117.48.196.66:110/live","videoProtocol":"2","videoDomain":"live","videoPort":110,"videoContext":"1"},{"videoUrl":"rtmp://117.48.196.66:1936/live","videoProtocol":"","videoDomain":"","videoPort":-1,"videoContext":""}]}],"wssWebControlList":[{"wssWebControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9841}],"wssWebControlCode":"XA-WSS-CONTROL-41"}],"webRtcControlList":[{"webRtcControlInfoList":[{"controlIp":"10.3.98.1","controlPort":9641}],"controlCode":"XA-USER-CONTROL-41","gateway":{"gatewayWssPort":8191,"gatewayIp":"xian.cloud-control.top","gatewayPort":8190}}],"sessionId":"b6d822fcc481462ead6c57741bf6d3f0","userId":11357855}', type=0, usedTime=0, totalTime=86400, gop=50, bitRate=3600, compressionType=VPU, maxDescentFrame=1, maxFrameRate=30, minDescentFrame=1, minFrameRate=20, picQuality=GRADE_LEVEL_HD, resolution=LEVEL_720_1280, sound=true, queueInfo=null}
-//        try {
-//            String ANDROID_ID = Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
-//            String Imei = DeviceUtils.getIMEI(mApplication);
-//
-//            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI, Imei);
-//            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
-//        }catch (Exception e){
-//        }
+        try {
+            String ANDROID_ID = Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
+            String Imei = DeviceUtils.getIMEI(mApplication);
+
+            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI, Imei);
+            manager.addDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
+        }catch (Exception e){
+        }
+
+        try {
+            //发送打点事件
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
+        }catch (Exception e){}
 
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
         manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
             @Override
-            public void onAPICallback(com.yd.yunapp.gameboxlib.DeviceControl deviceControl, int i) {
+            public void onAPICallback(com.yd.yunapp.gameboxlib.DeviceControl deviceControl, int code) {
+
+                DeviceControl control = null;
+                if (deviceControl!=null) {
+                    control = new DeviceControl(deviceControl, inf);
+                }
 
                 if (callback!=null){
-                    DeviceControl control = null;
-                    if (deviceControl!=null) {
-                        control = new DeviceControl(deviceControl, inf);
-                    }
-                    callback.onAPICallback(control, i);
+                    callback.onAPICallback(control, code);
                 }
+
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+
+                        HashMap ext = new HashMap<>();
+                        ext.put("code", code);
+                        event.setExt(ext);
+                    }
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
             }
         });
     }

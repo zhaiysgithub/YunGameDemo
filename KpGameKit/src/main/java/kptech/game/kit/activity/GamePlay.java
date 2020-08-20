@@ -39,6 +39,9 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.ad.IAdCallback;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.view.FloatMenuView;
 
@@ -92,6 +95,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         super.onCreate(savedInstanceState);
         setFullScreen();
         setContentView(R.layout.activity_game_play);
+
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
         long[] times = getIntent().getLongArrayExtra(EXTRA_TIMEOUT);
@@ -99,9 +103,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             fontTimeout = times[0] > 60 ? times[0] : 5 * 60;
             backTimeout = times[1] > 60 ? times[1] : 3 * 60;
         }
-
         initView();
         mHardwareManager = new HardwareManager(this);
+
+        //发送打点事件
+        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_CREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
 
         //未获取到游戏信息
         if (mCorpID == null || mGameInfo == null){
@@ -300,11 +306,16 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
         GameBoxManager.getInstance(GamePlay.this).exitQueue();
         mMenuView.dismissMenuDialog();
+
+        //发送打点事件
+        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+
     }
 
     @Override

@@ -10,6 +10,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import kptech.game.kit.activity.GamePlay;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.Logger;
 
 public class GameBox {
@@ -40,8 +43,12 @@ public class GameBox {
 
     public void playGame(Activity activity, GameInfo gameInfo){
         if (activity==null || gameInfo==null){
+            logger.error("playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
             return;
         }
+
+        //初始化事件基本信息
+        Event.createBaseEvent(activity, appKey);
 
         try {
             //判断本地是否已经安装
@@ -50,6 +57,8 @@ public class GameBox {
             if(intent!=null){
                 logger.info("本地已安装游戏："+gameInfo.pkgName);
                 activity.startActivity(intent);
+
+
                 return;
             }
         }catch (Exception e){
@@ -65,9 +74,6 @@ public class GameBox {
         if (noOpsTimeout != null){
             intent.putExtra(GamePlay.EXTRA_TIMEOUT, noOpsTimeout);
         }
-
-
-        int[] a = new int[]{};
         activity.startActivity(intent);
 
     }

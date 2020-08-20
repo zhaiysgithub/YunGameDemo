@@ -10,9 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.IRequestCallback;
 import kptech.game.kit.data.RequestGameInfoTask;
@@ -39,8 +43,14 @@ public class AdManager {
     }
 
     public boolean init(Application application){
+        boolean ret = false;
+
         //判断广告是否开启
         String adEnable = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADENABLE,null);
+
+        HashMap ext = new HashMap();
+        ext.put("adEnable", adEnable);
+
         if (adEnable!=null && "1".equals(adEnable)){
             String adJson = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADJSON,null);
             if (adJson!=null){
@@ -49,15 +59,29 @@ public class AdManager {
                     String appKey = adObj.getString("appKey");
                     String appToken = adObj.getString("appToken");
                     ZadSdkApi.init(application, appKey, appToken);
+                    ret = true;
 
-//                JSONArray gameStartArr = adObj.getJSONArray("gameStart");
-                    return true;
+                    JSONArray gameStartArr = adObj.getJSONArray("gameStart");
+                    ext.put("appKey", adEnable);
+                    ext.put("appToken", adEnable);
+                    if (gameStartArr!=null){
+                        ext.put("gameStartArr", gameStartArr.toString());
+                    }
+
                 }catch (Exception e){
                     logger.error(e.getMessage());
                 }
             }
         }
-        return false;
+
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(ret ? EventCode.DATA_AD_INIT_OK : EventCode.DATA_AD_INIT_FAILED);
+            event.setExt(ext);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
+
+        return ret;
     }
 
 
@@ -89,7 +113,7 @@ public class AdManager {
     }
 
 
-    public boolean showGameStartAd(final Activity activity, String corpId, GameInfo gameInfo, final IAdCallback<String> callback){
+    public boolean showGameStartAd(final Activity activity, String corpId, final GameInfo gameInfo, final IAdCallback<String> callback){
 
         //手动设置为不显示广告
         if (gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
@@ -119,7 +143,7 @@ public class AdManager {
         //直接显示广告，不用请求服务器
         if (gameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){
             //显示广告弹窗
-            showAdRemindDialog(activity, rewardCode, extCode, callback);
+            showAdRemindDialog(activity, rewardCode, extCode, gameInfo, callback);
             return true;
         }
 
@@ -131,7 +155,7 @@ public class AdManager {
             public void onResult(GameInfo game, int code) {
                 if (game!=null && game.showAd == 1){
                     //显示广告弹窗
-                    showAdRemindDialog(activity, finalRewardCode, finalExtCode, callback);
+                    showAdRemindDialog(activity, finalRewardCode, finalExtCode, gameInfo, callback);
                 }else {
                     if (callback!=null){
                         callback.onCallback("", 1);
@@ -143,10 +167,11 @@ public class AdManager {
     }
 
     //显示广告弹窗
-    private void showAdRemindDialog(Activity activity, String rewardCode, String extCode, final IAdCallback<String> callback){
+    private void showAdRemindDialog(Activity activity, String rewardCode, String extCode, GameInfo gameInfo, final IAdCallback<String> callback){
         new AdRemindDialog(activity)
                 .setRewardAdCode(rewardCode)
                 .setExtAdCode(extCode)
+                .setGameInfo(gameInfo)
                 .setCallback(new IAdCallback<String>() {
                     @Override
                     public void onCallback(String msg, int code) {

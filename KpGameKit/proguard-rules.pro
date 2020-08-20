@@ -18,7 +18,11 @@
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+
+#修改混淆时的包名，解决a.a.a与其它包冲突的问题
+-obfuscationdictionary fname.txt
+-classobfuscationdictionary fname.txt
+-packageobfuscationdictionary fname.txt
 
 -keep class kptech.cloud.kit.msg.** { *; }
 
