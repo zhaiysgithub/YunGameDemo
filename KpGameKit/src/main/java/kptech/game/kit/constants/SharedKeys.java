@@ -12,4 +12,6 @@ public class SharedKeys {
     public static final String KEY_AD_TOKEN = "adtoken";
     public static final String KEY_AD_TYPE = "adtype";
     public static final String KEY_AD_CODE = "adcode";
+
+    public static final String KEY_AD_REWARD_VERIFY_FLAG = "ad_reward_verify";
 }

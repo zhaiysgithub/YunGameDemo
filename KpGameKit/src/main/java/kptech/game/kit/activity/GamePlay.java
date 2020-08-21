@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.APICallback;
@@ -76,6 +77,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private long fontTimeout = 5 * 60;
     private long backTimeout = 3 * 60;
 
+    private int mErrorCode = -1;
+    private String mErrorMsg = null;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -106,8 +110,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         initView();
         mHardwareManager = new HardwareManager(this);
 
-        //发送打点事件
-        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        try {
+            //发送打点事件
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        }catch (Exception e){
+        }
 
         //未获取到游戏信息
         if (mCorpID == null || mGameInfo == null){
@@ -124,14 +131,36 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             finish();
         }else if(view.getId() == R.id.btn_down){
             if (view.getTag()!=null && view.getTag() instanceof String){
+                Event event = null;
                 String tag = (String) view.getTag();
                 if ("reload".equals(tag)){
                     //重试逻辑
                     reloadGame();
 
+                    event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+
                 }else if("down".equals(tag)){
+
                     //下载逻辑
                     Toast.makeText(this, "未获取到下载地址", Toast.LENGTH_SHORT).show();
+
+                    event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+                }
+
+                try {
+                    if (event != null){
+                        //发送打点事件
+                        event.setErrMsg(this.mErrorMsg);
+                        if (mDeviceControl!=null){
+                            event.setPadcode(mDeviceControl.getPadcode());
+                        }
+                        HashMap ext = new HashMap();
+                        ext.put("code", mErrorCode);
+                        ext.put("msg", mErrorMsg);
+                        event.setExt(ext);
+                        MobclickAgent.sendEvent(event);
+                    }
+                }catch (Exception e){
                 }
             }
         }
@@ -200,6 +229,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                                 mDeviceControl.stopGame();
                             }
 
+                            GamePlay.this.mErrorCode = code;
+                            GamePlay.this.mErrorMsg = getErrorText(code);
                             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
                         }
                     }
@@ -249,6 +280,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 return;
             }
 
+            this.mErrorCode = code;
+            this.mErrorMsg = msg != null ? msg : getErrorText(code);
             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
 
         }
@@ -313,8 +346,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         GameBoxManager.getInstance(GamePlay.this).exitQueue();
         mMenuView.dismissMenuDialog();
 
-        //发送打点事件
-        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        try{
+            //发送打点事件
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        }catch (Exception e){}
 
     }
 

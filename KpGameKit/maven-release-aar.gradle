@@ -18,7 +18,7 @@ uploadArchives {
         //注意”file://“ + 路径，有三个斜杠，别漏了
 //        repository(url: "file:///Users/zhangqinglou/work/maven")
         //远程仓库的地址
-        repository(url: "http://maven.kuaipantech.com/repository/maven-releases/") {
+        repository(url: "https://maven.kuaipantech.com/repository/maven-snapshots/") {
             //nexus登录的用户名和密码
             authentication(userName: "admin", password: "kpmvn!#%246")
         }

@@ -24,7 +24,10 @@ import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
+import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.ProferencesUtils;
+
 
 public class AdRemindDialog extends AlertDialog implements View.OnClickListener {
     private static final Logger logger = new Logger("AdRemindDialog") ;
@@ -185,6 +188,9 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
             mRewardVerify = rewardVerify;
 
             Toast.makeText(mActivity, "您已获得一次试玩机会", Toast.LENGTH_LONG).show();
+
+            //保存到缓存中
+            ProferencesUtils.setInt(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 1);
 
             try {
                 //发送打点事件

@@ -120,6 +120,12 @@ public class AdManager {
             return false;
         }
 
+        //判断是否已经看过广告了
+        int adVerify = ProferencesUtils.getIng(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
+        if (adVerify > 0) {
+            return false;
+        }
+
         //获取本地广告配置信息
         List<AdInfo> ads = getGameStartAds(activity);
         String rewardCode = null;

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -34,6 +36,8 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     private View mMenuDialogContentView;
     private DeviceControl mDeviceControl;
     private boolean mAudioSwitch = true;
+
+    private int systemUiVisibility = -1;
 
     public FloatMenuView(@NonNull Context context) {
         super(context);
@@ -64,6 +68,16 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 mMenuIcon.setVisibility(VISIBLE);
+
+                if (systemUiVisibility != -1){
+                    try {
+                        Context ctx = getContext();
+                        if (ctx instanceof Activity){
+                            Activity activity = (Activity) ctx;
+                            activity.getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
+                        }
+                    }catch (Exception e){}
+                }
             }
         });
         mMenuDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -95,6 +109,15 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (mMenuIcon == view) {
+            systemUiVisibility = -1;
+            try {
+                Context ctx = getContext();
+                if (ctx instanceof Activity){
+                    Activity activity = (Activity) ctx;
+                    systemUiVisibility = activity.getWindow().getDecorView().getSystemUiVisibility();
+                }
+            }catch (Exception e){}
+
             mMenuDialog.show();
         } else if (mAutoBtn == view) {
             setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
@@ -117,6 +140,18 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             mMenuDialog.dismiss();
             mAudioSwitch = !mAudioSwitch;
             mDeviceControl.setAudioSwitch(mAudioSwitch);
+        }
+    }
+
+    private void fullScreenImmersive(View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            view.setSystemUiVisibility(uiOptions);
         }
     }
 

@@ -7,6 +7,10 @@ public class EventCode {
     public static final String DATA_ACTIVITY_PLAYGAME_ONCREATE = "DATA_ACTIVITY_PLAYGAME_ONCREATE";
     //关闭游戏界面
     public static final String DATA_ACTIVITY_PLAYGAME_DESTORY = "DATA_ACTIVITY_PLAYGAME_DESTORY";
+    //游戏错误界面下载
+    public static final String DATA_ACTIVITY_PLAYERROR_DOWNLOAD = "DATA_ACTIVITY_PLAYERROR_DOWNLOAD";
+    //游戏错误界面重新加载
+    public static final String DATA_ACTIVITY_PLAYERROR_RELOAD = "DATA_ACTIVITY_PLAYERROR_RELOAD";
 
     //初始化SDK
     public static final String DATA_SDK_INIT = "DATA_SDK_INIT";

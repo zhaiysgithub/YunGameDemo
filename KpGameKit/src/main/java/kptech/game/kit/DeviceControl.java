@@ -19,8 +19,12 @@ import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
+import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.ProferencesUtils;
+
+
 
 public class DeviceControl {
     private static final String TAG = "GameControl";
@@ -112,7 +116,7 @@ public class DeviceControl {
         }
     }
 
-    private void execStartGame(@NonNull Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
+    private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
 
         //发送打点事件
         try {
@@ -126,6 +130,12 @@ public class DeviceControl {
             public void onAPICallback(String msg, int code) {
                 if (callback!=null){
                     callback.onAPICallback(msg, code);
+                }
+
+                //成功连接游戏,删除激励广告标记
+                int adVerify = ProferencesUtils.getIng(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
+                if (adVerify > 0 && (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS)){
+                    ProferencesUtils.setInt(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
                 }
 
                 //发送打点事件

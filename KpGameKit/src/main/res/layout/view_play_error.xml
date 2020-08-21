@@ -12,38 +12,53 @@
         android:layout_height="60dp"
         android:src="@mipmap/game_play_back_img"
         android:background="@null"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
-    <kptech.game.kit.view.RoundImageView
-        android:id="@+id/game_icon"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:scaleType="fitXY"
-        app:radius="10dp"
-        android:background="@drawable/icon_bg"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="95dp"
-        />
+        <kptech.game.kit.view.RoundImageView
+            android:id="@+id/game_icon"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:scaleType="fitXY"
+            app:radius="10dp"
+            android:background="@drawable/icon_bg"
+            android:layout_gravity="center_horizontal"
+            />
 
-    <TextView
-        android:id="@+id/error_text"
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="服务异常，请稍后再试"
+            android:textColor="#FF333333"
+            android:textSize="16sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            />
+
+        <Button
+            android:id="@+id/btn_down"
+            android:layout_width="170dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/game_play_btn"
+            android:layout_marginTop="20dp"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:text="下载游戏直接玩"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="服务异常，请稍后再试"
-        android:textColor="#FF333333"
-        android:textSize="16sp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        />
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        >
 
-    <Button
-        android:id="@+id/btn_down"
-        android:layout_width="170dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/game_play_btn"
-        android:layout_marginTop="20dp"
-        android:textSize="14sp"
-        android:textColor="#FFFFFF"
-        android:text="下载游戏直接玩"/>
+    </LinearLayout>
 
 </LinearLayout>
