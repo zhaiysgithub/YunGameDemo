@@ -175,20 +175,20 @@ SDK
 \f6\fs21\fsmilli10800 \cf7 \cb8 \
 allprojects \{\
     
-\f7\b \cf7 \cb8 repositories
-\f6\b0 \cf7 \cb8  \{\
+\f7\b repositories
+\f6\b0  \{\
         
-\f7\b \cf7 \cb8 ......\
+\f7\b ......\
 \
 
-\f6\b0 \cf7 \cb8 	  
-\f8\i \cf9 \cb8 //
+\f6\b0 	  
+\f8\i \cf9 //
 \f2\i0 \'cc\'ed\'bc\'d3maven\'bf\'e2
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 	
-\f7\b \cf7 \cb8   maven \{ url "https://raw.githubusercontent.com/kuaipantech/maven/master" \}\
+\f7\b   maven \{ url "https://maven.kuaipantech.com/repository/maven-releases/" \}\
 
-\f6\b0 \cf7 \cb8     \}\
+\f6\b0     \}\
 \}\
 \
 \pard\pardeftab720\sl340\partightenfactor0
@@ -204,23 +204,22 @@ allprojects \{\
 
 \f7\b\fs21\fsmilli10800 \cf7 \cb8 \
 dependencies
-\f6\b0 \cf7 \cb8  \{\
+\f6\b0  \{\
 
-\f7\b \cf7 \cb8     ......\
-\pard\pardeftab720\sl340\partightenfactor0
+\f7\b     ......\
 
-\f6\b0 \cf7 \cb8 \
+\f6\b0 \
     
-\f8\i \cf9 \cb8 //
+\f8\i \cf9 //
 \f2\i0 \'cc\'ed\'bc\'d3\'d2\'c0\'c0\'b5
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
     
-\f7\b \cf7 \cb8 implementation 
-\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.1.0\'94\cf7 \cb8 \
+\f7\b implementation 
+\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.1.4\'94\cf7 \
 \}
-\f2 \cf7 \cb8 \
+\f2 \
 
-\f6 \cf7 \cb8 \
+\f6 \
 \pard\pardeftab720\sl640\sa240\partightenfactor0
 
 \f0\b\fs40 \cf2 \cb1 \'b4\'fa\'c2\'eb\'bb\'ec\'cf\'fd
@@ -229,8 +228,8 @@ dependencies
 
 \f6\b0\fs21\fsmilli10800 \cf7 \cb8 \
 # 
-\f2 \cf7 \cb8 \'d3\'ce\'cf\'b7\'cf\'e0\'b9\'d8
-\f6 \cf7 \cb8 \
+\f2 \'d3\'ce\'cf\'b7\'cf\'e0\'b9\'d8
+\f6 \
 -keep class com.alibaba.fastjson.** \{ *; \}\
 -keep class com.redfinger.playsdk.fragment.**\{*;\}\
 -keep class com.redfinger.playsdk.widget.**\{*;\}\
@@ -239,7 +238,7 @@ dependencies
 -keep class kptech.cloud.kit.msg.** \{ *; \}\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\sl340\pardirnatural\partightenfactor0
-\cf7 \cb8 # 
+\cf7 # 
 \f2 \'b9\'e3\'b8\'e6\'cf\'e0\'b9\'d8
 \f6 \
 -keep class com.zad.sdk.operation.floatview.DragFloatManager \{\}\
@@ -262,7 +261,7 @@ dependencies
 -keep class com.bun.miitmdid.core.** \{*;\}\
 -keep class com.squareup.picasso.* \{*;\}\
 \pard\pardeftab720\sl340\partightenfactor0
-\cf7 \cb8 \
+\cf7 \
 \
 \pard\pardeftab720\sl640\sb300\sa300\partightenfactor0
 
@@ -275,73 +274,72 @@ dependencies
 \pard\pardeftab720\sl340\partightenfactor0
 
 \f6\fs21\fsmilli10800 \cf7 \cb8     
-\f8\i \cf9 \cb8 /**
-\f6\i0 \cf7 \cb8 \
-\pard\pardeftab720\sl340\partightenfactor0
+\f8\i \cf9 /**
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      * 
+\f8\i \cf9      * 
 \f2\i0 \'bb\'f1\'c8\'a1GameBox\'b6\'d4\'cf\'f3
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 
-\f8\i \cf9 \cb8      * \cf10 @param\cf9  app Application
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      * \cf10 @param\cf9  app Application
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      * \cf10 @param\cf9  appID
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      * \cf10 @param\cf9  appID
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      */
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      */
+\f6\i0 \cf7 \
     
-\f7\b \cf7 \cb8 public static
-\f6\b0 \cf7 \cb8  
-\f7\b \cf7 \cb8 void
-\f6\b0 \cf7 \cb8  
-\f7\b \cf11 \cb8 getInstance
-\f6\b0 \cf7 \cb8 (Application app, String appID);\
+\f7\b public static
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 getInstance
+\f6\b0 \cf7 (Application app, String appID);\
     \
 
-\f8\i \cf9 \cb8     /**
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9     /**
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      * 
+\f8\i \cf9      * 
 \f2\i0 \'c6\'f4\'b6\'af\'d3\'ce\'cf\'b7
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 
-\f8\i \cf9 \cb8      * \cf10 @param\cf9  activity
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      * \cf10 @param\cf9  activity
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      * \cf10 @param\cf9  game 
+\f8\i \cf9      * \cf10 @param\cf9  game 
 \f2\i0 \'d3\'ce\'cf\'b7\'d0\'c5\'cf\'a2
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 
-\f8\i \cf9 \cb8      */
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      */
+\f6\i0 \cf7 \
 
-\f7\b \cf7 \cb8     public
-\f6\b0 \cf7 \cb8  
-\f7\b \cf7 \cb8 void
-\f6\b0 \cf7 \cb8  
-\f7\b \cf11 \cb8 playGame
-\f6\b0 \cf7 \cb8 (Activity activity, GameInfo game);\
+\f7\b     public
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 playGame
+\f6\b0 \cf7 (Activity activity, GameInfo game);\
 \
 \
 
-\f8\i \cf9 \cb8     //
+\f8\i \cf9     //
 \f2\i0 \'ca\'be\'c0\'fd\'b4\'fa\'c2\'eb
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 
-\f7\b \cf7 \cb8     public
-\f6\b0 \cf7 \cb8  
-\f7\b \cf7 \cb8 void
-\f6\b0 \cf7 \cb8  
-\f7\b \cf11 \cb8 runGame
-\f6\b0 \cf7 \cb8 ()\{\
+\f7\b     public
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 runGame
+\f6\b0 \cf7 ()\{\
 		GameInfo info = new GameInfo();\
 		info.gid = 1893;\
 		info.pkgName = \'93com.netease.tom.guopan\'94;\
 		info.name = \'93
-\f2 \cf7 \cb8 \'c3\'a8\'ba\'cd\'c0\'cf\'ca\'f3
-\f6 \cf7 \cb8 \'94;\
+\f2 \'c3\'a8\'ba\'cd\'c0\'cf\'ca\'f3
+\f6 \'94;\
            GameBox.getInstance(getApplication(),your_appID).playGame(this, info);\
     \}\
 \pard\pardeftab720\sl480\sb300\sa300\partightenfactor0
@@ -351,29 +349,28 @@ dependencies
 \pard\pardeftab720\sl340\partightenfactor0
 
 \f6\fs21\fsmilli10800 \cf7 \cb8     
-\f8\i \cf9 \cb8 /**
-\f6\i0 \cf7 \cb8 \
-\pard\pardeftab720\sl340\partightenfactor0
+\f8\i \cf9 /**
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      * 
+\f8\i \cf9      * 
 \f2\i0 GameBoxManager
-\f6 \cf7 \cb8 \
+\f6 \cf7 \
 
-\f8\i \cf9 \cb8      * \cf10 @param\cf9  debug
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      * \cf10 @param\cf9  debug
+\f6\i0 \cf7 \
 
-\f8\i \cf9 \cb8      */
-\f6\i0 \cf7 \cb8 \
+\f8\i \cf9      */
+\f6\i0 \cf7 \
     
-\f7\b \cf7 \cb8 public static
-\f6\b0 \cf7 \cb8  
-\f7\b \cf7 \cb8 void
-\f6\b0 \cf7 \cb8  
-\f7\b \cf11 \cb8 setDebug
-\f6\b0 \cf7 \cb8 (boolean debug);\
+\f7\b public static
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 setDebug
+\f6\b0 \cf7 (boolean debug);\
     \
 
-\f8\i \cf9 \cb8     
+\f8\i \cf9     
 \f3\i0\fs30 \cf2 \cb1 \
 \pard\pardeftab720\sl640\sb300\sa300\partightenfactor0
 
@@ -393,5 +390,9 @@ dependencies
 \f2 \'ca\'d7\'b4\'ce\'cc\'e1\'bd\'bb\'a3\'ac\'cd\'f8\'d2\'d7\'d4\'c6\'d2\'f4\'c0\'d6\'b0\'e6\'b1\'be\'a1\'a3\
 \ls3\ilvl0
 \f3 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
-\uc0\u8232 \
+20200821: v1.1
+\f2 .1.4
+\f3 , 
+\f2 \'d4\'f6\'bc\'d3\'ca\'fd\'be\'dd\'b4\'f2\'b5\'e3\'a1\'a3
+\f3 \uc0\u8232 \
 }
