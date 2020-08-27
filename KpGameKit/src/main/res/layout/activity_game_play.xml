@@ -25,6 +25,12 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <kptech.game.kit.view.FloatDownView
+        android:id="@+id/float_down"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <include
         android:id="@+id/error_ll"
         layout="@layout/view_play_error"

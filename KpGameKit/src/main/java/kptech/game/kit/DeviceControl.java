@@ -5,15 +5,12 @@ import android.app.Activity;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+import kptech.game.kit.ad.AdLoader;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
@@ -33,6 +30,8 @@ public class DeviceControl {
     private com.yd.yunapp.gameboxlib.DeviceControl mDeviceControl;
     private GameInfo mGameInfo;
     private JSONObject mDeviceToken;
+    private AdManager mAdManager;
+    private AdLoader mAdLoader;
 
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
@@ -79,6 +78,10 @@ public class DeviceControl {
         }
     }
 
+    public void setAdLoader(AdLoader adLoader) {
+        this.mAdLoader = adLoader;
+    }
+
     /**
      * 启动游戏
      * @param activity
@@ -96,24 +99,44 @@ public class DeviceControl {
         //连接设备
         MsgManager.start(activity, mDeviceControl.getDeviceToken());
 
-        //弹出广告窗口
-        boolean showAd = AdManager.getInstance().showGameStartAd(activity, GameBoxManager.mCorpID, this.mGameInfo, new IAdCallback<String>() {
+        if (mAdManager != null){
+            mAdManager.destory();
+        }
+
+        mAdManager = new AdManager(activity);
+        mAdManager.setAdLoader(this.mAdLoader);
+        mAdManager.setAdCallback(new IAdCallback<String>() {
             @Override
-            public void onCallback(String msg, int code) {
-                if (code == 1){
-                    execStartGame(activity, res, callback);
-                }else {
-                    if (callback!=null){
-                        callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
-                    }
+            public void onAdCallback(String msg, int code) {
+                switch (code){
+                    //点击取消
+                    case AdManager.CB_AD_CANCELED:
+                        if (callback!=null){
+                            callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
+                        }
+                        break;
+                    //加载广告弹窗
+                    case AdManager.CB_AD_LOADING:
+                        //显示广告
+                        if (callback!=null){
+                            callback.onAPICallback("", APIConstants.AD_LOADING);
+                        }
+                        break;
+                    //激励视频广告加载失败
+                    case AdManager.CB_AD_FAILED:
+                    //其它状态，加载游戏
+                    default:
+                        if (callback!=null){
+                            callback.onAPICallback("", APIConstants.AD_FINISHED);
+                        }
+                        //运行游戏
+                        execStartGame(activity, res, callback);
+                        break;
+
                 }
             }
         });
-
-        //不显示广告，直接运行游戏
-        if (!showAd){
-            execStartGame(activity, res, callback);
-        }
+        mAdManager.loadGameAd(GameBoxManager.mCorpID, this.mGameInfo);
     }
 
     private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
@@ -130,6 +153,11 @@ public class DeviceControl {
             public void onAPICallback(String msg, int code) {
                 if (callback!=null){
                     callback.onAPICallback(msg, code);
+                }
+
+                //关闭插屏广告
+                if(mAdManager!=null){
+                    mAdManager.closeAd();
                 }
 
                 //成功连接游戏,删除激励广告标记
@@ -162,6 +190,15 @@ public class DeviceControl {
         }
 
         mDeviceControl.stopGame();
+
+        try {
+            mAdLoader = null;
+            if (mAdManager != null){
+                mAdManager.destory();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -345,6 +382,7 @@ public class DeviceControl {
     public void setVideoOrientation(int orientation){
         mDeviceControl.setVideoOrientation(orientation);
     }
+
 
 
     /**

@@ -47,6 +47,8 @@ public class GameBox {
             return;
         }
 
+        //
+
         //初始化事件基本信息
         Event.createBaseEvent(activity, appKey);
 

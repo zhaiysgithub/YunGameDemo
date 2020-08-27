@@ -1,5 +1,6 @@
 package kptech.game.kit;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import kptech.cloud.kit.msg.Messager;
+import kptech.game.kit.ad.AdLoader;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
@@ -155,7 +156,7 @@ public class GameBoxManager {
                         }
 
                         //初始化广告信息
-                        if (AdManager.getInstance().init(mApplication)) {
+                        if (AdManager.init(mApplication)) {
                             logger.info("ad initialized");
                         }else {
                             logger.error("ad init failure");
@@ -166,7 +167,7 @@ public class GameBoxManager {
 
                         //回调初始化
                         if (this.callback != null){
-                            this.callback.onCallback("", initState);
+                            this.callback.onAdCallback("", initState);
                         }
 
                         break;
@@ -177,15 +178,26 @@ public class GameBoxManager {
         }
     }
 
+    private static String tmpAK;
+    private static String tmpSK;
+    private static String tmpCH;
+
+    public static void setAppInfo(String ak, String sk, String ch){
+        tmpAK = ak;
+        tmpSK = sk;
+        tmpCH = ch;
+    }
+
+
     /**
      * 初始化gameBox
      */
     private boolean initLibManager(){
 
         boolean ret = false;
-        String ak = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_KEY,null);
-        String sk = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_SECRET,null);
-        String ch = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_CHANNEL,null);
+        String ak = tmpAK!=null ? tmpAK : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_KEY,null);
+        String sk = tmpSK!= null ? tmpSK : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_SECRET,null);
+        String ch = tmpCH!= null ? tmpCH : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_CHANNEL,null);
         if (ak!=null && sk != null){
             mLibManager.setDebug(mDebug);
 
@@ -224,8 +236,8 @@ public class GameBoxManager {
      * @param inf 游戏信息
      * @param callback 申请设备成功则返回状态码：APIConstants.API_CALL_SUCCESS和DeviceControl用于控制设备，否则返回对应错误码。
      */
-    public void applyCloudDevice(@NonNull final GameInfo inf, @NonNull final APICallback<DeviceControl> callback){
-        this.applyCloudDevice(inf, false, callback);
+    public void applyCloudDevice(@NonNull Activity activity,  @NonNull final GameInfo inf, @NonNull final APICallback<DeviceControl> callback){
+        this.applyCloudDevice(activity, inf, false, callback);
     }
 
     /**
@@ -234,7 +246,7 @@ public class GameBoxManager {
      * @param playQueue 设备不足时，是否进入队列等待，默认false不等待。
      * @param callback 申请设备成功则返回状态码：APIConstants.API_CALL_SUCCESS和DeviceControl用于控制设备，否则返回对应错误码。
      */
-    public void applyCloudDevice(@NonNull final GameInfo inf, final boolean playQueue, @NonNull final APICallback<DeviceControl> callback){
+    public void applyCloudDevice(@NonNull Activity activity, @NonNull final GameInfo inf, final boolean playQueue, @NonNull final APICallback<DeviceControl> callback){
         if (inf == null){
             if (callback!=null){
                 callback.onAPICallback(null, APIConstants.ERROR_GAME_INF_EMPTY);
@@ -266,6 +278,12 @@ public class GameBoxManager {
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}
 
+        //预加载广告
+        final AdLoader adLoader = new AdLoader(activity);
+        adLoader.setExtAdCode(AdManager.extCode);
+        adLoader.setRewardAdCode(AdManager.rewardCode);
+        adLoader.loadAd();
+
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
         manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
             @Override
@@ -274,12 +292,12 @@ public class GameBoxManager {
                 DeviceControl control = null;
                 if (deviceControl!=null) {
                     control = new DeviceControl(deviceControl, inf);
+                    control.setAdLoader(adLoader);
                 }
 
                 if (callback!=null){
                     callback.onAPICallback(control, code);
                 }
-
 
                 try {
                     //发送打点事件
@@ -334,19 +352,32 @@ public class GameBoxManager {
      * @return
      */
     public List<GameInfo> queryGameList(int page, int limit) {
-        List<GameInfo> list = RequestTask.queryGameList(mCorpID, page, limit);
-//        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
-//        if (manager == null){
-//            return null;
-//        }
-//        List<GameInfo> list = null;
-//        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = getLibManager().queryGameList(page,limit);
-//        if (gameInfoArr!=null && gameInfoArr.size()>0){
-//            list = new ArrayList<>();
-//            for (int i = 0; i < gameInfoArr.size(); i++) {
-//                list.add(new GameInfo(gameInfoArr.get(i)));
-//            }
-//        }
+        if (mCorpID != null && !"".equals(mCorpID)){
+            List<GameInfo> list = RequestTask.queryGameList(mCorpID, page, limit);
+            return list;
+        }
+
+        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+        if (manager == null){
+            //等待1秒
+            try {
+                Thread.sleep(1000);
+                manager = getLibManager();
+            }catch (Exception e){}
+        }
+
+        if (manager == null){
+            return null;
+        }
+
+        List<GameInfo> list = null;
+        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = getLibManager().queryGameList(page,limit);
+        if (gameInfoArr!=null && gameInfoArr.size()>0){
+            list = new ArrayList<>();
+            for (int i = 0; i < gameInfoArr.size(); i++) {
+                list.add(new GameInfo(gameInfoArr.get(i)));
+            }
+        }
         return list;
     }
 

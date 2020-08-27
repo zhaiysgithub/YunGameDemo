@@ -66,5 +66,7 @@ dependencies {
 
     implementation project(path: ':KpGameKit')
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+
 //    implementation (name:'KpGameKit-release-v1.0.3_3',ext:'aar')
 }

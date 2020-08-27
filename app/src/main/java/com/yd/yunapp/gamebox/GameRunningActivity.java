@@ -125,7 +125,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
 
     private void startCloudPhone() {
         mLoadingText.setText("正在加载云手机");
-        GameBoxManager.getInstance(this).applyCloudDevice(mGameInfo, false, new APICallback<DeviceControl>() {
+        GameBoxManager.getInstance(this).applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(DeviceControl deviceControl, final int code) {
                 mDeviceControl = deviceControl;

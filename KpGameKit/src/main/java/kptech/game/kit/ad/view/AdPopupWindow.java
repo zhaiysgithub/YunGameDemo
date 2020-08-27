@@ -29,24 +29,24 @@ import kptech.game.kit.utils.Logger;
 public class AdPopupWindow extends PopupWindow  {
     private static final Logger logger = new Logger("AdRemindDialog") ;
 
-    private Activity mActivity;
-    private ViewGroup mLayout;
-    private LayoutInflater inflater;
-    private String mAdCode;
-    private String mGamePkg;
+//    private Activity mActivity;
+//    private ViewGroup mLayout;
+//    private LayoutInflater inflater;
+//    private String mAdCode;
+//    private String mGamePkg;
 
-    public AdPopupWindow(Activity activity, String code, String gamePkg) {//, int position,
+    public AdPopupWindow(Activity activity, View adView) {//, int position,
         super(activity);
-        this.mActivity = activity;
-        this.mAdCode = code;
-        this.mGamePkg = gamePkg;
+//        this.mActivity = activity;
+//        this.mAdCode = code;
+//        this.mGamePkg = gamePkg;
 
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.ad_popup_layout, null);
         this.setContentView(view);
 
-        mLayout = view.findViewById(R.id.layout);
-
+        ViewGroup mLayout = view.findViewById(R.id.layout);
+        mLayout.addView(adView);
 
         //sdk > 21 解决 标题栏没有办法遮罩的问题
         this.setClippingEnabled(false);
@@ -80,115 +80,115 @@ public class AdPopupWindow extends PopupWindow  {
 
         //
     }
-
-    @Override
-    public void showAtLocation(View parent, int gravity, int x, int y) {
-        super.showAtLocation(parent, gravity, x, y);
-
-        //加载广告
-        loadInterstitialAd();
-    }
-
-    private ZadInterstitialWorker mInterstitialWorker;
-
-    /**
-     * 加载插屏广告
-     */
-    private void loadInterstitialAd() {
-        try {
-            //发送打点事件
-            HashMap ext = new HashMap<>();
-            ext.put("extAdCode", this.mAdCode);
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mGamePkg, ext));
-        }catch (Exception e){}
-
-        mInterstitialWorker = ZadSdkApi.getInterstitialAdWorker(this.mActivity, new MyInterObserver(), mAdCode);
-        if (mInterstitialWorker != null) mInterstitialWorker.requestProviderAd();
-    }
-
-    class MyInterObserver extends ZadInterstitialAdObserver {
-
-        @Override
-        public void onAdShow(String posId, String info) {
-            logger.info("onAdShow : " + info);
-            Toast.makeText(mActivity, "您已获得一次试玩机会", Toast.LENGTH_LONG).show();
-
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("extAdCode", mAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_DISPLAY, mGamePkg, ext));
-            }catch (Exception e){}
-        }
-
-        @Override
-        public void onAdClick(String posId, String info) {
-            logger.info("onAdClick : " + info);
-
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("extAdCode", mAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
-            }catch (Exception e){}
-        }
-
-        @Override
-        public void onAdReady(String posId, int count, String info) {
-            logger.info("onAdReady(), count = " + count + ", info = " + info);
-            if (count <= 0) {
-                mInterstitialWorker.getAdBeans();
-            } else {
-                mLayout.removeAllViews();
-                mLayout.addView(mInterstitialWorker.getAdBeans().get(0).getAdView());
-            }
-
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("extAdCode", mAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_READY, mGamePkg, ext));
-            }catch (Exception e){}
-        }
-
-        @Override
-        public void onClose(String posId, String info) {
-            logger.info("onClose, posId = " + posId + ", info = " + info);
-
-            dismiss();
-
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("extAdCode", mAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
-            }catch (Exception e){}
-        }
-
-        @Override
-        public void onAdEmpty(String posId, String info) {
-            logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
-//            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
-            dismiss();
-
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("extAdCode", mAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mGamePkg, ext));
-            }catch (Exception e){}
-        }
-    }
+//
+//    @Override
+//    public void showAtLocation(View parent, int gravity, int x, int y) {
+//        super.showAtLocation(parent, gravity, x, y);
+//
+//        //加载广告
+//        loadInterstitialAd();
+//    }
+//
+//    private ZadInterstitialWorker mInterstitialWorker;
+//
+//    /**
+//     * 加载插屏广告
+//     */
+//    private void loadInterstitialAd() {
+//        try {
+//            //发送打点事件
+//            HashMap ext = new HashMap<>();
+//            ext.put("extAdCode", this.mAdCode);
+//            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mGamePkg, ext));
+//        }catch (Exception e){}
+//
+//        mInterstitialWorker = ZadSdkApi.getInterstitialAdWorker(this.mActivity, new MyInterObserver(), mAdCode);
+//        if (mInterstitialWorker != null) mInterstitialWorker.requestProviderAd();
+//    }
+//
+//    class MyInterObserver extends ZadInterstitialAdObserver {
+//
+//        @Override
+//        public void onAdShow(String posId, String info) {
+//            logger.info("onAdShow : " + info);
+//            Toast.makeText(mActivity, "您已获得一次试玩机会", Toast.LENGTH_LONG).show();
+//
+//            try {
+//                //发送打点事件
+//                HashMap ext = new HashMap<>();
+//                ext.put("extAdCode", mAdCode);
+//                ext.put("posId", posId);
+//                ext.put("info", info);
+//                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_DISPLAY, mGamePkg, ext));
+//            }catch (Exception e){}
+//        }
+//
+//        @Override
+//        public void onAdClick(String posId, String info) {
+//            logger.info("onAdClick : " + info);
+//
+//            try {
+//                //发送打点事件
+//                HashMap ext = new HashMap<>();
+//                ext.put("extAdCode", mAdCode);
+//                ext.put("posId", posId);
+//                ext.put("info", info);
+//                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
+//            }catch (Exception e){}
+//        }
+//
+//        @Override
+//        public void onAdReady(String posId, int count, String info) {
+//            logger.info("onAdReady(), count = " + count + ", info = " + info);
+//            if (count <= 0) {
+//                mInterstitialWorker.getAdBeans();
+//            } else {
+//                mLayout.removeAllViews();
+//                mLayout.addView(mInterstitialWorker.getAdBeans().get(0).getAdView());
+//            }
+//
+//            try {
+//                //发送打点事件
+//                HashMap ext = new HashMap<>();
+//                ext.put("extAdCode", mAdCode);
+//                ext.put("posId", posId);
+//                ext.put("info", info);
+//                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_READY, mGamePkg, ext));
+//            }catch (Exception e){}
+//        }
+//
+//        @Override
+//        public void onClose(String posId, String info) {
+//            logger.info("onClose, posId = " + posId + ", info = " + info);
+//
+//            dismiss();
+//
+//            try {
+//                //发送打点事件
+//                HashMap ext = new HashMap<>();
+//                ext.put("extAdCode", mAdCode);
+//                ext.put("posId", posId);
+//                ext.put("info", info);
+//                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mGamePkg, ext));
+//            }catch (Exception e){}
+//        }
+//
+//        @Override
+//        public void onAdEmpty(String posId, String info) {
+//            logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
+////            Toast.makeText(mActivity, "未获取到插屏广告", Toast.LENGTH_LONG).show();
+//            dismiss();
+//
+//            try {
+//                //发送打点事件
+//                HashMap ext = new HashMap<>();
+//                ext.put("extAdCode", mAdCode);
+//                ext.put("posId", posId);
+//                ext.put("info", info);
+//                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mGamePkg, ext));
+//            }catch (Exception e){}
+//        }
+//    }
 
 
 }

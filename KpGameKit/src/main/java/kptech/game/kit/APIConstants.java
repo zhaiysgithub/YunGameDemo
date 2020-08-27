@@ -41,6 +41,8 @@ public class APIConstants {
     public static final int ERROR_GAME_INF_EMPTY = -2001;
     public static final int ERROR_GAME_CANCEL = -2002;
     public static final int ERROR_AD_FAILE = -2003;
+    public static final int AD_LOADING = 11001;
+    public static final int AD_FINISHED = 11002;
 
     public static final String DEVICE_VIDEO_QUALITY_HD = com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD;
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY;
