@@ -19,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import kptech.game.kit.R;
 
 
@@ -49,7 +47,7 @@ public class FloatingBarView extends SurfaceView implements SurfaceHolder.Callba
 
     private DrawingThread mDrawingThread;
 
-    public FloatingBarView(@NonNull Context context) {
+    public FloatingBarView(Context context) {
         super(context);
     }
 

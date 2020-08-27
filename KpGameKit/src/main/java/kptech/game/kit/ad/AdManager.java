@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
 import com.zad.sdk.Oapi.ZadSdkApi;
 
 import org.json.JSONArray;

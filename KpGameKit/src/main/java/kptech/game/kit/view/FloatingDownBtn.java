@@ -1,28 +1,14 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import kptech.game.kit.R;
 
@@ -41,7 +27,7 @@ public class FloatingDownBtn extends FrameLayout {
 
     private ProgressBar mProgressBar;
 
-    public FloatingDownBtn(@NonNull Context context) {
+    public FloatingDownBtn(Context context) {
         super(context);
     }
 
@@ -67,7 +53,7 @@ public class FloatingDownBtn extends FrameLayout {
     private int pro = 0;
     private Handler mHandler = new Handler(){
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             ++pro;
             if (pro > 100){
                 pro = 100;

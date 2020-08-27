@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.PopupWindow;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.callback.ZadInterstitialAdObserver;

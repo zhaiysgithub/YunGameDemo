@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +23,7 @@ public class PermissionHelper {
     private static PermissionHandler  mPermissionHandler = new PermissionHandlerImpl();
 
 
-    private static List<String> checkPermissions(@NonNull Context context, @NonNull String... permissions) {
+    private static List<String> checkPermissions( Context context, String... permissions) {
         List<String> permissionList = new ArrayList<>();
         for (String permission : permissions) {
             PermissionHandler handler = mPermissionHandler;//((DemoApplication) context.getApplicationContext()).getPermissionHandler();
@@ -49,7 +47,7 @@ public class PermissionHelper {
         return permissionList;
     }
 
-    public static boolean hasPermissions(@NonNull Context context, @NonNull String... permissions) {
+    public static boolean hasPermissions(Context context, String... permissions) {
         List<String> result = checkPermissions(context, permissions);
         if (result != null && result.size() > 0) {
             return false;
@@ -59,7 +57,7 @@ public class PermissionHelper {
     }
 
     public static boolean somePermissionPermanentlyDenied(Activity activity,
-                                                          @NonNull String[] perms, @NonNull int[] grants) {
+                                                          String[] perms, int[] grants) {
         List<String> granted = new ArrayList<>();
         List<String> denied = new ArrayList<>();
         for (int i = 0; i < perms.length; i++) {
@@ -74,7 +72,7 @@ public class PermissionHelper {
         return somePermissionPermanentlyDenied(activity, denied);
     }
 
-    public static boolean somePermissionPermanentlyDenied(Activity activity, @NonNull List<String> perms) {
+    public static boolean somePermissionPermanentlyDenied(Activity activity, List<String> perms) {
         for (String deniedPermission : perms) {
             if (permissionPermanentlyDenied(activity, deniedPermission)) {
                 logger.info("somePermissionPermanentlyDenied() perm = "+ deniedPermission);

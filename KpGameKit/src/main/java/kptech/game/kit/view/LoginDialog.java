@@ -2,35 +2,15 @@ package kptech.game.kit.view;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import kptech.game.kit.R;
 import kptech.game.kit.data.RequestLoginTask;
-import kptech.game.kit.msg.MsgManager;
 
 public class LoginDialog extends Dialog {
     public interface ICallback{

@@ -7,13 +7,9 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
@@ -39,12 +35,12 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
     private int systemUiVisibility = -1;
 
-    public FloatMenuView(@NonNull Context context) {
+    public FloatMenuView(Context context) {
         super(context);
         initView();
     }
 
-    public FloatMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public FloatMenuView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }

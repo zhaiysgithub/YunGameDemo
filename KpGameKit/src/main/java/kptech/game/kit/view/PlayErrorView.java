@@ -5,19 +5,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import kptech.game.kit.R;
 
 public class PlayErrorView extends RelativeLayout implements View.OnClickListener {
 
-    public PlayErrorView(@NonNull Context context) {
+    public PlayErrorView(Context context) {
         super(context);
         initView();
     }
 
-    public PlayErrorView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public PlayErrorView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
