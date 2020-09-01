@@ -2,6 +2,7 @@ package kptech.game.kit.ad.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -93,6 +94,14 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
 //        }catch (Exception e){}
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mCancelListener!=null){
+            mCancelListener.onClick(null);
+        }
+    }
+
     public void initView() {
         findViewById(R.id.cancel).setOnClickListener(this);
         findViewById(R.id.submit).setOnClickListener(this);
@@ -115,16 +124,16 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
         int i = view.getId();
         if (i == R.id.cancel) {
             dismiss();
-            if (mSubmitListener!=null){
-                mSubmitListener.onClick(view);
+            if (mCancelListener!=null){
+                mCancelListener.onClick(view);
             }
 //            if (mCallback!=null){
 //                mCallback.onAdCallback("cancel", 0);
 //            }
         } else if (i == R.id.submit) {
             dismiss();
-            if (mCancelListener!=null){
-                mCancelListener.onClick(view);
+            if (mSubmitListener!=null){
+                mSubmitListener.onClick(view);
             }
 //            if (mCallback!=null){
 //                mCallback.onAdCallback("submit", 1);

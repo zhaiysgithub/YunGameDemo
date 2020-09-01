@@ -55,6 +55,10 @@ public class Event {
      * 扩展
      */
     Map ext;
+    /**
+     *
+     */
+    String datafrom = "androidapp";
 
     /**
      * 请求json
@@ -72,6 +76,7 @@ public class Event {
             obj.put("actionresult", this.actionResult);
             obj.put("errmsg", this.errMsg != null ? this.errMsg : "");
             obj.put("traceid", this.traceId != null ? this.traceId : "");
+            obj.put("datafrom", this.datafrom);
             obj.put("debug", this.debug);
             JSONObject extObj = null;
             if (this.ext != null){

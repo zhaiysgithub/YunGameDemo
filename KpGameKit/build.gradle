@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.1.1.6"
+        versionCode 8
+        versionName "1.1.1.9"
     }
 
     buildTypes {
@@ -35,11 +35,15 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
-    implementation 'kptech.game.kit:ZADSdk:3.3.3230.3@aar'
-    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
-    //    implementation (name:'ZADSdk-3.3.3230.3',ext:'aar')
-    //    implementation(name:'msa_mdid_1.0.13', ext:'aar') // 获取OAID需要
-    //    implementation (name:'GDTSDK.unionNormal.4.232.1102', ext:'aar')
+    implementation 'kptech.game.kit:ZADSdk:3.3.3243.6@aar'
+    implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
+
+//    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
+//    implementation (name:'ZADSdk-3.3.3243.6',ext:'aar')
+//    implementation (name:'Baidu_MobAds_SDK-release',ext:'aar')
+//    implementation(name:'msa_mdid_1.0.13', ext:'aar') // 获取OAID需要
+//    implementation (name:'GDTSDK.unionNormal.4.232.1102', ext:'aar')
+
     implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

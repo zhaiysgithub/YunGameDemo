@@ -3,7 +3,6 @@ package kptech.game.kit.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,14 +21,15 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
+import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
@@ -42,9 +41,11 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
+import kptech.game.kit.view.LoadingView;
+import kptech.game.kit.view.PlayErrorView;
 
 
-public class GamePlay extends Activity implements APICallback<String>, DeviceControl.PlayListener, View.OnClickListener {
+public class GamePlay extends Activity implements APICallback<String>, DeviceControl.PlayListener, GameDownloader.ICallback {
 
     public static final String EXTRA_CORPID = "extra.corpid";
     public static final String EXTRA_GAME = "extra.game";
@@ -55,17 +56,29 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private static final int MSG_SHOW_ERROR = 1;
     private static final int PROGRESS_BAR_ = 2;
 
-    private TextView mLoadingText;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
-    private FrameLayout mLoadingLL;
-    private ViewGroup mErrorLL;
-    private TextView mErrorText;
-    private ImageView mGameIcon;
-    private Button mErrorBtn;
-    private ProgressBar mProBar;
 
-    private FloatDownView mDownView;
+    private LoadingView mLoadingView;
+
+//    private FrameLayout mLoadingLL;
+//    private ProgressBar mLoadingPb;
+//    private TextView mLoadingText;
+
+    private PlayErrorView mErrorView;
+
+//    private ViewGroup mErrorLL;
+//    private TextView mErrorText;
+//    private ImageView mGameIcon;
+//    private Button mErrorBtn;
+
+//    private ViewGroup mErrorDownBtn;
+//    private TextView mErrorDownText;
+//    private ProgressBar mErrorDownPb;
+
+
+
+    private FloatDownView mFloatDownView;
 
     private HardwareManager mHardwareManager;
 
@@ -83,6 +96,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private int mPro = 0;
     private boolean mPuasePro = false;
+
+    private GameDownloader mGameDownloader;
 
     private Handler mHandler = new Handler() {
 
@@ -117,7 +132,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     }
 
                     Log.i("GameRunTime", "Progress: "+mPro);
-                    mProBar.setProgress(mPro);
+//                    mLoadingPb.setProgress(mPro);
+
+                    mLoadingView.setProgress(mPro);
 
                     //延时更新进度
                     if (!mPuasePro && mPro < 100){
@@ -158,73 +175,128 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
         checkAndRequestPermission();
-    }
 
-    @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.btn_back){
-            finish();
-        }else if(view.getId() == R.id.btn_down){
-            if (view.getTag()!=null && view.getTag() instanceof String){
-                Event event = null;
-                String tag = (String) view.getTag();
-                if ("reload".equals(tag)){
-                    //重试逻辑
-                    reloadGame();
-
-                    event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-
-                }else if("down".equals(tag)){
-
-                    //下载逻辑
-                    Toast.makeText(this, "未获取到下载地址", Toast.LENGTH_SHORT).show();
-
-                    event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-                }
-
-                try {
-                    if (event != null){
-                        //发送打点事件
-                        event.setErrMsg(this.mErrorMsg);
-                        if (mDeviceControl!=null){
-                            event.setPadcode(mDeviceControl.getPadcode());
-                        }
-                        HashMap ext = new HashMap();
-                        ext.put("code", mErrorCode);
-                        ext.put("msg", mErrorMsg);
-                        event.setExt(ext);
-                        MobclickAgent.sendEvent(event);
-                    }
-                }catch (Exception e){
-                }
-            }
+        mGameDownloader = GameBox.getGameDownloader();
+        if (mGameDownloader != null){
+            mGameDownloader.addCallback(this);
         }
     }
 
     private void initView() {
-        mLoadingLL = (FrameLayout) findViewById(R.id.loading_ll);
-        mLoadingText = (TextView) findViewById(R.id.loading_txt);
+//        mLoadingLL = (FrameLayout) findViewById(R.id.loading_ll);
+//        mLoadingText = (TextView) findViewById(R.id.loading_txt);
+//        mLoadingPb = findViewById(R.id.loading_pb);
+
+        mLoadingView = findViewById(R.id.loading_view);
+
         mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
         mVideoContainer = (FrameLayout) findViewById(R.id.play_container);
-        mErrorLL = findViewById(R.id.error_ll);
-        mErrorText = findViewById(R.id.error_text);
-        mGameIcon = findViewById(R.id.game_icon);
-        mErrorBtn = findViewById(R.id.btn_down);
-        findViewById(R.id.btn_back).setOnClickListener(this);
-        findViewById(R.id.btn_down).setOnClickListener(this);
 
-        mProBar = findViewById(R.id.pb);
-        mDownView = findViewById(R.id.float_down);
+        mErrorView = findViewById(R.id.error_view);
+        mErrorView.setGameInfo(mGameInfo);
+        mErrorView.setOnBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        mErrorView.setOnRetryListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //重新加载游戏
+                reloadGame();
 
-//        mDownView.setVisibility(View.VISIBLE);
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+                    event.setErrMsg(GamePlay.this.mErrorMsg);
+                    if (mDeviceControl!=null){
+                        event.setPadcode(mDeviceControl.getPadcode());
+                    }
+                    HashMap ext = new HashMap();
+                    ext.put("code", mErrorCode);
+                    ext.put("msg", mErrorMsg);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){
+                }
+            }
+        });
+        mErrorView.setOnDownListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadApk(true);
+            }
+        });
+
+        mFloatDownView = findViewById(R.id.float_down);
+        mFloatDownView.setOnDownListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadApk(false);
+            }
+        });
+
     }
+
+    private void downloadApk(boolean error){
+        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
+            //下载逻辑
+            if (mGameDownloader == null){
+                mGameDownloader = GameBox.getGameDownloader();
+            }
+
+            //判断下载中，则暂停
+            if (mGameDownloader != null){
+                if (mDownloadStatus == GameDownloader.STATUS_STARTED){
+                    //点击停止
+                    mGameDownloader.stop(mGameInfo.downloadUrl);
+                }else if(mDownloadStatus == GameDownloader.STATUS_FINISHED){
+                    //点击安装
+
+                }else{
+                    //点击下载
+                    mGameDownloader.start(mGameInfo.downloadUrl);
+                    try {
+                        if (error){
+                            //错误界面发送事件
+                            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+                            event.setErrMsg(GamePlay.this.mErrorMsg);
+                            if (mDeviceControl!=null){
+                                event.setPadcode(mDeviceControl.getPadcode());
+                            }
+                            HashMap ext = new HashMap();
+                            ext.put("code", mErrorCode);
+                            ext.put("msg", mErrorMsg);
+                            event.setExt(ext);
+                            MobclickAgent.sendEvent(event);
+                        }else {
+                            //游戏界面发送
+                            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+                            if (mDeviceControl!=null){
+                                event.setPadcode(mDeviceControl.getPadcode());
+                            }
+                            MobclickAgent.sendEvent(event);
+                        }
+                    }catch (Exception e){
+                    }
+
+                }
+            }
+        }else {
+            //下载逻辑
+            Toast.makeText(GamePlay.this, "未获取到下载地址", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void checkInitCloudPhoneSDK(){
         mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
         //判断是否已经初始化
         if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
             //初始化
-            mLoadingText.setText("设备初始化...");
+//            mLoadingText.setText("设备初始化...");
+            mLoadingView.setText("正在设备初始化...");
 //            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
             GameBoxManager.getInstance(this).init(getApplication(), this.mCorpID, new IAdCallback<String>() {
                 @Override
@@ -253,7 +325,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //    long mStartSuccTime = 0;
 
     private void startCloudPhone() {
-        mLoadingText.setText("连接设备...");
+        mLoadingView.setText("正在连接设备...");
 //        mApplyTime = new Date().getTime();
 //        Log.i("GameRunTime",this.mGameInfo.name+" ,applyCloudDevice " + mApplyTime);
 
@@ -328,19 +400,20 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             //暂停进度条
             mPuasePro = true;
 
-            mLoadingText.setText("加载广告...");
+            mLoadingView.setText("正在加载广告...");
 
         }else if (code == APIConstants.AD_FINISHED){
             //重启进度条
             mPuasePro = false;
             mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 70));
 
-            mLoadingText.setText("加载游戏中...");
+            mLoadingView.setText("正在加载游戏...");
 
 //            mStartTime = new Date().getTime();
 //            Log.i("GameRunTime","startGame " + mStartTime + ", len:"+ (mStartTime - mApplySuccTime));
 
         }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
+            this.mErrorMsg = null;
 
             mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 100));
 
@@ -374,15 +447,16 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void playSuccess() {
-        mLoadingLL.setVisibility(View.GONE);
+        mLoadingView.setVisibility(View.GONE);
+
         mVideoContainer.setVisibility(View.VISIBLE);
         mMenuView.setVisibility(View.VISIBLE);
         mMenuView.setDeviceControl(mDeviceControl);
 
         //显示下载按钮
-//        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
-            mDownView.setVisibility(View.VISIBLE);
-//        }
+        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
+            mFloatDownView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void exitPlay() {
@@ -391,41 +465,20 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void showError(String err){
-        mLoadingLL.setVisibility(View.GONE);
+        mLoadingView.setVisibility(View.GONE);
         mVideoContainer.setVisibility(View.GONE);
         mMenuView.setVisibility(View.GONE);
-        mDownView.setVisibility(View.GONE);
-        mErrorLL.setVisibility(View.VISIBLE);
-        mErrorText.setText(err);
-        if (this.mGameInfo!=null){
-            mErrorBtn.setVisibility(View.VISIBLE);
-            if (this.mGameInfo.iconUrl!=null && !"".equals(this.mGameInfo.iconUrl)){
-                try {
-                    Picasso.with(this).load(this.mGameInfo.iconUrl).into(mGameIcon);
-                }catch (Exception e){}
-            }
-            if (this.mGameInfo.downloadUrl != null){
-                //显示下载按钮
-                mErrorBtn.setTag("down");
-                mErrorBtn.setText("下载游戏直接玩");
-            }else {
-                //显示重试按钮
-                mErrorBtn.setTag("reload");
-                mErrorBtn.setText("重新加载游戏");
-            }
-        }else {
-            //隐藏按钮
-            mErrorBtn.setVisibility(View.GONE);
-            mErrorBtn.setTag("hide");
-        }
+        mFloatDownView.setVisibility(View.GONE);
 
+        mErrorView.setVisibility(View.VISIBLE);
+        mErrorView.setErrorText(err);
     }
 
     private void reloadGame(){
-        mLoadingLL.setVisibility(View.VISIBLE);
+        mLoadingView.setVisibility(View.VISIBLE);
         mVideoContainer.setVisibility(View.GONE);
         mMenuView.setVisibility(View.GONE);
-        mErrorLL.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
 
         checkAndRequestPermission();
     }
@@ -444,6 +497,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
         }catch (Exception e){}
+
+        if (mGameDownloader!=null){
+            mGameDownloader.removeCallback(this);
+        }
 
     }
 
@@ -582,4 +639,71 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         return error;
     }
+
+    private int mDownloadStatus;
+    @Override
+    public void onDownloadStatusChanged(int status, String msg) {
+        mDownloadStatus = status;
+        switch (status){
+            case GameDownloader.STATUS_STARTED:
+                setDownProgress(0,"下载中...", true);
+                break;
+            case GameDownloader.STATUS_PAUSED:
+                setDownProgress(0,"已暂停，点击继续", false);
+                break;
+            case GameDownloader.STATUS_FINISHED:
+                setDownProgress(100,"下载完成", true);
+                break;
+            case GameDownloader.STATUS_STOPED:
+            case GameDownloader.STATUS_CANCEL:
+                setDownProgress(0,"已停止，点击下载", false);
+                break;
+            case GameDownloader.STATUS_WAITTING:
+                setDownProgress(0,"等待下载", false);
+                break;
+            case GameDownloader.STATUS_ERROR:
+                setDownProgress(0,"下载出错", false);
+                break;
+        }
+        logger.info("onDownloadStatusChanged: "+ status);
+    }
+
+    @Override
+    public void onDownloadProgress(long total, long current) {
+        if (mDownloadStatus != GameDownloader.STATUS_STARTED){
+            return;
+        }
+
+        float prcent = (float) total / (float)current;
+        if (prcent > 1){
+            prcent = 1;
+        }else if(prcent < 0){
+            prcent = 0;
+        }
+
+        int num = (int)(prcent * 100);
+
+        logger.info("onDownloadProgress: "+num+"%");
+        setDownProgress(num, ""+num+"%", true);
+    }
+
+    private void setDownStatus(){
+
+    }
+
+    private void setDownProgress(int progress, String text, boolean downing){
+        if (mErrorView!=null && mErrorView.isShown()){
+            mErrorView.setProgress(progress, text);
+        }
+
+        if (mFloatDownView!=null && mFloatDownView.isShown()){
+            if (downing){
+                mFloatDownView.setProgress(progress, text);
+            }else {
+                mFloatDownView.setProgress(progress, "边玩边下");
+            }
+
+        }
+    }
+
 }

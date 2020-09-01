@@ -19,5 +19,11 @@
         <attr name="right_bottom_radius" format="dimension"/>
         <attr name="left_bottom_radius" format="dimension"/>
     </declare-styleable>
-    
+
+    <declare-styleable name="LoadingRoundImageView">
+        <attr name="outer_circle_width" format="dimension"/>
+        <attr name="dot_width" format="dimension"/>
+        <attr name="border_width" format="dimension"/>
+
+    </declare-styleable>
 </resources>

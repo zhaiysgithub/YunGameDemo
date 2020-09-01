@@ -14,6 +14,7 @@ import android.widget.TextView;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
 import kptech.game.kit.R;
+import kptech.game.kit.utils.StringUtil;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
@@ -100,6 +101,9 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         mOrdianryBtn.setOnClickListener(this);
         mLsBtn.setOnClickListener(this);
         mAutoBtn.setOnClickListener(this);
+
+
+
     }
 
     @Override
@@ -136,6 +140,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             mMenuDialog.dismiss();
             mAudioSwitch = !mAudioSwitch;
             mDeviceControl.setAudioSwitch(mAudioSwitch);
+            setSoundStyle(mAudioSwitch);
         }
     }
 
@@ -153,6 +158,19 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
     public void setDeviceControl(DeviceControl deviceControl) {
         mDeviceControl = deviceControl;
+
+        if (mDeviceControl!=null){
+            String videoLevel = mDeviceControl.getVideoQuality();
+            if (!StringUtil.isEmpty(videoLevel)){
+                setSelectGradeLevel(videoLevel);
+            }
+            mAudioSwitch = mDeviceControl.isSoundEnable();
+            setSoundStyle(mAudioSwitch);
+        }
+    }
+
+    private void setSoundStyle(boolean sound){
+        mAutoBtn.setText(sound ? "关闭声音":"打开声音");
     }
 
     private void setSelectGradeLevel(String level) {

@@ -19,6 +19,7 @@
         android:layout_gravity="center"
         android:textSize="16sp"
         android:text="边玩边下"
+        android:lines="1"
         android:textColor="#ffffff"
         />
 

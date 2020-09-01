@@ -44,16 +44,8 @@ public class DeviceControl {
         parseDeviceToken();
     }
 
-    public String getPadcode(){
-        try {
-            if (mDeviceToken != null && mDeviceToken.has("deviceId")) {
-                String str = mDeviceToken.getString("deviceId");
-                return str;
-            }
-        }catch (Exception e){
-            logger.error("getPadcode, error:"+e.getMessage());
-        }
-        return null;
+    public void setAdLoader(AdLoader adLoader) {
+        this.mAdLoader = adLoader;
     }
 
     private void parseDeviceToken(){
@@ -63,23 +55,56 @@ public class DeviceControl {
             if (deviceTokenObj!=null && deviceTokenObj.has("token")){
                 String tokenStr = deviceTokenObj.getString("token");
                 JSONObject tokenObject = new JSONObject(tokenStr);
-                deviceTokenObj.put("token", tokenObject);
+//                if (tokenObject!=null && tokenObject.has("token")){
+//                    String subTokenStr = tokenObject.getString("token");
+//                    JSONObject subTokenObject = new JSONObject(subTokenStr);
+////                    tokenObject.put("token", subTokenObject);
+//                    deviceTokenObj.put("subtoken", subTokenObject);
+//                }
 
-                if (tokenObject!=null && tokenObject.has("token")){
-                    String subTokenStr = tokenObject.getString("token");
-                    JSONObject subTokenObject = new JSONObject(subTokenStr);
-                    tokenObject.put("token", subTokenObject);
-                }
+                mDeviceToken = tokenObject;
             }
 
-            mDeviceToken = deviceTokenObj;
         }catch (Exception e){
             logger.error("parseDeviceToken, error:"+e.getMessage());
         }
     }
 
-    public void setAdLoader(AdLoader adLoader) {
-        this.mAdLoader = adLoader;
+    public String getPadcode(){
+        try {
+            if (mDeviceToken != null && mDeviceToken.has("deviceId")) {
+                String str = mDeviceToken.getString("deviceId");
+                return str;
+            }
+
+        }catch (Exception e){
+            logger.error("getPadcode, error:"+e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean isSoundEnable(){
+        try {
+            if (mDeviceToken != null && mDeviceToken.has("sound")) {
+                String str = mDeviceToken.getString("sound");
+                return "true".equals(str);
+            }
+        }catch (Exception e){
+            logger.error("isSoundEnable, error:"+e.getMessage());
+        }
+        return true;
+    }
+
+    public String getVideoQuality(){
+        try {
+            if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
+                String str = mDeviceToken.getString("picQuality");
+                return str;
+            }
+        }catch (Exception e){
+            logger.error("getVideoQuality, error:"+e.getMessage());
+        }
+        return "";
     }
 
     /**
@@ -382,8 +407,6 @@ public class DeviceControl {
     public void setVideoOrientation(int orientation){
         mDeviceControl.setVideoOrientation(orientation);
     }
-
-
 
     /**
      * 试玩监听

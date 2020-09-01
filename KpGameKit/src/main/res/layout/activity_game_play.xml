@@ -6,10 +6,15 @@
     android:layout_height="match_parent"
     android:background="#00000000">
 
-    <include
-        android:id="@+id/loading_ll"
-        layout="@layout/view_loading"
-        android:visibility="visible"/>
+    <!--<include-->
+        <!--android:id="@+id/loading_ll"-->
+        <!--layout="@layout/view_loading"-->
+        <!--android:visibility="visible"/>-->
+
+    <kptech.game.kit.view.LoadingView
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/play_container"
@@ -31,9 +36,10 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <include
-        android:id="@+id/error_ll"
-        layout="@layout/view_play_error"
+    <kptech.game.kit.view.PlayErrorView
+        android:id="@+id/error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone"/>
 
 </FrameLayout>

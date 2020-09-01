@@ -190,20 +190,20 @@ public class AdManager implements IAdCallback {
                     .setOnCancelListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //显示广告按钮
-                            if (mAdLoader!=null){
-                                mAdLoader.setAdCallback(AdManager.this);
-                                mAdLoader.setPackageName(pkgName);
-                                mAdLoader.showAd();
+                            //取消按钮
+                            if (mAdCallback!=null){
+                                mAdCallback.onAdCallback(null, CB_AD_CANCELED);
                             }
                         }
                     })
                     .setOnSubmitListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //取消按钮
-                            if (mAdCallback!=null){
-                                mAdCallback.onAdCallback(null, CB_AD_CANCELED);
+                            //显示广告按钮
+                            if (mAdLoader!=null){
+                                mAdLoader.setAdCallback(AdManager.this);
+                                mAdLoader.setPackageName(pkgName);
+                                mAdLoader.showAd();
                             }
                         }
                     })

@@ -6,7 +6,7 @@
     android:background="@android:color/transparent">
 
     <kptech.game.kit.view.FloatingDownBtn
-        android:id="@+id/menu_icon"
+        android:id="@+id/down_btn"
         android:layout_gravity="top|right"
         android:layout_width="90dp"
         android:layout_height="30dp"

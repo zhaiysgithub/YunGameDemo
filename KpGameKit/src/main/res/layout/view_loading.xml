@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:gravity="center">
 
@@ -15,16 +15,50 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-20dp"
         android:layout_gravity="center"
-        android:layout_marginTop="-40dp"
         android:orientation="vertical">
-
-        <ImageView
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/logo_ezbuy"
             android:layout_gravity="center_horizontal"
-            />
+            android:layout_marginTop="10dp"
+            >
+            <kptech.game.kit.view.LoadingRoundImageView
+                android:id="@+id/loading_dot"
+                android:layout_width="144dp"
+                android:layout_height="144dp"
+                app:outer_circle_width="130dp"
+                app:dot_width="4dp"
+                app:border_width="2dp"
+                />
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@mipmap/loading_icon"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+
+        <!--<FrameLayout-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="150dp"-->
+            <!--android:layout_gravity="center"-->
+            <!---->
+            <!--&gt;-->
+            <!--<kptech.game.kit.view.LoadingRoundImageView-->
+                <!--android:id="@+id/loading_dot"-->
+                <!--android:layout_width="150dp"-->
+                <!--android:layout_height="150dp"-->
+                <!--android:background="#ff0000"-->
+                <!--android:layout_gravity="center"-->
+                <!--app:outer_circle_width="130dp"-->
+                <!--app:dot_width="6dp"-->
+                <!--app:border_width="3dp"-->
+                <!--/>-->
+
+        <!--</FrameLayout>-->
+
 
         <!--<ProgressBar-->
         <!--android:layout_width="56dp"-->
@@ -34,36 +68,37 @@
         <!--android:indeterminateDrawable="@drawable/loading_progressbar"-->
         <!--android:indeterminateOnly="true" />-->
 
-        <ProgressBar
-            android:id="@+id/pb"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="150dp"
-            android:layout_height="20dp"
-            android:max="100"
-            android:progressBackgroundTint="#c8c7c7"
-            android:progressTint="@color/down_notify_progress_bg_color"
-            android:layout_marginTop="30dp"
-            android:progress="0" />
+        <!--<ProgressBar-->
+            <!--android:id="@+id/loading_pb"-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:max="100"-->
+            <!--android:progressBackgroundTint="#c8c7c7"-->
+            <!--android:progressTint="@color/down_notify_progress_bg_color"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:progress="0" />-->
+
+        
 
         <TextView
             android:id="@+id/loading_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="15dp"
             android:layout_gravity="center_horizontal"
-            android:textColor="#070707"
-            android:textSize="13dp"
-            android:text="加载中..."/>
+            android:textColor="#333333"
+            android:textSize="20dp"
+            android:text="正在加载云游戏"/>
 
-        <!--<Button-->
-            <!--android:id="@+id/retry_btn"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_marginTop="30dp"-->
-            <!--android:background="@drawable/button_bg"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textSize="14sp"-->
-            <!--android:text="重新加载"-->
-            <!--android:visibility="gone"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#999999"
+            android:textSize="12dp"
+            android:text="请关闭手机自动旋转设置，游戏体验更好哦～"/>
+
     </LinearLayout>
 </FrameLayout>

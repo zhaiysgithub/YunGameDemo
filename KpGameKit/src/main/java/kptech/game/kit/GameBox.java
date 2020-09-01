@@ -25,6 +25,8 @@ public class GameBox {
 
     private long[] noOpsTimeout = null;
 
+    private volatile GameDownloader mDownloader = null;
+
     public static GameBox getInstance(@NonNull Application application, String appKey) {
         if (box == null) {
             synchronized(GameBoxManager.class) {
@@ -106,4 +108,14 @@ public class GameBox {
         }
     }
 
+    public void setGameDownloader(GameDownloader downloader){
+        this.mDownloader = downloader;
+    }
+
+    public static GameDownloader getGameDownloader(){
+        if (box!=null){
+            return box.mDownloader;
+        }
+        return null;
+    }
 }

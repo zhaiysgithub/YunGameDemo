@@ -18,7 +18,7 @@ uploadArchives {
         //注意”file://“ + 路径，有三个斜杠，别漏了
 //        repository(url: "file:///Users/zhangqinglou/work/maven")
         //远程仓库的地址
-        repository(url: "https://maven.kuaipantech.com/repository/maven-snapshots/") {
+        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
             //nexus登录的用户名和密码
             authentication(userName: "admin", password: "kpmvn!#%246")
         }
@@ -34,23 +34,35 @@ uploadArchives {
 //将第三方aar，导出到maven库
 publishing {
     publications {
+//        ZADSdk(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '3.3.3230.3'
+//            artifactId 'ZADSdk'
+//            artifact("../app/libs/ZADSdk-3.3.3230.3.aar")
+//        }
+//        MsaMdid(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '1.0.13'
+//            artifactId 'msa_mdid'
+//            artifact("../app/libs/msa_mdid_1.0.13.aar")
+//        }
+//        GDTSDK(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '4.232.1102'
+//            artifactId 'GDTSdk'
+//            artifact("../app/libs/GDTSDK.unionNormal.4.232.1102.aar")
+//        }
+        BDMobAdsSDK(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '0.0.0.1'
+            artifactId 'BDMobAdsSDK'
+            artifact("../app/libs/Baidu_MobAds_SDK-release.aar")
+        }
         ZADSdk(MavenPublication) {
             groupId 'kptech.game.kit'
-            version '3.3.3230.3'
+            version '3.3.3243.6'
             artifactId 'ZADSdk'
-            artifact("../app/libs/ZADSdk-3.3.3230.3.aar")
-        }
-        MsaMdid(MavenPublication) {
-            groupId 'kptech.game.kit'
-            version '1.0.13'
-            artifactId 'msa_mdid'
-            artifact("../app/libs/msa_mdid_1.0.13.aar")
-        }
-        GDTSDK(MavenPublication) {
-            groupId 'kptech.game.kit'
-            version '4.232.1102'
-            artifactId 'GDTSdk'
-            artifact("../app/libs/GDTSDK.unionNormal.4.232.1102.aar")
+            artifact("../app/libs/ZADSdk-3.3.3243.6.aar")
         }
     }
 //    repositories {

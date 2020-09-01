@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import kptech.game.kit.R;
@@ -26,6 +27,9 @@ public class FloatingDownBtn extends FrameLayout {
     private float mSlop;
 
     private ProgressBar mProgressBar;
+    private TextView mTextView;
+
+    private OnClickListener mListener;
 
     public FloatingDownBtn(Context context) {
         super(context);
@@ -41,30 +45,44 @@ public class FloatingDownBtn extends FrameLayout {
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "下载", Toast.LENGTH_SHORT).show();
 
-                mHandler.sendEmptyMessageDelayed(1, 1000);
+                if (mListener != null){
+                    mListener.onClick(view);
+                }
+//                Toast.makeText(getContext(), "下载", Toast.LENGTH_SHORT).show();
+//
+//                mHandler.sendEmptyMessageDelayed(1, 1000);
             }
         });
 
+        mTextView = view.findViewById(R.id.floating_text);
         mProgressBar = view.findViewById(R.id.pb_progressbar);
     }
 
-    private int pro = 0;
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            ++pro;
-            if (pro > 100){
-                pro = 100;
-            }
-            mProgressBar.setProgress(pro);
+    public void setOnDownListener(OnClickListener listener){
+        mListener = listener;
+    }
 
-            if (pro < 100){
-                mHandler.sendEmptyMessageDelayed(1, 300);
-            }
-        }
-    };
+    public void setProgress(int num, String text){
+        mProgressBar.setProgress(num);
+        mTextView.setText(text);
+    }
+
+//    private int pro = 0;
+//    private Handler mHandler = new Handler(){
+//        @Override
+//        public void handleMessage(Message msg) {
+//            ++pro;
+//            if (pro > 100){
+//                pro = 100;
+//            }
+//            mProgressBar.setProgress(pro);
+//
+//            if (pro < 100){
+//                mHandler.sendEmptyMessageDelayed(1, 300);
+//            }
+//        }
+//    };
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

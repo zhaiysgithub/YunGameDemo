@@ -19,6 +19,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kuaipan.game.demo.R;
 
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,6 +31,7 @@ import java.util.List;
 
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.activity.GamePlay;
 
@@ -44,6 +50,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     private HorizontalGameAdapter mGameAdapter;
     private LinkedHashMap<Integer, GameInfo> mGameInfos;
 
+    private GameDownloader mGameDownloader;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -57,8 +65,36 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_horizontal_main);
         mGameInfos = new LinkedHashMap<>();
         initView();
+
+        //下载类
+        mGameDownloader = new GameDownloader() {
+            @Override
+            public boolean start(final String url) {
+                new Thread(){
+                    @Override
+                    public void run() {
+                        download(url);
+                    }
+                }.start();
+
+                //处理开始下载方法
+                return true;
+            }
+
+            @Override
+            public void stop(String url) {
+                //处理停止下载
+                downloadStop();
+            }
+
+        };
+
+        gameBox = GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
+        gameBox.setGameDownloader(mGameDownloader);
     }
 
+    GameBox gameBox;
+    //启动云游戏
     public void startGame(View view){
         GameInfo info = new GameInfo();
         info.gid = 1893;
@@ -66,10 +102,11 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.name = "猫和老鼠";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_ON;
-        info.downloadUrl = "aa";
+        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
         info.addMockInfo = 1;
-        GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b")
-                .playGame(HorizontalHomeActivity.this,info);
+
+
+        gameBox.playGame(HorizontalHomeActivity.this,info);
     }
 
     private void initView() {
@@ -88,8 +125,11 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter = new HorizontalGameAdapter(this);
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
-                GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b")
-                        .playGame(HorizontalHomeActivity.this, (GameInfo) mGameAdapter.getItem(pos));
+                GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
+                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+//                GameBox box = GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
+//                gameBox.setGameDownloader(mGameDownloader);
+                gameBox.playGame(HorizontalHomeActivity.this, game);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
 //                HorizontalHomeActivity.this.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
@@ -205,5 +245,88 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         } else if (newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_USER) {
             ((GridLayoutManager) mGameList.getLayoutManager()).setSpanCount(5);
         }
+    }
+
+    private void downloadStop(){
+        if (cancelable!=null && !cancelable.isCancelled()){
+            cancelable.cancel();
+        }
+    }
+
+    private Callback.Cancelable cancelable;
+    private String mFilePath;
+//    private String mFileName;
+    private boolean cancel = false;
+    private void download(String url) {
+        if (cancel) {
+            return;
+        }
+        File dir = getExternalFilesDir("download");
+        if (!dir.exists()){
+            dir.mkdir();
+        }
+        String apkName = url.substring(url.lastIndexOf("/") + 1, url.length());
+        File file = new File(dir,apkName);
+        mFilePath = file.getPath();
+
+
+        RequestParams requestParams = new RequestParams(url);
+        requestParams.setSaveFilePath(mFilePath);
+        /**自动为文件命名**/
+        requestParams.setAutoRename(false);
+        /**自动为文件断点续传**/
+        requestParams.setAutoResume(true);
+
+        cancelable = x.http().get(requestParams, new Callback.ProgressCallback<File>() {
+            @Override
+            public void onSuccess(File result) {
+
+                if (mGameDownloader!=null){
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_FINISHED, null);
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+                if (mGameDownloader!=null){
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_ERROR, ex.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                if (mGameDownloader!=null){
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_CANCEL, null);
+                }
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+
+            @Override
+            public void onWaiting() {
+                if (mGameDownloader!=null){
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_WAITTING, null);
+                }
+            }
+
+            @Override
+            public void onStarted() {
+                if (mGameDownloader!=null){
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_STARTED, null);
+                }
+            }
+
+            @Override
+            public void onLoading(long total, long current, boolean isDownloading) {
+
+                if (mGameDownloader!=null){
+                    mGameDownloader.onProgresss(current, total);
+                }
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@ import kptech.game.kit.R;
 
 public class FloatDownView extends FrameLayout {
 
+    private FloatingDownBtn mDownBtn;
     public FloatDownView(Context context) {
         super(context);
         initView();
@@ -20,6 +21,18 @@ public class FloatDownView extends FrameLayout {
 
     private void initView() {
         inflate(getContext(), R.layout.view_float_down, this);
+        mDownBtn = findViewById(R.id.down_btn);
     }
 
+    public void setOnDownListener(OnClickListener listener){
+        if (mDownBtn!=null){
+            mDownBtn.setOnDownListener(listener);
+        }
+    }
+
+    public void setProgress(int num, String text){
+        if (mDownBtn!=null){
+            mDownBtn.setProgress(num, text);
+        }
+    }
 }

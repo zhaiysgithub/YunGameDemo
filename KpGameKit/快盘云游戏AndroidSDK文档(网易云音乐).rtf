@@ -13,7 +13,7 @@
 {\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
 {\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
-\paperw11900\paperh16840\margl1440\margr1440\vieww22900\viewh11680\viewkind0
+\paperw11900\paperh16840\margl1440\margr1440\vieww22900\viewh14720\viewkind0
 \deftab720
 \pard\pardeftab720\sl740\sa412\partightenfactor0
 
@@ -215,7 +215,7 @@ dependencies
 \f6 \cf7 \
     
 \f7\b implementation 
-\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.1.6\'94\cf7 \
+\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.1.8\'94\cf7 \
 \}
 \f2 \
 
@@ -370,6 +370,218 @@ dependencies
 \f6\b0 \cf7 (boolean debug);\
     \
 
+\f8\i \cf9     \
+\pard\pardeftab720\sl480\sb300\sa300\partightenfactor0
+
+\f2\i0\fs30 \cf2 \cb1 \'d3\'ce\'cf\'b7\'cf\'c2\'d4\'d8\'c6\'f7\'a3\'ac\'d7\'a2\'b2\'e1\'d3\'ce\'cf\'b7\'cf\'c2\'d4\'d8\'c6\'f7\'ca\'b5\'cf\'d6\'b1\'df\'cd\'e6\'b1\'df\'cf\'c2\'b9\'a6\'c4\'dc\'a3\'ba
+\f3 \
+\pard\pardeftab720\sl340\partightenfactor0
+
+\f6\fs21\fsmilli10800 \cf7 \cb8     
+\f8\i \cf9 /**
+\f6\i0 \cf7 \
+
+\f8\i \cf9      * 
+\f2\i0 GameBox\'b6\'d4\'cf\'f3\'d6\'d0\'b5\'f7\'d3\'c3
+\f6 \cf7 \
+
+\f8\i \cf9      * \cf10 @param\cf9  debug
+\f6\i0 \cf7 \
+
+\f8\i \cf9      */
+\f6\i0 \cf7 \
+    
+\f7\b public static
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 setGameDownloader
+\f6\b0 \cf7 (boolean debug);\
+\
+    
+\f8\i \cf9     \
+\pard\pardeftab720\sl480\sb300\sa300\partightenfactor0
+
+\f2\i0\fs30 \cf2 \cb1 \'d3\'ce\'cf\'b7\'cf\'c2\'d4\'d8\'c6\'f7GameDownloader\'c0\'e0\'a3\'ba
+\f3 \
+\pard\pardeftab720\sl340\partightenfactor0
+
+\f6\fs21\fsmilli10800 \cf7 \cb8 \
+    
+\f8\i \cf9 //
+\f2\i0 \'bf\'aa\'ca\'bc
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_STARTED = 1;  \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'d4\'dd\'cd\'a3
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_PAUSED = 2;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'cd\'a3\'d6\'b9
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_STOPED = 3;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'cf\'c2\'d4\'d8\'cd\'ea\'b3\'c9
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_FINISHED = 4;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'c8\'a1\'cf\'fb\'cf\'c2\'d4\'d8
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_CANCEL = 5;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'b5\'c8\'b4\'fd\'cf\'c2\'d4\'d8
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_WAITTING = 6;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 //
+\f2\i0 \'cf\'c2\'d4\'d8\'b3\'f6\'b4\'ed
+\f6 \cf7 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 	
+\f7\b public static final int
+\f6\b0  STATUS_ERROR = 7;\
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7 \
+\
+    
+\f8\i \cf9 /**\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf9      * 
+\f2\i0 \'bf\'aa\'ca\'bc\'cf\'c2\'d4\'d8
+\f8\i \
+     * \cf10 @param\cf9  url\
+     * \cf10 @return\cf9  true 
+\f2\i0 \'d5\'fd\'b3\'a3\'cf\'c2\'d4\'d8
+\f8\i \
+     */\
+\pard\pardeftab720\sl340\partightenfactor0
+
+\f6\i0 \cf7     
+\f7\b public abstract boolean
+\f6\b0  
+\f7\b \cf11 start
+\f6\b0 \cf7 (String url)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7    
+\f8\i \cf9  /**\
+     * 
+\f2\i0 \'cd\'a3\'d6\'b9\'cf\'c2\'d4\'d8
+\f8\i \
+     * \cf10 @param\cf9  url\
+     */\
+
+\f6\i0 \cf7     
+\f7\b public void
+\f6\b0  
+\f7\b \cf11 stop
+\f6\b0 \cf7 (String url)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 /**\
+     * 
+\f2\i0 \'d4\'dd\'cd\'a3
+\f8\i \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf9      */
+\f6\i0 \cf7 \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f7\b public void
+\f6\b0  
+\f7\b \cf11 pause
+\f6\b0 \cf7 ()\
+\
+    
+\f8\i \cf9 /**\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf9      * 
+\f2\i0 \'bc\'cc\'d0\'f8
+\f8\i \
+     */\
+\pard\pardeftab720\sl340\partightenfactor0
+
+\f6\i0 \cf7     
+\f7\b public void
+\f6\b0  
+\f7\b \cf11 resume
+\f6\b0 \cf7 ()\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7    
+\f8\i \cf9  /**\
+     * 
+\f2\i0 \'bd\'f8\'b6\'c8\'bb\'d8\'b5\'f7\'b7\'bd\'b7\'a8
+\f8\i \
+     * \cf10 @param \cf9 current  
+\f2\i0 \'b5\'b1\'c7\'b0\'cf\'c2\'d4\'d8\'b4\'f3\'d0\'a1
+\f8\i \
+     * \cf10 @param\cf9  total  
+\f2\i0 \'ce\'c4\'bc\'fe\'d7\'dc\'b4\'f3\'d0\'a1
+\f8\i \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf9      */\
+\pard\pardeftab720\sl340\partightenfactor0
+
+\f6\i0 \cf7     
+\f7\b public synchronized void \cf11 onProgresss
+\f6\b0 \cf7 (long current, long total)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf7 \
+\pard\pardeftab720\sl340\partightenfactor0
+\cf7     
+\f8\i \cf9 /**\
+     * 
+\f2\i0 \'d7\'b4\'cc\'ac\'bb\'d8\'b5\'f7
+\f8\i \
+     * \cf10 @param\cf9  status 
+\f2\i0 \'cf\'c2\'d4\'d8\'d7\'b4\'cc\'ac
+\f8\i \
+     * \cf10 @param\cf9  msg 
+\f2\i0 \'b4\'ed\'ce\'f3\'cf\'fb\'cf\'a2
+\f8\i \
+     */
+\f6\i0 \cf7 \
+    
+\f7\b public synchronized void
+\f6\b0  
+\f7\b \cf11 onStatusChanged
+\f6\b0 \cf7 (int status, String msg\
+    \
+
 \f8\i \cf9     
 \f3\i0\fs30 \cf2 \cb1 \
 \pard\pardeftab720\sl640\sb300\sa300\partightenfactor0
@@ -393,6 +605,24 @@ dependencies
 20200821: v1.1
 \f2 .1.6
 \f3 , 
-\f2 \'d4\'f6\'bc\'d3\'ca\'fd\'be\'dd\'b4\'f2\'b5\'e3\'a1\'a3
+\f2 \'d4\'f6\'bc\'d3\'ca\'fd\'be\'dd\'b4\'f2\'b5\'e3\'a1\'a3\
+\ls3\ilvl0
+\f3 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+20200827: v1.1
+\f2 .1.7
+\f3 , 
+\f2 \'d3\'c5\'bb\'af\'b9\'e3\'b8\'e6\'bc\'d3\'d4\'d8\'a1\'a3\
+\ls3\ilvl0
+\f3 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+20200827: v1.1
+\f2 .1.8
+\f3 , 
+\f2 \'d3\'c5\'bb\'af\'ca\'fd\'be\'dd\'b4\'f2\'b5\'e3\'a1\'a2\'b4\'fa\'c2\'eb\'c2\'df\'bc\'ad\'a1\'a3\
+\ls3\ilvl0
+\f3 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+20200901: v1.1
+\f2 .1.9
+\f3 , 
+\f2 \'d4\'f6\'bc\'d3\'cf\'c2\'d4\'d8\'b9\'a6\'c4\'dc\'a3\'ac\'d0\'de\'b8\'c4\'ce\'aa\'b0\'d9\'b6\'c8\'b9\'e3\'b8\'e6SDK\'a1\'a3
 \f3 \uc0\u8232 \
 }

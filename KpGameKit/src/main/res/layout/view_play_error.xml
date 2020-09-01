@@ -40,16 +40,44 @@
             android:layout_marginTop="40dp"
             />
 
-        <Button
-            android:id="@+id/btn_down"
+        <!--<Button-->
+            <!--android:id="@+id/btn_down"-->
+            <!--android:layout_width="170dp"-->
+            <!--android:layout_height="36dp"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:background="@drawable/game_play_btn"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textColor="#FFFFFF"-->
+            <!--android:text="下载游戏直接玩"/>-->
+
+        <FrameLayout
+            android:id="@+id/error_down_layout"
             android:layout_width="170dp"
             android:layout_height="36dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/game_play_btn"
             android:layout_marginTop="20dp"
-            android:textSize="14sp"
-            android:textColor="#FFFFFF"
-            android:text="下载游戏直接玩"/>
+            >
+            <ProgressBar
+                android:id="@+id/error_down_pb"
+                android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+                android:indeterminateOnly="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:progressDrawable="@drawable/down_pb_bg"
+                android:max="100"
+                android:progress="0"/>
+
+            <TextView
+                android:id="@+id/error_down_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="14sp"
+                android:text="下载游戏直接玩"
+                android:textColor="#ffffff"
+                />
+        </FrameLayout>
 
     </LinearLayout>
 
