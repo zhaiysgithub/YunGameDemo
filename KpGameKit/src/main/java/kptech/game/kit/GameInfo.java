@@ -3,6 +3,11 @@ package kptech.game.kit;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameInfo implements Parcelable {
     public static int GAME_AD_SHOW_AUTO = 0;    //按服务器配置信息显示
     public static int GAME_AD_SHOW_ON = 1;    //显示广告
@@ -32,6 +37,7 @@ public class GameInfo implements Parcelable {
     public int showAd = GAME_AD_SHOW_AUTO;
     //自动本地IMEI\AndroidID到云设备，0不添加，1添加
     public int addMockInfo = 0;
+    public HashMap<String,String> ext;
 
     public GameInfo() {
     }
@@ -48,6 +54,7 @@ public class GameInfo implements Parcelable {
         this.size = var1.readLong();
         this.showAd = var1.readInt();
         this.addMockInfo = var1.readInt();
+        this.ext = var1.readHashMap(HashMap.class.getClassLoader());
     }
 
     public int getEffectTime() {
@@ -70,6 +77,7 @@ public class GameInfo implements Parcelable {
         var1.writeLong(this.size);
         var1.writeInt(this.showAd);
         var1.writeInt(this.addMockInfo);
+        var1.writeMap(this.ext);
     }
 
 

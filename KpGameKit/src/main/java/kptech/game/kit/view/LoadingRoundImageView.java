@@ -126,6 +126,9 @@ public class LoadingRoundImageView extends View {
 
     //属性动画
     public void startAnimation() {
+        if (animator!=null && animator.isRunning()){
+            return;
+        }
         setDrawPoint(true);
         animator = ValueAnimator.ofFloat(0, 1.0f);
         //动画时长，让进度条在CountDown时间内正好从0-360走完，
@@ -151,7 +154,9 @@ public class LoadingRoundImageView extends View {
     }
 
     public void stopAnimation() {
-        animator.cancel();
-        animator = null;
+        if (animator!=null){
+            animator.cancel();
+            animator = null;
+        }
     }
 }

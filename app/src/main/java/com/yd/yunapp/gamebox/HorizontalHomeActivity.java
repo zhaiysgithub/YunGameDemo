@@ -1,6 +1,9 @@
 package com.yd.yunapp.gamebox;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -65,15 +68,17 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_horizontal_main);
         mGameInfos = new LinkedHashMap<>();
         initView();
+        GameBox.init(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
 
         //下载类
         mGameDownloader = new GameDownloader() {
             @Override
-            public boolean start(final String url) {
+            public boolean start(final GameInfo gameInfo) {
                 new Thread(){
                     @Override
                     public void run() {
-                        download(url);
+                        download(gameInfo.downloadUrl, gameInfo);
+
                     }
                 }.start();
 
@@ -82,15 +87,37 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             }
 
             @Override
-            public void stop(String url) {
+            public void stop(GameInfo gameInfo) {
                 //处理停止下载
                 downloadStop();
             }
 
         };
 
-        gameBox = GameBox.getInstance(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
+        gameBox = GameBox.getInstance();
         gameBox.setGameDownloader(mGameDownloader);
+
+        IntentFilter filter =new  IntentFilter();
+        filter.addAction("KpTech_Game_Kit_DownLoad_Start_Action");
+        filter.addAction("KpTech_Game_Kit_DownLoad_Stop_Action");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Start_Action")){
+                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            download(gameInfo.downloadUrl, gameInfo);
+                        }
+                    }.start();
+                }else  if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Stop_Action")){
+//                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
+                    downloadStop();
+                }
+
+            }
+        }, filter);
     }
 
     GameBox gameBox;
@@ -257,10 +284,11 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     private String mFilePath;
 //    private String mFileName;
     private boolean cancel = false;
-    private void download(String url) {
+    private void download(String url, final GameInfo gameInfo) {
         if (cancel) {
             return;
         }
+
         File dir = getExternalFilesDir("download");
         if (!dir.exists()){
             dir.mkdir();
@@ -282,7 +310,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             public void onSuccess(File result) {
 
                 if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_FINISHED, null);
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_FINISHED, null, gameInfo);
                 }
             }
 
@@ -290,15 +318,18 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             public void onError(Throwable ex, boolean isOnCallback) {
 
                 if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_ERROR, ex.getMessage());
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_ERROR, ex.getMessage(), gameInfo);
                 }
+
+                sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Fail"));
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
                 if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_CANCEL, null);
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_CANCEL, null, gameInfo);
                 }
+                sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Stop"));
             }
 
             @Override
@@ -309,22 +340,23 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             @Override
             public void onWaiting() {
                 if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_WAITTING, null);
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_WAITTING, null, gameInfo);
                 }
             }
 
             @Override
             public void onStarted() {
                 if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_STARTED, null);
+                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_STARTED, null, gameInfo);
                 }
+
+                sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Start"));
             }
 
             @Override
             public void onLoading(long total, long current, boolean isDownloading) {
-
                 if (mGameDownloader!=null){
-                    mGameDownloader.onProgresss(current, total);
+                    mGameDownloader.onProgresss(current, total, gameInfo);
                 }
             }
         });

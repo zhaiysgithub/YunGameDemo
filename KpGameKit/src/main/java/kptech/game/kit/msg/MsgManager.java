@@ -40,7 +40,7 @@ public class MsgManager {
         }
     }
     public static void setDebug(boolean debug){
-        Messager.setDebug(true);
+        Messager.setDebug(debug);
     }
 
     private MsgManager(Context context){

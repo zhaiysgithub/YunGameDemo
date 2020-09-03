@@ -76,7 +76,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
                     Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
                 }catch (Exception e){}
             }
-            if (this.mGameInfo.downloadUrl != null){
+            if (!StringUtil.isEmpty(mGameInfo.downloadUrl)){
                 //显示下载按钮
                 mErrorDownBtn.setTag("down");
                 mErrorDownText.setText("下载游戏直接玩");
@@ -95,6 +95,23 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     public void setProgress(int num, String text) {
         mErrorDownText.setText(text);
         mErrorDownPb.setProgress(num);
+    }
+
+    public void setDownloadStatus(int status){
+        switch (status){
+            case GameDownloader.STATUS_STARTED:
+                mErrorDownText.setText("下载中...");
+                break;
+            case GameDownloader.STATUS_ERROR:
+                mErrorDownText.setText("下载出错");
+                break;
+            case GameDownloader.STATUS_FINISHED:
+                mErrorDownText.setText("下载完成");
+                break;
+            default:
+                mErrorDownText.setText("下载游戏直接玩");
+                break;
+        }
     }
 
     @Override

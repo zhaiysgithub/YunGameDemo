@@ -35,18 +35,46 @@ public abstract class GameDownloader {
 
     /**
      * 开始下载
-     * @param url
+     * @param game
      * @return true 正常下载
      */
-    public abstract boolean start(String url);
+    public abstract boolean start(GameInfo game);
 
     /**
      * 停止下载
-     * @param url
+     * @param game
      */
-    public void stop(String url){
+    public void stop(GameInfo game){
 
     }
+
+    /**
+     * 进度回调方法
+     * @param current
+     * @param total
+     */
+    public synchronized void onProgresss(long current, long total, GameInfo game){
+        if (mHandler!=null){
+            Object[] data = new Object[]{current, total, game};
+            mHandler.sendMessage(Message.obtain(mHandler,2, data));
+        }
+    }
+
+    /**
+     * 状态回调
+     * @param status
+     * @param msg
+     */
+    public synchronized void onStatusChanged(int status, String msg, GameInfo game){
+        if (mHandler!=null){
+            if (msg == null){
+                msg = "";
+            }
+            Object[] obj = new Object[]{status, msg, game};
+            mHandler.sendMessage(Message.obtain(mHandler, 1, obj));
+        }
+    }
+
 
     /**
      * 暂停
@@ -62,33 +90,6 @@ public abstract class GameDownloader {
 
     }
 
-
-    /**
-     * 进度回调方法
-     * @param current
-     * @param total
-     */
-    public synchronized void onProgresss(long current, long total){
-        if (mHandler!=null){
-            Object[] data = new Object[]{current, total};
-            mHandler.sendMessage(Message.obtain(mHandler,2, data));
-        }
-    }
-
-    /**
-     * 状态回调
-     * @param status
-     * @param msg
-     */
-    public synchronized void onStatusChanged(int status, String msg){
-        if (mHandler!=null){
-            if (msg == null){
-                msg = "";
-            }
-            Object[] obj = new Object[]{status, msg};
-            mHandler.sendMessage(Message.obtain(mHandler, 1, obj));
-        }
-    }
 
     public synchronized void addCallback(ICallback callback){
         //判断是否已经存在
@@ -113,9 +114,9 @@ public abstract class GameDownloader {
 
     public interface ICallback {
 
-        void onDownloadStatusChanged(int status, String msg);
+        void onDownloadStatusChanged(int status, String msg, GameInfo game);
 
-        void onDownloadProgress(long total, long current);
+        void onDownloadProgress(long total, long current,  GameInfo game);
     }
 
     private class CallbackHandler extends Handler {
@@ -132,9 +133,13 @@ public abstract class GameDownloader {
                     try {
                         int status = (int) obj[0];
                         String info = (String) obj[1];
+                        GameInfo game = null;
+                        if (obj[2]!=null){
+                            game = (GameInfo) obj[2];
+                        }
                         for (WeakReference<GameDownloader.ICallback> ref : mCallbackList){
                             if ( ref.get() != null ){
-                                ref.get().onDownloadStatusChanged(status, info);
+                                ref.get().onDownloadStatusChanged(status, info, game);
                             }
                         }
                     }catch (Exception e){
@@ -146,9 +151,13 @@ public abstract class GameDownloader {
                     try {
                         long current = (long)obj[0];
                         long total = (long)obj[1];
+                        GameInfo game = null;
+                        if (obj[2]!=null){
+                            game = (GameInfo) obj[2];
+                        }
                         for (WeakReference<GameDownloader.ICallback> ref : mCallbackList){
                             if ( ref.get() != null ){
-                                ref.get().onDownloadProgress(current, total);
+                                ref.get().onDownloadProgress(current, total, game);
                             }
                         }
                     }catch (Exception e){

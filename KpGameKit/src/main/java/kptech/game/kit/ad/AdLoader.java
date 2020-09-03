@@ -48,11 +48,11 @@ public class AdLoader {
     private String mExtAdCode;
 
     private AdLoadState mAdLoadState = AdLoadState.unload;  //0未加载，1加载中，2 加载成功，3加载失败
-    private boolean mExtAdReady = false;
+    private AdLoadState mExtLoadState = AdLoadState.unload;
 
 
     private boolean loading = false;
-    private boolean extLoading = false;
+//    private boolean extLoading = false;
 
     private boolean wattingShowAd = false;
 
@@ -109,24 +109,23 @@ public class AdLoader {
         }
 
         //激励视频加载失败，显示插屏广告
-        if (mAdLoadState == AdLoadState.RewardFailed){
+        if (mInterstitialWorker!=null && mExtLoadState == AdLoadState.RewardReady){
+            //显示广告
+            if (mInterstitialWorker!=null){
+                if (extAdView != null){
+                    showExtAd(extAdView);
+                }else {
+                    mInterstitialWorker.getAdBeans();
+                }
+                return;
+            }
+        }
+
+        if (mAdLoadState == AdLoadState.RewardFailed && mExtLoadState == AdLoadState.RewardFailed){
             if (mAdCallback!=null){
                 mAdCallback.onAdCallback(null, ADSTATE_FAILED);
             }
-//
-////            //显示广告
-////            if (mExtAdReady && mInterstitialWorker!=null){
-////                if (extAdView != null){
-////                    showExtAd(extAdView);
-////                }else {
-////                    mInterstitialWorker.getAdBeans();
-////                }
-////            }
-//
-//            loadExtAd();
-            return;
         }
-
 
         loadReward();
     }
@@ -274,9 +273,10 @@ public class AdLoader {
                 if (mAdCallback!=null){
                     mAdCallback.onAdCallback(info, ADSTATE_FAILED);
                 }
+                return;
             }
 
-//            loadExtAd();
+            loadExtAd();
 
             try {
                 //发送打点事件
@@ -290,7 +290,7 @@ public class AdLoader {
     };
 
     private synchronized void loadExtAd(){
-        if (extLoading){
+        if (loading){
             return;
         }
 
@@ -298,7 +298,7 @@ public class AdLoader {
         mInterstitialWorker = ZadSdkApi.getInterstitialAdWorker(this.mActivity, mZadObserver, mExtAdCode);
         if (mInterstitialWorker != null) {
             mInterstitialWorker.requestProviderAd();
-            extLoading = true;
+            loading = true;
         }
 
         try {
@@ -315,6 +315,12 @@ public class AdLoader {
         @Override
         public void onClose(String posId, String info) {
             logger.info("onClose, posId = " + posId + ", info = " + info);
+
+            mExtLoadState = AdLoadState.RewardClosed;
+
+            if (mAdCallback!=null){
+                mAdCallback.onAdCallback(null, ADSTATE_VERIFY);
+            }
 
             try {
                 //发送打点事件
@@ -356,8 +362,8 @@ public class AdLoader {
         @Override
         public void onAdReady(String posId, int count, String info) {
             logger.info("onAdReady(), count = " + count + ", info = " + info);
-            extLoading = false;
-            mExtAdReady = true;
+            loading = false;
+            mExtLoadState = AdLoadState.RewardReady;
 
             if (wattingShowAd){
                 if (count <= 0){
@@ -383,7 +389,14 @@ public class AdLoader {
         @Override
         public void onAdEmpty(String posId, String info) {
             logger.error("onAdEmpty, posId = " + posId + ", info = " + info);
-            extLoading = false;
+            loading = false;
+            mExtLoadState = AdLoadState.RewardFailed;
+
+            if(wattingShowAd) {
+                if (mAdCallback!=null){
+                    mAdCallback.onAdCallback(info, ADSTATE_FAILED);
+                }
+            }
 
             try {
                 //发送打点事件

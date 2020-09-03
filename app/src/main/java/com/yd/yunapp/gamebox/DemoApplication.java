@@ -41,7 +41,7 @@ public class DemoApplication extends Application {
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);
         // 配置ak sk 渠道
-        GameBoxManager.setAppInfo(YOUR_AK, YOUR_SK, YOUR_CHANNEL);
+//        GameBoxManager.setAppInfo(YOUR_AK, YOUR_SK, YOUR_CHANNEL);
 
 //        GameBoxManager.setAppKey(APPKEY);
 

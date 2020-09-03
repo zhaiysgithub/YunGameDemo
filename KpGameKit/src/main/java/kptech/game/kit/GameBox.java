@@ -25,9 +25,9 @@ public class GameBox {
 
     private long[] noOpsTimeout = null;
 
-    private volatile GameDownloader mDownloader = null;
+    private GameDownloader mDownloader = null;
 
-    public static GameBox getInstance(@NonNull Application application, String appKey) {
+    public static void init(@NonNull Application application, String appKey) {
         if (box == null) {
             synchronized(GameBoxManager.class) {
                 if (box == null) {
@@ -35,6 +35,9 @@ public class GameBox {
                 }
             }
         }
+    }
+
+    public static GameBox getInstance() {
         return box;
     }
 
@@ -48,8 +51,6 @@ public class GameBox {
             logger.error("playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
             return;
         }
-
-        //
 
         //初始化事件基本信息
         Event.createBaseEvent(activity, appKey);
@@ -69,6 +70,9 @@ public class GameBox {
 
         logger.info("启动云游戏，gameInfo:" + gameInfo.toString());
 
+        logger.info("GameBox Process，pid:" + android.os.Process.myPid());
+
+
         //启动云游戏
         Intent intent = new Intent(activity, GamePlay.class);
         intent.putExtra(GamePlay.EXTRA_CORPID, this.appKey);
@@ -77,7 +81,6 @@ public class GameBox {
             intent.putExtra(GamePlay.EXTRA_TIMEOUT, noOpsTimeout);
         }
         activity.startActivity(intent);
-
     }
 
     public void playGame(Activity activity, int gid, String pkgName){
@@ -109,13 +112,12 @@ public class GameBox {
     }
 
     public void setGameDownloader(GameDownloader downloader){
+        logger.info("setGameDownloader :" + downloader);
         this.mDownloader = downloader;
     }
 
-    public static GameDownloader getGameDownloader(){
-        if (box!=null){
-            return box.mDownloader;
-        }
-        return null;
+    public GameDownloader getGameDownloader(){
+        logger.info("getGameDownloader :" + this.mDownloader);
+        return this.mDownloader;
     }
 }

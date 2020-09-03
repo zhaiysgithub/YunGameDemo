@@ -101,9 +101,6 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         mOrdianryBtn.setOnClickListener(this);
         mLsBtn.setOnClickListener(this);
         mAutoBtn.setOnClickListener(this);
-
-
-
     }
 
     @Override
@@ -117,7 +114,6 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
                     systemUiVisibility = activity.getWindow().getDecorView().getSystemUiVisibility();
                 }
             }catch (Exception e){}
-
             mMenuDialog.show();
         } else if (mAutoBtn == view) {
             setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
@@ -170,7 +166,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     }
 
     private void setSoundStyle(boolean sound){
-        mAutoBtn.setText(sound ? "关闭声音":"打开声音");
+        mAduioBtn.setText(sound ? "关闭声音":"打开声音");
     }
 
     private void setSelectGradeLevel(String level) {
@@ -189,7 +185,6 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             applyBtnStyle(mAutoBtn, R.drawable.translucent_btn);
             applyBtnStyle(mOrdianryBtn, R.drawable.translucent_btn);
             applyBtnStyle(mLsBtn, R.drawable.translucent_btn);
-
         } else if (level == APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY) {
             applyBtnStyle(mOrdianryBtn, R.drawable.blue_btn);
             applyBtnStyle(mHDBtn, R.drawable.translucent_btn);

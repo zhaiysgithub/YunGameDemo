@@ -41,10 +41,14 @@ public class LoadingView extends FrameLayout {
     @Override
     protected void onVisibilityChanged(View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
-        if (visibility == VISIBLE){
-            iv.startAnimation();
-        }else {
-            iv.stopAnimation();
+        try {
+            if (visibility == VISIBLE){
+                iv.startAnimation();
+            }else {
+                iv.stopAnimation();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -57,7 +61,11 @@ public class LoadingView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-//        iv.stopAnimation();
+        try {
+            iv.stopAnimation();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void setProgress(int mPro) {
