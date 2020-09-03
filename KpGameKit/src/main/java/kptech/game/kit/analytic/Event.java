@@ -4,10 +4,12 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class Event {
@@ -60,6 +62,8 @@ public class Event {
      */
     String datafrom = "androidapp";
 
+    int hearttimes = 0;
+
     /**
      * 请求json
      * @return
@@ -89,16 +93,36 @@ public class Event {
         return obj.toString();
     }
 
+    public String toTimeRequestJson(){
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("clientid=" + (this.clientId != null ? this.clientId : ""));
+            sb.append("&package=" + (this.gamePkg != null ? this.gamePkg : ""));
+            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
+            sb.append("&hearttimes=" +  this.hearttimes);
+            sb.append("&datafrom=" + this.datafrom);
+            sb.append("&userid=" + (this.userId != null ? this.userId : ""));
+            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
+            sb.append("&usertype=" + this.userType);
+        }catch (Exception e){
+
+        }
+
+        return sb.toString();
+    }
+
+
     private static String createTraceId(){
         return "ar"+new Date().getTime();
     }
 
     private static String getUserId(Context context){
-        String userId = ProferencesUtils.getString(context, "event_userid", null);
+        String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
         if (userId == null || "".equals(userId)){
             int random = (int)(Math.random()*900)+100;
             userId = new Date().getTime() + "" + random;
-            ProferencesUtils.setString(context, "event_userid", userId);
+            ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
         }
         return userId;
     }
@@ -163,5 +187,9 @@ public class Event {
 
     public void setGamePkg(String gamePkg) {
         this.gamePkg = gamePkg;
+    }
+
+    public void setHearttimes(int hearttimes) {
+        this.hearttimes = hearttimes;
     }
 }

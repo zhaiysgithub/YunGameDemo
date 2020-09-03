@@ -25,7 +25,22 @@ public class MobclickAgent {
         }
     }
 
+    public static void sendPlayTimeEvent(Event event){
+        if (event == null){
+            return;
+        }
+        try {
+            MobclickAgent agent = getInstance();
+            if (agent!=null){
+                agent.sendStringPlayTimeRequest(event.toTimeRequestJson());
+            }
+        }catch (Exception e){
+            logger.error("sendEvent error:"+e.getMessage());
+        }
+    }
+
     private String URL = "https://interface.open.kuaipantech.com/useraction.php";
+    private String URL_TIME = "https://interface.open.kuaipantech.com/useraction_playtimes.php";
     private RequestQueue mQueue;
 
     private static volatile MobclickAgent agent = null;
@@ -78,6 +93,31 @@ public class MobclickAgent {
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-
     }
+
+    /**
+     * 发送GET请求,返回的是String类型的数据, 同理还有{@see JsonRequest}、{@see MultipartRequest}
+     */
+    private void sendStringPlayTimeRequest(String params) {
+        try {
+            if (mQueue!=null){
+                String url = URL_TIME + "?" + params;
+                logger.info("sendLog:" + url);
+                StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
+                        new Request.RequestListener<String>() {
+                            @Override
+                            public void onComplete(int stCode, String response, String errMsg) {
+                                if (stCode != 200){
+                                    logger.info("sendLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
+                                }
+                            }
+                        });
+
+                mQueue.addRequest(request);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
 }

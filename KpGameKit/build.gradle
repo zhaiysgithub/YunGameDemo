@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 9
-        versionName "1.1.1.17"
+        versionName "1.1.1.19"
     }
 
     buildTypes {
@@ -34,8 +34,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
-    implementation 'kptech.game.kit:ZADSdk:3.3.3243.6@aar'
+    implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
+    implementation 'kptech.game.kit:ZADSdk:3.3.3244.6@aar'
     implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
 
 //    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'

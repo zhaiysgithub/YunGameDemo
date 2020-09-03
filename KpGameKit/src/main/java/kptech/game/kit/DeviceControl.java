@@ -1,12 +1,15 @@
 package kptech.game.kit;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Message;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +46,27 @@ public class DeviceControl {
         //解析deviceToken
         parseDeviceToken();
     }
+
+    private static final int MSG_SEND_EVENT_PLAY_TIME = 1;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case MSG_SEND_EVENT_PLAY_TIME:
+                    //发送打点事件
+//                    try {
+//                        Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
+//                        HashMap ext = new HashMap<>();
+//                        ext.put("code", code);
+//                        ext.put("msg", msg);
+//                        event.setExt(ext);
+//                        MobclickAgent.sendEvent(event);
+//                    }catch (Exception e){}
+                break;
+            }
+
+        }
+    };
 
     public void setAdLoader(AdLoader adLoader) {
         this.mAdLoader = adLoader;
@@ -164,6 +188,7 @@ public class DeviceControl {
         mAdManager.loadGameAd(GameBoxManager.mCorpID, this.mGameInfo);
     }
 
+    long playStartTime = 0;
     private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
 
         //发送打点事件
@@ -172,12 +197,25 @@ public class DeviceControl {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
-
+        playStartTime = 0;
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
             public void onAPICallback(String msg, int code) {
                 if (callback!=null){
                     callback.onAPICallback(msg, code);
+                }
+
+                //记录游戏开始时间
+                if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS){
+                    playStartTime = new Date().getTime();
+                    try {
+                        //发送打点事件
+                        try {
+                            Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
+                            event.setHearttimes(0);
+                            MobclickAgent.sendPlayTimeEvent(event);
+                        }catch (Exception e){}
+                    }catch (Exception e){}
                 }
 
                 //关闭插屏广告
@@ -224,6 +262,23 @@ public class DeviceControl {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        try {
+            //关闭时间记录心跳
+            if (playStartTime>0){
+                long time = new Date().getTime();
+                int len = (int) (time - playStartTime)/1000;
+                if (len > 0){
+                    //发送打点事件
+                    try {
+                        Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
+                        event.setHearttimes(len);
+                        MobclickAgent.sendPlayTimeEvent(event);
+                    }catch (Exception e){}
+                }
+                playStartTime = 0;
+            }
+        }catch (Exception e){}
     }
 
     /**

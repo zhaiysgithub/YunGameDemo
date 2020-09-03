@@ -66,6 +66,8 @@ public class EventCode {
     public static final String DATA_AD_REWARD_CLICK = "DATA_AD_REWARD_CLICK";
     public static final String DATA_AD_REWARD_PLAYCOMPLETE = "DATA_AD_REWARD_PLAYCOMPLETE";
 
+    public static final String DATA_GAME_PLAY_TIME = "DATA_GAME_PLAY_TIME";
+
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;
