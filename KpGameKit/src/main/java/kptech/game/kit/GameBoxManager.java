@@ -284,6 +284,7 @@ public class GameBoxManager {
         final AdLoader adLoader = new AdLoader(activity);
         adLoader.setExtAdCode(AdManager.extCode);
         adLoader.setRewardAdCode(AdManager.rewardCode);
+        adLoader.setPackageName(inf.pkgName);
         adLoader.loadAd();
 
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();

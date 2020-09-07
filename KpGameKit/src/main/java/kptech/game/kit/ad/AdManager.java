@@ -202,7 +202,6 @@ public class AdManager implements IAdCallback {
                             //显示广告按钮
                             if (mAdLoader!=null){
                                 mAdLoader.setAdCallback(AdManager.this);
-                                mAdLoader.setPackageName(pkgName);
                                 mAdLoader.showAd();
                             }
                         }
