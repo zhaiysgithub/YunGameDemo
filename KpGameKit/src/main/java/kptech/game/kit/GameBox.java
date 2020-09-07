@@ -44,6 +44,9 @@ public class GameBox {
     private GameBox(Application application, String appKey){
         this.mApplication = application;
         this.appKey = appKey;
+
+        Event.init(application, appKey);
+
     }
 
     public void playGame(Activity activity, GameInfo gameInfo){

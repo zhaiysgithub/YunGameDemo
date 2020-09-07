@@ -305,7 +305,7 @@ public class AdLoader {
             //发送打点事件
             HashMap ext = new HashMap<>();
             ext.put("extAdCode", this.mExtAdCode);
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mPkgName, ext));
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_LOADING, mPkgName, ext));
         }catch (Exception e){}
     }
 
@@ -328,7 +328,7 @@ public class AdLoader {
                 ext.put("extAdCode", mExtAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_CLOSED, mPkgName, ext));
             }catch (Exception e){}
         }
 
@@ -342,7 +342,7 @@ public class AdLoader {
                 ext.put("extAdCode", mExtAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_DISPLAY, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_DISPLAY, mPkgName, ext));
             }catch (Exception e){}
         }
 
@@ -355,7 +355,7 @@ public class AdLoader {
                 ext.put("extAdCode", mExtAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_CLOSED, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_CLICK, mPkgName, ext));
             }catch (Exception e){}
         }
 
@@ -381,7 +381,7 @@ public class AdLoader {
                 ext.put("extAdCode", mExtAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_READY, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_READY, mPkgName, ext));
             }catch (Exception e){}
         }
 
@@ -404,7 +404,7 @@ public class AdLoader {
                 ext.put("extAdCode", mExtAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_EMPTY, mPkgName, ext));
             }catch (Exception e){}
         }
     };

@@ -66,6 +66,14 @@ public class EventCode {
     public static final String DATA_AD_REWARD_CLICK = "DATA_AD_REWARD_CLICK";
     public static final String DATA_AD_REWARD_PLAYCOMPLETE = "DATA_AD_REWARD_PLAYCOMPLETE";
 
+    public static final String DATA_AD_EXT_LOADING = "DATA_AD_EXT_LOADING";
+    public static final String DATA_AD_EXT_EMPTY = "DATA_AD_EXT_EMPTY";
+    public static final String DATA_AD_EXT_READY = "DATA_AD_EXT_READY";
+    public static final String DATA_AD_EXT_DISPLAY = "DATA_AD_EXT_DISPLAY";
+    public static final String DATA_AD_EXT_VERIFY = "DATA_AD_EXT_VERIFY";
+    public static final String DATA_AD_EXT_CLOSED = "DATA_AD_EXT_CLOSED";
+    public static final String DATA_AD_EXT_CLICK = "DATA_AD_EXT_CLICK";
+
     public static final String DATA_GAME_PLAY_TIME = "DATA_GAME_PLAY_TIME";
 
     public static String getDeviceEventCode(int code){

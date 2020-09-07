@@ -90,6 +90,8 @@ public class GameBoxManager {
             return;
         }
 
+        Event.init(application, appKey);
+
         try {
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT);

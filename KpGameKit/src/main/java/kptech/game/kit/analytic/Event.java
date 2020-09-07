@@ -1,5 +1,6 @@
 package kptech.game.kit.analytic;
 
+import android.app.Application;
 import android.content.Context;
 
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import java.util.Map;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.ProferencesUtils;
+import kptech.game.kit.utils.StringUtil;
 
 public class Event {
     /**
@@ -63,6 +65,20 @@ public class Event {
     String datafrom = "androidapp";
 
     int hearttimes = 0;
+
+
+    private static Context mContext;
+    private static String mCorpKey;
+
+    public static void init(Application application, String appKey) {
+        if (mContext==null && application!=null ){
+            mContext = application;
+
+        }
+        if (mCorpKey==null && !StringUtil.isEmpty(appKey)){
+            mCorpKey = appKey;
+        }
+    }
 
     /**
      * 请求json
@@ -118,39 +134,45 @@ public class Event {
     }
 
     private static String getUserId(Context context){
-        String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
-        if (userId == null || "".equals(userId)){
-            int random = (int)(Math.random()*900)+100;
-            userId = new Date().getTime() + "" + random;
-            ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
+        try {
+            String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
+            if (userId == null || "".equals(userId)){
+                int random = (int)(Math.random()*900)+100;
+                userId = new Date().getTime() + "" + random;
+                ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
+            }
+            return userId;
+        }catch (Exception e){
         }
-        return userId;
+        return "";
     }
 
     private static Event base = null;
 
     public static void createBaseEvent(Context context, String corpId){
-        base = new Event();
-        base.clientId = corpId;
-        base.userId = getUserId(context);
-        base.traceId = createTraceId();
+        if (context!=null && corpId!=null){
+            base = new Event();
+            base.clientId = corpId;
+            base.userId = getUserId(context);
+            base.traceId = createTraceId();
+        }
     }
 
     public static Event getEvent(String event, String gamePkg, String padcode, String errMsg, Map ext){
         if (base == null){
-            base = new Event();
-        }else {
-            base.errMsg = null;
-            base.ext = null;
+            createBaseEvent(mContext, mCorpKey);
         }
 
-        base.event = event;
-        base.gamePkg = gamePkg;
-        base.padcode = padcode;
-        base.errMsg = errMsg;
-        base.ext = ext;
+        if (base != null){
+            base.event = event;
+            base.gamePkg = gamePkg;
+            base.padcode = padcode;
+            base.errMsg = errMsg!=null ? errMsg : null;
+            base.ext = ext!=null ? ext : null;
+            return base;
+        }
 
-        return base;
+        return new Event();
     }
 
     public static Event getEvent(String event, String gamePkg, String padcode){

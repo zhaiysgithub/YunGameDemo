@@ -7,12 +7,18 @@ import com.kptech.netqueue.requests.StringRequest;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.StringUtil;
 
 public class MobclickAgent {
-    private static Logger logger = new Logger("MobclickAgent", BuildConfig.DEBUG);
+    private static Logger logger = new Logger("MobclickAgent");
 
     public static void sendEvent(Event event) {
         if (event == null){
+            return;
+        }
+        //判断corpKey是否为空
+        if (event!=null && StringUtil.isEmpty(event.clientId)){
+            logger.error("sendEvent error: clientId is null ");
             return;
         }
         try {
@@ -29,13 +35,18 @@ public class MobclickAgent {
         if (event == null){
             return;
         }
+        //判断corpKey是否为空
+        if (event!=null && StringUtil.isEmpty(event.clientId)){
+            logger.error("sendPlayTimeEvent error: clientId is null ");
+            return;
+        }
         try {
             MobclickAgent agent = getInstance();
             if (agent!=null){
                 agent.sendStringPlayTimeRequest(event.toTimeRequestJson());
             }
         }catch (Exception e){
-            logger.error("sendEvent error:"+e.getMessage());
+            logger.error("sendPlayTimeEvent error:"+e.getMessage());
         }
     }
 
@@ -67,7 +78,6 @@ public class MobclickAgent {
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-
     }
 
     /**
