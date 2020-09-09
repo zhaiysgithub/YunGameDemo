@@ -1,8 +1,6 @@
 package kptech.game.kit;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Message;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -47,26 +45,26 @@ public class DeviceControl {
         parseDeviceToken();
     }
 
-    private static final int MSG_SEND_EVENT_PLAY_TIME = 1;
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
-                case MSG_SEND_EVENT_PLAY_TIME:
-                    //发送打点事件
-//                    try {
-//                        Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
-//                        HashMap ext = new HashMap<>();
-//                        ext.put("code", code);
-//                        ext.put("msg", msg);
-//                        event.setExt(ext);
-//                        MobclickAgent.sendEvent(event);
-//                    }catch (Exception e){}
-                break;
-            }
-
-        }
-    };
+//    private static final int MSG_SEND_EVENT_PLAY_TIME = 1;
+//    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            switch (msg.what){
+//                case MSG_SEND_EVENT_PLAY_TIME:
+//                    //发送打点事件
+////                    try {
+////                        Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
+////                        HashMap ext = new HashMap<>();
+////                        ext.put("code", code);
+////                        ext.put("msg", msg);
+////                        event.setExt(ext);
+////                        MobclickAgent.sendEvent(event);
+////                    }catch (Exception e){}
+//                break;
+//            }
+//
+//        }
+//    };
 
     public void setAdLoader(AdLoader adLoader) {
         this.mAdLoader = adLoader;
