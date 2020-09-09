@@ -36,7 +36,7 @@ public class GameInfo implements Parcelable {
     public long size;
     public int showAd = GAME_AD_SHOW_AUTO;
     //自动本地IMEI\AndroidID到云设备，0不添加，1添加
-    public int addMockInfo = 0;
+    public int addMockInfo = 1;
     public HashMap<String,String> ext;
 
     public GameInfo() {
