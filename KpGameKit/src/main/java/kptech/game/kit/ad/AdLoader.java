@@ -135,6 +135,13 @@ public class AdLoader {
             return;
         }
 
+        try {
+            //发送打点事件
+            HashMap ext = new HashMap<>();
+            ext.put("rewardAdCode", this.mRewardAdCode);
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mPkgName, ext));
+        }catch (Exception e){}
+
         //加载广告
         mRewardWorker = ZadSdkApi.getRewardAdWorker(mActivity, mRewardObserver, mRewardAdCode);
         if (mRewardWorker != null) {
@@ -142,12 +149,6 @@ public class AdLoader {
             loading = true;
         }
 
-        try {
-            //发送打点事件
-            HashMap ext = new HashMap<>();
-            ext.put("rewardAdCode", this.mRewardAdCode);
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_LOADING, mPkgName, ext));
-        }catch (Exception e){}
     }
 
 
@@ -266,6 +267,15 @@ public class AdLoader {
         public void onAdEmpty(String posId, String info) {
             logger.error( "onAdEmpty, posId = " + posId + ", info = " + info);
 
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("rewardAdCode", mRewardAdCode);
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mPkgName, ext));
+            }catch (Exception e){}
+
             loading = false;
             mAdLoadState = AdLoadState.RewardFailed;
 
@@ -278,14 +288,6 @@ public class AdLoader {
 
             loadExtAd();
 
-            try {
-                //发送打点事件
-                HashMap ext = new HashMap<>();
-                ext.put("rewardAdCode", mRewardAdCode);
-                ext.put("posId", posId);
-                ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mPkgName, ext));
-            }catch (Exception e){}
         }
     };
 
@@ -294,6 +296,14 @@ public class AdLoader {
             return;
         }
 
+        try {
+            //发送打点事件
+            HashMap ext = new HashMap<>();
+            ext.put("extAdCode", this.mExtAdCode);
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_LOADING, mPkgName, ext));
+        }catch (Exception e){}
+
+
         //加载插屏广告
         mInterstitialWorker = ZadSdkApi.getInterstitialAdWorker(this.mActivity, mZadObserver, mExtAdCode);
         if (mInterstitialWorker != null) {
@@ -301,12 +311,6 @@ public class AdLoader {
             loading = true;
         }
 
-        try {
-            //发送打点事件
-            HashMap ext = new HashMap<>();
-            ext.put("extAdCode", this.mExtAdCode);
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_EXT_LOADING, mPkgName, ext));
-        }catch (Exception e){}
     }
 
     private View extAdView = null;
