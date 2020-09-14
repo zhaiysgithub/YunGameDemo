@@ -60,16 +60,16 @@ publishing {
 //        }
         ZADSdk(MavenPublication) {
             groupId 'kptech.game.kit'
-            version '3.3.3244.6'
+            version '3.3.3247.6'
             artifactId 'ZADSdk'
-            artifact("../app/libs/ZADSdk-3.3.3244.6.aar")
+            artifact("../app/libs/ZADSdk-3.3.3247.6.aar")
         }
-        MsaMdid(MavenPublication) {
-            groupId 'kptech.game.kit'
-            version '1.0.10'
-            artifactId 'msa_mdid'
-            artifact("../app/libs/miit_mdid_1.0.10.aar")
-        }
+//        MsaMdid(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '1.0.10'
+//            artifactId 'msa_mdid'
+//            artifact("../app/libs/miit_mdid_1.0.10.aar")
+//        }
     }
 //    repositories {
 //        maven {
