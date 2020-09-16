@@ -5,8 +5,8 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
 //        applicationId "com.kptech.game.demo"
-        applicationId "com.zmeng.newspaper"
-//        applicationId "com.opos.mobaddemo"
+//        applicationId "com.zmeng.newspaper"
+        applicationId "com.netease.cloudmusic"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 3

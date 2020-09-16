@@ -46,6 +46,7 @@ public class AdLoader {
     private Activity mActivity;
     private String mRewardAdCode;
     private String mExtAdCode;
+    private String mFeedAdCode;
 
     private AdLoadState mAdLoadState = AdLoadState.unload;  //0未加载，1加载中，2 加载成功，3加载失败
     private AdLoadState mExtLoadState = AdLoadState.unload;
@@ -81,6 +82,10 @@ public class AdLoader {
 
     public void setExtAdCode(String extAdCode) {
         this.mExtAdCode = extAdCode;
+    }
+
+    public void setFeedAdCode(String feedAdCode) {
+        this.mFeedAdCode = feedAdCode;
     }
 
     public void destory(){

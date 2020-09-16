@@ -32,7 +32,6 @@ public class DeviceControl {
     private GameInfo mGameInfo;
     private JSONObject mDeviceToken;
     private AdManager mAdManager;
-    private AdLoader mAdLoader;
 
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
@@ -45,29 +44,8 @@ public class DeviceControl {
         parseDeviceToken();
     }
 
-//    private static final int MSG_SEND_EVENT_PLAY_TIME = 1;
-//    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-//        @Override
-//        public void handleMessage(@NonNull Message msg) {
-//            switch (msg.what){
-//                case MSG_SEND_EVENT_PLAY_TIME:
-//                    //发送打点事件
-////                    try {
-////                        Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
-////                        HashMap ext = new HashMap<>();
-////                        ext.put("code", code);
-////                        ext.put("msg", msg);
-////                        event.setExt(ext);
-////                        MobclickAgent.sendEvent(event);
-////                    }catch (Exception e){}
-//                break;
-//            }
-//
-//        }
-//    };
-
-    public void setAdLoader(AdLoader adLoader) {
-        this.mAdLoader = adLoader;
+    public void setAdManager(AdManager adManager) {
+        this.mAdManager = adManager;
     }
 
     private void parseDeviceToken(){
@@ -77,12 +55,6 @@ public class DeviceControl {
             if (deviceTokenObj!=null && deviceTokenObj.has("token")){
                 String tokenStr = deviceTokenObj.getString("token");
                 JSONObject tokenObject = new JSONObject(tokenStr);
-//                if (tokenObject!=null && tokenObject.has("token")){
-//                    String subTokenStr = tokenObject.getString("token");
-//                    JSONObject subTokenObject = new JSONObject(subTokenStr);
-////                    tokenObject.put("token", subTokenObject);
-//                    deviceTokenObj.put("subtoken", subTokenObject);
-//                }
 
                 mDeviceToken = tokenObject;
             }
@@ -146,44 +118,43 @@ public class DeviceControl {
         //连接设备
         MsgManager.start(activity, mDeviceControl.getDeviceToken());
 
-        if (mAdManager != null){
-            mAdManager.destory();
-        }
+        //加载广告
+        if (this.mAdManager != null){
+            this.mAdManager.loadGameAd(GameBoxManager.mCorpID, this.mGameInfo, new IAdCallback<String>() {
+                @Override
+                public void onAdCallback(String msg, int code) {
+                    switch (code){
+                        //点击取消
+                        case AdManager.CB_AD_CANCELED:
+                            if (callback!=null){
+                                callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
+                            }
+                            break;
+                        //加载广告弹窗
+                        case AdManager.CB_AD_LOADING:
+                            //显示广告
+                            if (callback!=null){
+                                callback.onAPICallback("", APIConstants.AD_LOADING);
+                            }
+                            break;
+                        //激励视频广告加载失败
+                        case AdManager.CB_AD_FAILED:
+                        //其它状态，加载游戏
+                        default:
+                            if (callback!=null){
+                                callback.onAPICallback("", APIConstants.AD_FINISHED);
+                            }
+                            //运行游戏
+                            execStartGame(activity, res, callback);
+                            break;
 
-        mAdManager = new AdManager(activity);
-        mAdManager.setAdLoader(this.mAdLoader);
-        mAdManager.setAdCallback(new IAdCallback<String>() {
-            @Override
-            public void onAdCallback(String msg, int code) {
-                switch (code){
-                    //点击取消
-                    case AdManager.CB_AD_CANCELED:
-                        if (callback!=null){
-                            callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
-                        }
-                        break;
-                    //加载广告弹窗
-                    case AdManager.CB_AD_LOADING:
-                        //显示广告
-                        if (callback!=null){
-                            callback.onAPICallback("", APIConstants.AD_LOADING);
-                        }
-                        break;
-                    //激励视频广告加载失败
-                    case AdManager.CB_AD_FAILED:
-                    //其它状态，加载游戏
-                    default:
-                        if (callback!=null){
-                            callback.onAPICallback("", APIConstants.AD_FINISHED);
-                        }
-                        //运行游戏
-                        execStartGame(activity, res, callback);
-                        break;
-
+                    }
                 }
-            }
-        });
-        mAdManager.loadGameAd(GameBoxManager.mCorpID, this.mGameInfo);
+            });
+        }else {
+            //运行游戏
+            execStartGame(activity, res, callback);
+        }
     }
 
     long playStartTime = 0;
@@ -253,7 +224,6 @@ public class DeviceControl {
         mDeviceControl.stopGame();
 
         try {
-            mAdLoader = null;
             if (mAdManager != null){
                 mAdManager.destory();
             }

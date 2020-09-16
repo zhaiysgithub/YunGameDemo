@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.zad.sdk.Oapi.ZadSdkApi;
 
 import org.json.JSONArray;
@@ -11,7 +13,14 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import kptech.game.kit.GameBox;
+import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.ad.loader.FeedAdLoader;
+import kptech.game.kit.ad.loader.IAdLoader;
+import kptech.game.kit.ad.loader.IAdLoaderCallback;
+import kptech.game.kit.ad.loader.RewardAdLoader;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -22,7 +31,7 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.ad.view.AdRemindDialog;
 
-public class AdManager implements IAdCallback {
+public class AdManager {
     private static final Logger logger = new Logger("AdManager") ;
 
     //取消显示
@@ -38,8 +47,10 @@ public class AdManager implements IAdCallback {
     //显示弹窗
     public static final int CB_AD_LOADING = 6;
 
+    public static boolean adEnable = true;
     public static String rewardCode = null;
     public static String extCode = null;
+    public static String feedCode = "ZM_SDKAD_1_00107";
     public static boolean init(Application application){
         boolean ret = false;
 
@@ -69,6 +80,8 @@ public class AdManager implements IAdCallback {
                                 rewardCode = code;
                             } else if ("interstitial".equals(type)) {
                                 extCode = code;
+                            }else if("feed".equals(type)){
+                                feedCode = code;
                             }
                         }
                     }catch (Exception e){
@@ -84,6 +97,8 @@ public class AdManager implements IAdCallback {
                     logger.error(e.getMessage());
                 }
             }
+        }else {
+            AdManager.adEnable = false;
         }
 
         try {
@@ -96,35 +111,131 @@ public class AdManager implements IAdCallback {
         return ret;
     }
 
-    private IAdCallback mAdCallback;
-    public void setAdCallback(IAdCallback adCallback) {
-        this.mAdCallback = adCallback;
-    }
 
-    private AdLoader mAdLoader;
-    public void setAdLoader(AdLoader adLoader) {
-        this.mAdLoader = adLoader;
-    }
+    private static final String AD_TYPE_REWARD = "reward";
+    private static final String AD_TYPE_FEED = "feed";
+
+    private static final int LOAD_STATE_NONE = 0;
+    private static final int LOAD_STATE_START = 1;
+    private static final int LOAD_STATE_SUCCESS = 2;
+    private static final int LOAD_STATE_FAILED = 3;
 
     private Activity mActivity;
+    private IAdCallback mAdCallback;
+
+    private int loadState = LOAD_STATE_NONE; //0未加载，1加载中，2加载成功，3加载失败
+    private boolean waitingShow = false;
+
+    private String mPackageName = null;
+
+    private IAdLoader mLoader = null;
+
     public AdManager(Activity activity){
         this.mActivity = activity;
     }
 
-    public void loadGameAd(String corpId, final GameInfo gameInfo){
-        try {
-            //手动设置为不显示广告
-            if (gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
-                if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_DISABLED);
+    public void setPackageName(String packageName) {
+        this.mPackageName = packageName;
+    }
+
+    public void prepareAd(){
+        loadAd(AD_TYPE_REWARD);
+    }
+
+    private synchronized void loadAd(String type){
+        if (mLoader != null){
+            mLoader.destory();
+        }
+
+        if (type == AD_TYPE_REWARD){
+            mLoader =  new RewardAdLoader(AdManager.rewardCode);
+        }else if (type == AD_TYPE_FEED){
+            mLoader = new FeedAdLoader(AdManager.feedCode);
+        }
+
+        if (mLoader != null){
+            loadState = LOAD_STATE_START;
+            mLoader.setPkgName(mPackageName);
+            mLoader.setLoaderCallback(mAdLoaderCallback);
+            mLoader.loadAd(mActivity);
+        }else {
+            loadState = LOAD_STATE_FAILED;
+            //加载失败
+            if (mAdCallback!=null){
+                mAdCallback.onAdCallback("", CB_AD_FAILED);
+            }
+        }
+
+    }
+
+    private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
+
+        @Override
+        public void onAdReady() {
+            loadState = LOAD_STATE_SUCCESS;
+
+            if (waitingShow){
+                //显示广告
+                if (mLoader != null){
+                    mLoader.showAd();
                 }
+            }
+        }
+
+        @Override
+        public void onAdClose() {
+            if (mAdCallback!=null){
+                mAdCallback.onAdCallback("", CB_AD_PASSED);
+            }
+        }
+
+        @Override
+        public void onAdFail() {
+            //判断是否要加载另一种
+            if (mLoader != null && mLoader instanceof RewardAdLoader){
+                loadAd(AD_TYPE_FEED);
                 return;
             }
 
-            //没有广告信息时不显示广告
-            if (mAdLoader == null){
+            loadState = LOAD_STATE_FAILED;
+            //加载失败
+            if (mAdCallback!=null){
+                mAdCallback.onAdCallback("", CB_AD_FAILED);
+            }
+        }
+    };
+
+    private synchronized void showAd(){
+        waitingShow = true;
+        if (loadState == 2){
+            //显示广告
+            if (mLoader != null){
+                mLoader.showAd();
+            }
+
+        }else if (loadState == 3){
+            //广告加载失败
+            if (mAdCallback!=null){
+                mAdCallback.onAdCallback("", CB_AD_FAILED);
+            }
+
+        }else if (loadState == 1){
+            //广告加载中，什么都不做
+
+        }else {
+            //广告未加载,开始加载
+            loadAd(AD_TYPE_REWARD);
+        }
+    }
+
+    public void loadGameAd(String corpId, final GameInfo gameInfo, IAdCallback adCallback){
+        this.mAdCallback = adCallback;
+
+        try {
+            //手动设置为不显示广告
+            if (!AdManager.adEnable || gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
                 if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_FAILED);
+                    mAdCallback.onAdCallback("", CB_AD_DISABLED);
                 }
                 return;
             }
@@ -146,7 +257,7 @@ public class AdManager implements IAdCallback {
             //直接显示广告，不用请求服务器
             if (gameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){
                 //显示广告弹窗
-                showAdRemindDialog(gameInfo.pkgName);
+                showAdRemindDialog();
                 return;
             }
 
@@ -156,7 +267,8 @@ public class AdManager implements IAdCallback {
                 public void onResult(GameInfo game, int code) {
                     if (game!=null && game.showAd == 1){
                         //显示广告弹窗
-                        showAdRemindDialog(gameInfo.pkgName);
+                        showAdRemindDialog();
+
                     }else {
                         //广告关闭
                         if (mAdCallback!=null){
@@ -176,16 +288,9 @@ public class AdManager implements IAdCallback {
         }
     }
 
-
     //显示广告弹窗
-    private void showAdRemindDialog(final String pkgName) {
+    private void showAdRemindDialog() {
         try {
-            //检测是否已经加载到广告
-//            if(mAdLoader.getRewardState() == AdLoader.AdLoadState.RewardFailed){
-//                //如果加载失败，则不弹出窗口
-//
-//            }
-
             new AdRemindDialog(mActivity)
                     .setOnCancelListener(new View.OnClickListener() {
                         @Override
@@ -200,10 +305,7 @@ public class AdManager implements IAdCallback {
                         @Override
                         public void onClick(View view) {
                             //显示广告按钮
-                            if (mAdLoader!=null){
-                                mAdLoader.setAdCallback(AdManager.this);
-                                mAdLoader.showAd();
-                            }
+                            showAd();
                         }
                     })
                     .show();
@@ -212,32 +314,31 @@ public class AdManager implements IAdCallback {
         }
     }
 
-    @Override
-    public void onAdCallback(Object msg, int code) {
-        switch (code){
-            case AdLoader.ADSTATE_CLOSE:
-                //用户取消，不进入游戏
-                if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_CANCELED);
-                }
-                break;
-            case AdLoader.ADSTATE_FAILED:
-                if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_FAILED);
-                }
-                break;
-            case AdLoader.ADSTATE_VERIFY:
-                if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_PASSED);
-                }
-                break;
-            default:
-                if (mAdCallback!=null){
-                    mAdCallback.onAdCallback("", CB_AD_PASSED);
-                }
-                break;
-        }
-    }
+//    public void onAdCallback(Object msg, int code) {
+//        switch (code){
+//            case AdLoader.ADSTATE_CLOSE:
+//                //用户取消，不进入游戏
+//                if (mAdCallback!=null){
+//                    mAdCallback.onAdCallback("", CB_AD_CANCELED);
+//                }
+//                break;
+//            case AdLoader.ADSTATE_FAILED:
+//                if (mAdCallback!=null){
+//                    mAdCallback.onAdCallback("", CB_AD_FAILED);
+//                }
+//                break;
+//            case AdLoader.ADSTATE_VERIFY:
+//                if (mAdCallback!=null){
+//                    mAdCallback.onAdCallback("", CB_AD_PASSED);
+//                }
+//                break;
+//            default:
+//                if (mAdCallback!=null){
+//                    mAdCallback.onAdCallback("", CB_AD_PASSED);
+//                }
+//                break;
+//        }
+//    }
 
     public void closeAd() {
         //关闭广告
@@ -246,12 +347,7 @@ public class AdManager implements IAdCallback {
 
     public void destory() {
         try {
-            if (mAdLoader!=null){
-                mAdLoader.destory();
-            }
             mAdCallback = null;
-            mAdLoader = null;
-            mActivity = null;
         }catch (Exception e){
             logger.error("destory error:"+e.getMessage());
         }

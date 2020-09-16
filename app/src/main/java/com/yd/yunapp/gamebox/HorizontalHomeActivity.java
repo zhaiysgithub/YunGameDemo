@@ -9,10 +9,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -37,6 +39,8 @@ import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.activity.GamePlay;
+import kptech.game.kit.ad.AdManager;
+import kptech.game.kit.ad.IAdCallback;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,13 +66,28 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
+    final String corpId = "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_main);
         mGameInfos = new LinkedHashMap<>();
         initView();
-        GameBox.init(getApplication(),"2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
+        GameBox.init(getApplication(),corpId);
+
+        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
+            GameBoxManager.getInstance(this).init(getApplication(), corpId, new IAdCallback<String>() {
+                @Override
+                public void onAdCallback(String msg, int code) {
+                    if (code == 1){
+
+                    }else {
+                        //初始化失败，退出页面
+                        Toast.makeText(HorizontalHomeActivity.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
 
         //下载类
         mGameDownloader = new GameDownloader() {
@@ -130,8 +149,22 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_ON;
         info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+//
+//        gameBox.playGame(HorizontalHomeActivity.this,info);
 
-        gameBox.playGame(HorizontalHomeActivity.this,info);
+        //预加载广告
+        final AdManager adManager = AdManager.adEnable ? new AdManager(this) : null;
+        if (adManager!=null){
+            adManager.setPackageName(info.pkgName);
+            adManager.prepareAd();
+        }
+
+        adManager.loadGameAd(corpId, info, new IAdCallback() {
+            @Override
+            public void onAdCallback(Object msg, int code) {
+                Log.i("HorizontalHomeActivity", ""+code);
+            }
+        });
     }
 
     private void initView() {

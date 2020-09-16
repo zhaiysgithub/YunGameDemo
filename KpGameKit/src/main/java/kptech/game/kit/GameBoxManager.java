@@ -190,7 +190,6 @@ public class GameBoxManager {
         tmpCH = ch;
     }
 
-
     /**
      * 初始化gameBox
      */
@@ -280,12 +279,13 @@ public class GameBoxManager {
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}
 
+
         //预加载广告
-        final AdLoader adLoader = new AdLoader(activity);
-        adLoader.setExtAdCode(AdManager.extCode);
-        adLoader.setRewardAdCode(AdManager.rewardCode);
-        adLoader.setPackageName(inf.pkgName);
-        adLoader.loadAd();
+        final AdManager adManager = AdManager.adEnable ? new AdManager(activity) : null;
+        if (adManager!=null){
+            adManager.setPackageName(inf.pkgName);
+            adManager.prepareAd();
+        }
 
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
         manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
@@ -295,7 +295,7 @@ public class GameBoxManager {
                 DeviceControl control = null;
                 if (deviceControl!=null) {
                     control = new DeviceControl(deviceControl, inf);
-                    control.setAdLoader(adLoader);
+                    control.setAdManager(adManager);
                 }
 
                 if (callback!=null){
