@@ -50,7 +50,7 @@ public class AdManager {
     public static boolean adEnable = true;
     public static String rewardCode = null;
     public static String extCode = null;
-    public static String feedCode = "ZM_SDKAD_1_00107";
+    public static String feedCode = null;
     public static boolean init(Application application){
         boolean ret = false;
 
@@ -139,33 +139,45 @@ public class AdManager {
     }
 
     public void prepareAd(){
-        loadAd(AD_TYPE_REWARD);
+        String adType = null;
+        if (AdManager.rewardCode != null){
+            adType = AD_TYPE_REWARD;
+        }else if (AdManager.feedCode != null){
+            adType = AD_TYPE_FEED;
+        }
+
+        loadAd(adType);
     }
 
     private synchronized void loadAd(String type){
-        if (mLoader != null){
-            mLoader.destory();
-        }
-
-        if (type == AD_TYPE_REWARD){
-            mLoader =  new RewardAdLoader(AdManager.rewardCode);
-        }else if (type == AD_TYPE_FEED){
-            mLoader = new FeedAdLoader(AdManager.feedCode);
-        }
-
-        if (mLoader != null){
-            loadState = LOAD_STATE_START;
-            mLoader.setPkgName(mPackageName);
-            mLoader.setLoaderCallback(mAdLoaderCallback);
-            mLoader.loadAd(mActivity);
-        }else {
-            loadState = LOAD_STATE_FAILED;
-            //加载失败
-            if (mAdCallback!=null){
-                mAdCallback.onAdCallback("", CB_AD_FAILED);
+        try {
+            if (mLoader != null){
+                mLoader.destory();
             }
+
+            if (type == AD_TYPE_REWARD){
+                mLoader =  new RewardAdLoader(AdManager.rewardCode);
+            }else if (type == AD_TYPE_FEED){
+                mLoader = new FeedAdLoader(AdManager.feedCode);
+            }
+
+            if (mLoader != null){
+                loadState = LOAD_STATE_START;
+                mLoader.setPkgName(mPackageName);
+                mLoader.setLoaderCallback(mAdLoaderCallback);
+                mLoader.loadAd(mActivity);
+                return;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
+        loadState = LOAD_STATE_FAILED;
+        //加载失败
+        if (mAdCallback!=null){
+            mAdCallback.onAdCallback("", CB_AD_FAILED);
+        }
     }
 
     private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
@@ -183,9 +195,9 @@ public class AdManager {
         }
 
         @Override
-        public void onAdClose() {
+        public void onAdClose(boolean b) {
             if (mAdCallback!=null){
-                mAdCallback.onAdCallback("", CB_AD_PASSED);
+                mAdCallback.onAdCallback("", b ? CB_AD_PASSED : CB_AD_CANCELED);
             }
         }
 
@@ -193,8 +205,10 @@ public class AdManager {
         public void onAdFail() {
             //判断是否要加载另一种
             if (mLoader != null && mLoader instanceof RewardAdLoader){
-                loadAd(AD_TYPE_FEED);
-                return;
+                if (AdManager.feedCode != null){
+                    loadAd(AD_TYPE_FEED);
+                    return;
+                }
             }
 
             loadState = LOAD_STATE_FAILED;
@@ -212,19 +226,17 @@ public class AdManager {
             if (mLoader != null){
                 mLoader.showAd();
             }
-
         }else if (loadState == 3){
             //广告加载失败
             if (mAdCallback!=null){
                 mAdCallback.onAdCallback("", CB_AD_FAILED);
             }
-
         }else if (loadState == 1){
             //广告加载中，什么都不做
 
         }else {
             //广告未加载,开始加载
-            loadAd(AD_TYPE_REWARD);
+            prepareAd();
         }
     }
 
@@ -245,6 +257,14 @@ public class AdManager {
             if (adVerify > 0) {
                 if (mAdCallback!=null){
                     mAdCallback.onAdCallback("", CB_AD_PASSED);
+                }
+                return;
+            }
+
+            //判断广告是否已经加载失败，加载失败后就不弹出弹窗
+            if (loadState == LOAD_STATE_FAILED){
+                if (mAdCallback!=null){
+                    mAdCallback.onAdCallback("", CB_AD_FAILED);
                 }
                 return;
             }
@@ -312,37 +332,6 @@ public class AdManager {
         }catch (Exception e){
             throw e;
         }
-    }
-
-//    public void onAdCallback(Object msg, int code) {
-//        switch (code){
-//            case AdLoader.ADSTATE_CLOSE:
-//                //用户取消，不进入游戏
-//                if (mAdCallback!=null){
-//                    mAdCallback.onAdCallback("", CB_AD_CANCELED);
-//                }
-//                break;
-//            case AdLoader.ADSTATE_FAILED:
-//                if (mAdCallback!=null){
-//                    mAdCallback.onAdCallback("", CB_AD_FAILED);
-//                }
-//                break;
-//            case AdLoader.ADSTATE_VERIFY:
-//                if (mAdCallback!=null){
-//                    mAdCallback.onAdCallback("", CB_AD_PASSED);
-//                }
-//                break;
-//            default:
-//                if (mAdCallback!=null){
-//                    mAdCallback.onAdCallback("", CB_AD_PASSED);
-//                }
-//                break;
-//        }
-//    }
-
-    public void closeAd() {
-        //关闭广告
-
     }
 
     public void destory() {

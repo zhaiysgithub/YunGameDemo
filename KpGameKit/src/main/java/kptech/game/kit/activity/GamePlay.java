@@ -59,7 +59,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private Logger logger = new Logger("GamePlay");
 
     private static final int MSG_SHOW_ERROR = 1;
-    private static final int PROGRESS_BAR_ = 2;
 
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
@@ -82,8 +81,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private int mErrorCode = -1;
     private String mErrorMsg = null;
 
-    private int mPro = 0;
-    private boolean mPuasePro = false;
+//    private int mPro = 0;
+//    private boolean mPuasePro = false;
 
 //    private GameDownloader mGameDownloader;
 //    private GameBox mGameBox;
@@ -98,38 +97,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             switch (msg.what) {
                 case MSG_SHOW_ERROR:
                     showError((String) msg.obj);
-                    break;
-                case PROGRESS_BAR_:
-
-                    if (msg.obj != null){
-                        int obj = (int) msg.obj;
-                        if (obj > mPro){
-                            mPro = obj;
-                        }
-                    }else {
-                        int last =  100 - mPro; //剩余长度
-                        int in = last / 10;
-                        if (in <= 0){
-                            in = 1;
-                        }
-
-                        mPro += in;
-                    }
-
-                    if (mPro > 100) {
-                        mPro = 100;
-                    }
-
-                    Log.i("GameRunTime", "Progress: "+mPro);
-//                    mLoadingPb.setProgress(mPro);
-
-                    mLoadingView.setProgress(mPro);
-
-                    //延时更新进度
-                    if (!mPuasePro && mPro < 100){
-                        //计算延时时间
-                        mHandler.sendEmptyMessageDelayed(PROGRESS_BAR_, 300);
-                    }
                     break;
             }
         }
@@ -228,12 +195,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mErrorView.setOnDownListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                downloadApk(true);
-
-//                //发送下载广播
-//                Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Action");
-//                intent.putExtra(EXTRA_GAME, mGameInfo);
-//                GamePlay.this.sendBroadcast(intent);
 
                 downloadApk();
 
@@ -365,7 +326,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
 
     private void checkInitCloudPhoneSDK(){
-        mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
         //判断是否已经初始化
         if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
             //初始化
@@ -376,7 +336,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 @Override
                 public void onAdCallback(String msg, int code) {
                     if (code == 1){
-                        mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 15));
                         startCloudPhone();
                     }else {
                         //初始化失败，退出页面
@@ -393,16 +352,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         startCloudPhone();
     }
 
-//    long mApplyTime = 0;
-//    long mApplySuccTime = 0;
-//    long mStartTime = 0;
-//    long mStartSuccTime = 0;
-
     private void startCloudPhone() {
         mLoadingView.setText("正在连接设备...");
-//        mApplyTime = new Date().getTime();
-//        Log.i("GameRunTime",this.mGameInfo.name+" ,applyCloudDevice " + mApplyTime);
-
         GameBoxManager.getInstance(this).applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(DeviceControl deviceControl, final int code) {
@@ -411,11 +362,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     @Override
                     public void run() {
                         if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-
-//                            mApplySuccTime = new Date().getTime();
-//                            Log.i("GameRunTime","applyCloudDeviceSuccess " + mApplySuccTime + ", len:"+ (mApplySuccTime-mApplyTime));
-
-                            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 30));
                             if (!isFinishing()) {
                                 startGame();
                             } else {
@@ -426,7 +372,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                             }
                         }else {
                             logger.error("申请试玩设备失败,code = " + code);
-//                            exitPlay();
+
                             if (mDeviceControl != null) {
                                 mDeviceControl.stopGame();
                             }
@@ -444,7 +390,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
 
     private void startGame() {
-        mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 40));
         mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
             @Override
             public void onSensorSamper(int sensor, int state) {
@@ -460,9 +405,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         //设置前后台无操作超时时间
         mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
-
-        // 发送消息，20s后弹出变下边玩按钮
-//         mHandler.sendEmptyMessageDelayed(MSG_REMIND_PLAYING_DOWNLOAD, 20 * 1000);
     }
 
     @Override
@@ -471,32 +413,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             logger.info("apiResult = " + msg);
         }
         if (code == APIConstants.AD_LOADING){
-            //暂停进度条
-            mPuasePro = true;
-
             mLoadingView.setText("正在加载广告...");
-
         }else if (code == APIConstants.AD_FINISHED){
-            //重启进度条
-            mPuasePro = false;
-            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 70));
-
             mLoadingView.setText("正在加载游戏...");
-
-//            mStartTime = new Date().getTime();
-//            Log.i("GameRunTime","startGame " + mStartTime + ", len:"+ (mStartTime - mApplySuccTime));
-
         }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
             this.mErrorMsg = null;
-
-            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 100));
-
-//            mStartSuccTime = new Date().getTime();
-//            Log.i("GameRunTime","startGameSuccess:" + mStartSuccTime + ", len:"+ (mStartSuccTime - mStartTime));
-//            Log.i("GameRunTime",this.mGameInfo.name+", 总时长 " + (mStartSuccTime - mApplyTime));
-//
-//            Toast.makeText(this,"获取设备："+(mApplySuccTime-mApplyTime)+"，启动游戏"+(mStartSuccTime - mStartTime)+"，总耗时：" + (mStartSuccTime - mApplyTime) + "", Toast.LENGTH_LONG).show();
-
             mDeviceControl.setPlayListener(this);
             playSuccess();
         } else {

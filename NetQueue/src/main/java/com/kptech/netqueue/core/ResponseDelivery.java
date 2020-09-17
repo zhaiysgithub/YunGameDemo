@@ -31,7 +31,11 @@ class ResponseDelivery implements Executor {
 
             @Override
             public void run() {
-                request.deliveryResponse(response);
+                try {
+                    request.deliveryResponse(response);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         };
 

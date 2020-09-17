@@ -60,6 +60,10 @@ public class Event {
      */
     Map ext;
     /**
+     * 版本号
+     */
+    String ver = BuildConfig.VERSION_NAME;
+    /**
      *
      */
     String datafrom = "androidapp";
@@ -96,6 +100,7 @@ public class Event {
             obj.put("actionresult", this.actionResult);
             obj.put("errmsg", this.errMsg != null ? this.errMsg : "");
             obj.put("traceid", this.traceId != null ? this.traceId : "");
+            obj.put("h5sdkversion", this.ver);
             obj.put("datafrom", this.datafrom);
             obj.put("debug", this.debug);
             JSONObject extObj = null;

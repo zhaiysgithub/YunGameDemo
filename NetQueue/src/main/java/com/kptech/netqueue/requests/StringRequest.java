@@ -11,7 +11,12 @@ public class StringRequest extends Request<String> {
 
     @Override
     public String parseResponse(Response response) {
-        return new String(response.getRawData());
+        try {
+            return new String(response.getRawData());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

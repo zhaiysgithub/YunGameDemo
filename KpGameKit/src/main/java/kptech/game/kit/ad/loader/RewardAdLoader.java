@@ -83,9 +83,9 @@ public class RewardAdLoader implements IAdLoader{
 
             if (mCallback!=null){
                 if (mRewardVerify) {
-                    mCallback.onAdClose();
+                    mCallback.onAdClose(true);
                 }else {
-                    mCallback.onAdClose();
+                    mCallback.onAdClose(false);
                 }
             }
 
@@ -123,6 +123,7 @@ public class RewardAdLoader implements IAdLoader{
         @Override
         public void onPlayComplete(String posId, String info) {
             logger.info("onPlayComplete(),   posId = " + posId + ", info = " + info);
+            mRewardVerify = true;
 
             try {
                 //发送打点事件

@@ -187,11 +187,6 @@ public class DeviceControl {
                     }catch (Exception e){}
                 }
 
-                //关闭插屏广告
-                if(mAdManager!=null){
-                    mAdManager.closeAd();
-                }
-
                 //成功连接游戏,删除激励广告标记
                 int adVerify = ProferencesUtils.getIng(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
                 if (adVerify > 0 && (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS)){

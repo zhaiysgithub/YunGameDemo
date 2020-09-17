@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
@@ -53,7 +54,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
                 String ch = dObj.has("ch") ? dObj.getString("ch") : null;
                 String paas =  dObj.has("paas") ? dObj.getString("paas") : null;
                 String adJson = dObj.has("adJson") ? dObj.getString("adJson") : null;
-                String adEnable = dObj.has("adEnable") ? dObj.getString("adEnable") : null;
+                String adEnable = dObj.has("adEnable2") ? dObj.getString("adEnable2") : null;
 
                 //缓存数据
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_KEY, ak);
@@ -94,6 +95,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
             sb.append("?corpKey="+corpKey);
+            sb.append("&apiVer=" + BuildConfig.API_VERSION);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求

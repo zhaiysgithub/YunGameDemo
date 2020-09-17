@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
@@ -24,7 +25,7 @@ public class RequestTask {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
-//            sb.append("?currentPage="+page);
+            sb.append("?apiVer=" + BuildConfig.API_VERSION);
 //            sb.append("&pageSize="+limit);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();

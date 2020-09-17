@@ -19,10 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.R;
-import kptech.game.kit.ad.view.AdFeedDialog;
 import kptech.game.kit.ad.view.AdFeedPopup;
-import kptech.game.kit.ad.view.AdPopupWindow;
-import kptech.game.kit.ad.view.TestPopupWindow;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -52,7 +49,6 @@ public class FeedAdLoader implements IAdLoader {
 
     @Override
     public void destory() {
-
     }
 
     @Override
@@ -165,37 +161,19 @@ public class FeedAdLoader implements IAdLoader {
             return;
         }
 
-//        int[] a = new int[0];
-//        TestPopupWindow pop = new TestPopupWindow(mActivity,a,adBean);
-//        pop.showAtLocation(mActivity.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
-
-//        Dialog mMenuDialog = new AdFeedDialog(mActivity, adBean);
-//        mMenuDialog.show();
-
-
-
         try {
-//            PopupWindow pop = new PopupWindow(mActivity);
-//            TestLayout layout = new TestLayout(mActivity, adBean);
-//            pop.setContentView(layout);
-//            // 设置SelectPicPopupWindow弹出窗体的宽
-//            pop.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-//            // 设置SelectPicPopupWindow弹出窗体的高
-//            pop.setHeight(WindowManager.LayoutParams.MATCH_PARENT);//屏幕的高
             PopupWindow pop = new AdFeedPopup(mActivity, adBean);
             pop.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-
                     try {
                         //发送打点事件
                         HashMap ext = new HashMap<>();
                         MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_FEED_CLOSED, mPkgName, ext));
                     }catch (Exception e){}
 
-
                     if (mCallback!=null){
-                        mCallback.onAdClose();
+                        mCallback.onAdClose(true);
                     }
                 }
             });

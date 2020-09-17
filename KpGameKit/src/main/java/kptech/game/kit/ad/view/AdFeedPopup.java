@@ -33,8 +33,11 @@ public class AdFeedPopup extends PopupWindow {
         this.mActivity = activity;
 
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        rootView = (ViewGroup) inflater.inflate(R.layout.ad_popup_feed, null);
-        this.setContentView(rootView);
+
+
+        View view = inflater.inflate(R.layout.ad_popup_feed, null);
+        this.setContentView(view);
+        rootView = view.findViewById(R.id.zmt_item_ad_RelativeLayout1);
 
 
         //sdk > 21 解决 标题栏没有办法遮罩的问题
@@ -102,12 +105,13 @@ public class AdFeedPopup extends PopupWindow {
         zmtItemAdImageView43 = (ImageView) rootView.findViewById(R.id.zmt_item_ad_imageView43);
         zmtItemLogoImageView1 = (ImageView) rootView.findViewById(R.id.zmt_item_logo_imageView1);
         zmtItemAdvertisingTextView1 = (TextView) rootView.findViewById(R.id.zmt_item_advertising_textView1);
-        zmtItemCloseImageView1 = (ImageView) rootView.findViewById(R.id.zmt_item_close_imageView1);
+        zmtItemCloseImageView1 = (ImageView) getContentView().findViewById(R.id.zmt_item_close_imageView1);
     }
 
 
 
     private void renderFeedAdView(ZadFeedDataAdBean ad) {
+        int contentHeight = 320;
         switch (ad.getImageMode()) {
             case ZADFeedConstant.IMAGE_MODE_LARGE_IMG:
                 rlContent1.setVisibility(View.VISIBLE);
@@ -127,6 +131,9 @@ public class AdFeedPopup extends PopupWindow {
                     zmtItemAdImageView1.setVisibility(View.GONE);
                 }
                 setContent(ad, zmtItemAdTitleTextView1, zmtItemAdDesTextView1);
+
+                //计算高度
+                contentHeight = 320;
                 break;
             case ZADFeedConstant.IMAGE_MODE_VERTICAL_IMG:
                 rlContent1.setVisibility(View.VISIBLE);
@@ -141,6 +148,7 @@ public class AdFeedPopup extends PopupWindow {
                     }catch (Exception e){}
                 }
                 setContent(ad, zmtItemAdTitleTextView1, zmtItemAdDesTextView1);
+                contentHeight = 320;
                 break;
             case ZADFeedConstant.IMAGE_MODE_SMALL_IMG:
                 rlContent1.setVisibility(View.GONE);
@@ -152,6 +160,7 @@ public class AdFeedPopup extends PopupWindow {
                     }catch (Exception e){}
                 }
                 setContent(ad, zmtItemAdTitleTextView3, zmtItemAdDesTextView3);
+                contentHeight = 120;
                 break;
             case ZADFeedConstant.IMAGE_MODE_GROUP_IMG:
                 rlContent1.setVisibility(View.GONE);
@@ -165,6 +174,7 @@ public class AdFeedPopup extends PopupWindow {
                     }catch (Exception e){}
                 }
                 setContent(ad, zmtItemAdTitleTextView4, zmtItemAdDesTextView4);
+                contentHeight = 170;
                 break;
             case ZADFeedConstant.IMAGE_MODE_VIDEO:
                 rlContent1.setVisibility(View.VISIBLE);
@@ -175,6 +185,7 @@ public class AdFeedPopup extends PopupWindow {
                 zmtItemAdVideo5.setVisibility(View.VISIBLE);
                 zmtItemAdVideo5.addView(ad.getAdView());
                 setContent(ad, zmtItemAdTitleTextView1, zmtItemAdDesTextView1);
+                contentHeight = 320;
                 break;
         }
         if (!TextUtils.isEmpty(ad.getAdLogoUrl())) {
@@ -197,6 +208,12 @@ public class AdFeedPopup extends PopupWindow {
 
 //        View adview = ad.getAdView();
 //        adview.setBackgroundColor(Color.GREEN);
+
+        ViewGroup.LayoutParams lp = rootView.getLayoutParams();
+        lp.height = DensityUtil.dip2px(mActivity,contentHeight);
+//        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, DensityUtil.dip2px(mActivity,contentHeight));
+//        lp.addRule(RelativeLayout.CENTER_IN_PARENT,RelativeLayout.TRUE);
+        rootView.setLayoutParams(lp);
     }
 
     @Override

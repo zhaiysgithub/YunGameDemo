@@ -10,6 +10,9 @@ android {
         targetSdkVersion 29
         versionCode 10
         versionName "1.1.1.26"
+
+        //接口版本号
+        buildConfigField "Integer", "API_VERSION", '1'
     }
 
     buildTypes {
@@ -34,15 +37,12 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
-//    implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
-//    implementation 'kptech.game.kit:ZADSdk:3.3.3247.6@aar'
-//    implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
-
+    //    implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
+    //    implementation 'kptech.game.kit:ZADSdk:3.3.3247.6@aar'
+    //    implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
     implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
     implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
     implementation 'kptech.game.kit:ZADSdk:3.3.3230.3@aar'
-
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
@@ -52,7 +52,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
 }
 
 
