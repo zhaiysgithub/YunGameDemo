@@ -28,13 +28,25 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     private TextView mPlayBtn;
     private TextView mExitBtn;
     private TextView mAduioBtn;
+    private TextView mResizeBtn;
 
     private Dialog mMenuDialog;
     private View mMenuDialogContentView;
     private DeviceControl mDeviceControl;
     private boolean mAudioSwitch = true;
+    public boolean mVideoScale = true;
 
     private int systemUiVisibility = -1;
+
+    private VideoResizeListener mResizeClickListener;
+
+    public interface VideoResizeListener{
+        void onVideoResize(boolean scale);
+    }
+
+    public void setResizeClickListener(VideoResizeListener listener) {
+        this.mResizeClickListener = listener;
+    }
 
     public FloatMenuView(Context context) {
         super(context);
@@ -92,6 +104,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         mPlayBtn = (TextView) mMenuDialogContentView.findViewById(R.id.play);
         mExitBtn = (TextView) mMenuDialogContentView.findViewById(R.id.exit_play);
         mAduioBtn = (TextView) mMenuDialogContentView.findViewById(R.id.audio);
+        mResizeBtn = (TextView) mMenuDialogContentView.findViewById(R.id.resize);
 
         mAduioBtn.setOnClickListener(this);
         mExitBtn.setOnClickListener(this);
@@ -101,6 +114,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         mOrdianryBtn.setOnClickListener(this);
         mLsBtn.setOnClickListener(this);
         mAutoBtn.setOnClickListener(this);
+        mResizeBtn.setOnClickListener(this);
     }
 
     @Override
@@ -137,7 +151,18 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             mAudioSwitch = !mAudioSwitch;
             mDeviceControl.setAudioSwitch(mAudioSwitch);
             setSoundStyle(mAudioSwitch);
+        } else if (mResizeBtn == view){
+            mMenuDialog.dismiss();
+            mVideoScale = !mVideoScale;
+            if (mResizeClickListener!=null){
+                mResizeClickListener.onVideoResize(mVideoScale);
+            }
+            setResizeStyle(mVideoScale);
         }
+    }
+
+    private void setResizeStyle(boolean scale){
+        mResizeBtn.setText(scale ? "全屏显示画面":"按比例显示画面");
     }
 
     private void fullScreenImmersive(View view) {

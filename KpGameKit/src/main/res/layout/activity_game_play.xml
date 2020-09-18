@@ -4,7 +4,7 @@
     android:id="@+id/content_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000">
+    android:background="#000000">
 
     <!--<include-->
         <!--android:id="@+id/loading_ll"-->
@@ -20,6 +20,7 @@
         android:id="@+id/play_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:background="@color/common_white"
         android:visibility="gone">
     </FrameLayout>

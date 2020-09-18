@@ -8,6 +8,7 @@ import com.yd.yunapp.gamebox.permission.PermissionHandler;
 import org.xutils.x;
 
 import kptech.game.kit.APIConstants;
+import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 
 
@@ -42,6 +43,7 @@ public class DemoApplication extends Application {
         GameBoxManager.setDebug(true);
         // 配置ak sk 渠道
 //        GameBoxManager.setAppInfo(YOUR_AK, YOUR_SK, YOUR_CHANNEL);
+//        GameBoxManager.getInstance(this).init(this,null,null);
 
 //        GameBoxManager.setAppKey(APPKEY);
 

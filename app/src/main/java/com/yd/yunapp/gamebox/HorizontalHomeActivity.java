@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -77,7 +79,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameInfos = new LinkedHashMap<>();
         initView();
         GameBox.init(getApplication(),corpId);
-
+//
 //        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
 //            GameBoxManager.getInstance(this).init(getApplication(), corpId, new IAdCallback<String>() {
 //                @Override
@@ -145,6 +147,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     GameBox gameBox;
     //启动云游戏
     public void startGame(View view){
+
         GameInfo info = new GameInfo();
         info.gid = 1893;
         info.pkgName = "com.netease.tom.guopan";
@@ -152,7 +155,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_ON;
         info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-//
+
         gameBox.playGame(HorizontalHomeActivity.this,info);
 
         //预加载广告

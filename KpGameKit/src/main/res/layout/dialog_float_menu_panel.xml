@@ -57,6 +57,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
+        <TextView
+            android:id="@+id/resize"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:gravity="center"
+            android:text="全屏显示画面"
+            android:textColor="@color/common_white"
+            android:textSize="15dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.33dp"
+            android:background="#54ffffff" />
+
         <TextView
             android:id="@+id/audio"
             android:layout_width="match_parent"

@@ -34,12 +34,12 @@
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="3"/>
 
-
         <FrameLayout
             android:id="@+id/loading_containar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/common_dark">
+            android:background="@color/common_dark"
+            >
 
             <LinearLayout
                 android:id="@+id/fail_ll"

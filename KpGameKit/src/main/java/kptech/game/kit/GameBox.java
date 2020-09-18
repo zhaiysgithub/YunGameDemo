@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.Logger;
 
 public class GameBox {
@@ -54,9 +52,6 @@ public class GameBox {
             logger.error("playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
             return;
         }
-
-        //初始化事件基本信息
-        Event.createBaseEvent(activity, appKey);
 
         try {
             //判断本地是否已经安装

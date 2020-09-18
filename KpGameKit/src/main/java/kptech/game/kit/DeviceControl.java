@@ -1,6 +1,7 @@
 package kptech.game.kit;
 
 import android.app.Activity;
+import android.view.Display;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -424,6 +425,24 @@ public class DeviceControl {
      */
     public void setVideoOrientation(int orientation){
         mDeviceControl.setVideoOrientation(orientation);
+    }
+
+    public int[] getVideoSize() {
+        try {
+            if (mDeviceToken!=null && mDeviceToken.has("resolution")){
+                String str = mDeviceToken.getString("resolution");
+                String[] arr = str.split("_");
+                if (arr.length == 3){
+                    int w = Integer.parseInt(arr[1]);
+                    int h = Integer.parseInt(arr[2]);
+                    return new int[]{w, h};
+                }
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return new int[]{720, 1280};
     }
 
     /**

@@ -155,9 +155,9 @@ public class Event {
     private static Event base = null;
 
     public static void createBaseEvent(Context context, String corpId){
-        if (context!=null && corpId!=null){
+        if (context!=null){
             base = new Event();
-            base.clientId = corpId;
+            base.clientId = corpId != null ? corpId : mCorpKey;
             base.userId = getUserId(context);
             base.traceId = createTraceId();
         }

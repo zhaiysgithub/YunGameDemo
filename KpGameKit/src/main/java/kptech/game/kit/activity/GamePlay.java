@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.squareup.picasso.Picasso;
 
@@ -42,6 +45,7 @@ import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
+import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
@@ -60,6 +64,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private static final int MSG_SHOW_ERROR = 1;
 
+    private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
 
@@ -80,6 +85,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private int mErrorCode = -1;
     private String mErrorMsg = null;
+
+//    private boolean mVideoContainerScale = false;
 
 //    private int mPro = 0;
 //    private boolean mPuasePro = false;
@@ -119,6 +126,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mHardwareManager = new HardwareManager(this);
 
         try {
+            Event.createBaseEvent(this, mCorpID);
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
         }catch (Exception e){
@@ -157,9 +165,25 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //        mLoadingText = (TextView) findViewById(R.id.loading_txt);
 //        mLoadingPb = findViewById(R.id.loading_pb);
 
+//        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                resizeVideoContainer(!mVideoContainerScale);
+//            }
+//        });
+
+        mContentView = findViewById(R.id.content_view);
+
         mLoadingView = findViewById(R.id.loading_view);
 
         mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
+        mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
+            @Override
+            public void onVideoResize(boolean scale) {
+                resizeVideoContainer(scale);
+            }
+        });
+
         mVideoContainer = (FrameLayout) findViewById(R.id.play_container);
 
         mErrorView = findViewById(R.id.error_view);
@@ -390,6 +414,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
 
     private void startGame() {
+        //获取云手机分辨率，按比例显示画面
+        initVideoSize();
+
         mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
             @Override
             public void onSensorSamper(int sensor, int state) {
@@ -405,6 +432,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         //设置前后台无操作超时时间
         mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
+
+
     }
 
     @Override
@@ -491,7 +520,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         try{
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
-        }catch (Exception e){}
+        }catch (Exception e){
+        }
 
 //        if (mGameDownloader!=null){
 //            mGameDownloader.removeCallback(this);
@@ -500,7 +530,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         try{
             unregisterReceiver(mDownloadReceiver);
             mDownloadReceiver = null;
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
@@ -750,4 +780,85 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
 
+    int resizeWidth = 0;
+    int resizeHeight = 0;
+    private void initVideoSize(){
+        if (mDeviceControl == null){
+            return;
+        }
+        //获取云手机分辨率，按比例显示画面
+        int[] size = mDeviceControl.getVideoSize();
+        if (size!=null && size.length==2){
+            //视频尺寸
+            int vw = size[0];
+            int vh = size[1];
+
+            //屏幕尺寸
+            int sw = mContentView.getWidth();
+            int sh = mContentView.getHeight();
+
+            if ( sw<=0 || sh<=0 ){
+                sw = DensityUtil.getScreenWidth(this);
+                sh = DensityUtil.getScreenHeight(this);
+            }
+
+            //处理横竖屏
+            int screenWidth = sh < sw ? sh : sw;
+            int screenHeight = sh < sw ? sw : sh;
+            int videoWidth = vh < vw ? vh : vw;
+            int videoHeight = vh < vw ? vw : vh;
+
+            //宽高比
+            float videoScale = (float)videoWidth/(float)videoHeight;
+            float screenScale = (float)screenWidth/(float)screenHeight;
+
+            float widthScale = (float)videoWidth/(float)screenWidth;
+            float heightScale = (float)videoHeight/(float)screenHeight;
+
+            if (widthScale < heightScale){
+                resizeHeight = screenHeight;
+                resizeWidth = (int)(screenHeight * videoScale);
+            }else {
+                resizeWidth = screenWidth;
+                resizeHeight = (int)(screenWidth / videoScale);
+            }
+        }
+
+        resizeVideoContainer(mMenuView.mVideoScale);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        resizeVideoContainer(mMenuView.mVideoScale);
+    }
+
+    private synchronized void resizeVideoContainer(boolean scale){
+        if (scale){
+            Configuration mConfiguration = this.getResources().getConfiguration(); //获取设置的配置信息
+            int ori = mConfiguration.orientation; //获取屏幕方向
+            if (resizeWidth > 0 && resizeHeight > 0){
+                if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+                    //横屏
+                    ViewGroup.LayoutParams lp =  mVideoContainer.getLayoutParams();
+                    lp.width = resizeHeight;
+                    lp.height = resizeWidth;
+                    mVideoContainer.setLayoutParams(lp);
+                } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+                    //竖屏
+                    ViewGroup.LayoutParams lp =  mVideoContainer.getLayoutParams();
+                    lp.width = resizeWidth;
+                    lp.height = resizeHeight;
+                    mVideoContainer.setLayoutParams(lp);
+                }
+            }
+        }else {
+            //全屏
+            ViewGroup.LayoutParams lp =  mVideoContainer.getLayoutParams();
+            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            mVideoContainer.setLayoutParams(lp);
+        }
+
+    }
 }

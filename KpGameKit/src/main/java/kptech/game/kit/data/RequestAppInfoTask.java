@@ -95,7 +95,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
             sb.append("?corpKey="+corpKey);
-            sb.append("&apiVer=" + BuildConfig.API_VERSION);
+            sb.append("&apiVer=" + BuildConfig.VERSION_NAME);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求

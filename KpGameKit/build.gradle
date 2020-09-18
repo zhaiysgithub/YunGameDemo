@@ -10,9 +10,6 @@ android {
         targetSdkVersion 29
         versionCode 10
         versionName "1.1.1.26"
-
-        //接口版本号
-        buildConfigField "Integer", "API_VERSION", '1'
     }
 
     buildTypes {
