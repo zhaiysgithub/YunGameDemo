@@ -4,8 +4,8 @@ android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
     defaultConfig {
-//        applicationId "com.kptech.game.demo"
-        applicationId "com.zmeng.newspaper"
+        applicationId "com.lixg.hcalendar"
+//        applicationId "com.zmeng.newspaper"
 //        applicationId "com.netease.cloudmusic"
         minSdkVersion 19
         targetSdkVersion 28

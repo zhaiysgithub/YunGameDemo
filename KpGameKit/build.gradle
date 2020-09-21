@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 10
-        versionName "1.1.1.26"
+        versionCode 11
+        versionName "1.1.2.0"
     }
 
     buildTypes {
@@ -34,12 +34,13 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    //    implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
-    //    implementation 'kptech.game.kit:ZADSdk:3.3.3247.6@aar'
-    //    implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
-    implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
-    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
-    implementation 'kptech.game.kit:ZADSdk:3.3.3230.3@aar'
+        implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
+        implementation 'kptech.game.kit:ZADSdk:3.3.3247.6@aar'
+        implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
+
+//    implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'
+//    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
+//    implementation 'kptech.game.kit:ZADSdk:3.3.3230.3@aar'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'

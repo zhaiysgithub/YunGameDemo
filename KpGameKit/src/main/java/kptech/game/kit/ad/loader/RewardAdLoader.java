@@ -191,7 +191,7 @@ public class RewardAdLoader implements IAdLoader{
                 ext.put("rewardAdCode", mRewardAdCode);
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_EMPTY, mPkgName, null, info, ext));
             }catch (Exception e){}
 
             if (mCallback!=null){

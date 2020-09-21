@@ -1,9 +1,7 @@
 package kptech.game.kit.activity;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
+import android.app.Activity;import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,13 +33,11 @@ import java.util.List;
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
-import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
-import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -126,7 +122,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mHardwareManager = new HardwareManager(this);
 
         try {
+            //统计事件开始点
             Event.createBaseEvent(this, mCorpID);
+
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
         }catch (Exception e){
@@ -161,16 +159,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void initView() {
-//        mLoadingLL = (FrameLayout) findViewById(R.id.loading_ll);
-//        mLoadingText = (TextView) findViewById(R.id.loading_txt);
-//        mLoadingPb = findViewById(R.id.loading_pb);
-
-//        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                resizeVideoContainer(!mVideoContainerScale);
-//            }
-//        });
 
         mContentView = findViewById(R.id.content_view);
 
@@ -243,8 +231,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mFloatDownView.setOnDownListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(GamePlay.this,"FloatDownView Clicked", Toast.LENGTH_SHORT).show();
-//                downloadApk(false);
 
                 downloadApk();
 
@@ -356,9 +342,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //            mLoadingText.setText("设备初始化...");
             mLoadingView.setText("正在设备初始化...");
 //            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
-            GameBoxManager.getInstance(this).init(getApplication(), this.mCorpID, new IAdCallback<String>() {
+            GameBoxManager.getInstance(this).init(getApplication(), this.mCorpID, new APICallback<String>() {
                 @Override
-                public void onAdCallback(String msg, int code) {
+                public void onAPICallback(String msg, int code) {
                     if (code == 1){
                         startCloudPhone();
                     }else {

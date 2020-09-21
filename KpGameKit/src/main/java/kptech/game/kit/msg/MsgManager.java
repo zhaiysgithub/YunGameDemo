@@ -76,7 +76,9 @@ public class MsgManager {
     }
 
     public static void stop(){
-        Messager.getInstance().close();
+        if (Messager.getInstance().isConnected()){
+            Messager.getInstance().close();
+        }
     }
 
     private Messager.ICallback mCallback = new Messager.ICallback() {

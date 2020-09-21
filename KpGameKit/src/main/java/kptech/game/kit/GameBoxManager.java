@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import kptech.game.kit.ad.AdLoader;
 import kptech.game.kit.ad.AdManager;
-import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -78,7 +76,7 @@ public class GameBoxManager {
         return this.isLibInited;
     }
 
-    public synchronized void init(@NonNull Application application, String appKey, IAdCallback<String> callback){
+    public synchronized void init(@NonNull Application application, String appKey, APICallback<String> callback){
         mApplication = application;
         mCorpID = appKey;
         if (mApplication == null){
@@ -94,7 +92,8 @@ public class GameBoxManager {
 
         try {
             //发送打点事件
-            Event event = Event.getEvent(EventCode.DATA_SDK_INIT);
+            Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
+            event.setExt(getDeviceInfo(application));
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
@@ -106,14 +105,28 @@ public class GameBoxManager {
 
     }
 
+    private HashMap getDeviceInfo(Context context){
+        HashMap<String,Object> params = new HashMap<>();
+        try {
+            params.put("imei", DeviceUtils.getDeviceId(context));
+            params.put("ip", DeviceUtils.getIPAddress(context));
+            params.put("phoneBrand", DeviceUtils.getPhoneBrand());
+            params.put("phoneType", DeviceUtils.getPhoneModel());
+            params.put("screenSize", DeviceUtils.getPhysicsScreenSize(context));
+            params.put("version", DeviceUtils.getVersionName(context));
+        }catch (Exception e){
+        }
+        return params;
+    }
+
 
     private class InitHandler extends Handler{
         public InitHandler(){
             super(Looper.getMainLooper());
         }
         private int requestCount = 0;
-        private IAdCallback<String> callback;
-        private void setCallback(IAdCallback<String> callback){
+        private APICallback<String> callback;
+        private void setCallback(APICallback<String> callback){
             this.callback = callback;
         }
         @Override
@@ -169,7 +182,7 @@ public class GameBoxManager {
 
                         //回调初始化
                         if (this.callback != null){
-                            this.callback.onAdCallback("", initState);
+                            this.callback.onAPICallback("", initState);
                         }
 
                         break;
@@ -260,6 +273,7 @@ public class GameBoxManager {
             return;
         }
 
+        //获取设备id, 发送到云手机，用来解决风控问题
         if (inf.addMockInfo == 1){
             //297ebd358f8d1d5f,  //864131034311009 //VM010127052028
             //DeviceInfo{id=0, status=0, deviceId='VM010127052028', token='{"webControlList":[{"webControlCode":"XA-WEBSOCKET-CONTROL-41","webControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9741}]}],"controlList":[{"controlCode":"XA-USER-CONTROL-41","controlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9641}]}],"padList":[{"controlCode":"XA-USER-CONTROL-41","padCode":"VM010127052028","padStatus":"1","padType":"0","videoCode":"GZ-TEST-USER-VIDEO-01"}],"videoList":[{"videoCode":"GZ-TEST-USER-VIDEO-01","videoInfoList":[{"videoUrl":"rtmp://117.48.196.66:110/live","videoProtocol":"2","videoDomain":"live","videoPort":110,"videoContext":"1"},{"videoUrl":"rtmp://117.48.196.66:1936/live","videoProtocol":"","videoDomain":"","videoPort":-1,"videoContext":""}]}],"wssWebControlList":[{"wssWebControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9841}],"wssWebControlCode":"XA-WSS-CONTROL-41"}],"webRtcControlList":[{"webRtcControlInfoList":[{"controlIp":"10.3.98.1","controlPort":9641}],"controlCode":"XA-USER-CONTROL-41","gateway":{"gatewayWssPort":8191,"gatewayIp":"xian.cloud-control.top","gatewayPort":8190}}],"sessionId":"b6d822fcc481462ead6c57741bf6d3f0","userId":11357855}', type=0, usedTime=0, totalTime=86400, gop=50, bitRate=3600, compressionType=VPU, maxDescentFrame=1, maxFrameRate=30, minDescentFrame=1, minFrameRate=20, picQuality=GRADE_LEVEL_HD, resolution=LEVEL_720_1280, sound=true, queueInfo=null}
@@ -287,6 +301,7 @@ public class GameBoxManager {
             adManager.prepareAd();
         }
 
+        //申请云手机
         com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
         manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
             @Override
@@ -298,6 +313,7 @@ public class GameBoxManager {
                     control.setAdManager(adManager);
                 }
 
+                //回调方法
                 if (callback!=null){
                     callback.onAPICallback(control, code);
                 }
@@ -307,11 +323,11 @@ public class GameBoxManager {
                     Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
                     if (control != null){
                         event.setPadcode(control.getPadcode());
-
-                        HashMap ext = new HashMap<>();
-                        ext.put("code", code);
-                        event.setExt(ext);
                     }
+                    event.setErrMsg(""+code);
+                    HashMap ext = new HashMap<>();
+                    ext.put("code", code);
+                    event.setExt(ext);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
 

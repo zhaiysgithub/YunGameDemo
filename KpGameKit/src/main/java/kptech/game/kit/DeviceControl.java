@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import kptech.game.kit.ad.AdLoader;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.Event;
@@ -175,6 +174,27 @@ public class DeviceControl {
                     callback.onAPICallback(msg, code);
                 }
 
+                //成功连接游戏,删除激励广告标记
+                try {
+                    int adVerify = ProferencesUtils.getIng(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
+                    if (adVerify > 0 && (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS)){
+                        ProferencesUtils.setInt(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
+                    }
+                }catch (Exception e){
+                    logger.error(e.getMessage());
+                }
+
+
+                //发送打点事件
+                try {
+                    Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
+                    HashMap ext = new HashMap<>();
+                    ext.put("code", code);
+                    ext.put("msg", msg);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
                 //记录游戏开始时间
                 if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS){
                     playStartTime = new Date().getTime();
@@ -186,23 +206,25 @@ public class DeviceControl {
                             MobclickAgent.sendPlayTimeEvent(event);
                         }catch (Exception e){}
                     }catch (Exception e){}
+                }else if (code == APIConstants.RELEASE_SUCCESS){
+                    try {
+                        //关闭时间记录心跳
+                        if (playStartTime>0){
+                            long time = new Date().getTime();
+                            int len = (int) (time - playStartTime)/1000;
+                            if (len > 0){
+                                //发送打点事件
+                                try {
+                                    Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
+                                    event.setHearttimes(len);
+                                    MobclickAgent.sendPlayTimeEvent(event);
+                                }catch (Exception e){}
+                            }
+                            playStartTime = 0;
+                        }
+                    }catch (Exception e){}
                 }
 
-                //成功连接游戏,删除激励广告标记
-                int adVerify = ProferencesUtils.getIng(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
-                if (adVerify > 0 && (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS)){
-                    ProferencesUtils.setInt(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
-                }
-
-                //发送打点事件
-                try {
-                    Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
-                    HashMap ext = new HashMap<>();
-                    ext.put("code", code);
-                    ext.put("msg", msg);
-                    event.setExt(ext);
-                    MobclickAgent.sendEvent(event);
-                }catch (Exception e){}
             }
         });
     }
@@ -226,23 +248,6 @@ public class DeviceControl {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        try {
-            //关闭时间记录心跳
-            if (playStartTime>0){
-                long time = new Date().getTime();
-                int len = (int) (time - playStartTime)/1000;
-                if (len > 0){
-                    //发送打点事件
-                    try {
-                        Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
-                        event.setHearttimes(len);
-                        MobclickAgent.sendPlayTimeEvent(event);
-                    }catch (Exception e){}
-                }
-                playStartTime = 0;
-            }
-        }catch (Exception e){}
     }
 
     /**
@@ -309,8 +314,9 @@ public class DeviceControl {
 
             @Override
             public boolean onNoOpsTimeout(int type, long timeout) {
+                boolean b = false;
                 if (listener!=null){
-                    return listener.onNoOpsTimeout(type,timeout);
+                    b = listener.onNoOpsTimeout(type,timeout);
                 }
 
                 try {
@@ -323,7 +329,7 @@ public class DeviceControl {
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
 
-                return false;
+                return b;
             }
 
             @Override

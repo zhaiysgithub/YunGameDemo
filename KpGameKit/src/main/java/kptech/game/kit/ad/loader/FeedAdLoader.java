@@ -142,7 +142,7 @@ public class FeedAdLoader implements IAdLoader {
                 HashMap ext = new HashMap<>();
                 ext.put("posId", posId);
                 ext.put("info", info);
-                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_FEED_EMPTY, mPkgName, ext));
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_FEED_EMPTY, mPkgName,null, info, ext));
             }catch (Exception e){}
 
             if (mCallback!=null){

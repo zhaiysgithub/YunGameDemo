@@ -15,7 +15,7 @@ public class EventCode {
     public static final String DATA_ACTIVITY_PLAYERROR_RELOAD = "DATA_ACTIVITY_PLAYERROR_RELOAD";
 
     //初始化SDK
-    public static final String DATA_SDK_INIT = "DATA_SDK_INIT";
+    public static final String DATA_SDK_INIT_START = "DATA_SDK_INIT_START";
     //SDK初化成功
     public static final String DATA_SDK_INIT_OK = "DATA_SDK_INIT_OK";
     //SDK初化失败
@@ -89,10 +89,9 @@ public class EventCode {
             return DATA_DEVICE_APPLY_BUSY;
         }else if(code == APIConstants.ERROR_NETWORK_ERROR){
             return DATA_DEVICE_NET_ERROR;
-        }else if(code == APIConstants.ERROR_SDK_INIT_ERROR){
-            return DATA_SDK_INIT_FAILED;
         }
 
+        //设备请求错误
         return DATA_DEVICE_REQ_ERROR;
     }
 
