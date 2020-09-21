@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +43,7 @@ import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
@@ -249,6 +251,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void downloadApk(){
+        //判断网络状态
+        if (DeviceUtils.getNetworkType(this) == ConnectivityManager.TYPE_MOBILE){
+            Toast.makeText(this,"您当前正在使用数据流量。", Toast.LENGTH_SHORT).show();
+        }
+
         if (mDownloadStatus == GameDownloader.STATUS_STARTED){
             //发送下载广播
             Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Stop_Action");

@@ -49,12 +49,22 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
             int c = jsonObject.getInt("c");
             if (c == 0){
                 JSONObject dObj = jsonObject.getJSONObject("d");
-                String ak = dObj.getString("ak");
-                String sk = dObj.getString("sk");
+                String ak = dObj.has("ak") ? dObj.getString("ak") : null;
+                String sk = dObj.has("sk") ? dObj.getString("sk") : null;
                 String ch = dObj.has("ch") ? dObj.getString("ch") : null;
                 String paas =  dObj.has("paas") ? dObj.getString("paas") : null;
                 String adJson = dObj.has("adJson") ? dObj.getString("adJson") : null;
-                String adEnable = "1";//dObj.has("adEnable") ? dObj.getString("adEnable") : null;
+                String adEnable = dObj.has("adEnable") ? dObj.getString("adEnable") : null;
+
+                if (dObj.has("BD")){
+                    JSONObject DBObj =  dObj.getJSONObject("BD");
+                    if (DBObj.has("ak")){
+                        ak = DBObj.getString("ak");
+                    }
+                    if (DBObj.has("sk")){
+                        sk = DBObj.getString("sk");
+                    }
+                }
 
                 //缓存数据
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_KEY, ak);
@@ -95,7 +105,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
             sb.append("?corpKey="+corpKey);
-            sb.append("&apiVer=" + BuildConfig.VERSION_NAME);
+            sb.append("&version=" + BuildConfig.VERSION_NAME);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求

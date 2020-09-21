@@ -109,6 +109,23 @@ public class DeviceUtils {
         return false;
     }
 
+    public static int getNetworkType(Context context) {
+        try {
+            NetworkInfo info = ((ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//当前使用2G/3G/4G网络
+                    return ConnectivityManager.TYPE_MOBILE;
+                } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {//当前使用无线网络
+                    return ConnectivityManager.TYPE_WIFI;
+                }
+            }
+        }catch (Exception e){
+
+        }
+        return -1;
+    }
+
     /**
      * 返回版本名字
      * 对应build.gradle中的versionName
