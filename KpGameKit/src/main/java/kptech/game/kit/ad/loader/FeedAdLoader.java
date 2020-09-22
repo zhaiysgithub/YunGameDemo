@@ -2,12 +2,17 @@ package kptech.game.kit.ad.loader;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.bean.ZadFeedDataAdBean;
@@ -28,7 +33,7 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class FeedAdLoader implements IAdLoader {
-    private final Logger logger = new Logger("RewardAdLoader") ;
+    private final Logger logger = new Logger("FeedAdLoader") ;
 
     private String mAdCode;
     private ZadFeedDataWorker mFeedWorker;
@@ -80,7 +85,7 @@ public class FeedAdLoader implements IAdLoader {
         mCallback = callback;
     }
 
-
+    private boolean adClicked = false;
     private class MyFeedDataObser extends ZadFeedDataAdObserver {
 
         @Override
@@ -98,6 +103,7 @@ public class FeedAdLoader implements IAdLoader {
         @Override
         public void onAdClick(String posId, String info) {
             logger.info("onAdClick,   posId = " + posId + ", info = " + info);
+            adClicked = true;
 
             try {
                 //发送打点事件
@@ -152,6 +158,7 @@ public class FeedAdLoader implements IAdLoader {
 
     }
 
+    private PopupWindow mAdPopupWindow;
     private void showFeedAd(){
         //广告view加载失败
         if (adBean == null || mActivity==null || mActivity.isFinishing()){
@@ -162,8 +169,8 @@ public class FeedAdLoader implements IAdLoader {
         }
 
         try {
-            PopupWindow pop = new AdFeedPopup(mActivity, adBean);
-            pop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            mAdPopupWindow = new AdFeedPopup(mActivity, adBean);
+            mAdPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
                     try {
@@ -175,9 +182,25 @@ public class FeedAdLoader implements IAdLoader {
                     if (mCallback!=null){
                         mCallback.onAdClose(true);
                     }
+
+                    try {
+                        if (mActivityCallback!=null){
+                            mActivity.getApplication().unregisterActivityLifecycleCallbacks(mActivityCallback);
+                            mActivityCallback = null;
+                        }
+                    }catch (Exception e){}
+
                 }
             });
-            pop.showAtLocation(mActivity.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+            mAdPopupWindow.showAtLocation(mActivity.getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+            try {
+                //增加actvity生命周期监听
+                mActivityCallback = new PopupActivityLifecycleCallbacks();
+                mActivity.getApplication().registerActivityLifecycleCallbacks(mActivityCallback);
+            }catch (Exception e){}
+
             return;
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -185,6 +208,49 @@ public class FeedAdLoader implements IAdLoader {
 
         if (mCallback!=null){
             mCallback.onAdFail();
+        }
+    }
+
+    private PopupActivityLifecycleCallbacks mActivityCallback;
+    private class PopupActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
+
+        @Override
+        public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
+
+        }
+
+        @Override
+        public void onActivityStarted(@NonNull Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityResumed(@NonNull Activity activity) {
+            if (adClicked && activity==mActivity && mAdPopupWindow!=null && mAdPopupWindow.isShowing()){
+                mAdPopupWindow.dismiss();
+            }
+        }
+
+        @Override
+        public void onActivityPaused(@NonNull Activity activity) {
+            if (adClicked && mAdPopupWindow!=null && mAdPopupWindow.isShowing()){
+//                mAdPopupWindow.dismiss();
+            }
+        }
+
+        @Override
+        public void onActivityStopped(@NonNull Activity activity) {
+
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) {
+
+        }
+
+        @Override
+        public void onActivityDestroyed(@NonNull Activity activity) {
+
         }
     }
 }

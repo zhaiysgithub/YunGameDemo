@@ -10,6 +10,8 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
+import com.bun.miitmdid.core.JLibrary;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.MiitHelper;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
@@ -90,15 +93,30 @@ public class GameBoxManager {
             return;
         }
 
-        //统计事件初始化
-        Event.init(application, mCorpID);
+//        try {
+//            JLibrary.InitEntry(application);
+//            new MiitHelper(new MiitHelper.AppIdsUpdater() {
+//                @Override
+//                public void OnIdsAvalid(@NonNull String ids) {
+//                    logger.info("oaid: "+ids);
+//                }
+//            }).getDeviceIds(mApplication);
+//        }catch (Exception e){
+//            logger.error(e.getMessage());
+//        }
+
 
         try {
+            //统计事件初始化
+            Event.init(application, mCorpID);
+
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
             event.setExt(getDeviceInfo(application));
             MobclickAgent.sendEvent(event);
-        }catch (Exception e){}
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
 
 
         //发送请求
@@ -116,7 +134,10 @@ public class GameBoxManager {
             params.put("phoneBrand", DeviceUtils.getPhoneBrand());
             params.put("phoneType", DeviceUtils.getPhoneModel());
             params.put("screenSize", DeviceUtils.getPhysicsScreenSize(context));
-            params.put("version", DeviceUtils.getVersionName(context));
+            params.put("appVer", DeviceUtils.getVersionName(context));
+            params.put("sdkVer", BuildConfig.VERSION_NAME);
+            params.put("androidLevel", DeviceUtils.getBuildLevel());
+            params.put("androidVer", DeviceUtils.getBuildVersion());
         }catch (Exception e){
         }
         return params;

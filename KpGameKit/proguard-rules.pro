@@ -37,3 +37,5 @@
 -keep class com.redfinger.playsdk.fragment.**{*;}
 -keep class com.redfinger.playsdk.widget.**{*;}
 -keep class com.gc.redfinger.** { *; }
+
+-keep class com.bun.miitmdid.core.** {*;}

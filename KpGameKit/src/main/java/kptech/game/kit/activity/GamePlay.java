@@ -431,7 +431,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         //设置前后台无操作超时时间
         mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
 
-
     }
 
     @Override

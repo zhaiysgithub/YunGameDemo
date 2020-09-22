@@ -72,7 +72,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = false;
+    static final boolean wy = BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
     @Override
@@ -150,17 +150,17 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     GameBox gameBox;
     //启动云游戏
     public void startGame(View view){
-        startActivity(new Intent(this,TestActivity.class));
+//        startActivity(new Intent(this,TestActivity.class));
 
-//        GameInfo info = new GameInfo();
-//        info.gid = 1893;
-//        info.pkgName = "com.netease.tom.guopan";
-//        info.name = "猫和老鼠";
-//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
-//        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-//
-//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
+        GameInfo info = new GameInfo();
+        info.gid = 1893;
+        info.pkgName = "com.netease.tom.guopan";
+        info.name = "猫和老鼠";
+        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+
+        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
 
         //预加载广告
 //        final AdManager adManager = AdManager.adEnable ? new AdManager(this) : null;

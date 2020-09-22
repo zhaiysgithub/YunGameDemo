@@ -34,7 +34,6 @@ public class AdFeedPopup extends PopupWindow {
 
         LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-
         View view = inflater.inflate(R.layout.ad_popup_feed, null);
         this.setContentView(view);
         rootView = view.findViewById(R.id.zmt_item_ad_RelativeLayout1);
@@ -224,6 +223,8 @@ public class AdFeedPopup extends PopupWindow {
 
     }
 
+
+
     private void setContent(ZadFeedDataAdBean zadFeedAd, TextView title, TextView des) {
         if (!TextUtils.isEmpty(zadFeedAd.getTitle())) {
             title.setVisibility(View.VISIBLE);
@@ -238,4 +239,6 @@ public class AdFeedPopup extends PopupWindow {
             des.setVisibility(View.GONE);
         }
     }
+
+
 }
