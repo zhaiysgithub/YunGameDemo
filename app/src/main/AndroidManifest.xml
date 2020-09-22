@@ -36,6 +36,13 @@
             android:name="com.yd.yunapp.gamebox.GameRunningActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:theme="@style/CloudPhone" />
+
+        <activity android:name="com.yd.yunapp.gamebox.TestActivity"
+            android:theme="@style/NoTitleFullscreen"
+            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:process=":test"
+            />
     </application>
 
 </manifest>

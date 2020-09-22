@@ -25,6 +25,7 @@ import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
+import kptech.game.kit.utils.StringUtil;
 
 
 public class GameBoxManager {
@@ -52,10 +53,6 @@ public class GameBoxManager {
         MsgManager.setDebug(debug);
     }
 
-    public static void setAppKey(String appKey){
-        mCorpID = appKey;
-    }
-
     public static GameBoxManager getInstance(Context context) {
         if (box == null) {
             synchronized(GameBoxManager.class) {
@@ -65,6 +62,11 @@ public class GameBoxManager {
             }
         }
         return box;
+    }
+    public static void setAppKey(String appKey){
+        if (!StringUtil.isEmpty(appKey)){
+            mCorpID = appKey;
+        }
     }
 
     private GameBoxManager(Context context){
@@ -88,7 +90,8 @@ public class GameBoxManager {
             return;
         }
 
-        Event.init(application, appKey);
+        //统计事件初始化
+        Event.init(application, mCorpID);
 
         try {
             //发送打点事件

@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import kptech.game.kit.activity.GamePlay;
-import kptech.game.kit.analytic.Event;
 import kptech.game.kit.utils.Logger;
 
 public class GameBox {
@@ -42,9 +41,7 @@ public class GameBox {
     private GameBox(Application application, String appKey){
         this.mApplication = application;
         this.appKey = appKey;
-
-        Event.init(application, appKey);
-
+        GameBoxManager.setAppKey(appKey);
     }
 
     public void playGame(Activity activity, GameInfo gameInfo){
@@ -67,9 +64,6 @@ public class GameBox {
         }
 
         logger.info("启动云游戏，gameInfo:" + gameInfo.toString());
-
-        logger.info("GameBox Process，pid:" + android.os.Process.myPid());
-
 
         //启动云游戏
         Intent intent = new Intent(activity, GamePlay.class);

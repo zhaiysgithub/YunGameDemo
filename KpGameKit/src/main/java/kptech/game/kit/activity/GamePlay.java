@@ -115,6 +115,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
+
+
         long[] times = getIntent().getLongArrayExtra(EXTRA_TIMEOUT);
         if (times!=null && times.length == 2){
             fontTimeout = times[0] > 60 ? times[0] : 5 * 60;
@@ -124,6 +126,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mHardwareManager = new HardwareManager(this);
 
         try {
+            //统计事件初始化
+            Event.init(getApplication(), mCorpID);
+
             //统计事件开始点
             Event.createBaseEvent(this, mCorpID);
 

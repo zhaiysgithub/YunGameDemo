@@ -126,6 +126,7 @@ public class Event {
             sb.append("&userid=" + (this.userId != null ? this.userId : ""));
             sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
             sb.append("&usertype=" + this.userType);
+            sb.append("&h5sdkversion=" + this.ver);
         }catch (Exception e){
 
         }

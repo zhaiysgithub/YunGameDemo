@@ -1,6 +1,10 @@
 package kptech.game.kit;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.view.Display;
 
 import androidx.annotation.IdRes;
@@ -19,6 +23,7 @@ import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
@@ -157,7 +162,6 @@ public class DeviceControl {
         }
     }
 
-    long playStartTime = 0;
     private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
 
         //发送打点事件
@@ -166,7 +170,6 @@ public class DeviceControl {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
-        playStartTime = 0;
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
             public void onAPICallback(String msg, int code) {
@@ -197,32 +200,11 @@ public class DeviceControl {
 
                 //记录游戏开始时间
                 if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS){
-                    playStartTime = new Date().getTime();
-                    try {
-                        //发送打点事件
-                        try {
-                            Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
-                            event.setHearttimes(0);
-                            MobclickAgent.sendPlayTimeEvent(event);
-                        }catch (Exception e){}
-                    }catch (Exception e){}
+                    //开始心跳统计
+                    startSendPlayTime();
                 }else if (code == APIConstants.RELEASE_SUCCESS){
-                    try {
-                        //关闭时间记录心跳
-                        if (playStartTime>0){
-                            long time = new Date().getTime();
-                            int len = (int) (time - playStartTime)/1000;
-                            if (len > 0){
-                                //发送打点事件
-                                try {
-                                    Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
-                                    event.setHearttimes(len);
-                                    MobclickAgent.sendPlayTimeEvent(event);
-                                }catch (Exception e){}
-                            }
-                            playStartTime = 0;
-                        }
-                    }catch (Exception e){}
+                    //关闭心跳统计
+                    stopSendPlayTime();
                 }
 
             }
@@ -517,5 +499,60 @@ public class DeviceControl {
          */
         void onSensorSamper(@SensorConstants.CloudPhoneSensorId int sensor,
                             @SensorConstants.SensorState int state);
+    }
+
+    //心跳统计游戏运行时长
+    private Handler mPlayTimeHandler = null;
+    private long playTimestamp = 0;
+    private synchronized void startSendPlayTime(){
+        if (mPlayTimeHandler == null) {
+            mPlayTimeHandler = new Handler(HeartThread.getInstance().getLooper()){
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    if (msg.what == 1){
+                        int len = 0;
+                        if (playTimestamp == 0){
+                            //首次发送
+                            playTimestamp = new Date().getTime();
+                            len = 0;
+                        }else {
+                            long time = new Date().getTime();
+                            len = (int) (time - playTimestamp)/1000;
+                            playTimestamp = time;
+                        }
+
+                        if (len<0){
+                            return;
+                        }
+
+                        //发送打点事件
+                        try {
+                            Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
+                            event.setHearttimes(len);
+                            MobclickAgent.sendPlayTimeEvent(event);
+                        }catch (Exception e){}
+
+                        //心跳10秒
+                        if (mPlayTimeHandler!=null){
+                            mPlayTimeHandler.sendEmptyMessageDelayed(1, 10*1000);
+                        }
+                    }
+                }
+            };
+        }
+
+        //开始
+        playTimestamp = 0;
+        mPlayTimeHandler.sendEmptyMessage(1);
+    }
+
+    private synchronized void stopSendPlayTime(){
+        if (mPlayTimeHandler!=null){
+            if (mPlayTimeHandler.hasMessages(1)){
+                mPlayTimeHandler.removeMessages(1);
+                mPlayTimeHandler.sendEmptyMessage(1);
+            }
+            mPlayTimeHandler = null;
+        }
     }
 }

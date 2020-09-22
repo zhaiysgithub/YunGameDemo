@@ -72,7 +72,9 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    final String corpId = BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    static final boolean wy = false;
+
+    final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +121,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //
 //        };
 //
-        gameBox = GameBox.getInstance();
+//        gameBox = GameBox.getInstance();
 //        gameBox.setGameDownloader(mGameDownloader);
 //
 //        IntentFilter filter =new  IntentFilter();
@@ -148,16 +150,17 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     GameBox gameBox;
     //启动云游戏
     public void startGame(View view){
+        startActivity(new Intent(this,TestActivity.class));
 
-        GameInfo info = new GameInfo();
-        info.gid = 1893;
-        info.pkgName = "com.netease.tom.guopan";
-        info.name = "猫和老鼠";
-        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_ON;
-        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-
-        gameBox.playGame(HorizontalHomeActivity.this,info);
+//        GameInfo info = new GameInfo();
+//        info.gid = 1893;
+//        info.pkgName = "com.netease.tom.guopan";
+//        info.name = "猫和老鼠";
+//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+//        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+//
+//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
 
         //预加载广告
 //        final AdManager adManager = AdManager.adEnable ? new AdManager(this) : null;
@@ -196,10 +199,10 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
-                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+//                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
-                gameBox.playGame(HorizontalHomeActivity.this, game);
+                GameBox.getInstance().playGame(HorizontalHomeActivity.this, game);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
 //                HorizontalHomeActivity.this.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);
@@ -277,18 +280,21 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     }
 
     private void loadGame() {
-//        GameBoxManager.setAppKey("2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
+        GameBoxManager.setAppKey("2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b");
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                List<GameInfo> result = GameBoxManager.getInstance(HorizontalHomeActivity.this)
-//                        .queryGameList(mGameInfos.size(), 50);
-
-                String tmp_data = "[{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d1921\",\"gid\":1921,\"iconUrl\":\"\",\"name\":\"QQ\",\"pkgName\":\"com.tencent.mobileqq\",\"playCount\":99,\"showAd\":0,\"size\":96018622,\"totalTime\":86400,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2497\",\"gid\":2497,\"iconUrl\":\"\",\"name\":\"明日之后\",\"pkgName\":\"com.netease.mrzh.guopan\",\"playCount\":60,\"showAd\":2,\"size\":2070011001,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2647\",\"gid\":2647,\"iconUrl\":\"\",\"name\":\"网易云音乐\",\"pkgName\":\"com.netease.cloudmusic\",\"playCount\":96,\"showAd\":2,\"size\":83116311,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2652\",\"gid\":2652,\"iconUrl\":\"\",\"name\":\"战神传奇\",\"pkgName\":\"com.zqgame.zscq.kuaipan\",\"playCount\":69,\"showAd\":2,\"size\":246827618,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2760\",\"gid\":2760,\"iconUrl\":\"\",\"name\":\"万象物语\",\"pkgName\":\"com.ilongyuan.sdorica.guopan\",\"playCount\":99,\"showAd\":2,\"size\":228779724,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2761\",\"gid\":2761,\"iconUrl\":\"\",\"name\":\"模拟城市：我是市长\",\"pkgName\":\"com.ea.simcitymobile.guopan\",\"playCount\":80,\"showAd\":1,\"size\":155105034,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2762\",\"gid\":2762,\"iconUrl\":\"\",\"name\":\"迷失岛2：时间的灰烬\",\"pkgName\":\"com.isoland2.lilithgames.guopan\",\"playCount\":99,\"showAd\":1,\"size\":280453188,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2764\",\"gid\":2764,\"iconUrl\":\"\",\"name\":\"梦间集：天鹅座\",\"pkgName\":\"com.pwrd.mjjsl.guopan\",\"playCount\":91,\"showAd\":1,\"size\":1416160752,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2809\",\"gid\":2809,\"iconUrl\":\"\",\"name\":\"传奇盛世2 \",\"pkgName\":\"com.sanjiu.cqss2.guopan\",\"playCount\":53,\"showAd\":1,\"size\":558109309,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2814\",\"gid\":2814,\"iconUrl\":\"\",\"name\":\"葫芦兄弟\",\"pkgName\":\"com.wk.hlxd.wanme\",\"playCount\":68,\"showAd\":1,\"size\":495070658,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2821\",\"gid\":2821,\"iconUrl\":\"\",\"name\":\"战歌竞技场\",\"pkgName\":\"com.tencent.hjzqgame\",\"playCount\":97,\"showAd\":1,\"size\":1009615840,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2823\",\"gid\":2823,\"iconUrl\":\"\",\"name\":\"疯狂原始人（爱奇艺测试通信sdk）\",\"pkgName\":\"com.skymoons.croods.iqiyiyyx\",\"playCount\":78,\"showAd\":1,\"size\":771857656,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2827\",\"gid\":2827,\"iconUrl\":\"\",\"name\":\"爱奇艺测试\",\"pkgName\":\"com.iqiyigame.sdk.demo\",\"playCount\":61,\"showAd\":1,\"size\":11441875,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2851\",\"gid\":2851,\"iconUrl\":\"\",\"name\":\"命运之刃（守护女神）\",\"pkgName\":\"com.bt.myzr.guopan\",\"playCount\":50,\"showAd\":0,\"size\":5757725,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2855\",\"gid\":2855,\"iconUrl\":\"\",\"name\":\"陌陌\",\"pkgName\":\"com.immomo.momo\",\"playCount\":61,\"showAd\":0,\"size\":84801024,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2856\",\"gid\":2856,\"iconUrl\":\"\",\"name\":\"花椒直播\",\"pkgName\":\"com.huajiao\",\"playCount\":81,\"showAd\":0,\"size\":67583573,\"totalTime\":604800,\"usedTime\":0}]";
-                Gson gson = new Gson();
-                Type listType = new TypeToken<List<GameInfo>>() {
-                }.getType();
-                List<GameInfo> result = gson.fromJson(tmp_data, listType);
+                List<GameInfo> result = null;
+                if (wy){
+                    result = GameBoxManager.getInstance(HorizontalHomeActivity.this)
+                            .queryGameList(mGameInfos.size(), 50);
+                }else {
+                    String tmp_data = "[{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d1921\",\"gid\":1921,\"iconUrl\":\"\",\"name\":\"QQ\",\"pkgName\":\"com.tencent.mobileqq\",\"playCount\":99,\"showAd\":0,\"size\":96018622,\"totalTime\":86400,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2497\",\"gid\":2497,\"iconUrl\":\"\",\"name\":\"明日之后\",\"pkgName\":\"com.netease.mrzh.guopan\",\"playCount\":60,\"showAd\":2,\"size\":2070011001,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2647\",\"gid\":2647,\"iconUrl\":\"\",\"name\":\"网易云音乐\",\"pkgName\":\"com.netease.cloudmusic\",\"playCount\":96,\"showAd\":2,\"size\":83116311,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2652\",\"gid\":2652,\"iconUrl\":\"\",\"name\":\"战神传奇\",\"pkgName\":\"com.zqgame.zscq.kuaipan\",\"playCount\":69,\"showAd\":2,\"size\":246827618,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2760\",\"gid\":2760,\"iconUrl\":\"\",\"name\":\"万象物语\",\"pkgName\":\"com.ilongyuan.sdorica.guopan\",\"playCount\":99,\"showAd\":2,\"size\":228779724,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2761\",\"gid\":2761,\"iconUrl\":\"\",\"name\":\"模拟城市：我是市长\",\"pkgName\":\"com.ea.simcitymobile.guopan\",\"playCount\":80,\"showAd\":1,\"size\":155105034,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2762\",\"gid\":2762,\"iconUrl\":\"\",\"name\":\"迷失岛2：时间的灰烬\",\"pkgName\":\"com.isoland2.lilithgames.guopan\",\"playCount\":99,\"showAd\":1,\"size\":280453188,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2764\",\"gid\":2764,\"iconUrl\":\"\",\"name\":\"梦间集：天鹅座\",\"pkgName\":\"com.pwrd.mjjsl.guopan\",\"playCount\":91,\"showAd\":1,\"size\":1416160752,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2809\",\"gid\":2809,\"iconUrl\":\"\",\"name\":\"传奇盛世2 \",\"pkgName\":\"com.sanjiu.cqss2.guopan\",\"playCount\":53,\"showAd\":1,\"size\":558109309,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2814\",\"gid\":2814,\"iconUrl\":\"\",\"name\":\"葫芦兄弟\",\"pkgName\":\"com.wk.hlxd.wanme\",\"playCount\":68,\"showAd\":1,\"size\":495070658,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2821\",\"gid\":2821,\"iconUrl\":\"\",\"name\":\"战歌竞技场\",\"pkgName\":\"com.tencent.hjzqgame\",\"playCount\":97,\"showAd\":1,\"size\":1009615840,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2823\",\"gid\":2823,\"iconUrl\":\"\",\"name\":\"疯狂原始人（爱奇艺测试通信sdk）\",\"pkgName\":\"com.skymoons.croods.iqiyiyyx\",\"playCount\":78,\"showAd\":1,\"size\":771857656,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2827\",\"gid\":2827,\"iconUrl\":\"\",\"name\":\"爱奇艺测试\",\"pkgName\":\"com.iqiyigame.sdk.demo\",\"playCount\":61,\"showAd\":1,\"size\":11441875,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2851\",\"gid\":2851,\"iconUrl\":\"\",\"name\":\"命运之刃（守护女神）\",\"pkgName\":\"com.bt.myzr.guopan\",\"playCount\":50,\"showAd\":0,\"size\":5757725,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2855\",\"gid\":2855,\"iconUrl\":\"\",\"name\":\"陌陌\",\"pkgName\":\"com.immomo.momo\",\"playCount\":61,\"showAd\":0,\"size\":84801024,\"totalTime\":604800,\"usedTime\":0},{\"addMockInfo\":0,\"downloadUrl\":\"http://yunapp-ws-sandbox.baidu.com/api/v1/app/download?appid\\u003d2856\",\"gid\":2856,\"iconUrl\":\"\",\"name\":\"花椒直播\",\"pkgName\":\"com.huajiao\",\"playCount\":81,\"showAd\":0,\"size\":67583573,\"totalTime\":604800,\"usedTime\":0}]";
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<GameInfo>>() {
+                    }.getType();
+                    result = gson.fromJson(tmp_data, listType);
+                }
 
                 if (result != null && result.size() > 0) {
                     for (GameInfo info : result) {
