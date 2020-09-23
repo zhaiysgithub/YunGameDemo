@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.GameBoxManager;
@@ -28,13 +29,14 @@ public class MsgManager {
 
     private static boolean inited = false;
 
-    public static void init(Application application){
+    private String mCorpId;
+    public static void init(Application application, String corpId){
         Messager.init(application);
         inited = true;
         if (instance == null){
             synchronized(GameBoxManager.class) {
                 if (instance == null) {
-                    instance = new MsgManager(application);
+                    instance = new MsgManager(application, corpId);
                 }
             }
         }
@@ -43,8 +45,9 @@ public class MsgManager {
         Messager.setDebug(debug);
     }
 
-    private MsgManager(Context context){
+    private MsgManager(Context context, String corpId){
         Messager.getInstance().addCallback(mCallback);
+        mCorpId = corpId;
     }
 
 
@@ -139,28 +142,30 @@ public class MsgManager {
                     //处理登录，判断是联运登录，还是本地登录
                     String uninqueId = GameBoxManager.getInstance(mActivity).getUniqueId();
                     if (uninqueId!=null && uninqueId.length() > 0){
-                        new RequestLoginTask(new RequestLoginTask.ICallback() {
+                        new RequestLoginTask(mCorpId, new RequestLoginTask.ICallback() {
                             @Override
-                            public void onResult(HashMap<String, String> map) {
+                            public void onResult(HashMap<String, Object> map) {
                                 if (map==null){
                                     Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                if (map.containsKey("access_token")){
-                                    String token = map.get("access_token");
-                                    String guid = map.get("guid");
-                                    sendLoginMsg(token);
-
-                                    mToken = token;
-                                    mGuid = guid;
-                                    mGloablId = map.get("global_id");
-
-                                }else if(map.containsKey("error")) {
-                                    String error = map.get("error");
+                                if (map != null && map.containsKey("error")){
+                                    String error = map.get("error").toString();
                                     Toast.makeText(mActivity, error, Toast.LENGTH_LONG).show();
-                                }else {
-                                    Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
+                                    return;
                                 }
+
+                                if (map.containsKey("access_token")){
+                                    mToken = map.get("access_token").toString();
+                                }
+                                if (map.containsKey("guid")){
+                                    mGuid = map.get("guid").toString();
+                                }
+                                if (map.containsKey("global_id")){
+                                    mGloablId = map.get("global_id").toString();
+                                }
+
+                                sendLoginMsg(map);
                             }
                         }).execute("uid",uninqueId);
                     }
@@ -186,7 +191,7 @@ public class MsgManager {
         if (mKpLoginDialog!=null && mKpLoginDialog.isShowing()){
             return;
         }
-        mKpLoginDialog = new LoginDialog(mActivity);
+        mKpLoginDialog = new LoginDialog(mActivity, mCorpId);
         mKpLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -198,26 +203,39 @@ public class MsgManager {
         });
         mKpLoginDialog.setCallback(new LoginDialog.ICallback() {
             @Override
-            public void onResult(int ret, String msg) {
-                if (ret == 1){
-                    sendLoginMsg(msg);
-                    mKpLoginDialog.dismiss();
-                }else if (msg != null){
-                    Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
-                }else {
+            public void onResult(Map map) {
+                if (map==null){
                     Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
+                    return;
                 }
+                if (map != null && map.containsKey("error")){
+                    String error = map.get("error").toString();
+                    Toast.makeText(mActivity, error, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                mKpLoginDialog.dismiss();
+                sendLoginMsg(map);
+
+
+//                if (ret == 1){
+//                    sendLoginMsg(msg);
+//                    mKpLoginDialog.dismiss();
+//                }else if (msg != null && msg.containsKey("error")){
+//                    Toast.makeText(mActivity, msg.get("error").toString(), Toast.LENGTH_LONG).show();
+//                }else {
+//                    Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
+//                }
             }
         });
         mKpLoginDialog.show();
     }
 
 
-    private void sendLoginMsg(String token){
-        JSONObject obj = new JSONObject();
+    private void sendLoginMsg(Map map){
+        JSONObject obj = new JSONObject(map);
         try {
             obj.put("event","login");
-            obj.put("token", token);
+//            obj.put("token", token);
         } catch (JSONException e) {
             e.printStackTrace();
         }

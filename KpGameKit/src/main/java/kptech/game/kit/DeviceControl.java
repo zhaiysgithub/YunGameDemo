@@ -27,8 +27,6 @@ import kptech.game.kit.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
-
-
 public class DeviceControl {
     private static final String TAG = "GameControl";
     private Logger logger = new Logger(TAG);

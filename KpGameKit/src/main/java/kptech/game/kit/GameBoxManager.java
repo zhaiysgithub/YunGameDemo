@@ -10,8 +10,6 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
-import com.bun.miitmdid.core.JLibrary;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +24,6 @@ import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.MiitHelper;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
@@ -202,7 +199,7 @@ public class GameBoxManager {
                         }
 
                         //初始化通讯
-                        MsgManager.init(mApplication);
+                        MsgManager.init(mApplication, mCorpID);
 
                         //回调初始化
                         if (this.callback != null){

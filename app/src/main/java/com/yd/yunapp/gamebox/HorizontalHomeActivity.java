@@ -82,6 +82,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameInfos = new LinkedHashMap<>();
         initView();
         GameBox.init(getApplication(),corpId);
+
+        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
 //
 //        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
 //            GameBoxManager.getInstance(this).init(getApplication(), corpId, new IAdCallback<String>() {
@@ -152,13 +154,22 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     public void startGame(View view){
 //        startActivity(new Intent(this,TestActivity.class));
 
+//        GameInfo info = new GameInfo();
+//        info.gid = 1893;
+//        info.pkgName = "com.netease.tom.guopan";
+//        info.name = "猫和老鼠";
+//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+//        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+
         GameInfo info = new GameInfo();
-        info.gid = 1893;
-        info.pkgName = "com.netease.tom.guopan";
-        info.name = "猫和老鼠";
+        info.gid = 3006;
+        info.pkgName = "com.zqgame.jqys.kuaipan";
+        info.name = "街球艺术";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
         info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+
 
         GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
 

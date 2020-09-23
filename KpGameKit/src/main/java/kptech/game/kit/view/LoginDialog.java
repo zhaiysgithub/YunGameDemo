@@ -8,28 +8,31 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import kptech.game.kit.R;
 import kptech.game.kit.data.RequestLoginTask;
 
 public class LoginDialog extends Dialog {
     public interface ICallback{
-        void onResult(int ret, String msg);
+        void onResult(Map msg);
     }
 
     private static final String TAG = "AlertDialog";
     private Activity mActivity;
     private EditText mPhoneText;
     private EditText mPswText;
+    private String mCorpId;
 
     private LoginDialog.ICallback mCallback;
     public void setCallback(LoginDialog.ICallback callback){
         mCallback = callback;
     }
 
-    public LoginDialog(Activity context) {
+    public LoginDialog(Activity context, String corpId) {
         super(context, R.style.MyTheme_CustomDialog);
         this.mActivity = context;
+        this.mCorpId = corpId;
     }
 
     @Override
@@ -68,24 +71,24 @@ public class LoginDialog extends Dialog {
             return;
         }
 
-        new RequestLoginTask(new RequestLoginTask.ICallback() {
+        new RequestLoginTask(mCorpId,new RequestLoginTask.ICallback() {
             @Override
-            public void onResult(HashMap<String, String> map) {
-                String msg = "";
-                int code = 0;
-                if (map == null){
-                    msg = "map null";
-                }else if (map.containsKey("access_token")){
-                    code = 1;
-                    msg = map.get("access_token");
-                }else if (map.containsKey("error")){
-                    msg = map.get("error");
-                }else{
-                    msg = "error";
-                }
+            public void onResult(HashMap<String, Object> map) {
+//                String msg = "";
+//                int code = 0;
+//                if (map == null){
+//                    msg = "map null";
+//                }else if (map.containsKey("access_token")){
+//                    code = 1;
+//                    msg = map.get("access_token");
+//                }else if (map.containsKey("error")){
+//                    msg = map.get("error");
+//                }else{
+//                    msg = "error";
+//                }
 
                 if (mCallback!=null){
-                    mCallback.onResult(code, msg);
+                    mCallback.onResult(map);
                 }
             }
         }).execute("kp",phone,psw);

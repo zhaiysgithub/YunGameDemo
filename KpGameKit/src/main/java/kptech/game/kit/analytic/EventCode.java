@@ -4,7 +4,7 @@ import kptech.game.kit.APIConstants;
 
 public class EventCode {
     //启动游戏界面
-    public static final String DATA_ACTIVITY_PLAYGAME_ONCREATE = "DATA_ACTIVITY_PLAYGAME_ONCREATE";
+    public static final String DATA_ACTIVITY_PLAYGAME_ONCREATE = "DATA_ACTIVITY_PLAYGAME_DISPLAY";
     //关闭游戏界面
     public static final String DATA_ACTIVITY_PLAYGAME_DESTORY = "DATA_ACTIVITY_PLAYGAME_DESTORY";
     //游戏中边玩边下按钮

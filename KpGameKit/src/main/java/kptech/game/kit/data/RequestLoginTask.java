@@ -11,15 +11,18 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class RequestLoginTask extends AsyncTask<String,Void,String> {
     public interface ICallback{
-        void onResult(HashMap<String, String> map);
+        void onResult(HashMap<String, Object> map);
     }
 
+    private String mCorpId;
     private ICallback mCallback;
-    public RequestLoginTask(ICallback callback){
+    public RequestLoginTask(String corpId, ICallback callback){
         mCallback = callback;
+        this.mCorpId = corpId;
     }
 
     private String mCmd = null;
@@ -45,7 +48,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String str) {
         if (mCallback!=null){
-            HashMap<String,String> map = new HashMap();
+            HashMap<String,Object> map = new HashMap();
             if (str == null){
                 map.put("error","登录参数出错");
                 mCallback.onResult(map);
@@ -62,6 +65,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
                     map.put("global_id", "uid".equals(mCmd) ? uninqueId : guid);
                     map.put("access_token",token);
                     map.put("guid", guid);
+
                 }else {
                     String m = jsonObject.getString("m");
                     map.put("error",m);
@@ -87,7 +91,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
             postConnection.setDoInput(true);//允许从服务端读取数据
             postConnection.setDoOutput(true);//允许写入
 //            postConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");//以表单形式传递参数
-            String postParms = "globalUserId="+userId+"&client_id=1585036969212529&client_secret=n9Yja2ybFgqNSNIua3ykqV83zq2mrXVDPmRmikqV";
+            String postParms = "corpKey="+mCorpId+"&globalUserId="+userId+"&client_id=1585036969212529&client_secret=n9Yja2ybFgqNSNIua3ykqV83zq2mrXVDPmRmikqV";
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.
             outputStream.flush();
@@ -124,7 +128,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
             postConnection.setDoInput(true);//允许从服务端读取数据
             postConnection.setDoOutput(true);//允许写入
 //            postConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");//以表单形式传递参数
-            String postParms = "phone="+phone+"&password="+psw+"&client_id=1585036969212529&client_secret=n9Yja2ybFgqNSNIua3ykqV83zq2mrXVDPmRmikqV&app_key=dc02bd00184e4a9381d2eb3fe4a529b2";
+            String postParms = "corpKey="+mCorpId+"&phone="+phone+"&password="+psw+"&client_id=1585036969212529&client_secret=n9Yja2ybFgqNSNIua3ykqV83zq2mrXVDPmRmikqV&app_key=dc02bd00184e4a9381d2eb3fe4a529b2";
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.
             outputStream.flush();
