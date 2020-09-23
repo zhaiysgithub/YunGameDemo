@@ -18,11 +18,9 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
         void onResult(HashMap<String, Object> map);
     }
 
-    private String mCorpId;
     private ICallback mCallback;
-    public RequestLoginTask(String corpId, ICallback callback){
+    public RequestLoginTask(ICallback callback){
         mCallback = callback;
-        this.mCorpId = corpId;
     }
 
     private String mCmd = null;
@@ -33,10 +31,10 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
         mCmd = args[0];
         try {
             if ("uid".equals(mCmd)){
-                uninqueId = args[1];
-                ret = requestUidLogin(args[1]);
+                uninqueId = args[2];
+                ret = requestUidLogin(args[1], args[2]);
             }else if ("kp".equals(mCmd)){
-                ret = requestKpLogin(args[1],args[2]);
+                ret = requestKpLogin(args[1], args[2],args[3]);
             }
         }catch (Exception e){
 
@@ -79,7 +77,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
     }
 
     //post请求
-    private String requestUidLogin(String userId) {
+    private String requestUidLogin(String mCorpId, String userId) {
 
         String str = "https://auth-dev.kuaipantech.com/api/client/user/login";
         try {
@@ -116,7 +114,7 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
     }
 
     //post请求
-    private String requestKpLogin(String phone, String psw) {
+    private String requestKpLogin(String mCorpId, String phone, String psw) {
 
         String str = "https://auth-dev.kuaipantech.com/api/user/login";
         try {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
@@ -83,10 +84,25 @@ public class GameBoxManager {
         mCorpID = appKey;
         if (mApplication == null){
             logger.error("Init application is null");
+            if (callback != null){
+                callback.onAPICallback("Application is null", APIConstants.ERROR_SDK_INIT_ERROR);
+            }
             return;
         }
         if (mCorpID==null || "".equals(mCorpID.trim())){
             logger.error("Init appKey is null");
+            //回调初始化
+            if (callback != null){
+                callback.onAPICallback("CorID is null", APIConstants.ERROR_SDK_INIT_ERROR);
+            }
+            return;
+        }
+
+        //判断已经初始化完成
+        if (box!=null && box.isGameBoxManagerInited()){
+            if (callback != null){
+                callback.onAPICallback("", 1);
+            }
             return;
         }
 
@@ -207,6 +223,11 @@ public class GameBoxManager {
                         }
 
                         break;
+
+                    case 3:
+                        //继续申请设备
+
+                        break;
                 }
             }catch (Exception e){
                 logger.error(e.getMessage());
@@ -291,6 +312,10 @@ public class GameBoxManager {
 
         com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
         if (manager == null){
+            //sdk未初始化
+            if (callback!=null){
+                callback.onAPICallback(null, APIConstants.ERROR_SDK_INIT_ERROR);
+            }
             return;
         }
 
@@ -310,6 +335,11 @@ public class GameBoxManager {
 
 
         try {
+            //重置打点数据
+            if (activity.getClass() != GamePlay.class){
+                Event.createBaseEvent(activity, mCorpID);
+            }
+
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}

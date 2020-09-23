@@ -6,33 +6,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import kptech.game.kit.R;
-import kptech.game.kit.data.RequestLoginTask;
 
 public class LoginDialog extends Dialog {
-    public interface ICallback{
-        void onResult(Map msg);
+    public interface OnLoginListener{
+        void onClick(String phone, String psw);
     }
 
     private static final String TAG = "AlertDialog";
     private Activity mActivity;
     private EditText mPhoneText;
     private EditText mPswText;
-    private String mCorpId;
 
-    private LoginDialog.ICallback mCallback;
-    public void setCallback(LoginDialog.ICallback callback){
+    private LoginDialog.OnLoginListener mCallback;
+    public void setCallback(LoginDialog.OnLoginListener callback){
         mCallback = callback;
     }
 
-    public LoginDialog(Activity context, String corpId) {
+    public LoginDialog(Activity context) {
         super(context, R.style.MyTheme_CustomDialog);
         this.mActivity = context;
-        this.mCorpId = corpId;
     }
 
     @Override
@@ -71,47 +64,10 @@ public class LoginDialog extends Dialog {
             return;
         }
 
-        new RequestLoginTask(mCorpId,new RequestLoginTask.ICallback() {
-            @Override
-            public void onResult(HashMap<String, Object> map) {
-//                String msg = "";
-//                int code = 0;
-//                if (map == null){
-//                    msg = "map null";
-//                }else if (map.containsKey("access_token")){
-//                    code = 1;
-//                    msg = map.get("access_token");
-//                }else if (map.containsKey("error")){
-//                    msg = map.get("error");
-//                }else{
-//                    msg = "error";
-//                }
-
-                if (mCallback!=null){
-                    mCallback.onResult(map);
-                }
-            }
-        }).execute("kp",phone,psw);
+        if (mCallback != null){
+            mCallback.onClick(phone, psw);
+        }
     }
 
-//    private void fullScreenImmersive(View view) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
-//            view.setSystemUiVisibility(uiOptions);
-//        }
-//    }
-//
-//    @Override
-//    public void show() {
-//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-//        super.show();
-//        fullScreenImmersive(getWindow().getDecorView());
-//        this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-//    }
 }
 

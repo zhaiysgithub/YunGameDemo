@@ -16,4 +16,6 @@ public class SharedKeys {
     public static final String KEY_AD_REWARD_VERIFY_FLAG = "kp_kit_ad_reward_verify";
 
     public static final String KEY_EVENT_USERID = "kp_kit_event_userid";
+
+    public static final String KEY_GAME_USER_LOGIN_DATA_PRE = "kp_kit_userlogin_";
 }

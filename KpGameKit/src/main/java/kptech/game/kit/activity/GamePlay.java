@@ -116,7 +116,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
 
-
         long[] times = getIntent().getLongArrayExtra(EXTRA_TIMEOUT);
         if (times!=null && times.length == 2){
             fontTimeout = times[0] > 60 ? times[0] : 5 * 60;
