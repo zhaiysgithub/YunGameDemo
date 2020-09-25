@@ -50,8 +50,29 @@ public class MobclickAgent {
         }
     }
 
-    private String URL = "https://interface.open.kuaipantech.com/useraction.php";
+    public static void sendTMEvent(Event event){
+        if (event == null){
+            return;
+        }
+        //判断corpKey是否为空
+        if (StringUtil.isEmpty(event.clientId)){
+            logger.error("sendTMEvent error: clientId is null ");
+            return;
+        }
+        try {
+            MobclickAgent agent = getInstance();
+            if (agent!=null){
+                agent.sendStringTMRequest(event.toTMRequestJson());
+            }
+        }catch (Exception e){
+            logger.error("sendTMEvent error:"+e.getMessage());
+        }
+    }
+
+
+    private String URL_ACTION = "https://interface.open.kuaipantech.com/useraction.php";
     private String URL_TIME = "https://interface.open.kuaipantech.com/useraction_playtimes.php";
+    private String URL_TM_ACTION = "https://interface.open.kuaipantech.com/useraction_special.php";
     private RequestQueue mQueue;
 
     private static volatile MobclickAgent agent = null;
@@ -86,18 +107,18 @@ public class MobclickAgent {
     private void sendStringRequest(String params) {
         try {
             if (mQueue!=null){
-                String url = URL + "?kphtmldata=" + params;
+                String url = URL_ACTION + "?kphtmldata=" + params;
                 logger.info("sendLog:" + url);
                 StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
-                        new Request.RequestListener<String>() {
-                            @Override
-                            public void onComplete(int stCode, String response, String errMsg) {
-                                if (stCode != 200){
-                                    logger.info("sendLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
-                                }
+                    new Request.RequestListener<String>() {
+                        @Override
+                        public void onComplete(int stCode, String response, String errMsg) {
+                            if (stCode != 200){
+                                logger.error("sendLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
                             }
-                        });
-
+                        }
+                    });
+                request.setShouldCache(false);
                 mQueue.addRequest(request);
             }
         }catch (Exception e){
@@ -118,11 +139,11 @@ public class MobclickAgent {
                             @Override
                             public void onComplete(int stCode, String response, String errMsg) {
                                 if (stCode != 200){
-                                    logger.info("sendLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
+                                    logger.error("sendPlayTimeLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
                                 }
                             }
                         });
-
+                request.setShouldCache(false);
                 mQueue.addRequest(request);
             }
         }catch (Exception e){
@@ -130,4 +151,28 @@ public class MobclickAgent {
         }
     }
 
+    /**
+     * 发送GET请求,返回的是String类型的数据, 同理还有{@see JsonRequest}、{@see MultipartRequest}
+     */
+    private void sendStringTMRequest(String params) {
+        try {
+            if (mQueue!=null){
+                String url = URL_TM_ACTION + "?" + params;
+                logger.info("sendLog:" + url);
+                StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
+                        new Request.RequestListener<String>() {
+                            @Override
+                            public void onComplete(int stCode, String response, String errMsg) {
+                                if (stCode != 200){
+                                    logger.error("sendTMLog response code:" + stCode + ",response:" + response + ",errMsg:" + errMsg);
+                                }
+                            }
+                        });
+                request.setShouldCache(false);
+                mQueue.addRequest(request);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
 }

@@ -64,6 +64,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
                     if (DBObj.has("sk")){
                         sk = DBObj.getString("sk");
                     }
+                    paas = "BD";
                 }
 
                 //缓存数据

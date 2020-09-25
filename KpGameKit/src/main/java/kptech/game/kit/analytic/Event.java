@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
@@ -68,7 +69,23 @@ public class Event {
      */
     String datafrom = "androidapp";
 
+    /**
+     * 视频时间
+     */
     int hearttimes = 0;
+
+    /**
+     * 时间段统计数据
+     */
+    Map tmData;
+    /**
+     * 时间段时间
+     */
+    long tmLocalTime = 0;
+    /**
+     * 时间段统计时长
+     */
+    long tmTimeLen = 0;
 
 
     private static Context mContext;
@@ -134,6 +151,46 @@ public class Event {
         return sb.toString();
     }
 
+    public String toTMRequestJson(){
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("corpkey=" + (this.clientId != null ? this.clientId : ""));
+            sb.append("&uid=" + (this.userId != null ? this.userId : ""));
+            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
+
+            sb.append("&action=" + this.event);
+            sb.append("&type=SDK");
+
+            sb.append("&pkgname=" + (this.gamePkg != null ? this.gamePkg : ""));
+            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
+
+            sb.append("&localtm=" + this.tmLocalTime);
+            sb.append("&useractiontime=" + this.tmTimeLen);
+
+            sb.append("&sdkversion=" + this.ver);
+            sb.append("&debug=" + this.debug);
+
+            if (this.tmData != null){
+                try {
+                    JSONObject tmDataObj = new JSONObject(this.tmData);
+                    sb.append("&data=" + tmDataObj.toString());
+                }catch (Exception e){}
+            }
+
+            if (this.ext != null){
+                try {
+                    JSONObject extObj = new JSONObject(this.ext);
+                    sb.append("&ext=" + extObj.toString());
+                }catch (Exception e){}
+            }
+
+        }catch (Exception e){
+
+        }
+
+        return sb.toString();
+    }
 
     private static String createTraceId(){
         return "ar"+new Date().getTime();
@@ -181,6 +238,21 @@ public class Event {
         return new Event();
     }
 
+
+    private static byte[] lock = new byte[0];
+    public static Event getTMEvent(String event, long tmLen, Map data){
+        synchronized (lock){
+            Event base = getEvent(event, null, null, null, null);
+            HashMap map =  new HashMap(data);
+            map.put("value",tmLen);
+            map.put("unit", "mm");
+            base.tmData = map;
+            base.tmLocalTime = new Date().getTime();
+            base.tmTimeLen = tmLen;
+            return base;
+        }
+    }
+
     public static Event getEvent(String event, String gamePkg, String padcode){
         return getEvent(event, gamePkg, padcode, null, null);
     }
@@ -220,4 +292,10 @@ public class Event {
     public void setHearttimes(int hearttimes) {
         this.hearttimes = hearttimes;
     }
+
+
+    public void setTmData(Map data){
+        this.tmData = data;
+    }
+
 }

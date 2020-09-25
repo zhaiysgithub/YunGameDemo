@@ -42,6 +42,8 @@ import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
+import kptech.game.kit.data.IRequestCallback;
+import kptech.game.kit.data.RequestGameInfoTask;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
@@ -357,7 +359,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 @Override
                 public void onAPICallback(String msg, int code) {
                     if (code == 1){
-                        startCloudPhone();
+                        checkGameAd();
                     }else {
                         //初始化失败，退出页面
 //                        Toast.makeText(GamePlay.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
@@ -370,7 +372,28 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
         //启动云手机
-        startCloudPhone();
+        checkGameAd();
+    }
+
+    private void checkGameAd(){
+        //检测是否需要加载广告
+        if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
+            mLoadingView.setText("获取游戏信息...");
+            //请求网络获取广告显示
+            new RequestGameInfoTask(this).setRequestCallback(new IRequestCallback<GameInfo>() {
+                @Override
+                public void onResult(GameInfo game, int code) {
+                    if (game!=null && game.showAd == 1){
+                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_ON;
+                    }else {
+                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                    }
+                    startCloudPhone();
+                }
+            }).execute(mCorpID, mGameInfo.pkgName);
+        }else {
+            startCloudPhone();
+        }
     }
 
     private void startCloudPhone() {

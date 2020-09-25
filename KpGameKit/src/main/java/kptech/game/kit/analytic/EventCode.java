@@ -82,6 +82,13 @@ public class EventCode {
 
     public static final String DATA_GAME_PLAY_TIME = "DATA_GAME_PLAY_TIME";
 
+    //耗时统计点
+    public static final String DATA_TMDATA_SDKINIT_END = "DATA_TMDATA_TM1";
+    public static final String DATA_TMDATA_DEVICE_START = "DATA_TMDATA_TM2";
+    public static final String DATA_TMDATA_DEVICE_END = "DATA_TMDATA_TM3";
+    public static final String DATA_TMDATA_VIDEO_START = "DATA_TMDATA_TM4";
+    public static final String DATA_TMDATA_VIDEO_END = "DATA_TMDATA_TM5";
+
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;

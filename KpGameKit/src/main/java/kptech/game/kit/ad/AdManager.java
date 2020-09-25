@@ -248,13 +248,13 @@ public class AdManager {
         this.mAdCallback = adCallback;
 
         try {
-            //手动设置为不显示广告
-            if (!AdManager.adEnable || gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
-                if (mHandler!=null){
-                    mHandler.sendEmptyMessage(CB_AD_DISABLED);
-                }
-                return;
-            }
+//            //手动设置为不显示广告
+//            if (!AdManager.adEnable || gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
+//                if (mHandler!=null){
+//                    mHandler.sendEmptyMessage(CB_AD_DISABLED);
+//                }
+//                return;
+//            }
 
             //判断是否已经看过广告了
             int adVerify = ProferencesUtils.getIng(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
@@ -285,24 +285,23 @@ public class AdManager {
                 return;
             }
 
-            //请求网络获取广告显示
-            new RequestGameInfoTask(mActivity).setRequestCallback(new IRequestCallback<GameInfo>() {
-                @Override
-                public void onResult(GameInfo game, int code) {
-                    if (game!=null && game.showAd == 1){
-                        //显示广告弹窗
-                        showAdRemindDialog();
+//            //请求网络获取广告显示
+//            new RequestGameInfoTask(mActivity).setRequestCallback(new IRequestCallback<GameInfo>() {
+//                @Override
+//                public void onResult(GameInfo game, int code) {
+//                    if (game!=null && game.showAd == 1){
+//                        //显示广告弹窗
+//                        showAdRemindDialog();
+//
+//                    }else {
+//                        //广告关闭
+//                        if (mHandler!=null){
+//                            mHandler.sendEmptyMessage(CB_AD_DISABLED);
+//                        }
+//                    }
+//                }
+//            }).execute(corpId, gameInfo.pkgName);
 
-                    }else {
-                        //广告关闭
-                        if (mHandler!=null){
-                            mHandler.sendEmptyMessage(CB_AD_DISABLED);
-                        }
-                    }
-                }
-            }).execute(corpId, gameInfo.pkgName);
-
-            return;
         }catch (Exception e){
             logger.error("showAd error:" + e.getMessage());
         }

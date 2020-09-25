@@ -36,6 +36,10 @@ public class DeviceControl {
     private JSONObject mDeviceToken;
     private AdManager mAdManager;
 
+    //耗时统计
+    private boolean sendTmEvent = false;
+    private long TM_DEVICE_END, TM_VIDEO_START, TM_VIDEO_END;
+
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
     }
@@ -49,6 +53,10 @@ public class DeviceControl {
 
     public void setAdManager(AdManager adManager) {
         this.mAdManager = adManager;
+    }
+
+    public void setTM_DEVICE_END(long tm){
+        this.TM_DEVICE_END = tm;
     }
 
     private void parseDeviceToken(){
@@ -168,6 +176,27 @@ public class DeviceControl {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
+        //发送事件耗时统计
+        if (!sendTmEvent) {
+            if (TM_DEVICE_END  == 0){
+                TM_DEVICE_END = new Date().getTime();
+            }
+
+            sendTmEvent = true;
+            try {
+                //发送事件耗时统计
+                TM_VIDEO_START = new Date().getTime();
+                long useTm = ( TM_VIDEO_START - TM_DEVICE_END );
+                HashMap data = new HashMap();
+                data.put("stime", TM_DEVICE_END);
+                data.put("etime", TM_VIDEO_START);
+                Event event = Event.getTMEvent(EventCode.DATA_TMDATA_VIDEO_START, useTm, data);
+                event.setPadcode(getPadcode());
+                event.setGamePkg(mGameInfo.pkgName);
+                MobclickAgent.sendTMEvent(event);
+            }catch (Exception e){}
+        }
+
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
             public void onAPICallback(String msg, int code) {
@@ -195,6 +224,33 @@ public class DeviceControl {
                     event.setExt(ext);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
+
+                //发送事件耗时统计
+                if (sendTmEvent){
+                    try {
+                        sendTmEvent = false;
+                        boolean ret = false;
+                        if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS){
+                            ret = true;
+                        }else {
+                            ret = false;
+                        }
+
+                        //发送事件耗时统计
+                        TM_VIDEO_END = new Date().getTime();
+                        long useTm = ( TM_VIDEO_END - TM_VIDEO_START );
+                        HashMap data = new HashMap();
+                        data.put("stime", TM_VIDEO_START);
+                        data.put("etime", TM_VIDEO_END);
+                        data.put("state", ret ? "ok" : "failed");
+                        data.put("code", code);
+                        Event event = Event.getTMEvent(EventCode.DATA_TMDATA_VIDEO_END, useTm, data);
+                        event.setPadcode(getPadcode());
+                        event.setGamePkg(mGameInfo.pkgName);
+                        MobclickAgent.sendTMEvent(event);
+                    }catch (Exception e){}
+                }
+
 
                 //记录游戏开始时间
                 if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS){
@@ -532,7 +588,7 @@ public class DeviceControl {
 
                         //心跳10秒
                         if (mPlayTimeHandler!=null){
-                            mPlayTimeHandler.sendEmptyMessageDelayed(1, 10*1000);
+                            mPlayTimeHandler.sendEmptyMessageDelayed(1, 15*1000);
                         }
                     }
                 }

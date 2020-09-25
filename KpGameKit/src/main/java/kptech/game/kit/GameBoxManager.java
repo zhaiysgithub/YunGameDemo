@@ -3,14 +3,19 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.PluralsRes;
+
+import com.bun.miitmdid.core.JLibrary;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,6 +30,7 @@ import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.MiitHelper;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
@@ -42,6 +48,7 @@ public class GameBoxManager {
     private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private String mUniqueId;
 
+    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
     private boolean isLibInited = false;
 
     private static boolean mDebug = false;
@@ -119,6 +126,8 @@ public class GameBoxManager {
 //        }
 
 
+        TM_SDKINIT_START = new Date().getTime();
+
         try {
             //统计事件初始化
             Event.init(application, mCorpID);
@@ -127,10 +136,10 @@ public class GameBoxManager {
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
             event.setExt(getDeviceInfo(application));
             MobclickAgent.sendEvent(event);
+
         }catch (Exception e){
             logger.error(e.getMessage());
         }
-
 
         //发送请求
         InitHandler mHandler = new InitHandler();
@@ -151,6 +160,17 @@ public class GameBoxManager {
             params.put("sdkVer", BuildConfig.VERSION_NAME);
             params.put("androidLevel", DeviceUtils.getBuildLevel());
             params.put("androidVer", DeviceUtils.getBuildVersion());
+            int netType = DeviceUtils.getNetworkType(context);
+            String netStr = "unkwon";
+            switch (netType){
+                case ConnectivityManager.TYPE_MOBILE:
+                    netStr = "mobile";
+                    break;
+                case ConnectivityManager.TYPE_WIFI:
+                    netStr = "wifi";
+                    break;
+            }
+            params.put("nettype", netStr);
         }catch (Exception e){
         }
         return params;
@@ -275,6 +295,19 @@ public class GameBoxManager {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
+
+        try {
+            //发送事件耗时统计
+            TM_SDKINIT_END = new Date().getTime();
+            long useTm = (TM_SDKINIT_END - TM_SDKINIT_START);
+            HashMap data = new HashMap();
+            data.put("state", ret ? "ok" : "failed");
+            data.put("stime", TM_SDKINIT_START);
+            data.put("etime", TM_SDKINIT_END);
+            Event event = Event.getTMEvent(EventCode.DATA_TMDATA_SDKINIT_END, useTm, data);
+            MobclickAgent.sendTMEvent(event);
+        }catch (Exception e){}
+
         return ret;
     }
 
@@ -339,14 +372,25 @@ public class GameBoxManager {
             if (activity.getClass() != GamePlay.class){
                 Event.createBaseEvent(activity, mCorpID);
             }
-
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}
 
+        try {
+            //发送事件耗时统计
+            TM_DEVICE_START = new Date().getTime();
+            long useTm = (TM_DEVICE_START - TM_SDKINIT_END);
+            HashMap data = new HashMap();
+            data.put("stime", TM_SDKINIT_END);
+            data.put("etime", TM_DEVICE_START);
+            Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_START, useTm, data);
+            event.setGamePkg(inf.pkgName);
+            MobclickAgent.sendTMEvent(event);
+        }catch (Exception e){}
+
 
         //预加载广告
-        final AdManager adManager = AdManager.adEnable ? new AdManager(activity) : null;
+        final AdManager adManager = (AdManager.adEnable && inf.showAd == GameInfo.GAME_AD_SHOW_ON)  ? new AdManager(activity) : null;
         if (adManager!=null){
             adManager.setPackageName(inf.pkgName);
             adManager.prepareAd();
@@ -364,11 +408,6 @@ public class GameBoxManager {
                     control.setAdManager(adManager);
                 }
 
-                //回调方法
-                if (callback!=null){
-                    callback.onAPICallback(control, code);
-                }
-
                 try {
                     //发送打点事件
                     Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
@@ -382,6 +421,28 @@ public class GameBoxManager {
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
 
+                try {
+                    //发送事件耗时统计
+                    TM_DEVICE_END = new Date().getTime();
+                    long useTm = (TM_DEVICE_END - TM_DEVICE_START );
+                    HashMap data = new HashMap();
+                    data.put("stime", TM_DEVICE_START);
+                    data.put("etime", TM_DEVICE_END);
+                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
+                    data.put("code", code);
+                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
+                    event.setGamePkg(inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+                        control.setTM_DEVICE_END(TM_DEVICE_END);
+                    }
+                    MobclickAgent.sendTMEvent(event);
+                }catch (Exception e){}
+
+                //回调方法
+                if (callback!=null){
+                    callback.onAPICallback(control, code);
+                }
             }
         });
     }
