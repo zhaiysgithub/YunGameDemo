@@ -9,8 +9,12 @@ public class EventCode {
     public static final String DATA_ACTIVITY_PLAYGAME_DESTORY = "DATA_ACTIVITY_PLAYGAME_DESTORY";
     //游戏中边玩边下按钮
     public static final String DATA_ACTIVITY_PLAYGAME_DOWNLOAD = "DATA_ACTIVITY_PLAYGAME_DOWNLOAD";
+    //边玩边下停止
+    public static final String DATA_ACTIVITY_PLAYGAME_DOWNLOADSTOP = "DATA_ACTIVITY_PLAYGAME_DOWNLOADSTOP";
     //游戏错误界面下载
     public static final String DATA_ACTIVITY_PLAYERROR_DOWNLOAD = "DATA_ACTIVITY_PLAYERROR_DOWNLOAD";
+    //游戏错误界面停止下载
+    public static final String DATA_ACTIVITY_PLAYERROR_DOWNLOADSTOP = "DATA_ACTIVITY_PLAYERROR_DOWNLOADSTOP";
     //游戏错误界面重新加载
     public static final String DATA_ACTIVITY_PLAYERROR_RELOAD = "DATA_ACTIVITY_PLAYERROR_RELOAD";
 

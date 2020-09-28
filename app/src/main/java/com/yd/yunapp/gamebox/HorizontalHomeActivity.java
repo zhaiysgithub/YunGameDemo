@@ -126,27 +126,27 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        gameBox = GameBox.getInstance();
 //        gameBox.setGameDownloader(mGameDownloader);
 //
-//        IntentFilter filter =new  IntentFilter();
-//        filter.addAction("KpTech_Game_Kit_DownLoad_Start_Action");
-//        filter.addAction("KpTech_Game_Kit_DownLoad_Stop_Action");
-//        registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Start_Action")){
+        IntentFilter filter =new  IntentFilter();
+        filter.addAction("KpTech_Game_Kit_DownLoad_Start_Action");
+        filter.addAction("KpTech_Game_Kit_DownLoad_Stop_Action");
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Start_Action")){
+                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            download(gameInfo.downloadUrl, gameInfo);
+                        }
+                    }.start();
+                }else  if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Stop_Action")){
 //                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
-//                    new Thread(){
-//                        @Override
-//                        public void run() {
-//                            download(gameInfo.downloadUrl, gameInfo);
-//                        }
-//                    }.start();
-//                }else  if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Stop_Action")){
-////                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
-//                    downloadStop();
-//                }
-//
-//            }
-//        }, filter);
+                    downloadStop();
+                }
+
+            }
+        }, filter);
     }
 
     //启动云游戏
@@ -208,7 +208,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
-//                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game);

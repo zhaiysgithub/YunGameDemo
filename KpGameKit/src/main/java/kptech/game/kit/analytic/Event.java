@@ -140,57 +140,75 @@ public class Event {
         return obj.toString();
     }
 
-    public String toTimeRequestJson(){
-        StringBuilder sb = new StringBuilder();
-
+    public Map toTimeRequestMap(){
+        Map<String, String> map = new HashMap<>();
         try {
-            sb.append("clientid=" + (this.clientId != null ? this.clientId : ""));
-            sb.append("&package=" + (this.gamePkg != null ? this.gamePkg : ""));
-            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
-            sb.append("&hearttimes=" +  this.hearttimes);
-            sb.append("&datafrom=" + this.datafrom);
-            sb.append("&userid=" + (this.userId != null ? this.userId : ""));
-            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
-            sb.append("&usertype=" + this.userType);
-            sb.append("&h5sdkversion=" + this.ver);
+            map.put("clientid", (this.clientId != null ? this.clientId : ""));
+            map.put("package", (this.gamePkg != null ? this.gamePkg : ""));
+            map.put("traceid", (this.traceId != null ? this.traceId : ""));
+            map.put("hearttimes",  ""+this.hearttimes);
+            map.put("datafrom", this.datafrom);
+            map.put("userid", (this.userId != null ? this.userId : ""));
+            map.put("padcode", (this.padcode != null ? this.padcode : ""));
+            map.put("usertype", this.userType);
+            map.put("h5sdkversion", this.ver);
         }catch (Exception e){
-
         }
-
-        return sb.toString();
+        return map;
     }
 
-    public String toTMRequestJson(){
-        StringBuilder sb = new StringBuilder();
+//    public String toTimeRequestJson(){
+//        StringBuilder sb = new StringBuilder();
+//
+//        try {
+//            sb.append("clientid=" + (this.clientId != null ? this.clientId : ""));
+//            sb.append("&package=" + (this.gamePkg != null ? this.gamePkg : ""));
+//            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
+//            sb.append("&hearttimes=" +  this.hearttimes);
+//            sb.append("&datafrom=" + this.datafrom);
+//            sb.append("&userid=" + (this.userId != null ? this.userId : ""));
+//            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
+//            sb.append("&usertype=" + this.userType);
+//            sb.append("&h5sdkversion=" + this.ver);
+//        }catch (Exception e){
+//
+//        }
+//
+//        return sb.toString();
+//    }
+
+
+    public Map toTMRequestMap(){
+        Map<String, String> map = new HashMap<>();
 
         try {
-            sb.append("corpkey=" + (this.clientId != null ? this.clientId : ""));
-            sb.append("&uid=" + (this.userId != null ? this.userId : ""));
-            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
+            map.put("corpkey", (this.clientId != null ? this.clientId : ""));
+            map.put("uid", (this.userId != null ? this.userId : ""));
+            map.put("traceid", (this.traceId != null ? this.traceId : ""));
 
-            sb.append("&action=" + this.event);
-            sb.append("&type=SDK");
+            map.put("action", this.event);
+            map.put("type","SDK");
 
-            sb.append("&pkgname=" + (this.gamePkg != null ? this.gamePkg : ""));
-            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
+            map.put("pkgname",(this.gamePkg != null ? this.gamePkg : ""));
+            map.put("padcode",(this.padcode != null ? this.padcode : ""));
 
-            sb.append("&localtm=" + this.tmLocalTime);
-            sb.append("&useractiontime=" + this.tmTimeLen);
+            map.put("localtm", "" + this.tmLocalTime);
+            map.put("useractiontime", "" + this.tmTimeLen);
 
-            sb.append("&sdkversion=" + this.ver);
-            sb.append("&debug=" + this.debug);
+            map.put("sdkversion", this.ver);
+            map.put("debug", "" + this.debug);
 
             if (this.tmData != null){
                 try {
                     JSONObject tmDataObj = new JSONObject(this.tmData);
-                    sb.append("&data=" + tmDataObj.toString());
+                    map.put("data", tmDataObj.toString());
                 }catch (Exception e){}
             }
 
             if (this.ext != null){
                 try {
                     JSONObject extObj = new JSONObject(this.ext);
-                    sb.append("&ext=" + extObj.toString());
+                    map.put("ext", extObj.toString());
                 }catch (Exception e){}
             }
 
@@ -198,8 +216,49 @@ public class Event {
 
         }
 
-        return sb.toString();
+        return map;
     }
+
+//    public String toTMRequestJson(){
+//        StringBuilder sb = new StringBuilder();
+//
+//        try {
+//            sb.append("corpkey=" + (this.clientId != null ? this.clientId : ""));
+//            sb.append("&uid=" + (this.userId != null ? this.userId : ""));
+//            sb.append("&traceid=" + (this.traceId != null ? this.traceId : ""));
+//
+//            sb.append("&action=" + this.event);
+//            sb.append("&type=SDK");
+//
+//            sb.append("&pkgname=" + (this.gamePkg != null ? this.gamePkg : ""));
+//            sb.append("&padcode=" + (this.padcode != null ? this.padcode : ""));
+//
+//            sb.append("&localtm=" + this.tmLocalTime);
+//            sb.append("&useractiontime=" + this.tmTimeLen);
+//
+//            sb.append("&sdkversion=" + this.ver);
+//            sb.append("&debug=" + this.debug);
+//
+//            if (this.tmData != null){
+//                try {
+//                    JSONObject tmDataObj = new JSONObject(this.tmData);
+//                    sb.append("&data=" + tmDataObj.toString());
+//                }catch (Exception e){}
+//            }
+//
+//            if (this.ext != null){
+//                try {
+//                    JSONObject extObj = new JSONObject(this.ext);
+//                    sb.append("&ext=" + extObj.toString());
+//                }catch (Exception e){}
+//            }
+//
+//        }catch (Exception e){
+//
+//        }
+//
+//        return sb.toString();
+//    }
 
     private static String createTraceId(){
         int random = (int)(Math.random()*900)+100;

@@ -216,22 +216,22 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             @Override
             public void onClick(View view) {
 
-                downloadApk();
+                downloadApk(view);
 
-                try {
-                    //错误界面发送事件
-                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-                    event.setErrMsg(GamePlay.this.mErrorMsg);
-                    if (mDeviceControl!=null){
-                        event.setPadcode(mDeviceControl.getPadcode());
-                    }
-                    HashMap ext = new HashMap();
-                    ext.put("code", mErrorCode);
-                    ext.put("msg", mErrorMsg);
-                    event.setExt(ext);
-                    MobclickAgent.sendEvent(event);
-                }catch (Exception e){
-                }
+//                try {
+//                    //错误界面发送事件
+//                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+//                    event.setErrMsg(GamePlay.this.mErrorMsg);
+//                    if (mDeviceControl!=null){
+//                        event.setPadcode(mDeviceControl.getPadcode());
+//                    }
+//                    HashMap ext = new HashMap();
+//                    ext.put("code", mErrorCode);
+//                    ext.put("msg", mErrorMsg);
+//                    event.setExt(ext);
+//                    MobclickAgent.sendEvent(event);
+//                }catch (Exception e){
+//                }
             }
         });
 
@@ -240,42 +240,69 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             @Override
             public void onClick(View view) {
 
-                downloadApk();
+                downloadApk(view);
 
-                try {
-                    //游戏界面发送
-                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-                    if (mDeviceControl!=null){
-                        event.setPadcode(mDeviceControl.getPadcode());
-                    }
-                    MobclickAgent.sendEvent(event);
-                }catch (Exception e){
-                }
+//                try {
+//                    //游戏界面发送
+//                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+//                    if (mDeviceControl!=null){
+//                        event.setPadcode(mDeviceControl.getPadcode());
+//                    }
+//                    MobclickAgent.sendEvent(event);
+//                }catch (Exception e){
+//                }
             }
         });
 
     }
 
-    private void downloadApk(){
+    private void downloadApk(View view){
         //判断网络状态
         if (DeviceUtils.getNetworkType(this) == ConnectivityManager.TYPE_MOBILE){
             Toast.makeText(this,"您当前正在使用数据流量。", Toast.LENGTH_SHORT).show();
         }
 
+        boolean stop = false;
         if (mDownloadStatus == GameDownloader.STATUS_STARTED){
             //发送下载广播
             Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Stop_Action");
             intent.putExtra(EXTRA_GAME, mGameInfo);
             GamePlay.this.sendBroadcast(intent);
+            stop = true;
         }else {
             //发送下载广播
             Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Start_Action");
             intent.putExtra(EXTRA_GAME, mGameInfo);
             GamePlay.this.sendBroadcast(intent);
+            stop = false;
+        }
+
+        //发送打点数据
+        try {
+            Event event = null;
+            if (view.getId() == R.id.error_down_layout){
+                //错误界面点的下载
+                String eventCode = stop ? EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOADSTOP : EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD;
+                event = Event.getEvent(eventCode, mGameInfo!=null ? mGameInfo.pkgName : "");
+                event.setErrMsg("code:"+mErrorCode+",err:"+mErrorMsg);
+
+            }else if (view.getId() == R.id.down_btn){
+                //边玩边下按钮
+                String eventCode = stop ? EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOADSTOP : EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD;
+                event = Event.getEvent(eventCode, mGameInfo!=null ? mGameInfo.pkgName : "");
+            }
+            if (event!=null){
+                if (mDeviceControl!=null){
+                    event.setPadcode(mDeviceControl.getPadcode());
+                }
+                MobclickAgent.sendEvent(event);
+            }
+        }catch (Exception e) {
+            logger.error(e.getMessage());
         }
     }
 
-//
+
 //    private void downloadApk(boolean error){
 ////        Toast.makeText(GamePlay.this,"FloatDownView Clicked 1", Toast.LENGTH_SHORT).show();
 //        logger.info("downloadApk downloader:" + mGameDownloader + ",game："+mGameInfo);

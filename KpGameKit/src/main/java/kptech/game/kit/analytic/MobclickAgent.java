@@ -5,6 +5,9 @@ import com.kptech.netqueue.core.RequestQueue;
 import com.kptech.netqueue.core.SimpleNet;
 import com.kptech.netqueue.requests.StringRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
@@ -43,7 +46,7 @@ public class MobclickAgent {
         try {
             MobclickAgent agent = getInstance();
             if (agent!=null){
-                agent.sendStringPlayTimeRequest(event.toTimeRequestJson());
+                agent.sendStringPlayTimeRequest(event.toTimeRequestMap());
             }
         }catch (Exception e){
             logger.error("sendPlayTimeEvent error:"+e.getMessage());
@@ -62,7 +65,7 @@ public class MobclickAgent {
         try {
             MobclickAgent agent = getInstance();
             if (agent!=null){
-                agent.sendStringTMRequest(event.toTMRequestJson());
+                agent.sendStringTMRequest(event.toTMRequestMap());
             }
         }catch (Exception e){
             logger.error("sendTMEvent error:"+e.getMessage());
@@ -104,12 +107,12 @@ public class MobclickAgent {
     /**
      * 发送GET请求,返回的是String类型的数据, 同理还有{@see JsonRequest}、{@see MultipartRequest}
      */
-    private void sendStringRequest(String params) {
+    private void sendStringRequest(String data) {
         try {
             if (mQueue!=null){
-                String url = URL_ACTION + "?kphtmldata=" + params;
-                logger.info("sendLog:" + url);
-                StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
+                logger.info("actSend:" + data);
+
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_ACTION,
                     new Request.RequestListener<String>() {
                         @Override
                         public void onComplete(int stCode, String response, String errMsg) {
@@ -119,6 +122,8 @@ public class MobclickAgent {
                         }
                     });
                 request.setShouldCache(false);
+                Map<String,String > params =  request.getParams();
+                params.put("kphtmldata", data);
                 mQueue.addRequest(request);
             }
         }catch (Exception e){
@@ -129,12 +134,11 @@ public class MobclickAgent {
     /**
      * 发送GET请求,返回的是String类型的数据, 同理还有{@see JsonRequest}、{@see MultipartRequest}
      */
-    private void sendStringPlayTimeRequest(String params) {
+    private void sendStringPlayTimeRequest(Map data) {
         try {
             if (mQueue!=null){
-                String url = URL_TIME + "?" + params;
-                logger.info("sendLog:" + url);
-                StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
+                logger.info("timeSend:" + data.toString());
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_TIME,
                         new Request.RequestListener<String>() {
                             @Override
                             public void onComplete(int stCode, String response, String errMsg) {
@@ -144,6 +148,8 @@ public class MobclickAgent {
                             }
                         });
                 request.setShouldCache(false);
+                Map<String,String> params = request.getParams();
+                params.putAll(data);
                 mQueue.addRequest(request);
             }
         }catch (Exception e){
@@ -154,12 +160,11 @@ public class MobclickAgent {
     /**
      * 发送GET请求,返回的是String类型的数据, 同理还有{@see JsonRequest}、{@see MultipartRequest}
      */
-    private void sendStringTMRequest(String params) {
+    private void sendStringTMRequest(Map map) {
         try {
             if (mQueue!=null){
-                String url = URL_TM_ACTION + "?" + params;
-                logger.info("sendLog:" + url);
-                StringRequest request = new StringRequest(Request.HttpMethod.GET, url,
+                logger.info("tmSend:" + map.toString());
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_TM_ACTION,
                         new Request.RequestListener<String>() {
                             @Override
                             public void onComplete(int stCode, String response, String errMsg) {
@@ -169,6 +174,8 @@ public class MobclickAgent {
                             }
                         });
                 request.setShouldCache(false);
+                Map<String,String> params = request.getParams();
+                params.putAll(map);
                 mQueue.addRequest(request);
             }
         }catch (Exception e){
