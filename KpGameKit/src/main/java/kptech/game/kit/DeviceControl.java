@@ -130,8 +130,8 @@ public class DeviceControl {
         MsgManager.start(activity, GameBoxManager.mCorpID, mDeviceControl.getDeviceToken(), this.mGameInfo.pkgName);
 
         //加载广告
-        if (this.mAdManager != null){
-            this.mAdManager.loadGameAd(GameBoxManager.mCorpID, this.mGameInfo, new IAdCallback<String>() {
+        if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){
+            this.mAdManager.loadGameAd(new IAdCallback<String>() {
                 @Override
                 public void onAdCallback(String msg, int code) {
                     switch (code){

@@ -1,14 +1,9 @@
 package kptech.game.kit.ad.loader;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Application;
-import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
@@ -18,19 +13,15 @@ import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.bean.ZadFeedDataAdBean;
 import com.zad.sdk.Oapi.callback.ZadFeedDataAdObserver;
 import com.zad.sdk.Oapi.work.ZadFeedDataWorker;
-import com.zad.sdk.Oapi.work.ZadRewardWorker;
 
 import java.util.HashMap;
 import java.util.List;
 
-import kptech.game.kit.R;
 import kptech.game.kit.ad.view.AdFeedPopup;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
-import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.ProferencesUtils;
 
 public class FeedAdLoader implements IAdLoader {
     private final Logger logger = new Logger("FeedAdLoader") ;

@@ -17,7 +17,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import kptech.game.kit.GameInfo;
 import kptech.game.kit.ad.loader.FeedAdLoader;
 import kptech.game.kit.ad.loader.IAdLoader;
 import kptech.game.kit.ad.loader.IAdLoaderCallback;
@@ -26,11 +25,8 @@ import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.data.IRequestCallback;
-import kptech.game.kit.data.RequestGameInfoTask;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
-import kptech.game.kit.ad.view.AdRemindDialog;
 
 public class AdManager {
     private static final Logger logger = new Logger("AdManager") ;
@@ -252,18 +248,10 @@ public class AdManager {
         }
     }
 
-    public void loadGameAd(String corpId, final GameInfo gameInfo, IAdCallback adCallback){
+    public void loadGameAd(IAdCallback adCallback){
         this.mAdCallback = adCallback;
 
         try {
-//            //手动设置为不显示广告
-//            if (!AdManager.adEnable || gameInfo.showAd == GameInfo.GAME_AD_SHOW_OFF){
-//                if (mHandler!=null){
-//                    mHandler.sendEmptyMessage(CB_AD_DISABLED);
-//                }
-//                return;
-//            }
-
             //判断是否已经看过广告了
             int adVerify = ProferencesUtils.getIng(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
             if (adVerify > 0) {
@@ -286,37 +274,15 @@ public class AdManager {
                 mHandler.sendEmptyMessage(CB_AD_LOADING);
             }
 
-            //直接显示广告，不用请求服务器
-            if (gameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){
-                //显示广告弹窗
-                showAdRemindDialog();
-                return;
-            }
-
-//            //请求网络获取广告显示
-//            new RequestGameInfoTask(mActivity).setRequestCallback(new IRequestCallback<GameInfo>() {
-//                @Override
-//                public void onResult(GameInfo game, int code) {
-//                    if (game!=null && game.showAd == 1){
-//                        //显示广告弹窗
-//                        showAdRemindDialog();
-//
-//                    }else {
-//                        //广告关闭
-//                        if (mHandler!=null){
-//                            mHandler.sendEmptyMessage(CB_AD_DISABLED);
-//                        }
-//                    }
-//                }
-//            }).execute(corpId, gameInfo.pkgName);
+            //显示广告弹窗
+            showAdRemindDialog();
 
         }catch (Exception e){
             logger.error("showAd error:" + e.getMessage());
-        }
 
-
-        if (mHandler!=null){
-            mHandler.sendEmptyMessage(CB_AD_FAILED);
+            if (mHandler!=null){
+                mHandler.sendEmptyMessage(CB_AD_FAILED);
+            }
         }
     }
 

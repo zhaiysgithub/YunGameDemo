@@ -8,7 +8,6 @@ import com.zad.sdk.Oapi.work.ZadRewardWorker;
 
 import java.util.HashMap;
 
-import kptech.game.kit.ad.AdLoader;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
