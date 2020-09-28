@@ -61,6 +61,8 @@ public class AdManager {
         HashMap ext = new HashMap();
         ext.put("adEnable", adEnable);
 
+        String err = null;
+
         if (adEnable!=null && "1".equals(adEnable)){
             String adJson = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADJSON,null);
             if (adJson!=null){
@@ -70,6 +72,7 @@ public class AdManager {
                     String appToken = adObj.getString("appToken");
                     ZadSdkApi.init(application, appKey, appToken);
                     ret = true;
+                    AdManager.adEnable = true;
 
                     JSONArray gameStartArr = adObj.getJSONArray("gameStart");
                     try {
@@ -86,6 +89,7 @@ public class AdManager {
                             }
                         }
                     }catch (Exception e){
+                        err = e.getMessage();
                     }
 
                     ext.put("appKey", appKey);
@@ -96,6 +100,7 @@ public class AdManager {
 
                 }catch (Exception e){
                     logger.error(e.getMessage());
+                    err = e.getMessage();
                 }
             }
         }else {
@@ -105,6 +110,9 @@ public class AdManager {
         try {
             //发送打点事件
             Event event = Event.getEvent(ret ? EventCode.DATA_AD_INIT_OK : EventCode.DATA_AD_INIT_FAILED);
+            if (err!=null){
+                event.setErrMsg(err);
+            }
             event.setExt(ext);
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}

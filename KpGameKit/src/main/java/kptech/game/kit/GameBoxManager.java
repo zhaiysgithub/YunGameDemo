@@ -113,6 +113,13 @@ public class GameBoxManager {
             return;
         }
 
+        try {
+            //统计事件初始化
+            Event.init(application, mCorpID);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
 //        try {
 //            JLibrary.InitEntry(application);
 //            new MiitHelper(new MiitHelper.AppIdsUpdater() {
@@ -127,11 +134,7 @@ public class GameBoxManager {
 
 
         TM_SDKINIT_START = new Date().getTime();
-
         try {
-            //统计事件初始化
-            Event.init(application, mCorpID);
-
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
             event.setExt(getDeviceInfo(application));
@@ -230,8 +233,6 @@ public class GameBoxManager {
                         //初始化广告信息
                         if (AdManager.init(mApplication)) {
                             logger.info("ad initialized");
-                        }else {
-                            logger.error("ad init failure");
                         }
 
                         //初始化通讯
@@ -369,9 +370,9 @@ public class GameBoxManager {
 
         try {
             //重置打点数据
-            if (activity.getClass() != GamePlay.class){
-                Event.createBaseEvent(activity, mCorpID);
-            }
+//            if (activity.getClass() != GamePlay.class){
+//                Event.createBaseEvent(activity, mCorpID);
+//            }
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}

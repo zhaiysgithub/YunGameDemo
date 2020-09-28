@@ -129,6 +129,18 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,String> {
                     buffer.append(line);//把一行数据拼接到buffer里
                 }
                 return buffer.toString();
+            }else {
+                String msg = null;
+                try {
+                    InputStream inputStream = postConnection.getErrorStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line = null;//一行一行的读取
+                    while ((line = bufferedReader.readLine()) != null) {
+                        buffer.append(line);//把一行数据拼接到buffer里
+                    }
+                    msg = buffer.toString();
+                }catch (Exception e){}
+                logger.error("appInfo response code:" + code + "msg:" + msg);
             }
 
         } catch (Exception e) {

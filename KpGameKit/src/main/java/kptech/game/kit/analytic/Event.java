@@ -12,6 +12,7 @@ import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
@@ -91,13 +92,21 @@ public class Event {
     private static Context mContext;
     private static String mCorpKey;
 
-    public static void init(Application application, String appKey) {
-        if (mContext==null && application!=null ){
-            mContext = application;
+    private static boolean inited = false;
 
+    public static void init(Application application, String appKey) {
+        if (inited) {
+            return;
         }
-        if (mCorpKey==null && !StringUtil.isEmpty(appKey)){
+        if (application == null || StringUtil.isEmpty(appKey)){
+            return;
+        }
+
+        if (application!=null && !StringUtil.isEmpty(appKey)){
+            mContext = application;
             mCorpKey = appKey;
+            createBaseEvent(application, appKey);
+            inited = true;
         }
     }
 
@@ -193,15 +202,21 @@ public class Event {
     }
 
     private static String createTraceId(){
-        return "ar"+new Date().getTime();
+        int random = (int)(Math.random()*900)+100;
+        String  traceId = new Date().getTime() + "" + random;
+        return "ar" + traceId;
     }
 
     private static String getUserId(Context context){
         try {
             String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
             if (userId == null || "".equals(userId)){
-                int random = (int)(Math.random()*900)+100;
-                userId = new Date().getTime() + "" + random;
+                String str = DeviceUtils.getDeviceId(context);
+                if (StringUtil.isEmpty(str)){
+                    int random = (int)(Math.random()*900)+100;
+                    str = new Date().getTime() + "" + random;
+                }
+                userId = StringUtil.getMD5(str);
                 ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
             }
             return userId;
@@ -212,7 +227,7 @@ public class Event {
 
     private static Event base = null;
 
-    public static void createBaseEvent(Context context, String corpId){
+    private static void createBaseEvent(Context context, String corpId){
         if (context!=null){
             base = new Event();
             base.clientId = corpId != null ? corpId : mCorpKey;
