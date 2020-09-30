@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp">
+
+    <EditText
+        android:id="@+id/login_phone"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@drawable/dialog_edit_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="请输入您的手机号"
+        android:inputType="phone"
+        android:textSize="15dp"
+        android:nextFocusForward="@id/login_psw"
+        android:imeOptions="actionNext"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        />
+
+    <EditText
+        android:id="@+id/login_psw"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@drawable/dialog_edit_bg"
+        android:layout_marginTop="10dp"
+        android:hint="请输入登录密码"
+        android:inputType="textPassword"
+        android:textSize="15dp"
+        android:imeOptions="actionDone"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        />
+
+    <Button
+        android:id="@+id/submit_login"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/dialog_btn_bg"
+        android:textSize="16sp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="登  录"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:gravity="right"
+        android:layout_marginTop="5dp"
+        android:paddingRight="20dp">
+        <Button
+            android:id="@+id/go_regist"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="12sp"
+            android:textColor="#8B8A8A"
+            android:text="注册帐号"/>
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="#8B8A8A"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            />
+        <Button
+            android:id="@+id/go_forget"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:textSize="12sp"
+            android:textColor="#8B8A8A"
+            android:text="忘记密码"/>
+    </LinearLayout>
+</LinearLayout>

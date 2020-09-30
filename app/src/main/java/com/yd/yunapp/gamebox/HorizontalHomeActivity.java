@@ -2,6 +2,7 @@ package com.yd.yunapp.gamebox;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -32,6 +33,7 @@ import org.xutils.x;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -47,6 +49,8 @@ import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.ProferencesUtils;
+import kptech.game.kit.view.LoginDialog;
+import kptech.game.kit.view.PayDialog;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -82,6 +86,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameInfos = new LinkedHashMap<>();
         initView();
         GameBox.init(getApplication(),corpId);
+        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
 //        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
 //
@@ -153,42 +158,60 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     public void startGame(View view){
 //        startActivity(new Intent(this,TestActivity.class));
 
-        GameInfo info = new GameInfo();
-        info.gid = 3097;
-        info.pkgName = "com.kptach.test";
-        info.name = "测试";
-        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        LoginDialog mLoginDialog = new LoginDialog(this, corpId);
+        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+
+            }
+        });
+        mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
+            @Override
+            public void onLoginSuccess(HashMap<String, Object> map) {
+                Log.i("", map.toString());
+            }
+        });
+        mLoginDialog.show();
+
+//        PayDialog mPayDialog = new PayDialog(this);
+//        mPayDialog.productcode = "test111";
+//        mPayDialog.cp_orderid = "test111";
+//        mPayDialog.guid = "test_guid";
+//        mPayDialog.globaluserid =  "test_globaid";
+//        mPayDialog.globalusername = "";
+//        mPayDialog.cotype = "lianyun";
+//        mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialogInterface) {
+//
+//            }
+//        });
+//        mPayDialog.setCallback(new PayDialog.ICallback() {
+//            @Override
+//            public void onResult(int ret, String msg) {
+//
+//            }
+//        });
+//        mPayDialog.show();
 
 //        GameInfo info = new GameInfo();
-//        info.gid = 3006;
-//        info.pkgName = "com.zqgame.jqys.kuaipan";
-//        info.name = "街球艺术";
+//        info.gid = 3097;
+//        info.pkgName = "com.kptach.test";
+//        info.name = "测试";
+//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+
+//        GameInfo info = new GameInfo();
+//
 //        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
 //        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-
-
-        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
-
-        //预加载广告
-//        final AdManager adManager = AdManager.adEnable ? new AdManager(this) : null;
-//        if (adManager!=null){
-//            adManager.setPackageName(info.pkgName);
-//            adManager.prepareAd();
-//        }
 //
-//        adManager.loadGameAd(corpId, info, new IAdCallback() {
-//            @Override
-//            public void onAdCallback(Object msg, int code) {
-//                Log.i("HorizontalHomeActivity", ""+code);
-//                //成功连接游戏,删除激励广告标记
-//                int adVerify = ProferencesUtils.getIng(HorizontalHomeActivity.this, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
-//                if (adVerify > 0){
-//                    ProferencesUtils.setInt(HorizontalHomeActivity.this, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
-//                }
-//            }
-//        });
+//        info.gid = 3101;
+//        info.pkgName = "com.sy.fsyhj.yofun.mumu";
+//        info.name = "浮生妖世绘";
+//
+//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
     }
 
     private void initView() {

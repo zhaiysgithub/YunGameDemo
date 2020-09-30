@@ -31,7 +31,6 @@
         android:text="111"
         android:inputType="phone"
         android:textSize="15dp"
-        android:nextFocusForward="@id/psw"
         android:imeOptions="actionNext"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"

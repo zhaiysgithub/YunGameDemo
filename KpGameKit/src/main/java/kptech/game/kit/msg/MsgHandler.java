@@ -20,7 +20,6 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.view.LoginDialog;
 import kptech.game.kit.view.PayDialog;
-import kptech.game.kit.view.PayRadioButton;
 
 public class MsgHandler extends Handler {
     private static final Logger logger = new Logger("MsgHandler") ;
@@ -140,12 +139,24 @@ public class MsgHandler extends Handler {
     }
 
     private void showLoginDialog(){
-
         //处理登录，判断是联运登录，还是本地登录
         String uninqueId = GameBoxManager.getInstance(mActivity).getUniqueId();
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
-            requestLogin("uid", mCorpId, uninqueId);
+            LoginDialog login = new LoginDialog(mActivity, mCorpId);
+            login.setCallback(new LoginDialog.OnLoginListener() {
+                @Override
+                public void onLoginSuccess(HashMap<String, Object> map) {
+                    //缓存数据
+                    cacheLoginData(map);
+
+                    //回调
+                    if (mCallback!=null){
+                        mCallback.onLogin(1, "", map);
+                    }
+                }
+            });
+            login.requestUidLogin(uninqueId);
         }else {
             if (mActivity == null || mActivity.isFinishing()){
                 //回调
@@ -160,7 +171,7 @@ public class MsgHandler extends Handler {
             if (mLoginDialog!=null && mLoginDialog.isShowing()){
                 return;
             }
-            mLoginDialog = new LoginDialog(mActivity);
+            mLoginDialog = new LoginDialog(mActivity, mCorpId);
             mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
@@ -172,40 +183,18 @@ public class MsgHandler extends Handler {
             });
             mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
                 @Override
-                public void onClick(String phone, String psw) {
-                    requestLogin("kp", mCorpId, phone, psw);
+                public void onLoginSuccess(HashMap<String, Object> map) {
+                    //缓存数据
+                    cacheLoginData(map);
+
+                    //回调
+                    if (mCallback!=null){
+                        mCallback.onLogin(1, "", map);
+                    }
                 }
             });
             mLoginDialog.show();
         }
-    }
-
-    private void requestLogin(String ...params){
-        new RequestLoginTask(new RequestLoginTask.ICallback() {
-            @Override
-            public void onResult(HashMap<String, Object> map) {
-                if (map==null){
-                    Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                if (map != null && map.containsKey("error")){
-                    String error = map.get("error").toString();
-                    Toast.makeText(mActivity, error, Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                //缓存数据
-                cacheLoginData(map);
-
-                if (mLoginDialog!=null){
-                    mLoginDialog.dismiss();
-                }
-
-                if (mCallback!=null){
-                    mCallback.onLogin(1, "", map);
-                }
-            }
-        }).execute(params);
     }
 
     private void handlePay(Object obj){

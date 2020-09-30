@@ -16,15 +16,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.R;
-import kptech.game.kit.data.RequestPayTask;
 
 public class PayDialog extends Dialog {
     private static final String DEFAULT_REFERER = "https://wxapp.kuaipantech.com";
@@ -50,7 +47,7 @@ public class PayDialog extends Dialog {
     public String globalusername = "";
     public String cotype = "lianyun";
     private boolean choose = true;
-    private PayRadioButton mWeChat_id, mtreasure_id;
+//    private PayRadioButton mWeChat_id, mtreasure_id;
 
     public void setCallback(PayDialog.ICallback callback) {
         mCallback = callback;
@@ -64,49 +61,64 @@ public class PayDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.pay_dialog);
+        setContentView(R.layout.dialog_pay);
         setCanceledOnTouchOutside(false);
 
         mProBar = findViewById(R.id.progressBar1);
+
+        findViewById(R.id.yhj_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PayYouHuiDialog dialog = new PayYouHuiDialog(mActivity);
+                dialog.show();
+            }
+        });
 
         findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();
-                if (mCallback != null) {
-                    mCallback.onResult(1, "");
-                }
             }
         });
-        mWeChat_id = findViewById(R.id.mWeChat_id);
-        mtreasure_id = findViewById(R.id.treasure_id);
-        mWeChat_id.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                choose = isChecked;
-            }
-        });
+
+//        findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dismiss();
+//                if (mCallback != null) {
+//                    mCallback.onResult(1, "");
+//                }
+//            }
+//        });
+//        mWeChat_id = findViewById(R.id.mWeChat_id);
+//        mtreasure_id = findViewById(R.id.treasure_id);
+//        mWeChat_id.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                choose = isChecked;
+//            }
+//        });
 //        调起支付
-        confirm_the_payment = findViewById(R.id.confirm_the_payment);
-        confirm_the_payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (choose) {
-                    //微信
-                    PAY_URLS = "https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
-                    weChatpay();
-                } else {
-                    //支付宝
-                    PAY_URLS = "https://kppay.kuaipantech.com/alipay_wap/wappay/pay.php";
-                    weChatpay();
-                }
-            }
-        });
+//        confirm_the_payment = findViewById(R.id.confirm_the_payment);
+//        confirm_the_payment.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (choose) {
+//                    //微信
+//                    PAY_URLS = "https://wxapp.kuaipantech.com/h5demo/Toc/androidpay/androidpay.php?paytype=WX";//"https://wxapp.kuaipantech.com/h5demo/wxjspay/weixin_to_h5.php";
+//                    weChatpay();
+//                } else {
+//                    //支付宝
+//                    PAY_URLS = "https://kppay.kuaipantech.com/alipay_wap/wappay/pay.php";
+//                    weChatpay();
+//                }
+//            }
+//        });
 
 //        String url = PAY_URL + "?tradenum=" + tradenum;
         webView = findViewById(R.id.webview);
 //        webView.loadUrl(url);
-        initView();
+//        initView();
 
     }
 
@@ -121,47 +133,50 @@ public class PayDialog extends Dialog {
             confirm_the_payment.setEnabled(false);
             payState = 1;
 
-            //生成订单
-            HashMap<String, String> map = new HashMap();
-            map.put("productcode", productcode);
-            map.put("cp_orderid", cp_orderid);
-            map.put("guid", guid);
-            map.put("globaluserid", globaluserid);
-            map.put("globalusername", globalusername);
-            map.put("cotype", cotype);
-            new RequestPayTask(new RequestPayTask.ICallback() {
-                @Override
-                public void onResult(HashMap<String, String> map) {
-                    //获取订单号
-                    String msg = "";
-                    int code = 0;
-                    if (map == null) {
-                        msg = "map null";
-                    } else if (map.containsKey("tradenum")) {
-                        code = 1;
-                        String tradenum = map.get("tradenum");
+            String url = PAY_URLS + "&tradenum=" + 1;
+            webView.loadUrl(url);
 
-                        //调用微信
-                        confirm_the_payment.setText("支付中，请稍等...");
-                        confirm_the_payment.setEnabled(false);
-                        payState = 2;
-
-                        String url = PAY_URLS + "?tradenum=" + tradenum;
-                        webView.loadUrl(url);
-
-                    } else {
-                        if (map.containsKey("error")) {
-                            msg = map.get("error");
-                        } else {
-                            msg = "error";
-                        }
-                        Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
-                        confirm_the_payment.setEnabled(true);
-                        confirm_the_payment.setText("生成订单失败，点击重试");
-                        payState = 0;
-                    }
-                }
-            }).execute(map);
+//            //生成订单
+//            HashMap<String, String> map = new HashMap();
+//            map.put("productcode", productcode);
+//            map.put("cp_orderid", cp_orderid);
+//            map.put("guid", guid);
+//            map.put("globaluserid", globaluserid);
+//            map.put("globalusername", globalusername);
+//            map.put("cotype", cotype);
+//            new RequestPayTask(new RequestPayTask.ICallback() {
+//                @Override
+//                public void onResult(HashMap<String, String> map) {
+//                    //获取订单号
+//                    String msg = "";
+//                    int code = 0;
+//                    if (map == null) {
+//                        msg = "map null";
+//                    } else if (map.containsKey("tradenum")) {
+//                        code = 1;
+//                        String tradenum = map.get("tradenum");
+//
+//                        //调用微信
+//                        confirm_the_payment.setText("支付中，请稍等...");
+//                        confirm_the_payment.setEnabled(false);
+//                        payState = 2;
+//
+//                        String url = PAY_URLS + "?tradenum=" + tradenum;
+//                        webView.loadUrl(url);
+//
+//                    } else {
+//                        if (map.containsKey("error")) {
+//                            msg = map.get("error");
+//                        } else {
+//                            msg = "error";
+//                        }
+//                        Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
+//                        confirm_the_payment.setEnabled(true);
+//                        confirm_the_payment.setText("生成订单失败，点击重试");
+//                        payState = 0;
+//                    }
+//                }
+//            }).execute(map);
 
         } else if (payState == 2) {
             dismiss();
