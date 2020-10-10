@@ -35,7 +35,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         Messager.setDebug(debug);
     }
 
-    public static void start(Activity activity, String corpId, String token, String pkgName){
+    public static void start(Activity activity, String corpId, String token, String pkgName, String gameId, String gameName){
         if (!inited){
             logger.error("kpckit messager not initialized");
             return;
@@ -45,6 +45,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             mMsgManager = new MsgManager(activity, corpId, pkgName);
         }
         Messager.getInstance().addCallback(mMsgManager);
+
 
         String padCode = null;
         try {
@@ -56,7 +57,15 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 padCode = deviceId.substring(2,deviceId.length());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+
+
+        if (mMsgManager != null){
+            mMsgManager.setPadCode("VM"+padCode);
+            mMsgManager.setGameId(gameId);
+            mMsgManager.setGameName(gameName);
+            mMsgManager.setPkgName(pkgName);
         }
 
         if (padCode!=null){
@@ -88,9 +97,34 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         this.mHandler.setCallback(this);
     }
 
+
     private void destory(){
         this.mHandler.setCallback(null);
         this.mHandler = null;
+    }
+
+    private void setPadCode(String padCode){
+        if (mHandler!=null){
+            mHandler.setPadCode(padCode);
+        }
+    }
+
+    private void setGameId(String gameId){
+        if (mHandler!=null){
+            mHandler.setGameId(gameId);
+        }
+    }
+
+    private void setGameName(String gameName){
+        if (mHandler!=null){
+            mHandler.setGameName(gameName);
+        }
+    }
+
+    private void setPkgName(String pkgName){
+        if (mHandler!=null){
+            mHandler.setPkgName(pkgName);
+        }
     }
 
     @Override
@@ -127,12 +161,12 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             }else if ("reLogin".equals(event)){
                 mHandler.sendEmptyMessage(MsgHandler.MSG_RELOGIN);
             }else if ("pay".equals(event)){
-                String proCode = obj.getString("productcode");
-                String orderId = obj.getString("orderID");
-                HashMap<String,String> map = new HashMap();
-                map.put("productcode",proCode);
-                map.put("orderID",orderId);
-                mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY,map));
+//                String proCode = obj.getString("productcode");
+//                String orderId = obj.getString("orderID");
+//                HashMap<String,String> map = new HashMap();
+//                map.put("productcode",proCode);
+//                map.put("orderID",orderId);
+                mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY,msg));
             }
         } catch (JSONException e) {
             logger.error(e.getMessage());

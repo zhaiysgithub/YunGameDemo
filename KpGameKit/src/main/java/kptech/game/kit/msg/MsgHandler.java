@@ -36,8 +36,11 @@ public class MsgHandler extends Handler {
 
     private String mCorpId;
     private String mPkgName;
+    private String mGameId;
+    private String mGameName;
+    private String mPadCode;
 
-    private String mCacheKey;
+//    private String mCacheKey;
 
     private int systemUi = -1;
 
@@ -52,11 +55,30 @@ public class MsgHandler extends Handler {
         this.mActivity = activity;
         this.mCorpId = corpId;
         this.mPkgName = pkgName;
-        this.mCacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + pkgName;
     }
 
     public void setCallback(ICallback callback){
         this.mCallback = callback;
+    }
+
+    public void setGameId(String gameId) {
+        this.mGameId = gameId;
+    }
+
+    public void setGameName(String gameName) {
+        this.mGameName = gameName;
+    }
+
+    public void setPadCode(String padCode) {
+        this.mPadCode = padCode;
+    }
+
+    public void setPkgName(String pkgName) {
+        this.mPkgName = pkgName;
+    }
+
+    public String getCacheKey(){
+        return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + this.mPkgName;
     }
 
     @Override
@@ -69,17 +91,18 @@ public class MsgHandler extends Handler {
                 handleRelogin();
                 break;
             case MSG_PAY:
-                handlePay(msg.obj);
+                handlePay(msg.obj.toString());
                 break;
         }
     }
 
     private void handleLogin(){
+
         try {
             //获取缓存，判断是否已经登录过
             Map<String, Object> loginData = getLoginData();
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
-            String token = loginData.containsKey("access_token") ? loginData.get("access_token").toString() : null;
+            String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
 
             //发送缓存数据
             if (guid!=null && token!=null){
@@ -107,8 +130,13 @@ public class MsgHandler extends Handler {
     private void cacheLoginData(Map map){
         try {
             if (map!=null){
+                if (map.containsKey("access_token")){
+                    Object at =  map.get("access_token");
+                    map.put("token", at);
+                    map.remove("access_token");
+                }
                 JSONObject obj = new JSONObject(map);
-                ProferencesUtils.setString(mActivity, mCacheKey, obj.toString());
+                ProferencesUtils.setString(mActivity, getCacheKey(), obj.toString());
             }
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -116,13 +144,13 @@ public class MsgHandler extends Handler {
     }
 
     private void clearCacheLoginData(){
-        ProferencesUtils.remove(mActivity, mCacheKey);
+        ProferencesUtils.remove(mActivity, getCacheKey());
     }
 
     private Map<String,Object> getLoginData(){
         HashMap<String,Object> map = new HashMap<>();
         try {
-            String data = ProferencesUtils.getString(mActivity, mCacheKey, null);
+            String data = ProferencesUtils.getString(mActivity, getCacheKey(), null);
             if (data!=null){
                 JSONObject obj = new JSONObject(data);
                 Iterator<String> keys = obj.keys();
@@ -143,7 +171,7 @@ public class MsgHandler extends Handler {
         String uninqueId = GameBoxManager.getInstance(mActivity).getUniqueId();
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
-            LoginDialog login = new LoginDialog(mActivity, mCorpId);
+            LoginDialog login = new LoginDialog(mActivity, mCorpId, mPkgName, mPadCode);
             login.setCallback(new LoginDialog.OnLoginListener() {
                 @Override
                 public void onLoginSuccess(HashMap<String, Object> map) {
@@ -171,7 +199,7 @@ public class MsgHandler extends Handler {
             if (mLoginDialog!=null && mLoginDialog.isShowing()){
                 return;
             }
-            mLoginDialog = new LoginDialog(mActivity, mCorpId);
+            mLoginDialog = new LoginDialog(mActivity, mCorpId, mPkgName, mPadCode);
             mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
@@ -197,27 +225,11 @@ public class MsgHandler extends Handler {
         }
     }
 
-    private void handlePay(Object obj){
-        String productcode = null;
-        String orderID = null;
-        try {
-            if (obj!=null){
-                HashMap<String,String> map = (HashMap<String, String>)obj;
-                productcode = map.get("productcode");
-                orderID = map.get("orderID");
-            }
-        }catch (Exception e){
-            logger.error(e.getMessage());
-        }
-
-        if (productcode == null || orderID == null){
-            //回调
-            if (mCallback!=null){
-                mCallback.onPay(0, "Error params: productcode or orderID ", null);
-            }
-
+    private void handlePay(String msg){
+        if (mPayDialog!=null && mPayDialog.isShowing()){
             return;
         }
+
         if (mActivity == null || mActivity.isFinishing()){
             //回调
             if (mCallback!=null){
@@ -226,22 +238,64 @@ public class MsgHandler extends Handler {
             return;
         }
 
-        systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
-        if (mPayDialog!=null && mPayDialog.isShowing()){
+        String productcode = null;
+        String orderID = null;
+        String productName = null;
+        String productMoney = null;
+        String cpId = null;
+
+        try {
+            JSONObject obj = new JSONObject(msg);
+
+            productcode = obj.has("productcode") ? obj.getString("productcode") : null;
+            orderID = obj.has("orderID") ? obj.getString("orderID") : null;
+            productName = obj.has("productname") ? obj.getString("productname") : null;
+            productMoney = obj.has("money") ? obj.getString("money") : null;
+            cpId = obj.has("cpid") ? obj.getString("cpid") : null;
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        if (productcode == null || orderID == null){
+            Toast.makeText(mActivity, "未获取到商品信息", Toast.LENGTH_SHORT).show();
+            //回调
+            if (mCallback!=null){
+                mCallback.onPay(0, "Error params: productcode or orderID ", null);
+            }
             return;
         }
 
         Map<String, Object> loginData = getLoginData();
         String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
-        String globaid = loginData.containsKey("global_id") ? loginData.get("global_id").toString() : null;
+        String phone = loginData.containsKey("phone" )? loginData.get("phone").toString() : null;
+
+        //判断用户是否已登录
+        if (guid == null){
+            Toast.makeText(mActivity, "用户未登录", Toast.LENGTH_SHORT).show();
+            //回调
+            if (mCallback!=null){
+                mCallback.onPay(0, "Error params: guid,gloabid", null);
+            }
+            return;
+        }
 
         mPayDialog = new PayDialog(mActivity);
+
+        mPayDialog.setPadCode(mPadCode);
+
         mPayDialog.productcode = productcode;
+        mPayDialog.productname = productName;
+        mPayDialog.productprice = productMoney;
         mPayDialog.cp_orderid = orderID;
         mPayDialog.guid = guid;
-        mPayDialog.globaluserid =  globaid;
-        mPayDialog.globalusername = "";
-        mPayDialog.cotype = "lianyun";
+        mPayDialog.cpid = cpId;
+        mPayDialog.corpKey = mCorpId;
+        mPayDialog.gameId = mGameId;
+        mPayDialog.gamePkg = mPkgName;
+        mPayDialog.gameName = mGameName;
+        mPayDialog.phone = phone;
+
         mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -255,8 +309,6 @@ public class MsgHandler extends Handler {
             @Override
             public void onResult(int ret, String msg) {
                 if (ret == 1){
-                    mPayDialog.dismiss();
-
                     //回调
                     if (mCallback!=null){
                         mCallback.onPay(1, "", null);
@@ -269,6 +321,7 @@ public class MsgHandler extends Handler {
                 }
             }
         });
+        systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
         mPayDialog.show();
     }
 

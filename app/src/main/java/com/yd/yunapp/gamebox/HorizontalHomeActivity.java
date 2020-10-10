@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kuaipan.game.demo.R;
 
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -34,8 +35,10 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
@@ -76,7 +79,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
     @Override
@@ -86,7 +89,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameInfos = new LinkedHashMap<>();
         initView();
         GameBox.init(getApplication(),corpId);
-        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
+//        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
 //        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
 //
@@ -154,32 +157,39 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }, filter);
     }
 
+    String access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxNTg1MDM2OTY5MjEyNTI5IiwianRpIjoiMzAyY2FhYmIzODU3MTRiMmU2ODIzOTYwMzk5YjcxYTI5ZDU2Y2M2MzUyNTI1Mzk3YjA0NDQwYjZlNjdmOTc3ZDgxYjUwZmU4YWQ0NWIwN2EiLCJpYXQiOjE2MDIyMjgwNTEsIm5iZiI6MTYwMjIyODA1MSwiZXhwIjoxNjEwMTc2ODUxLCJzdWIiOiIzNDgzZWEyNjc5NTc0MjliYTA1OTBmOWNmZTRiYTk4ZCIsInNjb3BlcyI6WyJnZXRVc2VySW5mbyIsImxvZ2luT3V0IiwidXBkYXRlUGFzc3dvcmQiXX0.jCiMgLKd-Pi0Y-EbPfLd9XPZSRJ8Tre6_8Vn0fnhHf9KixiS0AB9GL30oQvDpLqwHrIanCDswgty_7D3n_vsCkygfjmXeAqOTxUC4iEF_swZkOFdvocjyTXfyIV8IEGmoDy3o6kH_mLX11iJ4eyuii6CoValgCxWRB5aH_ByighSbBp0PfNmND7BLQjIo_6fPjK11r1cEbulFmpYuSmbwcu2XsuKjCfRXdXiG_lTzLHi9_UYUxwIwdTHYDxmAkW159IB0FWhnR0r6RzHWyNlIhR794EqurDkRKKGfs49WxMbf7MNQNS9gcoiS4yt--T5uzBrt0MV28ZkRy5gBQSRO6mRcimOEnulCRolmpBZvHbwXPUYVulUBAmQSiKTlQE-SYUzstK5UtqDnyvGPmtUCz7z9Dw36IR9LRS_ksnj58agCJQpssg_ZK6LDXx0NQksTL46hqI4KBpB8-kAPCce5a_t_q_XSDladnpXZYSYtn1VMYA5YNLeiSC_bWSXgffJfqLMXhryfpUaMOxnxlRt9L9dCiokZz8GSzR8_fJwCyKZzbmDo_FgCp4-9OOqS_jsX6Vlw9qeTZUoOLDTbW2Jp7gcFDZwFj_AYOSDFx_v2Lt3";
+    String guid = "3483ea267957429ba0590f9cfe4ba98d";
+    String global_id = "3483ea267957429ba0590f9cfe4ba98d";
     //启动云游戏
     public void startGame(View view){
 //        startActivity(new Intent(this,TestActivity.class));
 
-        LoginDialog mLoginDialog = new LoginDialog(this, corpId);
-        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-
-            }
-        });
-        mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
-            @Override
-            public void onLoginSuccess(HashMap<String, Object> map) {
-                Log.i("", map.toString());
-            }
-        });
-        mLoginDialog.show();
-
+//        LoginDialog mLoginDialog = new LoginDialog(this, corpId);
+//        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialogInterface) {
+//
+//            }
+//        });
+//        mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
+//            @Override
+//            public void onLoginSuccess(HashMap<String, Object> map) {
+//                Log.i("", map.toString());
+//            }
+//        });
+//        mLoginDialog.show();
+//
 //        PayDialog mPayDialog = new PayDialog(this);
-//        mPayDialog.productcode = "test111";
 //        mPayDialog.cp_orderid = "test111";
-//        mPayDialog.guid = "test_guid";
-//        mPayDialog.globaluserid =  "test_globaid";
-//        mPayDialog.globalusername = "";
-//        mPayDialog.cotype = "lianyun";
+//        mPayDialog.guid = guid;
+//        mPayDialog.gameId = "3075";
+//        mPayDialog.gameName = "MT2";
+//        mPayDialog.gamePkg = "com.mt2.kp";
+//        mPayDialog.corpKey = corpId;
+//        mPayDialog.productcode = "test111";
+//        mPayDialog.productname = "test商品1001";
+//        mPayDialog.productprice = "81";
+//        mPayDialog.phone = "13811571397";
 //        mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
 //            @Override
 //            public void onDismiss(DialogInterface dialogInterface) {
@@ -194,12 +204,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        });
 //        mPayDialog.show();
 
-//        GameInfo info = new GameInfo();
-//        info.gid = 3097;
-//        info.pkgName = "com.kptach.test";
-//        info.name = "测试";
-//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-//        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        GameInfo info = new GameInfo();
+        info.gid = 3075;
+        info.pkgName = "com.mt2.kp";
+        info.name = "MT2";
+        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 
 //        GameInfo info = new GameInfo();
 //
@@ -211,8 +221,9 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.pkgName = "com.sy.fsyhj.yofun.mumu";
 //        info.name = "浮生妖世绘";
 //
-//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
+        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
     }
+
 
     private void initView() {
         mLoadingContainar = (FrameLayout) findViewById(R.id.loading_containar);

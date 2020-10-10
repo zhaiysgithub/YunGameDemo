@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import kptech.game.kit.R;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.data.RequestPhoneCodeTask;
 import kptech.game.kit.data.RequestRegistTask;
@@ -53,6 +56,9 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
 
     private int mType = TYPE_LOGIN;
 
+    private String mPkgName;
+    private String mPadCode;
+
     private String mCorpId;
 
     private LoginDialog.OnLoginListener mCallback;
@@ -60,10 +66,14 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
         mCallback = callback;
     }
 
-    public LoginDialog(Activity context, String corpId) {
+    private LoadingDialog mLoading;
+
+    public LoginDialog(Activity context, String corpId, String pkgName, String padCode) {
         super(context, R.style.MyTheme_CustomDialog);
         this.mActivity = context;
         this.mCorpId = corpId;
+        this.mPkgName = pkgName;
+        this.mPadCode = padCode;
     }
 
     @Override
@@ -195,27 +205,51 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
         requestRegist(phone, psw, smsCode);
     }
 
-    private void requestRegist(String phone, String psw, String smsCode){
+    private void requestRegist(final String phone, String psw, String smsCode){
+        if ( mType == TYPE_REGISAT){
+            //发送打点事件
+            try {
+                Event event = Event.getEvent(EventCode.DATA_USER_REGIST_START, mPkgName, mPadCode);
+                HashMap<String,String> ext = new HashMap<>();
+                ext.put("phone", phone);
+                event.setExt(ext);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){}
+        }
+
         if (mRegistBtn!=null){
             mRegistBtn.setEnabled(false);
         }
-
+        mLoading = LoadingDialog.build(mActivity);
+        mLoading.show();
         String action = mType == TYPE_FORGET ? RequestPhoneCodeTask.ACTION_FORGET : RequestPhoneCodeTask.ACTION_REGIST;
         new RequestRegistTask(mCorpId, action, phone, psw, smsCode, smsCodeId, new RequestRegistTask.ICallback() {
             @Override
             public void onResult(HashMap<String, Object> map) {
+                mLoading.dismiss();
                 if (mRegistBtn!=null){
                     mRegistBtn.setEnabled(true);
                 }
-
+                String errMsg = null;
                 if (map == null){
-                    Toast.makeText(mActivity, mType == TYPE_FORGET ? "修改密码失败" : "注册失败", Toast.LENGTH_LONG).show();
-                    return;
+                    errMsg = mType == TYPE_FORGET ? "修改密码失败" : "注册失败";
+                }else if (map.containsKey("error")){
+                    errMsg = map.get("error").toString();
                 }
 
-                if (map.containsKey("error")){
-                    String error = map.get("error").toString();
-                    Toast.makeText(mActivity, error, Toast.LENGTH_LONG).show();
+                if (errMsg != null){
+                    Toast.makeText(mActivity, errMsg, Toast.LENGTH_SHORT).show();
+
+                    try {
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_USER_REGIST_FAILED, mPkgName, mPadCode);
+                        event.setErrMsg(errMsg);
+                        HashMap<String,String> ext = new HashMap<>();
+                        ext.put("phone", phone);
+                        event.setExt(ext);
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){}
+
                     return;
                 }
 
@@ -233,6 +267,15 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
                     if (isShowing()){
                         dismiss();
                     }
+
+                    try {
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_USER_REGIST_SUCCESS, mPkgName, mPadCode);
+                        HashMap<String,String> ext = new HashMap<>();
+                        ext.put("phone", phone);
+                        event.setExt(ext);
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){}
                 }
             }
         }).execute();
@@ -246,12 +289,15 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
         if (mPhoneCodeBtn!=null){
             mPhoneCodeBtn.setEnabled(false);
         }
-
+        mLoading = LoadingDialog.build(mActivity);
+        mLoading.show();
         //发送请求
         String action = mType == TYPE_FORGET ? RequestPhoneCodeTask.ACTION_FORGET : RequestPhoneCodeTask.ACTION_REGIST;
         new RequestPhoneCodeTask(mCorpId, action, phone, new RequestPhoneCodeTask.ICallback() {
             @Override
             public void onResult(HashMap<String, Object> map) {
+                mLoading.dismiss();
+
                 if (map == null){
                     mPhoneCodeBtn.setEnabled(true);
                     Toast.makeText(mActivity, "获取验证码失败", Toast.LENGTH_LONG).show();
@@ -293,24 +339,60 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
     }
 
 
-    private void requestLogin(String ...params){
+    private void requestLogin(final String ...params){
+        //发送打点事件
+        try {
+            Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_START, mPkgName, mPadCode);
+            if (params!=null && params.length >= 3){
+                String type = params[0];
+                String account = params[2];
+                HashMap<String,String> ext = new HashMap<>();
+                ext.put("type", type);
+                ext.put("acct", account);
+                event.setExt(ext);
+            }
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
+
         if (mLoginBtn!=null){
             mLoginBtn.setEnabled(false);
         }
+        mLoading = LoadingDialog.build(mActivity);
+        mLoading.show();
         new RequestLoginTask(new RequestLoginTask.ICallback() {
             @Override
             public void onResult(HashMap<String, Object> map) {
+                mLoading.dismiss();
+
                 if (mLoginBtn!=null) {
                     mLoginBtn.setEnabled(true);
                 }
 
-                if (map==null){
-                    Toast.makeText(mActivity, "登录失败", Toast.LENGTH_LONG).show();
-                    return;
+                String errMsg = null;
+                if (map==null || map.size()<=0){
+                    errMsg = "登录失败";
+                }else if (map.containsKey("error")){
+                    errMsg = map.get("error").toString();
                 }
-                if (map != null && map.containsKey("error")){
-                    String error = map.get("error").toString();
-                    Toast.makeText(mActivity, error, Toast.LENGTH_LONG).show();
+
+                if (errMsg != null){
+                    Toast.makeText(mActivity, errMsg, Toast.LENGTH_SHORT).show();
+
+                    try {
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_FAILED, mPkgName, mPadCode);
+                        event.setErrMsg(errMsg);
+                        if (params!=null && params.length >= 3){
+                            String type = params[0];
+                            String account = params[2];
+                            HashMap<String,String> ext = new HashMap<>();
+                            ext.put("type", type);
+                            ext.put("acct", account);
+                            event.setExt(ext);
+                        }
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){}
+
                     return;
                 }
 
@@ -321,6 +403,20 @@ public class LoginDialog extends Dialog implements View.OnClickListener {
                 if (mCallback!=null){
                     mCallback.onLoginSuccess(map);
                 }
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_SUCCESS, mPkgName, mPadCode);
+                    if (params!=null && params.length >= 3){
+                        String type = params[0];
+                        String account = params[2];
+                        HashMap<String,String> ext = new HashMap<>();
+                        ext.put("type", type);
+                        ext.put("acct", account);
+                        event.setExt(ext);
+                    }
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
             }
         }).execute(params);
     }

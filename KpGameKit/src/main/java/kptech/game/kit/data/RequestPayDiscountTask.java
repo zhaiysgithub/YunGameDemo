@@ -12,21 +12,26 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
+public class RequestPayDiscountTask extends AsyncTask<String,Void,String> {
     public interface ICallback{
         void onResult(HashMap<String, String> map);
     }
 
     private ICallback mCallback;
-    public RequestPayTask(ICallback callback){
+    public RequestPayDiscountTask(ICallback callback){
         mCallback = callback;
     }
 
-    private String mCmd = null;
-
     @Override
-    protected String doInBackground(HashMap... args) {
-        return requestOrder(args[0]);
+    protected String doInBackground(String... args) {
+        if (args==null || args.length < 3){
+            return null;
+        }
+
+        String corpId = args[0];
+        String guid = args[1];
+        String gameId = args[2];
+        return requestDiscount(corpId, guid, gameId);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
                 JSONObject jsonObject = new JSONObject(str);
                 int c = jsonObject.getInt("c");
 
-                if (c == 0){
+                if (c == 200){
                     JSONObject dObj = jsonObject.getJSONObject("d");
                     String tradenum = dObj.getString("tradenum");
                     map.put("tradenum",tradenum);
@@ -67,11 +72,10 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
     }
 
     //post请求
-    private String requestOrder(HashMap map) {
+    private String requestDiscount(String corpKey, String guid, String gameId) {
 
-//        String str1 = "https://wxapp.kuaipantech.com/h5demo/wxjspay/maketrade.php";
-        String str = "https://wxapp.kuaipantech.com/h5demo/Toc/index.php";
-
+        String str = "https://wxgzh.kuaipantech.com/kp/api/wx/gzh/game/discounts/list";
+        //https://wxgzh.kuaipantech.com/kp/api/wx/gzh/game/discounts/list?gameId=&guid=
         try {
             URL url = new URL(str);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
@@ -81,18 +85,9 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
             postConnection.setDoInput(true);//允许从服务端读取数据
             postConnection.setDoOutput(true);//允许写入
 //            postConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");//以表单形式传递参数
-//            String postParms = "productcode=" + map.get("productcode")
-//                    + "&cp_orderID=" + map.get("cp_orderid")
-//                    + "&guid=" +  map.get("guid")
-//                    + "&globaluserid=" + map.get("globaluserid")
-//                    + "&globalusername=" + map.get("globalusername")
-//                    + "&cotype=" + map.get("cotype")
-//                    + "&cpid=" + map.get("cpid")
-//                    + "&corpKey=" + map.get("corpKey");
-
-            String postParms = "env=dev"
-                    + "&f=maketrade"
-                    + "&p="+new JSONObject(map).toString();
+            String postParms = "gameId=" + gameId
+                    + "&guid=" + guid
+                    + "&corpKey=" + corpKey;
 
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.

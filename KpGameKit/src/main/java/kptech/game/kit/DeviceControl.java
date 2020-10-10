@@ -127,7 +127,7 @@ public class DeviceControl {
         }
 
         //连接设备
-        MsgManager.start(activity, GameBoxManager.mCorpID, mDeviceControl.getDeviceToken(), this.mGameInfo.pkgName);
+        MsgManager.start(activity, GameBoxManager.mCorpID, mDeviceControl.getDeviceToken(), this.mGameInfo.pkgName, this.mGameInfo.gid+"", this.mGameInfo.name);
 
         //加载广告
         if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){

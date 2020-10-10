@@ -8,6 +8,8 @@ public class SharedKeys {
     public static final String KEY_GAME_APP_ADJSON = "kp_kit_adjson";
     public static final String KEY_GAME_APP_ADENABLE = "kp_kit_adenable";
 
+    public static final String KEY_PAY_CONF = "kp_kit_payconf";
+
     public static final String KEY_AD_KEY = "kp_kit_adkey";
     public static final String KEY_AD_TOKEN = "kp_kit_adtoken";
     public static final String KEY_AD_TYPE = "kp_kit_adtype";

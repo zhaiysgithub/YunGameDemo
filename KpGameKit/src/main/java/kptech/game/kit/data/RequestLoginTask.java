@@ -58,12 +58,13 @@ public class RequestLoginTask extends AsyncTask<String,Void,String> {
 
                 if (c == 200){
                     JSONObject dObj = jsonObject.getJSONObject("d");
-                    String token = dObj.getString("access_token");
-                    String guid = dObj.getString("guid");
-                    map.put("global_id", "uid".equals(mCmd) ? uninqueId : guid);
-                    map.put("access_token",token);
-                    map.put("guid", guid);
-
+                    if (dObj != null){
+                        Iterator<String> keys =  dObj.keys();
+                        while (keys.hasNext()){
+                            String k = keys.next();
+                            map.put(k, dObj.get(k)) ;
+                        }
+                    }
                 }else {
                     String m = jsonObject.getString("m");
                     map.put("error",m);

@@ -93,6 +93,25 @@ public class EventCode {
     public static final String DATA_TMDATA_VIDEO_START = "DATA_TMDATA_TM4";
     public static final String DATA_TMDATA_VIDEO_END = "DATA_TMDATA_TM5";
 
+    //用户注册
+    public static final String DATA_USER_REGIST_START = "DATA_USER_REGIST_START";
+    public static final String DATA_USER_REGIST_SUCCESS = "DATA_USER_REGIST_SUCCESS";
+    public static final String DATA_USER_REGIST_FAILED = "DATA_USER_REGIST_FAILED";
+    //用户登录
+    public static final String DATA_USER_LOGIN_START = "DATA_USER_LOGIN_START";
+    public static final String DATA_USER_LOGIN_SUCCESS = "DATA_USER_LOGIN_SUCCESS";
+    public static final String DATA_USER_LOGIN_FAILED = "DATA_USER_LOGIN_FAILED";
+    //支付生成订单
+    public static final String DATA_PAY_MAKETRADE_START = "DATA_PAY_MAKETRADE_START";
+    public static final String DATA_PAY_MAKETRADE_SUCCESS = "DATA_PAY_MAKETRADE_SUCCESS";
+    public static final String DATA_PAY_MAKETRADE_FAILED = "DATA_PAY_MAKETRADE_FAILED";
+    //支付
+    public static final String DATA_PAY_APP_WX = "DATA_PAY_APP_WX";
+    public static final String DATA_PAY_APP_ZFB = "DATA_PAY_APP_ZFB";
+    public static final String DATA_PAY_APP_ERROR = "DATA_PAY_APP_ERROR";
+    public static final String DATA_PAY_APP_FINISH = "DATA_PAY_APP_FINISH";
+
+
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;

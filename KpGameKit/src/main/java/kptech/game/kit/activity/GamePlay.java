@@ -604,7 +604,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         logger.error("onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
 
         exitPlay();
-        Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout/1000), Toast.LENGTH_LONG).show();
 
         return true;
     }
