@@ -48,7 +48,7 @@ public class EventCode {
     public static final String DATA_VIDEO_CLOSE = "DATA_VIDEO_CLOSE";
 
     //用户长时间未操作
-    public static final String DATA_USER_LEAVE = "DATA_USER_LEAVE";
+    public static final String DATA_VIDEO_USER_LEAVE = "DATA_VIDEO_USER_LEAVE";
 
     //初始化广告成功
     public static final String DATA_AD_INIT_OK = "DATA_AD_INIT_OK";
@@ -92,7 +92,6 @@ public class EventCode {
     public static final String DATA_TMDATA_DEVICE_END = "DATA_TMDATA_TM3";
     public static final String DATA_TMDATA_VIDEO_START = "DATA_TMDATA_TM4";
     public static final String DATA_TMDATA_VIDEO_END = "DATA_TMDATA_TM5";
-
     //用户注册
     public static final String DATA_USER_REGIST_START = "DATA_USER_REGIST_START";
     public static final String DATA_USER_REGIST_SUCCESS = "DATA_USER_REGIST_SUCCESS";

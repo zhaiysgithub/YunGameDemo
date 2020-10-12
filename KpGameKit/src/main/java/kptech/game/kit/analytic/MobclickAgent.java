@@ -13,7 +13,8 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 
 public class MobclickAgent {
-    private static Logger logger = new Logger("MobclickAgent", BuildConfig.DEBUG);
+
+    private static Logger logger = new Logger("MobclickAgent");
 
 
     public static void sendEvent(Event event) {

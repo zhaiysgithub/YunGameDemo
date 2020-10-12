@@ -167,6 +167,8 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 //                map.put("productcode",proCode);
 //                map.put("orderID",orderId);
                 mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY,msg));
+            }else if ("logout".equals(event)){
+                mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
             }
         } catch (JSONException e) {
             logger.error(e.getMessage());

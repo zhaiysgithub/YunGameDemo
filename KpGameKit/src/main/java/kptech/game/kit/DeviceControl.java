@@ -357,7 +357,7 @@ public class DeviceControl {
 
                 try {
                     //发送打点事件
-                    Event event = Event.getEvent(EventCode.DATA_USER_LEAVE, mGameInfo.pkgName, getPadcode());
+                    Event event = Event.getEvent(EventCode.DATA_VIDEO_USER_LEAVE, mGameInfo.pkgName, getPadcode());
                     HashMap ext = new HashMap<>();
                     ext.put("type", type);
                     ext.put("timeout", timeout);

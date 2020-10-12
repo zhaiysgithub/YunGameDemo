@@ -27,6 +27,7 @@ public class MsgHandler extends Handler {
     protected static final int MSG_LOGIN = 1;
     protected static final int MSG_RELOGIN = 2;
     protected static final int MSG_PAY = 3;
+    protected static final int MSG_LOGOUT = 4;
 
 
 
@@ -93,6 +94,9 @@ public class MsgHandler extends Handler {
             case MSG_PAY:
                 handlePay(msg.obj.toString());
                 break;
+            case MSG_LOGOUT:
+                handleLogout();
+                break;
         }
     }
 
@@ -117,6 +121,11 @@ public class MsgHandler extends Handler {
 
         //登录
         showLoginDialog();
+    }
+
+    private void handleLogout(){
+        //清除缓存数据
+        clearCacheLoginData();
     }
 
     private void handleRelogin(){

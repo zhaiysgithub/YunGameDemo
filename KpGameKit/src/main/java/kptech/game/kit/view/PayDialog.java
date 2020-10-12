@@ -98,6 +98,8 @@ public class PayDialog extends Dialog {
     private int mPayType = PAY_TYPE_WECHAT;
     private int payState = 0;
 
+    private OnDismissListener mOnDismissListener;
+
     public void setCallback(PayDialog.ICallback callback) {
         mCallback = callback;
     }
@@ -209,20 +211,29 @@ public class PayDialog extends Dialog {
             }
         });
 
+        super.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                if (payState == PAY_STATE_FINISHED) {
+                    if (mCallback != null) {
+                        mCallback.onResult(1, "");
+                    }
+                }
+
+                if (mOnDismissListener!=null){
+                    mOnDismissListener.onDismiss(dialogInterface);
+                }
+            }
+        });
+
         webView = findViewById(R.id.webview);
         initView();
 
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
-
-        if (payState == PAY_STATE_FINISHED) {
-            if (mCallback != null) {
-                mCallback.onResult(1, "");
-            }
-        }
+    public void setOnDismissListener(OnDismissListener listener) {
+        this.mOnDismissListener = listener;
     }
 
     /**
