@@ -3,6 +3,7 @@ package kptech.game.kit.view;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,6 +36,7 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
+import java.io.NotActiveException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.text.DecimalFormat;
@@ -246,18 +248,18 @@ public class PayDialog extends Dialog {
         }
 
         if (payState == PAY_STATE_NONE) {
-            if (mPayType == PAY_TYPE_ALIPAY){
-                //判断是否安装支付宝
-                if (!IsInstallUtils.isAliPayInstalled(mActivity)){
-                    Toast.makeText(mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }else if (mPayType == PAY_TYPE_WECHAT){
-                if (!IsInstallUtils.isWeixinInstalled(mActivity)){
-                    Toast.makeText(mActivity, "未安装微信", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
+//            if (mPayType == PAY_TYPE_ALIPAY){
+//                //判断是否安装支付宝
+//                if (!IsInstallUtils.isAliPayInstalled(mActivity)){
+//                    Toast.makeText(mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//            }else if (mPayType == PAY_TYPE_WECHAT){
+//                if (!IsInstallUtils.isWeixinInstalled(mActivity)){
+//                    Toast.makeText(mActivity, "未安装微信", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//            }
 
             //处理按钮
             mConfirmPaymentBtn.setEnabled(false);
@@ -277,6 +279,7 @@ public class PayDialog extends Dialog {
             map.put("gamename", gameName);
             map.put("cpid", cpid);
             map.put("clientid", corpKey);
+            map.put("productname", productname);
 
             //发送打点事件
             try {
@@ -419,10 +422,10 @@ public class PayDialog extends Dialog {
                         intent.setData(Uri.parse(url));
                         mActivity.startActivity(intent);
 
-                        if (url.startsWith("alipays://")){
-                            //关闭错误定时器
-                            mHandler.removeMessages(MSG_ALIPAY_TIMEOUT_ERROR);
-                        }
+//                        if (url.startsWith("alipays://")){
+//                            //关闭错误定时器
+//                            mHandler.removeMessages(MSG_ALIPAY_TIMEOUT_ERROR);
+//                        }
 
                         try {
                             //发送打点事件
@@ -436,8 +439,30 @@ public class PayDialog extends Dialog {
 
                         return true;
                     }
-                } catch (Exception e) {
-                    return false;
+                }catch (ActivityNotFoundException ex) {
+//                    String errMsg = ex.getMessage();
+//                    //未找到activity
+//                    if (url.startsWith("alipays://")){
+//                        Toast.makeText(mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
+//                        mConfirmPaymentBtn.setText("支付失败");
+//                        mConfirmPaymentBtn.setEnabled(true);
+//                        payState = PAY_STATE_ERROR;
+//                    }
+//
+//                    try {
+//                        //发送打点事件
+//                        Event event = Event.getEvent(EventCode.DATA_PAY_APP_ERROR, gamePkg, mPadCode);
+//                        event.setErrMsg(errMsg);
+//                        HashMap<String,String> ext = new HashMap<>();
+//                        event.setExt(ext);
+//                        MobclickAgent.sendEvent(event);
+//                    }catch (Exception e){}
+
+                    ex.printStackTrace();
+                }
+                catch (Exception e) {
+
+                    e.printStackTrace();
                 }
 
                 if (url.contains("https://wx.tenpay.com")) {
@@ -474,34 +499,38 @@ public class PayDialog extends Dialog {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
 
-                String errMsg = "支付出错";
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    String des = error.getDescription().toString();
-                    int code = error.getErrorCode();
-                    errMsg = "支付出错,"+ code+"," +des;
-                }
-
+                String msg = "支付失败";
                 String requestUri = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     Uri uri = request.getUrl();
                     if (uri.toString().startsWith("weixin://")) {
-
+                        msg = "支付失败，未安装微信";
                     }else if (uri.toString().startsWith("alipays://")) {
-
+                        msg = "支付失败，未安装支付宝";
                     }
                     requestUri = uri.toString();
                 }
-//                else if (view.getUrl().startsWith("https://wx.tenpay.com")){
-//                    urlStr = view.getUrl();
+//                else{
+//                    if (view.getUrl().startsWith("https://wx.tenpay.com")) {
+//
+//                    }else if (view.getUrl().startsWith("https://mclient.alipay.com")){
+//
+//                    }
 //                }
 
-                Toast.makeText(mActivity, errMsg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
                 mConfirmPaymentBtn.setText("支付失败");
                 mConfirmPaymentBtn.setEnabled(true);
                 payState = PAY_STATE_ERROR;
 
                 try {
+                    String errMsg = "支付出错";
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        String des = error.getDescription().toString();
+                        int code = error.getErrorCode();
+                        errMsg = "支付出错,"+ code+"," +des;
+                    }
+
                     //发送打点事件
                     Event event = Event.getEvent(EventCode.DATA_PAY_APP_ERROR, gamePkg, mPadCode);
                     event.setErrMsg(errMsg);
@@ -521,11 +550,11 @@ public class PayDialog extends Dialog {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                String str = view.getUrl();
-                if (str.startsWith("https://openapi.alipay.com/gateway.do") ){
-                    //支付宝页面，启动错误定时器
-                    mHandler.sendEmptyMessageDelayed(MSG_ALIPAY_TIMEOUT_ERROR, 10 * 1000);
-                }
+//                String str = view.getUrl();
+//                if (str.startsWith("https://openapi.alipay.com/gateway.do") ){
+//                    //支付宝页面，启动错误定时器
+//                    mHandler.sendEmptyMessageDelayed(MSG_ALIPAY_TIMEOUT_ERROR, 10 * 1000);
+//                }
             }
 
             @Override
@@ -577,19 +606,19 @@ public class PayDialog extends Dialog {
         }
     }
 
-    private static final int MSG_ALIPAY_TIMEOUT_ERROR = 1001;
-    private Handler mHandler = new Handler(Looper.getMainLooper()){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
-                case MSG_ALIPAY_TIMEOUT_ERROR:
-                    Toast.makeText(mActivity, "支付失败，支付宝出错", Toast.LENGTH_SHORT).show();
-                    mConfirmPaymentBtn.setText("支付失败");
-                    mConfirmPaymentBtn.setEnabled(true);
-                    payState = PAY_STATE_ERROR;
-                    break;
-            }
-        }
-    };
+//    private static final int MSG_ALIPAY_TIMEOUT_ERROR = 1001;
+//    private Handler mHandler = new Handler(Looper.getMainLooper()){
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            switch (msg.what){
+//                case MSG_ALIPAY_TIMEOUT_ERROR:
+//                    Toast.makeText(mActivity, "支付失败，支付宝出错", Toast.LENGTH_SHORT).show();
+//                    mConfirmPaymentBtn.setText("支付失败");
+//                    mConfirmPaymentBtn.setEnabled(true);
+//                    payState = PAY_STATE_ERROR;
+//                    break;
+//            }
+//        }
+//    };
 }
 
