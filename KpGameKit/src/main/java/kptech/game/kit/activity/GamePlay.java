@@ -794,12 +794,32 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Start")){
                 //开始下载
                 updateDownStatus(GameDownloader.STATUS_STARTED);
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTART,  mGameInfo!=null ? mGameInfo.pkgName : ""));
+                }catch (Exception e){
+                }
+
             }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Fail")){
                 //下载失败
                 updateDownStatus(GameDownloader.STATUS_ERROR);
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADERROR,  mGameInfo!=null ? mGameInfo.pkgName : ""));
+                }catch (Exception e){
+                }
+
             }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Stop")){
                 //停止下载
                 updateDownStatus(GameDownloader.STATUS_STOPED);
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP,  mGameInfo!=null ? mGameInfo.pkgName : ""));
+                }catch (Exception e){
+                }
             }
         }
     };

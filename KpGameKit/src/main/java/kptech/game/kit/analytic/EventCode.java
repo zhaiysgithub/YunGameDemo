@@ -18,6 +18,13 @@ public class EventCode {
     //游戏错误界面重新加载
     public static final String DATA_ACTIVITY_PLAYERROR_RELOAD = "DATA_ACTIVITY_PLAYERROR_RELOAD";
 
+    //接收到下载开始
+    public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADSTART= "DATA_ACTIVITY_RECEIVE_DOWNLOADSTART";
+    //接收到下载停止
+    public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP= "DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP";
+    //接收到下载出错
+    public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADERROR = "DATA_ACTIVITY_RECEIVE_DOWNLOADERROR";
+
     //初始化SDK
     public static final String DATA_SDK_INIT_START = "DATA_SDK_INIT_START";
     //SDK初化成功

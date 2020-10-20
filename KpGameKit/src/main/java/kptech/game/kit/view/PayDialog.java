@@ -248,18 +248,18 @@ public class PayDialog extends Dialog {
         }
 
         if (payState == PAY_STATE_NONE) {
-//            if (mPayType == PAY_TYPE_ALIPAY){
-//                //判断是否安装支付宝
-//                if (!IsInstallUtils.isAliPayInstalled(mActivity)){
-//                    Toast.makeText(mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//            }else if (mPayType == PAY_TYPE_WECHAT){
-//                if (!IsInstallUtils.isWeixinInstalled(mActivity)){
-//                    Toast.makeText(mActivity, "未安装微信", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//            }
+            if (mPayType == PAY_TYPE_ALIPAY){
+                //判断是否安装支付宝
+                if (!IsInstallUtils.isAliPayInstalled(mActivity)){
+                    Toast.makeText(mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }else if (mPayType == PAY_TYPE_WECHAT){
+                if (!IsInstallUtils.isWeixinInstalled(mActivity)){
+                    Toast.makeText(mActivity, "未安装微信", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
 
             //处理按钮
             mConfirmPaymentBtn.setEnabled(false);
