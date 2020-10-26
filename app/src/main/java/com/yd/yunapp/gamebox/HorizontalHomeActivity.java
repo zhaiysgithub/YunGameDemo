@@ -91,7 +91,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         GameBox.init(getApplication(),corpId);
 //        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
-//        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
+        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
 //
 //        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
 //            GameBoxManager.getInstance(this).init(getApplication(), corpId, new IAdCallback<String>() {
@@ -205,8 +205,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        mPayDialog.show();
 
         GameInfo info = new GameInfo();
-        info.gid = 3075;
-        info.pkgName = "com.mt2.kp";
+        info.gid = 3235;
+        info.pkgName = "com.kptach.test";
         info.name = "MT2";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
