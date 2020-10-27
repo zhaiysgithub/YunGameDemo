@@ -12,8 +12,6 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.PluralsRes;
 
-import com.bun.miitmdid.core.JLibrary;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +28,6 @@ import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.MiitHelper;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 

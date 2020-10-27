@@ -1,4 +1,4 @@
-package kptech.game.kit.ad.loader;
+package com.kptach.game.ad.loader;
 
 public interface IAdLoaderCallback {
     void onAdReady();

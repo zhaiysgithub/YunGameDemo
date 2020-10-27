@@ -10,17 +10,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.zad.sdk.Oapi.ZadSdkApi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import kptech.game.kit.ad.loader.FeedAdLoader;
-import kptech.game.kit.ad.loader.IAdLoader;
-import kptech.game.kit.ad.loader.IAdLoaderCallback;
-import kptech.game.kit.ad.loader.RewardAdLoader;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -44,7 +39,7 @@ public class AdManager {
     //显示弹窗
     public static final int CB_AD_LOADING = 6;
 
-    public static boolean adEnable = true;
+    public static boolean adEnable = false;
     public static String rewardCode = null;
     public static String extCode = null;
     public static String feedCode = null;
@@ -66,7 +61,7 @@ public class AdManager {
                     JSONObject adObj = new JSONObject(adJson);
                     String appKey = adObj.getString("appKey");
                     String appToken = adObj.getString("appToken");
-                    ZadSdkApi.init(application, appKey, appToken);
+//                    ZadSdkApi.init(application, appKey, appToken);
                     ret = true;
                     AdManager.adEnable = true;
 
@@ -133,7 +128,7 @@ public class AdManager {
 
     private String mPackageName = null;
 
-    private IAdLoader mLoader = null;
+//    private IAdLoader mLoader = null;
 
     public AdManager(Activity activity){
         this.mActivity = activity;
@@ -155,97 +150,132 @@ public class AdManager {
     }
 
     private synchronized void loadAd(String type){
-        try {
-            if (mLoader != null){
-                mLoader.destory();
-            }
-
-            if (type == AD_TYPE_REWARD){
-                mLoader =  new RewardAdLoader(AdManager.rewardCode);
-            }else if (type == AD_TYPE_FEED){
-                mLoader = new FeedAdLoader(AdManager.feedCode);
-            }
-
-            if (mLoader != null){
-                loadState = LOAD_STATE_START;
-                mLoader.setPkgName(mPackageName);
-                mLoader.setLoaderCallback(mAdLoaderCallback);
-                mLoader.loadAd(mActivity);
-                return;
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        loadState = LOAD_STATE_FAILED;
-        //加载失败
-        if (mHandler!=null){
-            mHandler.sendEmptyMessage(CB_AD_FAILED);
-        }
+//        try {
+//            if (mLoader != null){
+//                mLoader.destory();
+//            }
+//
+//            if (type == AD_TYPE_REWARD){
+//                mLoader =  new RewardAdLoader(AdManager.rewardCode);
+//            }else if (type == AD_TYPE_FEED){
+//                mLoader = new FeedAdLoader(AdManager.feedCode);
+//            }
+//
+//            if (mLoader != null){
+//                loadState = LOAD_STATE_START;
+//                mLoader.setPkgName(mPackageName);
+//                mLoader.setLoaderCallback(mAdLoaderCallback);
+//                mLoader.loadAd(mActivity);
+//                return;
+//            }
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        loadState = LOAD_STATE_FAILED;
+//        //加载失败
+//        if (mHandler!=null){
+//            mHandler.sendEmptyMessage(CB_AD_FAILED);
+//        }
     }
 
-    private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
-
-        @Override
-        public void onAdReady() {
-            loadState = LOAD_STATE_SUCCESS;
-
-            if (waitingShow){
-                //显示广告
-                if (mLoader != null){
-                    mLoader.showAd();
-                }
-            }
-        }
-
-        @Override
-        public void onAdClose(boolean b) {
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(b ? CB_AD_PASSED : CB_AD_CANCELED);
-            }
-        }
-
-        @Override
-        public void onAdFail() {
-            //判断是否要加载另一种
-            if (mLoader != null && mLoader instanceof RewardAdLoader){
-                if (AdManager.feedCode != null){
-                    loadAd(AD_TYPE_FEED);
-                    return;
-                }
-            }
-
-            loadState = LOAD_STATE_FAILED;
-            //加载失败
-            if (waitingShow){
-                if (mHandler!=null){
-                    mHandler.sendEmptyMessage(CB_AD_FAILED);
-                }
-            }
-
-        }
-    };
+//    private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
+//
+//        @Override
+//        public void onAdReady() {
+//            loadState = LOAD_STATE_SUCCESS;
+//
+//            if (waitingShow){
+//                //显示广告
+//                if (mLoader != null){
+//                    mLoader.showAd();
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onAdClose(boolean b) {
+//            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(b ? CB_AD_PASSED : CB_AD_CANCELED);
+//            }
+//        }
+//
+//        @Override
+//        public void onAdFail() {
+//            //判断是否要加载另一种
+//            if (mLoader != null && mLoader instanceof RewardAdLoader){
+//                if (AdManager.feedCode != null){
+//                    loadAd(AD_TYPE_FEED);
+//                    return;
+//                }
+//            }
+//
+//            loadState = LOAD_STATE_FAILED;
+//            //加载失败
+//            if (waitingShow){
+//                if (mHandler!=null){
+//                    mHandler.sendEmptyMessage(CB_AD_FAILED);
+//                }
+//            }
+//
+//        }
+//
+//        @Override
+//        public void onAdClosed(IAdLoader loader, String posId, String info) {
+//
+//        }
+//
+//        @Override
+//        public void onRewardVerify(IAdLoader loader, String posId, boolean rewardVerify, int rewardAmount, String rewardName) {
+//
+//        }
+//
+//        @Override
+//        public void onPlayComplete(IAdLoader loader, String posId, String info) {
+//
+//        }
+//
+//        @Override
+//        public void onAdShow(IAdLoader loader, String posId, String info) {
+//
+//        }
+//
+//        @Override
+//        public void onAdClick(IAdLoader loader, String posId, String info) {
+//
+//        }
+//
+//        @Override
+//        public void onAdReady(IAdLoader loader, String posId, int count, String info) {
+//
+//        }
+//
+//        @Override
+//        public void onAdEmpty(IAdLoader loader, String posId, String info) {
+//
+//        }
+//    };
 
     private synchronized void showAd(){
-        waitingShow = true;
-        if (loadState == 2){
-            //显示广告
-            if (mLoader != null){
-                mLoader.showAd();
-            }
-        }else if (loadState == 3){
-            //广告加载失败
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(CB_AD_FAILED);
-            }
-        }else if (loadState == 1){
-            //广告加载中，什么都不做
-
-        }else {
-            //广告未加载,开始加载
-            prepareAd();
-        }
+//        waitingShow = true;
+//        if (loadState == 2){
+//            //显示广告
+//            if (mLoader != null){
+//                mLoader.showAd();
+//            }
+//        }else if (loadState == 3){
+//            //广告加载失败
+//            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(CB_AD_FAILED);
+//            }
+//        }else if (loadState == 1){
+//            //广告加载中，什么都不做
+//
+//        }else {
+//            //广告未加载,开始加载
+//            prepareAd();
+//        }
     }
 
     public void loadGameAd(IAdCallback adCallback){

@@ -81,7 +81,13 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
     static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
-    final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    final String jidou = "2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
+
+
+    final String corpId = jidou;//wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +97,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         GameBox.init(getApplication(),corpId);
 //        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
-        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
+//        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
 //
 //        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
 //            GameBoxManager.getInstance(this).init(getApplication(), corpId, new IAdCallback<String>() {
@@ -205,11 +211,11 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        mPayDialog.show();
 
         GameInfo info = new GameInfo();
-        info.gid = 3235;
-        info.pkgName = "com.kptach.test";
-        info.name = "MT2";
+        info.gid = 3069;
+        info.pkgName = "com.popcap.pvz2cthdyyh";
+        info.name = "植物";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        info.showAd = GameInfo.GAME_AD_SHOW_ON;
 
 //        GameInfo info = new GameInfo();
 //

@@ -40,6 +40,10 @@ public class DeviceControl {
     private boolean sendTmEvent = false;
     private long TM_DEVICE_END, TM_VIDEO_START, TM_VIDEO_END;
 
+    private String mPadcode = "";
+    private boolean mIsSoundEnable = true;
+    private String mPicQuality = "";
+
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
     }
@@ -68,6 +72,24 @@ public class DeviceControl {
                 JSONObject tokenObject = new JSONObject(tokenStr);
 
                 mDeviceToken = tokenObject;
+
+                //解析padcode
+                if (mDeviceToken != null && mDeviceToken.has("deviceId")) {
+                    String str = mDeviceToken.getString("deviceId");
+                    mPadcode = str;
+                }
+
+                //解析当前声音开关
+                if (mDeviceToken != null && mDeviceToken.has("sound")) {
+                    String str = mDeviceToken.getString("sound");
+                    mIsSoundEnable = "true".equals(str);
+                }
+
+                //解析当前画面质量
+                if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
+                    String str = mDeviceToken.getString("picQuality");
+                    mPicQuality = str;
+                }
             }
 
         }catch (Exception e){
@@ -75,41 +97,28 @@ public class DeviceControl {
         }
     }
 
+    /**
+     * 获取padcode
+     * @return
+     */
     public String getPadcode(){
-        try {
-            if (mDeviceToken != null && mDeviceToken.has("deviceId")) {
-                String str = mDeviceToken.getString("deviceId");
-                return str;
-            }
-
-        }catch (Exception e){
-            logger.error("getPadcode, error:"+e.getMessage());
-        }
-        return null;
+        return mPadcode;
     }
 
+    /**
+     * 当前声音是否打开
+     * @return
+     */
     public boolean isSoundEnable(){
-        try {
-            if (mDeviceToken != null && mDeviceToken.has("sound")) {
-                String str = mDeviceToken.getString("sound");
-                return "true".equals(str);
-            }
-        }catch (Exception e){
-            logger.error("isSoundEnable, error:"+e.getMessage());
-        }
-        return true;
+        return mIsSoundEnable;
     }
 
+    /**
+     * 画面质量
+     * @return
+     */
     public String getVideoQuality(){
-        try {
-            if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
-                String str = mDeviceToken.getString("picQuality");
-                return str;
-            }
-        }catch (Exception e){
-            logger.error("getVideoQuality, error:"+e.getMessage());
-        }
-        return "";
+        return mPicQuality;
     }
 
     /**
