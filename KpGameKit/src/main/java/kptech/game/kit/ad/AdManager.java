@@ -10,6 +10,11 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 import kptech.game.kit.ad.inter.IAdLoader;
 import kptech.game.kit.ad.inter.IAdLoaderCallback;
 import kptech.game.kit.analytic.Event;
@@ -46,14 +51,21 @@ public class AdManager {
         boolean ret = false;
 
 
-        if (AdLoaderFactory.init(application, "ZM_appSDK_00029", "MadXeXeJf7zNzBIH")){
+//        if (AdLoaderFactory.init(application, "ZM_appSDK_00029", "MadXeXeJf7zNzBIH")){
+//            AdManager.adEnable = true;
+//        }
+//
+//        rewardCode = "ZM_SDKAD_1_00066";
+//        feedCode = "ZM_SDKAD_1_00107";
+
+        if (AdLoaderFactory.init(application, "ZM_appSDK_00038", "NMjBe5rjxwCboi5q")){
             AdManager.adEnable = true;
         }
 
-//        rewardCode = "ZM_SDKAD_1_00066";
-        feedCode = "ZM_SDKAD_1_00107";
+        rewardCode = "ZM_SDKAD_1_00119";
+        feedCode = "ZM_SDKAD_1_00121";
 
-//
+
 //        //判断广告是否开启
 //        String adEnable = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADENABLE,null);
 //
@@ -71,8 +83,6 @@ public class AdManager {
 //                    String appToken = adObj.getString("appToken");
 ////                    ZadSdkApi.init(application, appKey, appToken);
 //
-//                    appKey = "ZM_appSDK_00029";
-//                    appToken = "MadXeXeJf7zNzBIH";
 //                    if (AdLoaderFactory.init(application, appKey, appToken)){
 //                        AdManager.adEnable = true;
 //                    }
@@ -86,12 +96,11 @@ public class AdManager {
 //                            String type = gameObj.getString("adType");
 //                            String code = gameObj.getString("adCode");
 //                            if ("reward".equals(type)) {
-//
-//                                rewardCode = "ZM_SDKAD_1_00066";//code;
+//                                rewardCode = code;
 //                            } else if ("interstitial".equals(type)) {
 //                                extCode = code;
 //                            }else if("feed".equals(type)){
-//                                feedCode = "ZM_SDKAD_1_00107";//code;
+//                                feedCode = code;
 //                            }
 //                        }
 //                    }catch (Exception e){
@@ -112,7 +121,7 @@ public class AdManager {
 //        }else {
 //            AdManager.adEnable = false;
 //        }
-
+//
 //        try {
 //            //发送打点事件
 //            Event event = Event.getEvent(ret ? EventCode.DATA_AD_INIT_OK : EventCode.DATA_AD_INIT_FAILED);
@@ -171,6 +180,17 @@ public class AdManager {
             mLoader = AdLoaderFactory.createrAdLoader(type, code);
 
             if (mLoader != null){
+                try {
+                    //发送打点事件
+                    String eventCode = EventCode.DATA_AD_REWARD_LOADING;
+                    if ((AdLoaderFactory.AD_TYPE_FEED).equals(type)){
+                        eventCode = EventCode.DATA_AD_FEED_LOADING;
+                    }
+                    HashMap ext = new HashMap<>();
+                    ext.put("adCode", code);
+                    MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, ext));
+                }catch (Exception e){}
+
                 loadState = LOAD_STATE_START;
                 mLoader.setLoaderCallback(mAdLoaderCallback);
                 mLoader.loadAd(mActivity);
@@ -191,22 +211,56 @@ public class AdManager {
     private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
         private boolean mRewardVerify = false;
 
-
         @Override
         public void onAdClosed(IAdLoader loader, String posId, String info) {
             if (mHandler!=null){
                 mHandler.sendEmptyMessage(mRewardVerify ? CB_AD_PASSED : CB_AD_CANCELED);
             }
+
+            try {
+                //发送打点事件
+                String eventCode = EventCode.DATA_AD_REWARD_CLOSED;
+                if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                    eventCode = EventCode.DATA_AD_FEED_CLOSED;
+                }
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("info", info);
+                ext.put("rewardVerify", mRewardVerify);
+                MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, ext));
+            }catch (Exception e){}
         }
 
         @Override
         public void onRewardVerify(IAdLoader loader, String posId, boolean rewardVerify, int rewardAmount, String rewardName) {
             mRewardVerify = rewardVerify;
+
+            if (mActivity != null){
+                //保存到缓存中
+                ProferencesUtils.setInt(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 1);
+            }
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("rewardVerify", rewardVerify);
+                ext.put("rewardName", rewardName);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_VERIFY, mPackageName, ext));
+            }catch (Exception e){}
         }
 
         @Override
         public void onPlayComplete(IAdLoader loader, String posId, String info) {
             mRewardVerify = true;
+
+            try {
+                //发送打点事件
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_REWARD_PLAYCOMPLETE, mPackageName, ext));
+            }catch (Exception e){}
         }
 
         @Override
@@ -214,26 +268,77 @@ public class AdManager {
             if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
                 mRewardVerify = true;
             }
+
+            try {
+                //发送打点事件
+                String eventCode = EventCode.DATA_AD_REWARD_DISPLAY;
+                if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                    eventCode = EventCode.DATA_AD_FEED_DISPLAY;
+                }
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, ext));
+            }catch (Exception e){}
         }
 
         @Override
         public void onAdClick(IAdLoader loader, String posId, String info) {
+            try {
+                //发送打点事件
+                String eventCode = EventCode.DATA_AD_REWARD_CLICK;
+                if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                    eventCode = EventCode.DATA_AD_FEED_CLICK;
+                }
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, ext));
+            }catch (Exception e){}
         }
 
         @Override
         public void onAdReady(IAdLoader loader, String posId, int count, String info) {
-            loadState = LOAD_STATE_SUCCESS;
 
+            try {
+                //发送打点事件
+                String eventCode = EventCode.DATA_AD_REWARD_READY;
+                if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                    eventCode = EventCode.DATA_AD_FEED_READY;
+                }
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("count", count);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, ext));
+            }catch (Exception e){}
+
+
+            loadState = LOAD_STATE_SUCCESS;
             if (waitingShow){
                 //显示广告
                 if (mLoader != null){
                     mLoader.showAd();
                 }
             }
+
         }
 
         @Override
         public void onAdEmpty(IAdLoader loader, String posId, String info) {
+
+            try {
+                //发送打点事件
+                String eventCode = EventCode.DATA_AD_REWARD_EMPTY;
+                if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                    eventCode = EventCode.DATA_AD_FEED_EMPTY;
+                }
+                HashMap ext = new HashMap<>();
+                ext.put("posId", posId);
+                ext.put("info", info);
+                MobclickAgent.sendEvent(Event.getEvent(eventCode, mPackageName, null, info, ext));
+            }catch (Exception e){}
+
             //判断是否要加载另一种
             if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_REWARD)){
                 if (AdManager.feedCode != null){
@@ -325,10 +430,6 @@ public class AdManager {
             dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-                    try {
-                        //发送打点事件
-                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_CANCEL, mPackageName));
-                    }catch (Exception e){}
                 }
             });
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -344,6 +445,11 @@ public class AdManager {
             dialog.setOnCancelListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    try {
+                        //发送打点事件
+                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_CANCEL, mPackageName));
+                    }catch (Exception e){}
+
                     //取消按钮
                     if (mHandler!=null){
                         mHandler.sendEmptyMessage(CB_AD_CANCELED);
@@ -353,6 +459,12 @@ public class AdManager {
             dialog.setOnSubmitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    try {
+                        //发送打点事件
+                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_SUBMIT, mPackageName));
+                    }catch (Exception e){}
+
                     //显示广告按钮
                     showAd();
                 }

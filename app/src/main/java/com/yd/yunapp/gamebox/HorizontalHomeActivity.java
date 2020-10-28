@@ -84,7 +84,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     final String jidou = "2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
-    final String corpId = jidou;//wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    final String corpId = jidou; //wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
 
 
 

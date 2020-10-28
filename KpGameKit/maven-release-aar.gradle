@@ -58,12 +58,30 @@ publishing {
 //            artifactId 'BDMobAdsSDK'
 //            artifact("../app/libs/Baidu_MobAds_SDK-release.aar")
 //        }
-        ZADSdk(MavenPublication) {
-            groupId 'kptech.game.kit'
-            version '3.3.3261.6'
-            artifactId 'ZADSdk'
-            artifact("../app/libs/ZADSdk-3.3.3261.6.aar")
-        }
+//        Mimo(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '5.0.2'
+//            artifactId 'mimo-ad-sdk'
+//            artifact("../app/libs/mimo-ad-sdk_5.0.2.aar")
+//        }
+//        Csj(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '0.0.0.1'
+//            artifactId 'open_ad_sdk'
+//            artifact("../app/libs/open_ad_sdk.aar")
+//        }
+//        ZADSdk(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '3.3.3260.29'
+//            artifactId 'ZADSdk'
+//            artifact("../app/libs/ZADSdk-3.3.3260.29.aar")
+//        }
+//        ZADSdk(MavenPublication) {
+//            groupId 'kptech.game.kit'
+//            version '3.3.3261.6'
+//            artifactId 'ZADSdk'
+//            artifact("../app/libs/ZADSdk-3.3.3261.6.aar")
+//        }
 //        MsaMdid(MavenPublication) {
 //            groupId 'kptech.game.kit'
 //            version '1.0.10'

@@ -66,6 +66,8 @@ public class EventCode {
     public static final String DATA_AD_DIALOG_DISPLAY = "DATA_AD_DIALOG_DISPLAY";
     //取消广告，关闭窗口
     public static final String DATA_AD_DIALOG_CANCEL = "DATA_AD_DIALOG_CANCEL";
+    //显示广告，关闭窗口
+    public static final String DATA_AD_DIALOG_SUBMIT = "DATA_AD_DIALOG_SUBMIT";
 
     //广告行为
     public static final String DATA_AD_REWARD_LOADING = "DATA_AD_REWARD_LOADING";
