@@ -1,4 +1,4 @@
-package com.kptach.game.ad.loader;
+package kptech.game.kit.ad.loader;
 
 import android.app.Activity;
 
@@ -8,15 +8,8 @@ import com.zad.sdk.Oapi.work.ZadRewardWorker;
 
 import java.util.HashMap;
 
-import kptech.game.kit.ad.inter.IAdLoader;
-import kptech.game.kit.ad.inter.IAdLoaderCallback;
-//
-//import kptech.game.kit.analytic.Event;
-//import kptech.game.kit.analytic.EventCode;
-//import kptech.game.kit.analytic.MobclickAgent;
-//import kptech.game.kit.constants.SharedKeys;
-//import kptech.game.kit.utils.Logger;
-//import kptech.game.kit.utils.ProferencesUtils;
+import kptach.game.kit.inter.ad.IAdLoader;
+import kptach.game.kit.inter.ad.IAdLoaderCallback;
 
 public class RewardAdLoader implements IAdLoader {
 

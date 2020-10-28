@@ -1,4 +1,4 @@
-package com.kptach.game.ad.view;
+package kptech.game.kit.ad.view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,10 +17,11 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.kptach.game.ad.R;
 import com.squareup.picasso.Picasso;
 import com.zad.sdk.Oapi.bean.ZadFeedDataAdBean;
 import com.zad.sdk.Oapi.constants.ZADFeedConstant;
+
+import kptech.game.kit.ad.R;
 
 public class AdFeedPopup extends PopupWindow {
 

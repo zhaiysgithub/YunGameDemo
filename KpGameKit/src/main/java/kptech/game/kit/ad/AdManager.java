@@ -15,8 +15,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import kptech.game.kit.ad.inter.IAdLoader;
-import kptech.game.kit.ad.inter.IAdLoaderCallback;
+import kptach.game.kit.inter.ad.IAdLoader;
+import kptach.game.kit.inter.ad.IAdLoaderCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;

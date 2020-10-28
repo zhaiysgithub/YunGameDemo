@@ -5,7 +5,7 @@ import android.app.Application;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import kptech.game.kit.ad.inter.IAdLoader;
+import kptach.game.kit.inter.ad.IAdLoader;
 
 public class AdLoaderFactory {
 
@@ -16,9 +16,9 @@ public class AdLoaderFactory {
         IAdLoader obj = null;
         try {
             if (AdLoaderFactory.AD_TYPE_REWARD.equals(adtype)){
-                obj = (IAdLoader) newInstance("com.kptach.game.ad.loader.RewardAdLoader", new Class[]{String.class}, new Object[]{adcode});
+                obj = (IAdLoader) newInstance("kptech.game.kit.ad.loader.RewardAdLoader", new Class[]{String.class}, new Object[]{adcode});
             }else if (AdLoaderFactory.AD_TYPE_FEED.equals(adtype)){
-                obj = (IAdLoader) newInstance("com.kptach.game.ad.loader.FeedAdLoader", new Class[]{String.class}, new Object[]{adcode});
+                obj = (IAdLoader) newInstance("kptech.game.kit.ad.loader.FeedAdLoader", new Class[]{String.class}, new Object[]{adcode});
             }
         }catch (Exception e){
             e.printStackTrace();

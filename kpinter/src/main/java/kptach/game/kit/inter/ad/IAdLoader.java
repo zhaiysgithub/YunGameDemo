@@ -1,4 +1,4 @@
-package kptech.game.kit.ad.inter;
+package kptach.game.kit.inter.ad;
 
 import android.app.Activity;
 
@@ -7,9 +7,6 @@ public interface IAdLoader {
     void showAd();
     void setLoaderCallback(IAdLoaderCallback callback);
     void destory();
-
-//    void setPkgName(String pkgName);
-
 
     String getAdType();
     String getAdCode();
