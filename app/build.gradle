@@ -5,8 +5,8 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
 //        applicationId "com.lixg.hcalendar"
-//        applicationId "com.zmeng.newspaper"
-        applicationId "com.netease.cloudmusic"
+        applicationId "com.zmeng.newspaper"
+//        applicationId "com.netease.cloudmusic"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 3
@@ -78,6 +78,8 @@ dependencies {
 
     implementation 'org.xutils:xutils:3.3.36'
 
+//    implementation 'kptech.game.kit:gamead-netease:1.0.0.1'
+//    implementation 'kptech.game.kit:gamead-normal:1.0.0.1'
 
-    implementation project(path: ':KpGameAd')
+//    implementation project(path: ':KpGameAd')
 }
