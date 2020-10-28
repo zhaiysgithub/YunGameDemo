@@ -79,7 +79,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String jidou = "2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
@@ -249,6 +249,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
                 game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+                game.showAd = GameInfo.GAME_AD_SHOW_ON;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game);

@@ -1,1 +1,1 @@
-include ':app', ':KpGameKit', ':NetQueue'
+include ':app', ':KpGameKit', ':NetQueue', ':KpGameAd'

@@ -10,15 +10,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
-import kptech.game.kit.ad.loader.AdLoaderFactory;
-import kptech.game.kit.ad.loader.IAdLoader;
-import kptech.game.kit.ad.loader.IAdLoaderCallback;
+import kptech.game.kit.ad.inter.IAdLoader;
+import kptech.game.kit.ad.inter.IAdLoaderCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -52,70 +45,83 @@ public class AdManager {
     public static boolean init(Application application){
         boolean ret = false;
 
-        //判断广告是否开启
-        String adEnable = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADENABLE,null);
 
-        HashMap ext = new HashMap();
-        ext.put("adEnable", adEnable);
-
-        String err = null;
-
-        if (adEnable!=null && "1".equals(adEnable)){
-            String adJson = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADJSON,null);
-            if (adJson!=null){
-                try {
-                    JSONObject adObj = new JSONObject(adJson);
-                    String appKey = adObj.getString("appKey");
-                    String appToken = adObj.getString("appToken");
-//                    ZadSdkApi.init(application, appKey, appToken);
-                    AdLoaderFactory.init(application, appKey, appToken);
-
-                    ret = true;
-                    AdManager.adEnable = true;
-
-                    JSONArray gameStartArr = adObj.getJSONArray("gameStart");
-                    try {
-                        for (int i = 0; i < gameStartArr.length(); i++) {
-                            JSONObject gameObj = gameStartArr.getJSONObject(i);
-                            String type = gameObj.getString("adType");
-                            String code = gameObj.getString("adCode");
-                            if ("reward".equals(type)) {
-
-                                rewardCode = code;
-                            } else if ("interstitial".equals(type)) {
-                                extCode = code;
-                            }else if("feed".equals(type)){
-                                feedCode = code;
-                            }
-                        }
-                    }catch (Exception e){
-                        err = e.getMessage();
-                    }
-
-                    ext.put("appKey", appKey);
-                    ext.put("appToken", appToken);
-                    if (gameStartArr!=null){
-                        ext.put("gameStartArr", gameStartArr.toString());
-                    }
-
-                }catch (Exception e){
-                    logger.error(e.getMessage());
-                    err = e.getMessage();
-                }
-            }
-        }else {
-            AdManager.adEnable = false;
+        if (AdLoaderFactory.init(application, "ZM_appSDK_00029", "MadXeXeJf7zNzBIH")){
+            AdManager.adEnable = true;
         }
 
-        try {
-            //发送打点事件
-            Event event = Event.getEvent(ret ? EventCode.DATA_AD_INIT_OK : EventCode.DATA_AD_INIT_FAILED);
-            if (err!=null){
-                event.setErrMsg(err);
-            }
-            event.setExt(ext);
-            MobclickAgent.sendEvent(event);
-        }catch (Exception e){}
+//        rewardCode = "ZM_SDKAD_1_00066";
+        feedCode = "ZM_SDKAD_1_00107";
+
+//
+//        //判断广告是否开启
+//        String adEnable = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADENABLE,null);
+//
+//        HashMap ext = new HashMap();
+//        ext.put("adEnable", adEnable);
+//
+//        String err = null;
+//
+//        if (adEnable!=null && "1".equals(adEnable)){
+//            String adJson = ProferencesUtils.getString(application, SharedKeys.KEY_GAME_APP_ADJSON,null);
+//            if (adJson!=null){
+//                try {
+//                    JSONObject adObj = new JSONObject(adJson);
+//                    String appKey = adObj.getString("appKey");
+//                    String appToken = adObj.getString("appToken");
+////                    ZadSdkApi.init(application, appKey, appToken);
+//
+//                    appKey = "ZM_appSDK_00029";
+//                    appToken = "MadXeXeJf7zNzBIH";
+//                    if (AdLoaderFactory.init(application, appKey, appToken)){
+//                        AdManager.adEnable = true;
+//                    }
+//
+//                    ret = true;
+//
+//                    JSONArray gameStartArr = adObj.getJSONArray("gameStart");
+//                    try {
+//                        for (int i = 0; i < gameStartArr.length(); i++) {
+//                            JSONObject gameObj = gameStartArr.getJSONObject(i);
+//                            String type = gameObj.getString("adType");
+//                            String code = gameObj.getString("adCode");
+//                            if ("reward".equals(type)) {
+//
+//                                rewardCode = "ZM_SDKAD_1_00066";//code;
+//                            } else if ("interstitial".equals(type)) {
+//                                extCode = code;
+//                            }else if("feed".equals(type)){
+//                                feedCode = "ZM_SDKAD_1_00107";//code;
+//                            }
+//                        }
+//                    }catch (Exception e){
+//                        err = e.getMessage();
+//                    }
+//
+//                    ext.put("appKey", appKey);
+//                    ext.put("appToken", appToken);
+//                    if (gameStartArr!=null){
+//                        ext.put("gameStartArr", gameStartArr.toString());
+//                    }
+//
+//                }catch (Exception e){
+//                    logger.error(e.getMessage());
+//                    err = e.getMessage();
+//                }
+//            }
+//        }else {
+//            AdManager.adEnable = false;
+//        }
+
+//        try {
+//            //发送打点事件
+//            Event event = Event.getEvent(ret ? EventCode.DATA_AD_INIT_OK : EventCode.DATA_AD_INIT_FAILED);
+//            if (err!=null){
+//                event.setErrMsg(err);
+//            }
+//            event.setExt(ext);
+//            MobclickAgent.sendEvent(event);
+//        }catch (Exception e){}
 
         return ret;
     }
@@ -200,10 +206,14 @@ public class AdManager {
 
         @Override
         public void onPlayComplete(IAdLoader loader, String posId, String info) {
+            mRewardVerify = true;
         }
 
         @Override
         public void onAdShow(IAdLoader loader, String posId, String info) {
+            if (loader!=null && loader.getAdType().equals(AdLoaderFactory.AD_TYPE_FEED)){
+                mRewardVerify = true;
+            }
         }
 
         @Override

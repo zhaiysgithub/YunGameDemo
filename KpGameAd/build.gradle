@@ -1,0 +1,84 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs', '../app/libs'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+//    implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
+//    implementation 'kptech.game.kit:ZADSdk:3.3.3261.6@aar'
+//    implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
+
+    implementation(name:'ZADSdk-3.3.3260.29', ext:'aar')         // 根据实际情况，填写对应的zmt sdk对应的版本号
+    implementation(name:'msa_mdid_1.0.13', ext:'aar')       // 获取OAID需要
+
+    def zmtLastNo = 31     // 此处填写zmt提供的版本号的最后一位，（如：ZADSdk-3.3.258.127，的最后一位是 127）
+    if (zmtLastNo & 16) implementation(name:'mimo-ad-sdk_5.0.2', ext:'aar')                    // mi
+    if (zmtLastNo & 8) implementation(name:'open_ad_sdk', ext:'aar')                           // tt
+    if (zmtLastNo & 4) implementation(name:'Baidu_MobAds_SDK-release', ext:'aar')              // baidu
+    if (zmtLastNo & 1) implementation(name:'GDTSDK.unionNormal.4.232.1102', ext:'aar')         // gdt
+
+
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+}
+
+task deleteOldJar(type: Delete) {
+    //删除存在的
+    delete 'build/libs/CImageLoader.jar'
+}
+
+task makeJar(type: org.gradle.api.tasks.bundling.Jar) {
+    //指定生成的jar名
+    baseName 'CImageLoader'
+
+    //从哪里打包class文件
+    //com/c_imageloader为包名目录
+    from('build/intermediates/classes/debug/com/c_imageloader/')
+
+    //jar包的目录结构(文件处于com/c_imageloader目录下)
+    //生成的jar包没有包名
+    into('com/c_imageloader')
+
+    //去掉不需要打包的目录和文件
+    exclude('BuildConfig.class', 'R.class')
+
+    //去掉R$开头的文件
+    exclude{ it.name.startsWith('R$');}
+}
+
+makeJar.dependsOn(deleteOldJar, build)

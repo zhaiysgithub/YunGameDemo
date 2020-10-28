@@ -17,6 +17,12 @@ android {
 
     }
     signingConfigs {
+        debug {
+            storeFile file('./xiaobaobao.keystore')
+            storePassword "123456"
+            keyAlias "xiaobaobao.keystore"
+            keyPassword "123456"
+        }
         release {
             storeFile file('../release.keystore')
             storePassword "123456"
@@ -71,4 +77,7 @@ dependencies {
 //    implementation (name:'KpGameKit-release-v1.0.3_3',ext:'aar')
 
     implementation 'org.xutils:xutils:3.3.36'
+
+
+    implementation project(path: ':KpGameAd')
 }
