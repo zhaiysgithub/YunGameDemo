@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -58,28 +58,35 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
 }
 
-task deleteOldJar(type: Delete) {
-    //删除存在的
-    delete 'build/libs/CImageLoader.jar'
+// 1.maven-插件
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+// 2.maven-信息
+ext {// ext is a gradle closure allowing the declaration of global properties
+    PUBLISH_GROUP_ID = 'kptech.game.kit'
+    PUBLISH_ARTIFACT_ID = 'gamead-netease'
+    PUBLISH_PACKAGING = 'aar'
+    PUBLISH_VERSION = android.defaultConfig.versionName
 }
 
-task makeJar(type: org.gradle.api.tasks.bundling.Jar) {
-    //指定生成的jar名
-    baseName 'CImageLoader'
 
-    //从哪里打包class文件
-    //com/c_imageloader为包名目录
-    from('build/intermediates/classes/debug/com/c_imageloader/')
-
-    //jar包的目录结构(文件处于com/c_imageloader目录下)
-    //生成的jar包没有包名
-    into('com/c_imageloader')
-
-    //去掉不需要打包的目录和文件
-    exclude('BuildConfig.class', 'R.class')
-
-    //去掉R$开头的文件
-    exclude{ it.name.startsWith('R$');}
+// 3.maven-路径
+uploadArchives {
+    repositories.mavenDeployer {
+        //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
+        //注意”file://“ + 路径，有三个斜杠，别漏了
+//        repository(url: "file:///Users/zhangqinglou/work/maven")
+        //远程仓库的地址
+        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
+            //nexus登录的用户名和密码
+            authentication(userName: "admin", password: "kpmvn!#%246")
+        }
+        pom.project {
+            groupId project.PUBLISH_GROUP_ID
+            artifactId project.PUBLISH_ARTIFACT_ID
+            version project.PUBLISH_VERSION
+            packaging project.PUBLISH_PACKAGING
+        }
+    }
 }
-
-makeJar.dependsOn(deleteOldJar, build)
