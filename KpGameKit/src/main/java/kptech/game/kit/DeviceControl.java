@@ -1,6 +1,7 @@
 package kptech.game.kit;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -22,6 +23,7 @@ import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.data.RequestClientNotice;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
@@ -164,6 +166,8 @@ public class DeviceControl {
                             if (callback!=null){
                                 callback.onAPICallback("", APIConstants.AD_FINISHED);
                             }
+                            //调用通知接口
+
                             //运行游戏
                             execStartGame(activity, res, callback);
                             break;
@@ -172,10 +176,14 @@ public class DeviceControl {
                 }
             });
         }else {
+//            new AsyncTask<>().execute();
+
             //运行游戏
             execStartGame(activity, res, callback);
         }
     }
+
+
 
     private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
 
@@ -306,15 +314,16 @@ public class DeviceControl {
 
     /**
      * 调整试玩的码率
-     * @param leve 等级，目前支持5档
+     * @param level 等级，目前支持5档
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_AUTO} 自动
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_HD} 高清
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_ORDINARY} 普通
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_HS} 一般
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_LS} 流畅
      */
-    public void switchQuality(@APIConstants.VideoQuality String leve){
-        mDeviceControl.switchQuality(leve);
+    public void switchQuality(@APIConstants.VideoQuality String level){
+        mPicQuality = level;
+        mDeviceControl.switchQuality(level);
     }
 
     /**
@@ -322,6 +331,7 @@ public class DeviceControl {
      * @param audioSwitch
      */
     public void setAudioSwitch(boolean audioSwitch){
+        mIsSoundEnable = audioSwitch;
         mDeviceControl.setAudioSwitch(audioSwitch);
     }
 

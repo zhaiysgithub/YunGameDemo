@@ -49,8 +49,12 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
+import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.data.RequestClientNotice;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.utils.DeviceIdUtil;
+import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.view.LoginDialog;
 import kptech.game.kit.view.PayDialog;
@@ -168,6 +172,18 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     String global_id = "3483ea267957429ba0590f9cfe4ba98d";
     //启动云游戏
     public void startGame(View view){
+
+        new RequestClientNotice()
+                .execute("VM110110110","com.tencent.YiRen","h51038462",corpId);
+
+//        String str = DeviceIdUtil.getDeviceId(this);
+//        Log.i("HorizontalHomeActivity", str);
+//
+//        //初始化设备信息，并发送
+//        if (!DeviceInfo.hasDeviceId(this)){
+//            DeviceInfo.sendDeviceInfo(this,corpId);
+//        }
+
 //        startActivity(new Intent(this,TestActivity.class));
 
 //        LoginDialog mLoginDialog = new LoginDialog(this, corpId);
@@ -227,7 +243,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.pkgName = "com.sy.fsyhj.yofun.mumu";
 //        info.name = "浮生妖世绘";
 //
-        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
+//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
     }
 
 

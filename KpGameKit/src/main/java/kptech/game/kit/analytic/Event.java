@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.constants.SharedKeys;
@@ -266,23 +267,25 @@ public class Event {
         return "ar" + traceId;
     }
 
-    private static String getUserId(Context context){
-        try {
-            String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
-            if (userId == null || "".equals(userId)){
-                String str = DeviceUtils.getDeviceId(context);
-                if (StringUtil.isEmpty(str)){
-                    int random = (int)(Math.random()*900)+100;
-                    str = new Date().getTime() + "" + random;
-                }
-                userId = StringUtil.getMD5(str);
-                ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
-            }
-            return userId;
-        }catch (Exception e){
-        }
-        return "";
-    }
+//    private static String getUserId(Context context){
+//        try {
+//            String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
+//            if (userId == null || "".equals(userId)){
+////                String str = DeviceUtils.getDeviceId(context);
+//
+//                String uniqueID = UUID.randomUUID().toString();
+////                if (StringUtil.isEmpty(str)){
+////                    int random = (int)(Math.random()*900)+100;
+////                    str = new Date().getTime() + "" + random;
+////                }
+//                userId = StringUtil.getMD5(uniqueID);
+//                ProferencesUtils.setString(context, SharedKeys.KEY_EVENT_USERID, userId);
+//            }
+//            return userId;
+//        }catch (Exception e){
+//        }
+//        return "";
+//    }
 
     private static Event base = null;
 
@@ -290,7 +293,7 @@ public class Event {
         if (context!=null){
             base = new Event();
             base.clientId = corpId != null ? corpId : mCorpKey;
-            base.userId = getUserId(context);
+            base.userId = DeviceInfo.getUserId(context);
             base.traceId = createTraceId();
         }
     }

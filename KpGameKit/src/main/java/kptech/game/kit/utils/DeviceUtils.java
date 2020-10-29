@@ -57,9 +57,24 @@ public class DeviceUtils {
                 imei = (String) method.invoke(tm);
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return imei;
+    }
+
+    /**
+     * 获得设备的AndroidId
+     *
+     * @param context 上下文
+     * @return 设备的AndroidId
+     */
+    public static String getAndroidId(Context context) {
+        try {
+            return Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -183,43 +198,43 @@ public class DeviceUtils {
         return versionCode;
     }
 
-    /**
-     * 获取设备的唯一标识，deviceId
-     *
-     * @param context
-     * @return
-     */
-    public static String getDeviceId(Context context) {
-        String str = "";
-        try {
-
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                //没有权限则返回""
-
-            } else {
-                String deviceId = tm.getDeviceId();
-                if (deviceId != null) {
-                    str = deviceId;
-                }
-
-
-            }
-        }catch (Exception e){
-
-        }
-
-        try{
-            if(str == null || "".equals(str)){
-                str = Settings.System.getString(
-                        context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            }
-        }catch (Exception e){
-
-        }
-
-        return  str;
-    }
+//    /**
+//     * 获取设备的唯一标识，deviceId
+//     *
+//     * @param context
+//     * @return
+//     */
+//    public static String getDeviceId(Context context) {
+//        String str = "";
+//        try {
+//
+//            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                //没有权限则返回""
+//
+//            } else {
+//                String deviceId = tm.getDeviceId();
+//                if (deviceId != null) {
+//                    str = deviceId;
+//                }
+//
+//
+//            }
+//        }catch (Exception e){
+//
+//        }
+//
+//        try{
+//            if(str == null || "".equals(str)){
+//                str = Settings.System.getString(
+//                        context.getContentResolver(), Settings.Secure.ANDROID_ID);
+//            }
+//        }catch (Exception e){
+//
+//        }
+//
+//        return  str;
+//    }
 
     /**
      * 获取手机品牌

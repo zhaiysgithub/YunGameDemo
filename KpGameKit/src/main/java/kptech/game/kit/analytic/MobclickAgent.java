@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 
@@ -75,9 +76,9 @@ public class MobclickAgent {
     }
 
 
-    private String URL_ACTION = "https://interface.open.kuaipantech.com/useraction.php";
-    private String URL_TIME = "https://interface.open.kuaipantech.com/useraction_playtimes.php";
-    private String URL_TM_ACTION = "https://interface.open.kuaipantech.com/useraction_special.php";
+    private String URL_ACTION = Urls.EVENT_RUL + "/useraction.php";
+    private String URL_TIME = Urls.EVENT_RUL + "/useraction_playtimes.php";
+    private String URL_TM_ACTION = Urls.EVENT_RUL + "/useraction_special.php";
     private RequestQueue mQueue;
 
     private static volatile MobclickAgent agent = null;
