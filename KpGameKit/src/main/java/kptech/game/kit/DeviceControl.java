@@ -37,6 +37,7 @@ public class DeviceControl {
     private GameInfo mGameInfo;
     private JSONObject mDeviceToken;
     private AdManager mAdManager;
+    private String mCorpKey;
 
     //耗时统计
     private boolean sendTmEvent = false;
@@ -46,6 +47,11 @@ public class DeviceControl {
     private boolean mIsSoundEnable = true;
     private String mPicQuality = "";
 
+    private Handler mGameHandler;
+    private Activity mActivity;
+    private int mGameRes;
+    private APICallback<String> mGameStartCallback;
+
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this(control,null);
     }
@@ -53,8 +59,13 @@ public class DeviceControl {
     protected DeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control, GameInfo game){
         this.mDeviceControl = control;
         this.mGameInfo = game;
+        this.mGameHandler = new GameHandler();
         //解析deviceToken
         parseDeviceToken();
+    }
+
+    public void setCorpKey(String corpKey){
+        this.mCorpKey = corpKey;
     }
 
     public void setAdManager(AdManager adManager) {
@@ -137,6 +148,10 @@ public class DeviceControl {
             return;
         }
 
+        this.mActivity = activity;
+        this.mGameRes = res;
+        this.mGameStartCallback = callback;
+
         //连接设备
         MsgManager.start(activity, GameBoxManager.mCorpID, mDeviceControl.getDeviceToken(), this.mGameInfo.pkgName, this.mGameInfo.gid+"", this.mGameInfo.name);
 
@@ -163,29 +178,69 @@ public class DeviceControl {
                         case AdManager.CB_AD_FAILED:
                         //其它状态，加载游戏
                         default:
-                            if (callback!=null){
-                                callback.onAPICallback("", APIConstants.AD_FINISHED);
-                            }
                             //调用通知接口
-
+                            sendClientNotice();
                             //运行游戏
-                            execStartGame(activity, res, callback);
+//                            execStartGame(activity, res, callback);
                             break;
 
                     }
                 }
             });
         }else {
-//            new AsyncTask<>().execute();
+            sendClientNotice();
 
             //运行游戏
-            execStartGame(activity, res, callback);
+//            execStartGame(activity, res, callback);
+        }
+    }
+
+    private boolean sendClientNotice(){
+        //发送打点事件
+        try {
+            Event event = Event.getEvent(EventCode.DATA_DEVICE_SEND_NOTICE, mGameInfo.pkgName, getPadcode());
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){}
+
+        try {
+            new RequestClientNotice()
+                    .setCallback(new RequestClientNotice.ICallback() {
+                        @Override
+                        public void onResult(boolean success) {
+                            mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
+                        }
+                    })
+                    .execute(mPadcode,mGameInfo.pkgName,"h51038462",mCorpKey);
+
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
+        return false;
+    }
+
+    private static final int MSG_GAME_EXEC = 1;
+    private class GameHandler extends Handler{
+        public GameHandler(){
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                //运行游戏
+                case MSG_GAME_EXEC:
+                    execStartGame(mActivity,mGameRes,mGameStartCallback);
+                    break;
+            }
+
         }
     }
 
 
-
-    private void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
+    private synchronized void execStartGame(@NonNull final Activity activity, @IdRes int res, @NonNull final APICallback<String> callback){
 
         //发送打点事件
         try {
@@ -214,6 +269,9 @@ public class DeviceControl {
             }catch (Exception e){}
         }
 
+        if (callback!=null){
+            callback.onAPICallback("", APIConstants.GAME_LOADING);
+        }
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>() {
             @Override
             public void onAPICallback(String msg, int code) {
@@ -301,6 +359,10 @@ public class DeviceControl {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        mActivity = null;
+        mGameStartCallback = null;
+
     }
 
     /**

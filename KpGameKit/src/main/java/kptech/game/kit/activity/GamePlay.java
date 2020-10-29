@@ -489,13 +489,13 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
         if (code == APIConstants.AD_LOADING){
             mLoadingView.setText("正在加载广告...");
-        }else if (code == APIConstants.AD_FINISHED){
+        }else if (code == APIConstants.GAME_LOADING){
             mLoadingView.setText("正在加载游戏...");
         }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
             this.mErrorMsg = null;
             mDeviceControl.setPlayListener(this);
             playSuccess();
-        } else {
+        } else if (code < 0){
             if (mDeviceControl!=null){
                 mDeviceControl.setPlayListener(null);
                 mDeviceControl.stopGame();

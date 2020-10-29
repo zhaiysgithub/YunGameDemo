@@ -15,29 +15,47 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestClientNotice extends AsyncTask<String,Void,String> {
-    @Override
-    protected String doInBackground(String... params) {
-        HashMap<String,Object> p = new HashMap<>();
-        p.put("action", "usevm"); //string，固定值
-        p.put("padcode", params[0]);
-        p.put("pkgname", params[1]);
-        p.put("uid", params[2]);
-        p.put("type", 1); //int 终端类型，1 -- Android SDK， 2 -- iOS SDK，3 -- H5 SDK
-        p.put("tm", new Date().getTime()); //long int 本地时间戳
-        HashMap m = new HashMap<String,Object>();
-        m.put("corpkey",params[3]);
-        p.put("clientinfo", m);//Object 客户端的相关信息，key-value值，例如：agent："xxxx",corpkey:"xxxx"
+public class RequestClientNotice extends AsyncTask<String,Void,Void> {
+    public interface ICallback{
+        void onResult(boolean success);
+    }
 
-        String ret = request(p);
+    private ICallback mCallback;
+    public RequestClientNotice setCallback(ICallback callback){
+        this.mCallback = callback;
+        return this;
+    }
+
+
+    @Override
+    protected Void doInBackground(String... params) {
         try {
-            JSONObject obj = new JSONObject(ret);
-            Log.i("",obj.toString());
+            HashMap<String,Object> p = new HashMap<>();
+            p.put("action", "usevm"); //string，固定值
+            p.put("padcode", params[0]);
+            p.put("pkgname", params[1]);
+            p.put("uid", params[2]);
+            p.put("type", 1); //int 终端类型，1 -- Android SDK， 2 -- iOS SDK，3 -- H5 SDK
+            p.put("tm", new Date().getTime()); //long int 本地时间戳
+            HashMap m = new HashMap<String,Object>();
+            m.put("corpkey",params[3]);
+            p.put("clientinfo", m);//Object 客户端的相关信息，key-value值，例如：agent："xxxx",corpkey:"xxxx"
+
+            String ret = request(p);
+            try {
+                JSONObject obj = new JSONObject(ret);
+                Log.i("",obj.toString());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }catch (Exception e){
-            e.printStackTrace();
         }
 
-        return ret;
+        if (mCallback != null){
+            mCallback.onResult(true);
+        }
+
+        return null;
     }
 
     //post请求

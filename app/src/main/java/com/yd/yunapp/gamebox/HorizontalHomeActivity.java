@@ -173,8 +173,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     //启动云游戏
     public void startGame(View view){
 
-        new RequestClientNotice()
-                .execute("VM110110110","com.tencent.YiRen","h51038462",corpId);
+//        new RequestClientNotice()
+//                .execute("VM110110110","com.tencent.YiRen","h51038462",corpId);
 
 //        String str = DeviceIdUtil.getDeviceId(this);
 //        Log.i("HorizontalHomeActivity", str);
@@ -243,7 +243,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.pkgName = "com.sy.fsyhj.yofun.mumu";
 //        info.name = "浮生妖世绘";
 //
-//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
+        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
     }
 
 

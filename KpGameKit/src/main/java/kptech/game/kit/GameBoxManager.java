@@ -389,6 +389,7 @@ public class GameBoxManager {
                 if (deviceControl!=null) {
                     control = new DeviceControl(deviceControl, inf);
                     control.setAdManager(adManager);
+                    control.setCorpKey(mCorpID);
                 }
 
                 try {

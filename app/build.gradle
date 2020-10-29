@@ -81,5 +81,5 @@ dependencies {
 //    implementation 'kptech.game.kit:gamead-netease:1.0.0.1'
 //    implementation 'kptech.game.kit:gamead-normal:1.0.0.1'
 
-    implementation project(path: ':KpGameAd')
+//    implementation project(path: ':KpGameAd')
 }

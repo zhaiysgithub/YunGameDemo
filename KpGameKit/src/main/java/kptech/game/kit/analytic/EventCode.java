@@ -46,6 +46,9 @@ public class EventCode {
     public static final String DATA_DEVICE_APPLY_FAILED = "DATA_DEVICE_APPLY_FAILED";
 
     //准备开始游戏
+    public static final String DATA_DEVICE_SEND_NOTICE = "DATA_DEVICE_SEND_NOTICE";
+
+    //准备开始游戏
     public static final String DATA_VIDEO_READY_RECVING = "DATA_VIDEO_READY_RECVING";
     //成功开始游戏，接收视频
     public static final String DATA_VIDEO_START_RECVING = "DATA_VIDEO_START_RECVING";

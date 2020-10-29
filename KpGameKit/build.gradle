@@ -8,8 +8,10 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 11
+        versionCode 12
         versionName "1.1.2.17"
+
+        //versionName "1.1.3.2" //1.1.3为通用版本
     }
 
     buildTypes {
