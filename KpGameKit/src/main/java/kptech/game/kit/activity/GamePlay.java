@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ import kptech.game.kit.DeviceControl;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.ParamKey;
+import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.analytic.Event;
@@ -58,7 +61,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     public static final String EXTRA_CORPID = "extra.corpid";
     public static final String EXTRA_GAME = "extra.game";
-    public static final String EXTRA_TIMEOUT = "extra.timeout";
+//    public static final String EXTRA_TIMEOUT = "extra.timeout";
+    public static final String EXTRA_PARAMS = "extra.params";
 
     private Logger logger = new Logger("GamePlay");
 
@@ -94,6 +98,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //    private GameDownloader mGameDownloader;
 //    private GameBox mGameBox;
 
+    private Params mCustParams;
+
     private Handler mHandler = new Handler() {
 
         @Override
@@ -117,21 +123,24 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
-
-        long[] times = getIntent().getLongArrayExtra(EXTRA_TIMEOUT);
-        if (times!=null && times.length == 2){
-            fontTimeout = times[0] > 60 ? times[0] : 5 * 60;
-            backTimeout = times[1] > 60 ? times[1] : 3 * 60;
+        if (getIntent().hasExtra(EXTRA_PARAMS)){
+            try {
+                mCustParams = (Params) getIntent().getSerializableExtra(EXTRA_PARAMS);
+            }catch (Exception e){}
         }
+        if (mCustParams == null){
+            mCustParams = new Params();
+        }
+
+        fontTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_FONT,5 * 60);
+        backTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_BACK,3 * 60);
+
         initView();
         mHardwareManager = new HardwareManager(this);
 
         try {
             //统计事件初始化
             Event.init(getApplication(), mCorpID);
-
-            //统计事件开始点
-//            Event.createBaseEvent(this, mCorpID);
 
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
@@ -164,6 +173,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Stop");
 
         registerReceiver(mDownloadReceiver, intentFilter);
+
+
     }
 
     private void initView() {
@@ -171,6 +182,16 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mContentView = findViewById(R.id.content_view);
 
         mLoadingView = findViewById(R.id.loading_view);
+
+        int iconRes = mCustParams.get(ParamKey.ACTIVITY_LOADING_ICON,-1);
+        if (iconRes > 0){
+            try {
+                getResources().getResourceTypeName(iconRes);
+                mLoadingView.setIconImageResource(iconRes);
+            }catch (Exception e){
+                mLoadingView.setIconImageResource(R.mipmap.loading_icon);
+            }
+        }
 
         mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
         mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
@@ -218,20 +239,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
                 downloadApk(view);
 
-//                try {
-//                    //错误界面发送事件
-//                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-//                    event.setErrMsg(GamePlay.this.mErrorMsg);
-//                    if (mDeviceControl!=null){
-//                        event.setPadcode(mDeviceControl.getPadcode());
-//                    }
-//                    HashMap ext = new HashMap();
-//                    ext.put("code", mErrorCode);
-//                    ext.put("msg", mErrorMsg);
-//                    event.setExt(ext);
-//                    MobclickAgent.sendEvent(event);
-//                }catch (Exception e){
-//                }
             }
         });
 
@@ -242,15 +249,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
                 downloadApk(view);
 
-//                try {
-//                    //游戏界面发送
-//                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-//                    if (mDeviceControl!=null){
-//                        event.setPadcode(mDeviceControl.getPadcode());
-//                    }
-//                    MobclickAgent.sendEvent(event);
-//                }catch (Exception e){
-//                }
             }
         });
 
@@ -379,7 +377,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         //判断是否已经初始化
         if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
             //初始化
-//            mLoadingText.setText("设备初始化...");
             mLoadingView.setText("正在设备初始化...");
 //            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
             GameBoxManager.getInstance(this).init(getApplication(), this.mCorpID, new APICallback<String>() {
@@ -403,17 +400,26 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void checkGameAd(){
-        //检测是否需要加载广告
-        if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
+        mLoadingView.setText("获取游戏信息...");
+
+        // 检测是否需要加载广告
+        if (mGameInfo.kpGameId == null || mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
             mLoadingView.setText("获取游戏信息...");
             //请求网络获取广告显示
             new RequestGameInfoTask(this).setRequestCallback(new IRequestCallback<GameInfo>() {
                 @Override
                 public void onResult(GameInfo game, int code) {
-                    if (game!=null && game.showAd == 1){
-                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_ON;
-                    }else {
-                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                    try {
+                        if (game!=null){
+                            mGameInfo.kpGameId = game.kpGameId;
+                            if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
+                                mGameInfo.showAd = game.showAd == 1 ? GameInfo.GAME_AD_SHOW_ON : GameInfo.GAME_AD_SHOW_OFF;
+                            }
+                        }else {
+                            mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                        }
+                    }catch (Exception e){
+                        logger.error(e.getMessage());
                     }
                     startCloudPhone();
                 }

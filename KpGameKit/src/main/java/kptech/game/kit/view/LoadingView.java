@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import kptech.game.kit.R;
 public class LoadingView extends FrameLayout {
     private ProgressBar mLoadingPb;
     private TextView mLoadingText;
+    private ImageView mIconImg;
 
     public LoadingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,6 +38,7 @@ public class LoadingView extends FrameLayout {
 
         mLoadingText = (TextView) findViewById(R.id.loading_txt);
 //        mLoadingPb = findViewById(R.id.loading_pb);
+        mIconImg = findViewById(R.id.icon);
     }
 
     @Override
@@ -74,5 +77,9 @@ public class LoadingView extends FrameLayout {
 
     public void setText(String text) {
         mLoadingText.setText(text);
+    }
+
+    public void setIconImageResource(int res){
+        mIconImg.setImageResource(res);
     }
 }

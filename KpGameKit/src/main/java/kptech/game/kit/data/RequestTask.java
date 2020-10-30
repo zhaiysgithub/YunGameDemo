@@ -142,6 +142,7 @@ public class RequestTask {
 
                 inf = new GameInfo();
                 inf.gid = gameObj.getInt("gid");
+                inf.kpGameId = gameObj.getString("gameId");
                 inf.pkgName = gameObj.getString("gamePackageName");
                 inf.name = gameObj.getString("gameName");
                 inf.iconUrl = gameObj.getString("gameLogoUrl");

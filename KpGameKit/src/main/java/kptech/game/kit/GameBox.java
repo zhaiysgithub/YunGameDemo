@@ -20,8 +20,6 @@ public class GameBox {
     public Application mApplication = null;
     public String appKey = null;
 
-    private long[] noOpsTimeout = null;
-
     private GameDownloader mDownloader = null;
 
     public static void init(@NonNull Application application, String appKey) {
@@ -43,8 +41,10 @@ public class GameBox {
         this.appKey = appKey;
         GameBoxManager.setAppKey(appKey);
     }
-
     public void playGame(Activity activity, GameInfo gameInfo){
+        this.playGame(activity,gameInfo,null);
+    }
+    public void playGame(Activity activity, GameInfo gameInfo, Params params){
         if (activity==null || gameInfo==null){
             logger.error("playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
             return;
@@ -69,39 +69,27 @@ public class GameBox {
         Intent intent = new Intent(activity, GamePlay.class);
         intent.putExtra(GamePlay.EXTRA_CORPID, this.appKey);
         intent.putExtra(GamePlay.EXTRA_GAME, gameInfo);
-        if (noOpsTimeout != null){
-            intent.putExtra(GamePlay.EXTRA_TIMEOUT, noOpsTimeout);
-        }
+        intent.putExtra(GamePlay.EXTRA_PARAMS, params);
+
         activity.startActivity(intent);
     }
 
-    public void playGame(Activity activity, int gid, String pkgName){
-        this.playGame(activity,gid,pkgName,null, 0);
-    }
+//    public void playGame(Activity activity, int gid, String pkgName){
+//        this.playGame(activity,gid,pkgName,null, 0);
+//    }
+//
+//    public void playGame(Activity activity, int gid, String pkgName, String downUrl){
+//        this.playGame(activity,gid,pkgName,downUrl, 0);
+//    }
+//    public void playGame(Activity activity, int gid, String pkgName, String downUrl, int showAd){
+//        GameInfo info = new GameInfo();
+//        info.gid = gid;
+//        info.pkgName = pkgName;
+//        info.downloadUrl = downUrl;
+//        info.showAd = showAd;
+//        this.playGame(activity,info);
+//    }
 
-    public void playGame(Activity activity, int gid, String pkgName, String downUrl){
-        this.playGame(activity,gid,pkgName,downUrl, 0);
-    }
-
-    public void playGame(Activity activity, int gid, String pkgName, String downUrl, int showAd){
-        GameInfo info = new GameInfo();
-        info.gid = gid;
-        info.pkgName = pkgName;
-        info.downloadUrl = downUrl;
-        info.showAd = showAd;
-        this.playGame(activity,info);
-    }
-
-    /**
-     * 设置无操作超时,
-     * @param font 前台超时，单位s
-     * @param back 后台超时，单位s
-     */
-    public void setNoOpsTimeout(long font, long back){
-        if (font > 60 && back > 60){
-            noOpsTimeout = new long[]{font, back};
-        }
-    }
 
     public void setGameDownloader(GameDownloader downloader){
         logger.info("setGameDownloader :" + downloader);
@@ -112,4 +100,5 @@ public class GameBox {
         logger.info("getGameDownloader :" + this.mDownloader);
         return this.mDownloader;
     }
+
 }

@@ -46,6 +46,8 @@ import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.ParamKey;
+import kptech.game.kit.Params;
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
@@ -83,12 +85,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String jidou = "2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
-    final String corpId = jidou; //wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
 
 
 
@@ -227,8 +229,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        mPayDialog.show();
 
         GameInfo info = new GameInfo();
-        info.gid = 3069;
-        info.pkgName = "com.popcap.pvz2cthdyyh";
+        info.gid = 3273;
+        info.pkgName = "com.kptach.cpgame.demo";
         info.name = "植物";
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
         info.showAd = GameInfo.GAME_AD_SHOW_ON;
@@ -243,7 +245,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.pkgName = "com.sy.fsyhj.yofun.mumu";
 //        info.name = "浮生妖世绘";
 //
-        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info);
+
+        Params params = new Params();
+        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
+        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 2 * 60);
+        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 1 * 60);
+        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
     }
 
 

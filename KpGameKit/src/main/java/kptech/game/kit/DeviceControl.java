@@ -19,6 +19,7 @@ import java.util.Map;
 
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
+import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -26,6 +27,7 @@ import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestClientNotice;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.thread.HeartThread;
+import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
@@ -202,6 +204,7 @@ public class DeviceControl {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
 
+        //调用通知接口
         try {
             new RequestClientNotice()
                     .setCallback(new RequestClientNotice.ICallback() {
@@ -210,7 +213,7 @@ public class DeviceControl {
                             mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
                         }
                     })
-                    .execute(mPadcode,mGameInfo.pkgName,"h51038462",mCorpKey);
+                    .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
 
             return true;
         }catch (Exception e){

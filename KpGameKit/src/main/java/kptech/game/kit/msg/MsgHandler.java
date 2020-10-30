@@ -256,8 +256,8 @@ public class MsgHandler extends Handler {
         try {
             JSONObject obj = new JSONObject(msg);
 
-            productcode = obj.has("productcode") ? obj.getString("productcode") : null;
-            orderID = obj.has("orderID") ? obj.getString("orderID") : null;
+            productcode = obj.has("cpproductcode") ? obj.getString("cpproductcode") : null;
+            orderID = obj.has("cporder") ? obj.getString("cporder") : null;
             productName = obj.has("productname") ? obj.getString("productname") : null;
             productMoney = obj.has("money") ? obj.getString("money") : null;
             cpId = obj.has("cpid") ? obj.getString("cpid") : null;
