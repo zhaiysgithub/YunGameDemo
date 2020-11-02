@@ -34,6 +34,7 @@ import org.xutils.x;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -54,12 +55,11 @@ import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestClientNotice;
+import kptech.game.kit.dialog.AccountActivity;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.DeviceIdUtil;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.ProferencesUtils;
-import kptech.game.kit.view.LoginDialog;
-import kptech.game.kit.view.PayDialog;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -175,6 +175,27 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     //启动云游戏
     public void startGame(View view){
 
+//        AccountActivity mLoginDialog = new AccountActivity(this, corpId, "aaa", "bbb");
+//        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialogInterface) {
+//
+//            }
+//        });
+//            mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
+//                @Override
+//                public void onLoginSuccess(HashMap<String, Object> map) {
+//                    //缓存数据
+//                    cacheLoginData(map);
+//
+//                    //回调
+//                    if (mCallback!=null){
+//                        mCallback.onLogin(1, "", map);
+//                    }
+//                }
+//            });
+//        mLoginDialog.show();
+
 //        new RequestClientNotice()
 //                .execute("VM110110110","com.tencent.YiRen","h51038462",corpId);
 
@@ -248,10 +269,32 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
         Params params = new Params();
         params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
-        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 2 * 60);
-        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 1 * 60);
+        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
+        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
         GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
     }
+
+//    void charge() {
+//        Map<String, String> paramMap = new HashMap<String, String>();
+//
+//        paramMap.put(SDKParamKey.PAY_CPID, "3");
+//        paramMap.put(SDKParamKey.PAY_AMOUNT, "25");
+//        paramMap.put(SDKParamKey.PAY_CP_ORDER_ID, "123123");
+//        paramMap.put(SDKParamKey.PAY_PRODUCT_CODE, "A1");
+//        paramMap.put(SDKParamKey.PAY_PRODUCT_NAME, "ABCDWEF");
+//        paramMap.put(SDKParamKey.PAY_TIME, new Date().getTime() + "");
+//
+////        SDKParams sdkParams = new SDKParams();
+////        Map<String, Object> map = new HashMap<String, Object>();
+////        map.putAll(paramMap);
+////        sdkParams.putAll(map);
+//
+//        //建议从服务器获取sign
+//        String sign = sign(paramMap, GameConfig.cpSecret);
+//        paramMap.put(SDKParamKey.PAY_SIGN, sign);
+//
+//        CpGameSDK.defaultSdk().pay(this, sdkParams);
+//    }
 
 
     private void initView() {

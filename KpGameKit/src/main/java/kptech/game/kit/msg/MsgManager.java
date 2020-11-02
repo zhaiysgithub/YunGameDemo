@@ -12,15 +12,10 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
-import kptech.game.kit.GameBoxManager;
-import kptech.game.kit.data.RequestLoginTask;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.view.LoginDialog;
-import kptech.game.kit.view.PayDialog;
 
 public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
     private static final Logger logger = new Logger("MsgManager") ;
@@ -161,11 +156,6 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             }else if ("reLogin".equals(event)){
                 mHandler.sendEmptyMessage(MsgHandler.MSG_RELOGIN);
             }else if ("pay".equals(event)){
-//                String proCode = obj.getString("productcode");
-//                String orderId = obj.getString("orderID");
-//                HashMap<String,String> map = new HashMap();
-//                map.put("productcode",proCode);
-//                map.put("orderID",orderId);
                 mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY,msg));
             }else if ("logout".equals(event)){
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
@@ -174,6 +164,18 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             logger.error(e.getMessage());
         }
     }
+
+    @Override
+    public void onLogout() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("event","logout");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Messager.getInstance().send(obj.toString());
+    }
+
 
     @Override
     public void onLogin(int code, String msg, Map<String, Object> map) {

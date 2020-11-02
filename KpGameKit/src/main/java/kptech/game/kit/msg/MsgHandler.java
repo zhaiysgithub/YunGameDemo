@@ -15,11 +15,10 @@ import java.util.Map;
 
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.data.RequestLoginTask;
+import kptech.game.kit.dialog.AccountActivity;
+import kptech.game.kit.dialog.PayActivity;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
-import kptech.game.kit.view.LoginDialog;
-import kptech.game.kit.view.PayDialog;
 
 public class MsgHandler extends Handler {
     private static final Logger logger = new Logger("MsgHandler") ;
@@ -32,8 +31,8 @@ public class MsgHandler extends Handler {
 
 
     private Activity mActivity;
-    private LoginDialog mLoginDialog;
-    private PayDialog mPayDialog;
+    private AccountActivity mLoginDialog;
+    private PayActivity mPayDialog;
 
     private String mCorpId;
     private String mPkgName;
@@ -49,6 +48,7 @@ public class MsgHandler extends Handler {
     protected interface ICallback {
         void onLogin(int code, String msg, Map<String, Object> map);
         void onPay(int code, String msg, Map<String, Object> map);
+        void onLogout();
     }
 
     public MsgHandler(Activity activity, String corpId, String pkgName){
@@ -126,6 +126,11 @@ public class MsgHandler extends Handler {
     private void handleLogout(){
         //清除缓存数据
         clearCacheLoginData();
+
+        //回调
+        if (mCallback!=null){
+            mCallback.onLogout();
+        }
     }
 
     private void handleRelogin(){
@@ -180,10 +185,10 @@ public class MsgHandler extends Handler {
         String uninqueId = GameBoxManager.getInstance(mActivity).getUniqueId();
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
-            LoginDialog login = new LoginDialog(mActivity, mCorpId, mPkgName, mPadCode);
-            login.setCallback(new LoginDialog.OnLoginListener() {
+            AccountActivity login = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);
+            login.setCallback(new AccountActivity.OnLoginListener() {
                 @Override
-                public void onLoginSuccess(HashMap<String, Object> map) {
+                public void onLoginSuccess(Map<String, Object> map) {
                     //缓存数据
                     cacheLoginData(map);
 
@@ -208,7 +213,7 @@ public class MsgHandler extends Handler {
             if (mLoginDialog!=null && mLoginDialog.isShowing()){
                 return;
             }
-            mLoginDialog = new LoginDialog(mActivity, mCorpId, mPkgName, mPadCode);
+            mLoginDialog = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);
             mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
@@ -218,9 +223,9 @@ public class MsgHandler extends Handler {
                     }
                 }
             });
-            mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
+            mLoginDialog.setCallback(new AccountActivity.OnLoginListener() {
                 @Override
-                public void onLoginSuccess(HashMap<String, Object> map) {
+                public void onLoginSuccess(Map<String, Object> map) {
                     //缓存数据
                     cacheLoginData(map);
 
@@ -247,32 +252,19 @@ public class MsgHandler extends Handler {
             return;
         }
 
-        String productcode = null;
-        String orderID = null;
-        String productName = null;
-        String productMoney = null;
-        String cpId = null;
-
+        HashMap<String,Object> params = new HashMap<>();
         try {
             JSONObject obj = new JSONObject(msg);
-
-            productcode = obj.has("cpproductcode") ? obj.getString("cpproductcode") : null;
-            orderID = obj.has("cporder") ? obj.getString("cporder") : null;
-            productName = obj.has("productname") ? obj.getString("productname") : null;
-            productMoney = obj.has("money") ? obj.getString("money") : null;
-            cpId = obj.has("cpid") ? obj.getString("cpid") : null;
-
+            Iterator<String> keys = obj.keys();
+            while (keys.hasNext()){
+                String key = keys.next();
+                if ("event".equals(key)){
+                    continue;
+                }
+                params.put(key, obj.get(key));
+            }
         }catch (Exception e){
             logger.error(e.getMessage());
-        }
-
-        if (productcode == null || orderID == null){
-            Toast.makeText(mActivity, "未获取到商品信息", Toast.LENGTH_SHORT).show();
-            //回调
-            if (mCallback!=null){
-                mCallback.onPay(0, "Error params: productcode or orderID ", null);
-            }
-            return;
         }
 
         Map<String, Object> loginData = getLoginData();
@@ -289,21 +281,9 @@ public class MsgHandler extends Handler {
             return;
         }
 
-        mPayDialog = new PayDialog(mActivity);
-
-        mPayDialog.setPadCode(mPadCode);
-
-        mPayDialog.productcode = productcode;
-        mPayDialog.productname = productName;
-        mPayDialog.productprice = productMoney;
-        mPayDialog.cp_orderid = orderID;
-        mPayDialog.guid = guid;
-        mPayDialog.cpid = cpId;
-        mPayDialog.corpKey = mCorpId;
-        mPayDialog.gameId = mGameId;
-        mPayDialog.gamePkg = mPkgName;
-        mPayDialog.gameName = mGameName;
-        mPayDialog.phone = phone;
+        mPayDialog = new PayActivity(mActivity, mCorpId, mGameId, mPkgName, mPadCode);
+        mPayDialog.setParams(params);
+        mPayDialog.setUserInfo(guid, phone);
 
         mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -314,7 +294,7 @@ public class MsgHandler extends Handler {
                 }
             }
         });
-        mPayDialog.setCallback(new PayDialog.ICallback() {
+        mPayDialog.setCallback(new PayActivity.ICallback() {
             @Override
             public void onResult(int ret, String msg) {
                 if (ret == 1){
@@ -322,7 +302,6 @@ public class MsgHandler extends Handler {
                     if (mCallback!=null){
                         mCallback.onPay(1, "", null);
                     }
-//                    sendPayMsg();
                 }else if (msg != null){
                     Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
                 }else {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:minHeight="200dp"
+    android:background="@drawable/dialog_bg"
+    android:paddingTop="12dp"
+    android:paddingBottom="5dp"
+    >
+
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/dialog_kp_logo"
+            android:layout_centerInParent="true"/>
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="5dp"
+            android:src="@mipmap/down_notify_close"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
+    <kptech.game.kit.dialog.view.PhoneLoginView
+        android:id="@+id/ph_login_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"/>
+
+    <kptech.game.kit.dialog.view.PwdLoginView
+        android:id="@+id/pw_login_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+
+</LinearLayout>

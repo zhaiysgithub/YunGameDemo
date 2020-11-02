@@ -112,15 +112,45 @@ public class EventCode {
     public static final String DATA_USER_LOGIN_START = "DATA_USER_LOGIN_START";
     public static final String DATA_USER_LOGIN_SUCCESS = "DATA_USER_LOGIN_SUCCESS";
     public static final String DATA_USER_LOGIN_FAILED = "DATA_USER_LOGIN_FAILED";
+
+    //获取验证码失败
+    public static final String DATA_GET_CREDIT_FAILED = "DATA_GET_CREDIT_FAILED";
+
+    //用户手机号登录
+    public static final String DATA_USER_LOGINPHONE_START = "DATA_USER_LOGINPHONE_START";
+    public static final String DATA_USER_LOGINPHONE_SUCCESS = "DATA_USER_LOGINPHONE_SUCCESS";
+    public static final String DATA_USER_LOGINPHONE_FAILED = "DATA_USER_LOGINPHONE_FAILED";
+
     //支付生成订单
     public static final String DATA_PAY_MAKETRADE_START = "DATA_PAY_MAKETRADE_START";
     public static final String DATA_PAY_MAKETRADE_SUCCESS = "DATA_PAY_MAKETRADE_SUCCESS";
     public static final String DATA_PAY_MAKETRADE_FAILED = "DATA_PAY_MAKETRADE_FAILED";
+
     //支付
     public static final String DATA_PAY_APP_WX = "DATA_PAY_APP_WX";
     public static final String DATA_PAY_APP_ZFB = "DATA_PAY_APP_ZFB";
     public static final String DATA_PAY_APP_ERROR = "DATA_PAY_APP_ERROR";
     public static final String DATA_PAY_APP_FINISH = "DATA_PAY_APP_FINISH";
+
+    //调用支付
+    public static final String DATA_PAY_APP_START = "DATA_PAY_APP_START";
+    public static final String DATA_PAY_APP_FAILED = "DATA_PAY_APP_FAILED";
+    public static final String DATA_PAY_WEB_FAILED = "DATA_PAY_WEB_FAILED";
+
+
+    //帐号界面显示
+    public static final String DATA_DIALOG_PHONELOGIN_DISPLAY = "DATA_DIALOG_PHLOGIN_DISPLAY";
+    public static final String DATA_DIALOG_PWDLOGIN_DISPLAY = "DATA_DIALOG_PWLOGIN_DISPLAY";
+    public static final String DATA_DIALOG_REGIST_DISPLAY = "DATA_DIALOG_REGIST_DISPLAY";
+    public static final String DATA_DIALOG_FORGET_DISPLAY = "DATA_DIALOG_FORGET_DISPLAY";
+    //帐号界面关闭
+    public static final String DATA_DIALOG_ACCOUNT_CLOSE = "DATA_DIALOG_ACCOUNT_CLOSE";
+
+    //支付界面
+    public static final String DATA_DIALOG_PAY_DISPLAY = "DATA_DIALOG_PAY_DISPLAY";
+    public static final String DATA_DIALOG_PAY_CLOSE = "DATA_DIALOG_PAY_CLOSE";
+
+
 
 
     public static String getDeviceEventCode(int code){

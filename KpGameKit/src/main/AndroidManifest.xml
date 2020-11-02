@@ -44,6 +44,9 @@
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:theme="@style/MyTheme.Activity.GamePlay"
             android:launchMode="singleTask"/>
+
+        <activity android:name="kptech.game.kit.dialog.WebViewActivity"  />
+
     </application>
 
 
