@@ -66,6 +66,14 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                     ProferencesUtils.setString(mContext, SharedKeys.KEY_PAY_CONF, payJson);
                 }
 
+                //挽留弹窗次数
+                String exitAlertNum = dObj.has("detentionNum") ? dObj.getString("detentionNum") : null;
+                if (exitAlertNum != null){
+                    try {
+                        ProferencesUtils.setInt(mContext, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, Integer.parseInt(exitAlertNum));
+                    }catch (Exception e){}
+                }
+
                 ret = true;
             }else {
                 String m = jsonObject.getString("m");

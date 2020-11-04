@@ -1,5 +1,6 @@
 package kptech.game.kit.data;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MD5Util;
@@ -35,6 +37,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     public static final String ACTION_CHECKLOGIN = "6";
     public static final String ACTION_PAY_ORDER = "7";
     public static final String ACTION_LOGIN_CHANNEL_UUID = "8";
+    public static final String ACTION_AUTH_CHANNEL_UUID = "9";
 
     public static final String SENDSMS_TYPE_PHONELOGIN = "4";
     public static final String SENDSMS_TYPE_REGIST = "1";
@@ -43,9 +46,13 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     private String mAction;
     private String mCorpKey;
     private ICallback mCallback;
+    private String mDeviceId;
 
-    public AccountTask(String action){
+    private Context mContext;
+    public AccountTask(Context context, String action){
+        this.mContext = context;
         this.mAction = action;
+        mDeviceId = DeviceInfo.getDeviceId(context);
     }
 
     public AccountTask setCallback(ICallback callback) {
@@ -75,6 +82,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             ret = doPayOrder(params);
         }else if (mAction == ACTION_LOGIN_CHANNEL_UUID){
             ret = doLoginChannel(params);
+        }else if (mAction == ACTION_AUTH_CHANNEL_UUID){
+            ret = doAuthChannelUser(params);
         }
         return ret;
     }
@@ -91,6 +100,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("func", "login");
         p.put("phone", params[0]);
         p.put("password", params[1]);
+        p.put("deviceid", mDeviceId);
         return request(p);
     }
 
@@ -100,13 +110,16 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("phone", params[0]);
         p.put("smsCode", params[1]);
         p.put("smsCodeId", params[2]);
+        p.put("deviceid", mDeviceId);
         return request(p);
     }
 
     private Map<String, Object> doLoginChannel(Object... params){
         Map<String,Object> p = new HashMap<>();
-        p.put("func", "smscodelogin" );
-        p.put("uuid", params[0]);
+        p.put("func", "thirdpartlogin");
+        p.put("usersign", params[0]);    //用户id
+        p.put("deviceid", mDeviceId);
+        p.put("corpkey", mCorpKey);    //用户id
         return request(p);
     }
 
@@ -125,6 +138,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("smsCode", params[1]);
         p.put("smsCodeId", params[2]);
         p.put("password", params[3]);
+        p.put("deviceid", mDeviceId);
         return request(p);
     }
 
@@ -151,6 +165,17 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("gamename","");
         p.put("clientid", mCorpKey);
 
+        return request(p);
+    }
+
+    private Map<String,Object> doAuthChannelUser(Object... params){
+        Map<String,Object> p = new HashMap<>();
+        p.put("func", "appuserauth");
+        p.put("corpkey", mCorpKey);
+        p.put("deviceid", mDeviceId);
+        p.put("usersign", params[0]);
+        p.put("package", params[1]);
+        p.put("ext", DeviceInfo.getDeviceHardInfo(mContext));
         return request(p);
     }
 

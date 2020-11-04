@@ -36,7 +36,7 @@ dependencies {
     implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
     implementation 'kptech.game.kit:ZADSdk:3.3.3261.6@aar'
     implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
-
+    implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
 
 //    implementation 'kptech.game.kit:ZADSdk:3.3.3260.29@aar'       // 根据实际情况，填写对应的zmt sdk对应的版本号
 //    implementation 'kptech.game.kit:msa_mdid:1.0.13@aar'      // 获取OAID需要

@@ -28,8 +28,8 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
         void onLoginSuccess(Map<String, Object> map);
     }
 
-    public static final String CORP_KEY = "corp_key";
-    public static final String CPID = "cpid";
+//    public static final String CORP_KEY = "corp_key";
+//    public static final String CPID = "cpid";
 
     String mCorpKey;
     String mCpId;
@@ -149,7 +149,7 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
 //        requestLogin("kp", mCorpId, uninqueId);
 
         //通过渠道设置的UID登录
-        new AccountTask(AccountTask.ACTION_LOGIN_CHANNEL_UUID)
+        new AccountTask(mActivity, AccountTask.ACTION_LOGIN_CHANNEL_UUID)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override

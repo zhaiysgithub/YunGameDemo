@@ -3,34 +3,37 @@ package kptech.game.kit.activity;
 import android.Manifest;
 import android.app.Activity;import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.squareup.picasso.Picasso;
+import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
@@ -42,19 +45,27 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
+import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
+import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.data.AccountTask;
 import kptech.game.kit.data.IRequestCallback;
+import kptech.game.kit.data.RequestGameExitListTask;
 import kptech.game.kit.data.RequestGameInfoTask;
+import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.MD5Util;
+import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
 import kptech.game.kit.view.LoadingView;
 import kptech.game.kit.view.PlayErrorView;
+import kptech.game.kit.view.UserAuthView;
 
 
 public class GamePlay extends Activity implements APICallback<String>, DeviceControl.PlayListener{
@@ -67,6 +78,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private Logger logger = new Logger("GamePlay");
 
     private static final int MSG_SHOW_ERROR = 1;
+    private static final int MSG_RELOAD_GAME = 2;
+    private static final int MSG_SHOW_AUTH = 3;
 
     private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
@@ -75,6 +88,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private LoadingView mLoadingView;
     private PlayErrorView mErrorView;
     private FloatDownView mFloatDownView;
+    private UserAuthView mUserAuthView;
 
     private HardwareManager mHardwareManager;
 
@@ -100,7 +114,14 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private Params mCustParams;
 
-    private Handler mHandler = new Handler() {
+    private boolean mEnableExitGameAlert = false;
+    private List<GameInfo> mExitGameList = null;
+
+    private String mUnionUUID = null;
+
+    private int systemUi = -1;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
 
         @Override
         public void handleMessage(Message msg) {
@@ -110,6 +131,12 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             switch (msg.what) {
                 case MSG_SHOW_ERROR:
                     showError((String) msg.obj);
+                    break;
+                case MSG_RELOAD_GAME:
+                    reloadGame();
+                    break;
+                case MSG_SHOW_AUTH:
+                   showUserAuthView();
                     break;
             }
         }
@@ -134,6 +161,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         fontTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_FONT,5 * 60);
         backTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_BACK,3 * 60);
+
+        mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
+
+        mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
+        GameBoxManager.getInstance(this).setUniqueId(mUnionUUID);
 
         initView();
         mHardwareManager = new HardwareManager(this);
@@ -200,6 +232,12 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 resizeVideoContainer(scale);
             }
         });
+        mMenuView.setOnExitClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         mVideoContainer = (FrameLayout) findViewById(R.id.play_container);
 
@@ -215,7 +253,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             @Override
             public void onClick(View view) {
                 //重新加载游戏
-                reloadGame();
+                mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
 
                 try {
                     //发送打点事件
@@ -252,6 +290,75 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }
         });
 
+        mUserAuthView = findViewById(R.id.auth_view);
+        mUserAuthView.setOnAuthListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_APPROVE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+                }catch (Exception e){
+                }
+
+                //调用接口发送授权数据
+                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_CHANNEL_UUID)
+                        .setCorpKey(mCorpID)
+                        .setCallback(new AccountTask.ICallback() {
+                            @Override
+                            public void onResult(Map<String, Object> map) {
+                                //保存数据
+                                String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
+                                ProferencesUtils.setInt(GamePlay.this, key, 1);
+                            }
+                        })
+                        .execute(mUnionUUID, mGameInfo.pkgName);
+
+                startCloudPhone();
+                hideUserAuthView();
+            }
+        });
+        mUserAuthView.setOnBackListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exitPlay();
+
+                try {
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_CANCEL, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+                }catch (Exception e){
+                }
+            }
+        });
+    }
+
+    /**
+     * 显示授权界面
+     */
+    private void showUserAuthView(){
+        if (mUserAuthView.getVisibility() == View.VISIBLE){
+            return;
+        }
+        mUserAuthView.setInfo(mGameInfo.name, mGameInfo.iconUrl);
+        mUserAuthView.setAnimation(AnimationUtil.moveToViewLocation());
+        mUserAuthView.setVisibility(View.VISIBLE);
+
+        try {
+            //发送打点事件
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_DISPLAY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+        }catch (Exception e){
+        }
+    }
+
+    /**
+     * 隐藏授权界面
+     */
+    private void hideUserAuthView(){
+        if (mUserAuthView.getVisibility() != View.VISIBLE){
+            return;
+        }
+        mUserAuthView.setAnimation(AnimationUtil.moveToViewBottom());
+        mUserAuthView.setVisibility(View.GONE);
     }
 
     private void downloadApk(View view){
@@ -383,7 +490,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 @Override
                 public void onAPICallback(String msg, int code) {
                     if (code == 1){
-                        checkGameAd();
+                        getGameInfo();
                     }else {
                         //初始化失败，退出页面
 //                        Toast.makeText(GamePlay.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
@@ -396,37 +503,43 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
         //启动云手机
-        checkGameAd();
+        getGameInfo();
     }
 
-    private void checkGameAd(){
+    private void getGameInfo(){
         mLoadingView.setText("获取游戏信息...");
-
-        // 检测是否需要加载广告
-        if (mGameInfo.kpGameId == null || mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
-            mLoadingView.setText("获取游戏信息...");
-            //请求网络获取广告显示
-            new RequestGameInfoTask(this).setRequestCallback(new IRequestCallback<GameInfo>() {
-                @Override
-                public void onResult(GameInfo game, int code) {
-                    try {
-                        if (game!=null){
-                            mGameInfo.kpGameId = game.kpGameId;
-                            if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
-                                mGameInfo.showAd = game.showAd == 1 ? GameInfo.GAME_AD_SHOW_ON : GameInfo.GAME_AD_SHOW_OFF;
-                            }
-                        }else {
-                            mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        new RequestGameInfoTask(this).setRequestCallback(new IRequestCallback<GameInfo>() {
+            @Override
+            public void onResult(GameInfo game, int code) {
+                try {
+                    if (game!=null){
+                        //处理广告显示
+                        if (mGameInfo.showAd != GameInfo.GAME_AD_SHOW_AUTO){
+                            game.showAd = mGameInfo.showAd;
                         }
-                    }catch (Exception e){
-                        logger.error(e.getMessage());
+                        mGameInfo = game;
+                    }else {
+                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
                     }
-                    startCloudPhone();
+                }catch (Exception e){
+                    logger.error(e.getMessage());
                 }
-            }).execute(mCorpID, mGameInfo.pkgName);
-        }else {
-            startCloudPhone();
-        }
+
+                //判断是否需要显示授权界面
+                if (mGameInfo.kpUnionGame == 1 && mUnionUUID!=null){
+                    String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
+                    int auth = ProferencesUtils.getIng(GamePlay.this, key, 0);
+                    if (auth == 0){
+                        mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
+                        return;
+                    }
+                }
+                //启动游戏
+                startCloudPhone();
+
+            }
+        }).execute(mCorpID, mGameInfo.pkgName);
+
     }
 
     private void startCloudPhone() {
@@ -501,7 +614,18 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             this.mErrorMsg = null;
             mDeviceControl.setPlayListener(this);
             playSuccess();
-        } else if (code < 0){
+        } else if(code == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
+            if (mDeviceControl!=null){
+                mDeviceControl.setPlayListener(null);
+            }
+
+            if (mChangeGame){
+                mChangeGame = false;
+                mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
+            }
+
+
+        }else if(code < 0){
             if (mDeviceControl!=null){
                 mDeviceControl.setPlayListener(null);
                 mDeviceControl.stopGame();
@@ -533,6 +657,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
             mFloatDownView.setVisibility(View.VISIBLE);
         }
+
+        requestExitGameList();
     }
 
     private void exitPlay() {
@@ -540,21 +666,31 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         finish();
     }
 
+    /**
+     * 显示错识页面
+     * @param err
+     */
     private void showError(String err){
         mLoadingView.setVisibility(View.GONE);
         mVideoContainer.setVisibility(View.GONE);
         mMenuView.setVisibility(View.GONE);
         mFloatDownView.setVisibility(View.GONE);
 
+        mErrorView.setGameInfo(mGameInfo);
         mErrorView.setVisibility(View.VISIBLE);
         mErrorView.setErrorText(err);
+
     }
 
+    /**
+     * 重试加载游戏
+     */
     private void reloadGame(){
         mLoadingView.setVisibility(View.VISIBLE);
         mVideoContainer.setVisibility(View.GONE);
         mMenuView.setVisibility(View.GONE);
         mErrorView.setVisibility(View.GONE);
+        mFloatDownView.setVisibility(View.GONE);
 
         checkAndRequestPermission();
     }
@@ -588,15 +724,66 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        if ((System.currentTimeMillis() - mBackClickTime) > 3000) {
+//            //弹出挽留窗口,从挽留窗口启动的，不弹界面
+//            if (!showExitGameListDialog(this)){
+//                mBackClickTime = System.currentTimeMillis();
+//                //退出
+//                Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            exitPlay();
+//        }
+//    }
+
     @Override
     public void onBackPressed() {
-        if ((System.currentTimeMillis() - mBackClickTime) > 3000) {
-            mBackClickTime = System.currentTimeMillis();
-            Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
-        } else {
+        if (mDeviceControl==null || mDeviceControl.isReleased()){
             exitPlay();
+            return;
         }
+        //弹出挽留窗口
+        if (showExitGameListDialog(this)){
+            return;
+        }
+        //弹出退出窗口
+        if (showExitDialog()){
+            return;
+        }
+
+        exitPlay();
+
     }
+
+    private boolean showExitDialog() {
+        ExitDialog dialog = new ExitDialog(this);
+        dialog.setOnExitListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exitPlay();
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                if (systemUi != -1){
+                    GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                    systemUi = -1;
+                }
+            }
+        });
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
+            }
+        });
+        dialog.show();
+        return true;
+    }
+
 
     @Override
     public void onPingUpdate(int ping) {
@@ -651,7 +838,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private static final int CODE_REQUEST_PERMISSION = 1024;
     private void checkAndRequestPermission() {
         if (Build.VERSION.SDK_INT < 23) {
-//            startCloudPhone();
             checkInitCloudPhoneSDK();
             return;
         }
@@ -674,18 +860,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             lackedPermission.toArray(requestPermissions);
             requestPermissions(requestPermissions, CODE_REQUEST_PERMISSION);
         } else {
-//            startCloudPhone();
             checkInitCloudPhoneSDK();
         }
-    }
-
-    private boolean hasAllPermissionsGranted(int[] grantResults) {
-        for (int grantResult : grantResults) {
-            if (grantResult == PackageManager.PERMISSION_DENIED) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
@@ -693,7 +869,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode != CODE_REQUEST_PERMISSION) return;
 
-//        startCloudPhone();
         checkInitCloudPhoneSDK();
     }
 
@@ -854,6 +1029,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     int resizeWidth = 0;
     int resizeHeight = 0;
+
+    /**
+     * 初始化显示画面比例尺寸
+     */
     private void initVideoSize(){
         if (mDeviceControl == null){
             return;
@@ -905,6 +1084,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         resizeVideoContainer(mMenuView.mVideoScale);
     }
 
+    /**
+     * 修改显示画面比例
+     * @param scale
+     */
     private synchronized void resizeVideoContainer(boolean scale){
         if (scale){
             Configuration mConfiguration = this.getResources().getConfiguration(); //获取设置的配置信息
@@ -930,6 +1113,203 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
             mVideoContainer.setLayoutParams(lp);
+        }
+    }
+
+    /**
+     * 切换游戏
+     */
+    private boolean mChangeGame = false;
+    private void changeGame(GameInfo game){
+        if (game == null || game.gid == 0){
+            return;
+        }
+
+        try{
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_CHANGEGAME);
+            event.setGamePkg(game.pkgName);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){
+        }
+
+        //关闭换留窗显示
+        mEnableExitGameAlert = false;
+        //删除数据
+        mExitGameList = null;
+
+        mChangeGame = true;
+
+        //更换游戏信息
+        mGameInfo = game;
+
+        //关闭当前游戏
+        if (mDeviceControl != null && !mDeviceControl.isReleased()){
+            mDeviceControl.stopGame();
+        }else {
+            mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
+        }
+    }
+
+    /**
+     * 显示挽留窗口
+     * @param activity
+     * @return
+     */
+    public boolean showExitGameListDialog(Activity activity){
+        if (mExitGameList==null || mExitGameList.size()<=0){
+            return false;
+        }
+
+        try {
+
+            final ExitGameListDialog dialog = new ExitGameListDialog(activity, mExitGameList);
+            dialog.setCallback(new ExitGameListDialog.ICallback() {
+                @Override
+                public void onGameItem(GameInfo gameInfo) {
+                    dialog.dismiss();
+                    changeGame(gameInfo);
+                }
+
+                @Override
+                public void onExit() {
+                    dialog.dismiss();
+                    exitPlay();
+
+                    try{
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_EXITBTN, mGameInfo.pkgName);
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){
+                    }
+                }
+
+                @Override
+                public void onClose(){
+                    dialog.dismiss();
+
+                    try{
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_CANCELBTN, mGameInfo.pkgName);
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){
+                    }
+                }
+            });
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
+
+                    //增加显示数量
+                    addExitShowNum();
+
+                    try{
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_DISPLAY, mGameInfo.pkgName);
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){
+                    }
+                }
+            });
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    if (systemUi != -1){
+                        GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                        systemUi = -1;
+                    }
+                }
+            });
+
+            dialog.show();
+
+            return true;
+        }catch (Exception e){
+
+        }
+
+        return false;
+    }
+
+
+    private static final String KEY_EXIT_NUM = "kp_game_exit_dialog_num";
+
+    /**
+     * 获取挽留窗显示次数
+     * @return
+     */
+    private int getExitShowNum(){
+        //判断次数
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        final String today = sdf.format(new Date());
+        int num = 0;
+        try {
+            String str = ProferencesUtils.getString(this, KEY_EXIT_NUM, null);
+            JSONObject obj = new JSONObject(str);
+            if (obj.has(today)){
+                num = obj.getInt(today);
+            }
+
+        }catch (Exception e){}
+        return num;
+    }
+
+    /**
+     * 记录挽留窗显示次数
+     */
+    private void addExitShowNum(){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            final String today = sdf.format(new Date());
+            int num = getExitShowNum();
+            HashMap<String,Object> map = new HashMap<>();
+            map.put(today, num+1);
+            ProferencesUtils.setString(this, KEY_EXIT_NUM, new JSONObject(map).toString());
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 请求挽留窗游戏数据
+     */
+    private void requestExitGameList() {
+        try {
+            if (mExitGameList!=null){
+                return;
+            }
+
+            //判断是否要显示挽留窗
+            if (!mEnableExitGameAlert){
+                mExitGameList = null;
+                return;
+            }
+
+            //获取总数
+            int mExitAlertCount = ProferencesUtils.getIng(this, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, 0);
+
+            int num = getExitShowNum();
+
+            //超过显示数量,不显示
+            if (num >= mExitAlertCount){
+                return ;
+            }
+
+            //获取数据
+            new RequestGameExitListTask(this)
+                    .setRequestCallback(new IRequestCallback<List<GameInfo>>() {
+                        @Override
+                        public void onResult(List<GameInfo> list, int code) {
+                            if (list!=null && list.size() > 0){
+                                mExitGameList = new ArrayList<>();
+                                mExitGameList.addAll(list);
+                            }
+                        }
+                    })
+                    .execute(mCorpID, mGameInfo.kpGameId);
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
 
     }

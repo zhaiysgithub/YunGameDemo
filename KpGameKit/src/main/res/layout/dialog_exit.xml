@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="270dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:padding="20dp"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/bottom_ll"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确认退出云游戏吗？"
+            android:textColor="#333333"
+            android:textSize="17sp"
+            android:textAlignment="center"
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_ll"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/exit_game"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textSize="17sp"
+            android:textColor="#ff3a3a"
+            android:background="@drawable/game_cancel_btn"
+            android:text="退出游戏"/>
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:textColor="#ffffff"
+            android:background="@drawable/game_submit_btn"
+            android:layout_alignParentRight="true"
+            android:textSize="17sp"
+            android:text="再想想"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

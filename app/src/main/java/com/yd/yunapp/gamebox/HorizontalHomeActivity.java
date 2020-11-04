@@ -2,7 +2,6 @@ package com.yd.yunapp.gamebox;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -10,38 +9,27 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.kuaipan.game.demo.R;
 
-import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
@@ -49,17 +37,8 @@ import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.activity.GamePlay;
-import kptech.game.kit.ad.AdManager;
-import kptech.game.kit.ad.IAdCallback;
-import kptech.game.kit.analytic.DeviceInfo;
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.data.RequestClientNotice;
-import kptech.game.kit.dialog.AccountActivity;
-import kptech.game.kit.utils.DensityUtil;
-import kptech.game.kit.utils.DeviceIdUtil;
-import kptech.game.kit.utils.DeviceUtils;
-import kptech.game.kit.utils.ProferencesUtils;
+import kptech.game.kit.activity.ExitDialog;
+import kptech.game.kit.activity.ExitGameListDialog;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -169,11 +148,43 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }, filter);
     }
 
+
     String access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxNTg1MDM2OTY5MjEyNTI5IiwianRpIjoiMzAyY2FhYmIzODU3MTRiMmU2ODIzOTYwMzk5YjcxYTI5ZDU2Y2M2MzUyNTI1Mzk3YjA0NDQwYjZlNjdmOTc3ZDgxYjUwZmU4YWQ0NWIwN2EiLCJpYXQiOjE2MDIyMjgwNTEsIm5iZiI6MTYwMjIyODA1MSwiZXhwIjoxNjEwMTc2ODUxLCJzdWIiOiIzNDgzZWEyNjc5NTc0MjliYTA1OTBmOWNmZTRiYTk4ZCIsInNjb3BlcyI6WyJnZXRVc2VySW5mbyIsImxvZ2luT3V0IiwidXBkYXRlUGFzc3dvcmQiXX0.jCiMgLKd-Pi0Y-EbPfLd9XPZSRJ8Tre6_8Vn0fnhHf9KixiS0AB9GL30oQvDpLqwHrIanCDswgty_7D3n_vsCkygfjmXeAqOTxUC4iEF_swZkOFdvocjyTXfyIV8IEGmoDy3o6kH_mLX11iJ4eyuii6CoValgCxWRB5aH_ByighSbBp0PfNmND7BLQjIo_6fPjK11r1cEbulFmpYuSmbwcu2XsuKjCfRXdXiG_lTzLHi9_UYUxwIwdTHYDxmAkW159IB0FWhnR0r6RzHWyNlIhR794EqurDkRKKGfs49WxMbf7MNQNS9gcoiS4yt--T5uzBrt0MV28ZkRy5gBQSRO6mRcimOEnulCRolmpBZvHbwXPUYVulUBAmQSiKTlQE-SYUzstK5UtqDnyvGPmtUCz7z9Dw36IR9LRS_ksnj58agCJQpssg_ZK6LDXx0NQksTL46hqI4KBpB8-kAPCce5a_t_q_XSDladnpXZYSYtn1VMYA5YNLeiSC_bWSXgffJfqLMXhryfpUaMOxnxlRt9L9dCiokZz8GSzR8_fJwCyKZzbmDo_FgCp4-9OOqS_jsX6Vlw9qeTZUoOLDTbW2Jp7gcFDZwFj_AYOSDFx_v2Lt3";
     String guid = "3483ea267957429ba0590f9cfe4ba98d";
     String global_id = "3483ea267957429ba0590f9cfe4ba98d";
     //启动云游戏
     public void startGame(View view){
+
+        List<GameInfo> list = new ArrayList<GameInfo>();
+        list.addAll(mGameInfos.values());
+//        GameInfo info = new GameInfo();
+//        info.gid = 3273;
+//        info.pkgName = "com.kptach.cpgame.demo";
+//        info.name = "植物";
+//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+//        list.add(info);
+
+//        ExitGameListDialog dialog = new ExitGameListDialog(this, list);
+//
+//        dialog.show();
+
+        ExitDialog dialog1 = new ExitDialog(this);
+        dialog1.show();
+
+//        new RequestGameExitListTask(this)
+//                .setRequestCallback(new IRequestCallback<List<GameInfo>>() {
+//                    @Override
+//                    public void onResult(List<GameInfo> list, int code) {
+//                        Log.i("AA", list.toString());
+//                    }
+//                })
+//                .execute(corpId, "51");
+
+//        ProferencesUtils.setInt(this, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, 3);
+
+
+//        showExitGameListDialog();
 
 //        AccountActivity mLoginDialog = new AccountActivity(this, corpId, "aaa", "bbb");
 //        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -249,12 +260,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        });
 //        mPayDialog.show();
 
-        GameInfo info = new GameInfo();
-        info.gid = 3273;
-        info.pkgName = "com.kptach.cpgame.demo";
-        info.name = "植物";
-        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+//        GameInfo info = new GameInfo();
+//        info.gid = 3273;
+//        info.pkgName = "com.kptach.cpgame.demo";
+//        info.name = "植物";
+//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
 
 //        GameInfo info = new GameInfo();
 //
@@ -267,11 +278,11 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.name = "浮生妖世绘";
 //
 
-        Params params = new Params();
-        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
-        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
-        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
-        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
+//        Params params = new Params();
+//        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
+//        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
+//        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
+//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
     }
 
 //    void charge() {
@@ -318,7 +329,10 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
                 game.showAd = GameInfo.GAME_AD_SHOW_ON;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
-                GameBox.getInstance().playGame(HorizontalHomeActivity.this, game);
+
+                Params params = new Params();
+                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
+                GameBox.getInstance().playGame(HorizontalHomeActivity.this, game, params);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
 //                HorizontalHomeActivity.this.startActivityForResult(intent, HomeActivity.PLAY_GAME_REQUEST);

@@ -25,6 +25,13 @@ public class EventCode {
     //接收到下载出错
     public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADERROR = "DATA_ACTIVITY_RECEIVE_DOWNLOADERROR";
 
+    //显示授权页面
+    public static final String DATA_ACTIVITY_USERAUTH_DISPLAY= "DATA_ACTIVITY_USERAUTH_DISPLAY";
+    //取消授权
+    public static final String DATA_ACTIVITY_USERAUTH_CANCEL = "DATA_ACTIVITY_USERAUTH_CANCEL";
+    //允许授权
+    public static final String DATA_ACTIVITY_USERAUTH_APPROVE = "DATA_ACTIVITY_USERAUTH_APPROVE";
+
     //初始化SDK
     public static final String DATA_SDK_INIT_START = "DATA_SDK_INIT_START";
     //SDK初化成功
@@ -150,7 +157,11 @@ public class EventCode {
     public static final String DATA_DIALOG_PAY_DISPLAY = "DATA_DIALOG_PAY_DISPLAY";
     public static final String DATA_DIALOG_PAY_CLOSE = "DATA_DIALOG_PAY_CLOSE";
 
-
+    //挽留弹窗
+    public static final String DATA_DIALOG_EXITLIST_DISPLAY = "DATA_DIALOG_EXITLIST_DISPLAY";
+    public static final String DATA_DIALOG_EXITLIST_EXITBTN = "DATA_DIALOG_EXITLIST_EXITBTN";
+    public static final String DATA_DIALOG_EXITLIST_CANCELBTN = "DATA_DIALOG_EXITLIST_CANCELBTN";
+    public static final String DATA_DIALOG_EXITLIST_CHANGEGAME = "DATA_DIALOG_EXITLIST_CHANGEGAME";
 
 
     public static String getDeviceEventCode(int code){

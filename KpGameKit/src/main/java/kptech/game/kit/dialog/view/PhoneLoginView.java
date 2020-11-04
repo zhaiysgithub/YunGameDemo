@@ -170,7 +170,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
         mLoading = Loading.build(mActivity);
         mLoading.show();
 
-        new AccountTask(AccountTask.ACTION_LOGIN_PHONE)
+        new AccountTask(mActivity, AccountTask.ACTION_LOGIN_PHONE)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
@@ -242,7 +242,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
         mLoading = Loading.build(mActivity);
         mLoading.show();
         //发送请求
-        new AccountTask(AccountTask.ACTION_SENDSMS)
+        new AccountTask(mActivity, AccountTask.ACTION_SENDSMS)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override

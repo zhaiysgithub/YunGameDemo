@@ -306,7 +306,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
         mLoading = Loading.build(mActivity);
         mLoading.show();
 
-        new AccountTask(AccountTask.ACTION_LOGIN_PASSWORD)
+        new AccountTask(mActivity, AccountTask.ACTION_LOGIN_PASSWORD)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
@@ -379,7 +379,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
         String action = mType == TYPE_FORGET ? AccountTask.ACTION_UPDATE_PWD : AccountTask.ACTION_REGIST;
         String codeId = smsCodeId.containsKey(action) ? smsCodeId.get(action) : "";
 
-        new AccountTask(action)
+        new AccountTask(mActivity,action)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
@@ -450,7 +450,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
         mLoading = Loading.build(mActivity);
         mLoading.show();
         //发送请求
-        new AccountTask(AccountTask.ACTION_SENDSMS)
+        new AccountTask(mActivity, AccountTask.ACTION_SENDSMS)
                 .setCorpKey(mCorpKey)
                 .setCallback(new AccountTask.ICallback() {
                     @Override

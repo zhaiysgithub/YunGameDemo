@@ -25,6 +25,7 @@ import kptech.game.kit.utils.StringUtil;
 
 public class DeviceInfo {
 
+    private static String mDeviceId = null;
     public static boolean hasDeviceId(Context context){
         String dev = null;
         try {
@@ -46,6 +47,30 @@ public class DeviceInfo {
         }catch (Exception e){
         }
         return "";
+    }
+
+    public static String getDeviceId(Context context){
+        if (mDeviceId == null){
+            mDeviceId = DeviceIdUtil.getDeviceId(context);
+        }
+        return mDeviceId;
+    }
+
+    public static Map<String,Object> getDeviceHardInfo(Context context){
+        String imei = DeviceUtils.getIMEI(context);
+        String androidId = DeviceUtils.getAndroidId(context);
+        String phoneBrand = DeviceUtils.getPhoneBrand();
+        String phoneType = DeviceUtils.getPhoneModel();
+        String screenSize = DeviceUtils.getPhysicsScreenSize(context)+"";
+
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("imei", imei);
+        map.put("sysid", androidId);
+        map.put("phonebrand", phoneBrand);
+        map.put("phonetype", phoneType);
+        map.put("screensize", screenSize);
+
+        return map;
     }
 
     public static void sendDeviceInfo(final Context context, String corpKey) {

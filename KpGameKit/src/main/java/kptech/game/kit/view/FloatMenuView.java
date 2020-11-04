@@ -48,6 +48,11 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         this.mResizeClickListener = listener;
     }
 
+    private OnClickListener mExitListener;
+    public void setOnExitClickListener(View.OnClickListener listener) {
+        mExitListener = listener;
+    }
+
     public FloatMenuView(Context context) {
         super(context);
         initView();
@@ -145,7 +150,9 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             mMenuDialog.dismiss();
         } else if (mExitBtn == view) {
             mMenuDialog.dismiss();
-            ((Activity) getContext()).finish();
+            if (mExitListener!=null){
+                mExitListener.onClick(view);
+            }
         } else if (mAduioBtn == view) {
             mMenuDialog.dismiss();
             mAudioSwitch = !mAudioSwitch;

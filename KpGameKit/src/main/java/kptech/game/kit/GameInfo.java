@@ -29,26 +29,35 @@ public class GameInfo implements Parcelable {
     public String pkgName;
     public String name;
     public String iconUrl;
+    public String coverUrl;
     public String downloadUrl;
     public int playCount;
     public int totalTime;
     public int usedTime;
     public long size;
+    //快盘id
     public String kpGameId;
+    //下载开关
+    public int enableDownload = 1;
     public int showAd = GAME_AD_SHOW_AUTO;
     //自动本地IMEI\AndroidID到云设备，0不添加，1添加
     public int addMockInfo = 1;
+    //快盘联运游戏 1是，0否
+    public int kpUnionGame;
     public HashMap<String,String> ext;
 
     public GameInfo() {
     }
 
     protected GameInfo(Parcel var1) {
+        this.kpGameId = var1.readString();
         this.gid = var1.readInt();
         this.pkgName = var1.readString();
         this.name = var1.readString();
         this.iconUrl = var1.readString();
+        this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
+        this.enableDownload = var1.readInt();
         this.playCount = var1.readInt();
         this.totalTime = var1.readInt();
         this.usedTime = var1.readInt();
@@ -67,11 +76,14 @@ public class GameInfo implements Parcelable {
     }
 
     public void writeToParcel(Parcel var1, int var2) {
+        var1.writeString(this.kpGameId);
         var1.writeInt(this.gid);
         var1.writeString(this.pkgName);
         var1.writeString(this.name);
         var1.writeString(this.iconUrl);
+        var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
+        var1.writeInt(this.enableDownload);
         var1.writeInt(this.playCount);
         var1.writeInt(this.totalTime);
         var1.writeInt(this.usedTime);
@@ -110,7 +122,7 @@ public class GameInfo implements Parcelable {
 
     @Override
     public String toString() {
-        String str = "gid:" + this.gid+",pkgName:" + this.pkgName + ",name:" + this.name
+        String str = "kpGameId:" + this.kpGameId + ",gid:" + this.gid+",pkgName:" + this.pkgName + ",name:" + this.name
                 +",iconUrl:" + this.iconUrl + ",downloadUrl:" + this.downloadUrl
                 +",playCount:" + this.playCount + ",totalTime:" + this.totalTime
                 +",usedTime:" + this.usedTime + ",size:" + this.size

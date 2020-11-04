@@ -102,7 +102,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     }
 
     public PayActivity(Activity context, String corpId, String gameId, String pkgName, String padCode) {
-        super(context, R.style.MyTheme_CustomDialog);
+        super(context, R.style.MyTheme_CustomDialog_Background);
         this.mActivity = context;
         this.mCorpKey = corpId;
         this.mPkgName = pkgName;
@@ -172,7 +172,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
         webView = findViewById(R.id.webview);
 
         String productname = mParams.containsKey("productname") ? (String) mParams.get("productname") : "";
-        String productprice = mParams.containsKey("money") ? (String) mParams.get("money") : "";
+        String productprice = mParams.containsKey("money") ?  mParams.get("money")+"" : "";
 
         String showPrice = "";
         try {
@@ -189,7 +189,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
         mProductPriceText.setText(showPrice);
         mPayPriceText.setText(showPrice);
 
-
+//        mParams.put("productname","aa");
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
@@ -276,7 +276,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
             mTradeNum = null;
             //生成订单
-            new AccountTask(AccountTask.ACTION_PAY_ORDER)
+            new AccountTask(mActivity, AccountTask.ACTION_PAY_ORDER)
                     .setCorpKey(mCorpKey)
                     .setCallback(new AccountTask.ICallback() {
                         @Override
@@ -338,7 +338,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                             }
 
                         }
-                    }).execute(guid, mPayType+"", mParams, mGameId, mPkgName);
+                    }).execute(guid, mPayType+"", mParams, mGameId, mPkgName.trim());
         }
 
     }
