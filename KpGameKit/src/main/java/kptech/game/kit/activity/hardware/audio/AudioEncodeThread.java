@@ -18,7 +18,7 @@ import kptech.game.kit.utils.Logger;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AudioEncodeThread extends Thread {
-    Logger logger = new Logger("AudioEncodeThread");
+    private static final String TAG = "AudioEncodeThread";
     private static final boolean DEBUG = true;
     // 音频通道(单声道)
     private static final int CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_STEREO;
@@ -60,7 +60,7 @@ public class AudioEncodeThread extends Thread {
         if (mIsStart) {
             return;
         }
-        logger.info("startMediaCodec");
+        Logger.info(TAG,"startMediaCodec");
         try {
             startMediaEncode();
             startAudioRecord();
@@ -90,7 +90,7 @@ public class AudioEncodeThread extends Thread {
      * release audio recorder and encode
      */
     public void releaseMediaCodec() {
-        logger.info("releaseMediaCodec");
+        Logger.info(TAG,"releaseMediaCodec");
         mIsStart = false;
         if (mAudioRecord != null) {
             mAudioRecord.setRecordPositionUpdateListener(null);
@@ -116,7 +116,7 @@ public class AudioEncodeThread extends Thread {
         super.run();
         int bufferReadResult = 0;
         if (DEBUG) {
-            logger.info( "AudioEncodeThread start encode  " + mIsStart + "   " + mIsExit);
+            Logger.info(TAG, "AudioEncodeThread start encode  " + mIsStart + "   " + mIsExit);
         }
         try {
             while (!mIsExit) {
@@ -136,7 +136,7 @@ public class AudioEncodeThread extends Thread {
                         if (bufferReadResult == AudioRecord.ERROR_BAD_VALUE
                                 || bufferReadResult == AudioRecord.ERROR_INVALID_OPERATION) {
                             if (DEBUG) {
-                                logger.error( "Read error");
+                                Logger.error(TAG, "Read error");
                             }
                         }
                         if (mAudioRecord != null && bufferReadResult > 0) {
@@ -147,10 +147,10 @@ public class AudioEncodeThread extends Thread {
             }
         } catch (Exception e) {
             // just continue
-            logger.error("=======" + e.getMessage());
+            Logger.error(TAG,"=======" + e.getMessage());
         }
         if (DEBUG) {
-            logger.info("AudioEncodeThread end encode");
+            Logger.info(TAG,"AudioEncodeThread end encode");
         }
     }
 

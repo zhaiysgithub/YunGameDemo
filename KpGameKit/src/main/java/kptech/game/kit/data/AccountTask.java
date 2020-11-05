@@ -23,7 +23,8 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MD5Util;
 
 public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
-    private static final Logger logger = new Logger("AccountTask") ;
+
+    private static final String TAG = "AccountTask" ;
 
     public interface ICallback{
         void onResult(Map<String, Object> map);
@@ -196,7 +197,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             String dataStr = new JSONObject(params).toString();
 
             String postParms = "data="+dataStr+"&key="+mCorpKey+"&sign="+sign;
-            logger.info("req: " + url + "?" + postParms);
+            Logger.info(TAG,"req: " + url + "?" + postParms);
 
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.
@@ -213,7 +214,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
                 }
                 String retStr = buffer.toString();
 
-                logger.info("resp:" + retStr);
+                Logger.info(TAG,"resp:" + retStr);
 
                 JSONObject jsonObject = new JSONObject(retStr);
                 int c = jsonObject.getInt("c");
@@ -228,7 +229,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
                     }
                 } else {
                     String m = jsonObject.getString("m");
-                    logger.error("resp msg:" + m);
+                    Logger.error(TAG,"resp msg:" + m);
                     ret.put("error", m);
                 }
             }else {
@@ -242,13 +243,13 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
                     }
                     msg = buffer.toString();
                 }catch (Exception e){}
-                logger.error("resp code:" + code + ", msg:" + msg);
+                Logger.error(TAG,"resp code:" + code + ", msg:" + msg);
 
                 ret.put("error", msg);
             }
 
         } catch (Exception e) {
-            logger.error("request exception: " + e.getMessage());
+            Logger.error(TAG,"request exception: " + e.getMessage());
             ret.put("error", e.getMessage());
         }
         return ret;

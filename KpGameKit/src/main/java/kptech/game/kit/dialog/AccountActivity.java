@@ -22,7 +22,8 @@ import kptech.game.kit.dialog.view.PwdLoginView;
 import kptech.game.kit.utils.Logger;
 
 public class AccountActivity extends Dialog implements View.OnClickListener {
-    private static final Logger logger = new Logger("AccountActivity");
+    private static final String TAG = "AccountActivity";
+//    private static final Logger logger = new Logger("AccountActivity");
 
     public interface OnLoginListener{
         void onLoginSuccess(Map<String, Object> map);
@@ -60,14 +61,14 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        logger.info("onCreate " + mCorpKey);
+        Logger.info(TAG,"onCreate " + mCorpKey);
 
         try {
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_DIALOG_PHONELOGIN_DISPLAY);
             MobclickAgent.sendEvent(event);
         }catch (Exception ex){
-            logger.error(ex.getMessage());
+            Logger.error(TAG,ex.getMessage());
         }
 
         mPhoneView = findViewById(R.id.ph_login_view);
@@ -100,7 +101,7 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
     }
 
     private void success(Map<String, Object> map){
-        logger.info("login success data: " + map!=null ? map.toString() : null);
+        Logger.info(TAG,"login success data: " + map!=null ? map.toString() : null);
 
         //登录成功
         if (map!=null){

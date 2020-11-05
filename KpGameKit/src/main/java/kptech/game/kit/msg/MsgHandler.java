@@ -21,7 +21,7 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class MsgHandler extends Handler {
-    private static final Logger logger = new Logger("MsgHandler") ;
+//    private static final Logger logger = new Logger("MsgHandler") ;
 
     protected static final int MSG_LOGIN = 1;
     protected static final int MSG_RELOGIN = 2;
@@ -116,7 +116,7 @@ public class MsgHandler extends Handler {
                 return;
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("MsgHandler",e.getMessage());
         }
 
         //登录
@@ -153,7 +153,7 @@ public class MsgHandler extends Handler {
                 ProferencesUtils.setString(mActivity, getCacheKey(), obj.toString());
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("MsgHandler",e.getMessage());
         }
     }
 
@@ -175,7 +175,7 @@ public class MsgHandler extends Handler {
                 }
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("MsgHandler",e.getMessage());
         }
         return map;
     }
@@ -264,7 +264,7 @@ public class MsgHandler extends Handler {
                 params.put(key, obj.get(key));
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("MsgHandler",e.getMessage());
         }
 
         Map<String, Object> loginData = getLoginData();

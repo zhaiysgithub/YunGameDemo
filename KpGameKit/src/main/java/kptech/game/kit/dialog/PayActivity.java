@@ -50,7 +50,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
         void onResult(int ret, String msg);
     }
 
-    private static final Logger logger = new Logger("PayActivity");
+    private static final String TAG = "PayActivity";
 
     private static int PAY_TYPE_WECHAT = 1;
     private static int PAY_TYPE_ALIPAY = 3;
@@ -130,7 +130,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
             Event event = Event.getEvent(EventCode.DATA_DIALOG_PAY_DISPLAY);
             MobclickAgent.sendEvent(event);
         }catch (Exception ex){
-            logger.error(ex.getMessage());
+            Logger.error(TAG,ex.getMessage());
         }
 
         findViewById(R.id.close).setOnClickListener(this);
@@ -144,7 +144,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                     Event event = Event.getEvent(EventCode.DATA_DIALOG_PAY_CLOSE);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception ex){
-                    logger.error(ex.getMessage());
+                    Logger.error(TAG,ex.getMessage());
                 }
 
                 if (mPayState == PAY_STATE_FINISHED) {
@@ -235,19 +235,19 @@ public class PayActivity extends Dialog implements View.OnClickListener {
      * 创建订单
      */
     private void buildOrder(){
-        logger.info("buildOrder payState:" + mPayState);
+        Logger.info(TAG,"buildOrder payState:" + mPayState);
 
         if (mPayState == PAY_STATE_NONE) {
             if (mPayType == PAY_TYPE_ALIPAY){
                 //判断是否安装支付宝
                 if (!IsInstallUtils.isAliPayInstalled(this.mActivity)){
-                    logger.error("buildOrder error: 未安装支付宝 ");
+                    Logger.error(TAG,"buildOrder error: 未安装支付宝 ");
                     Toast.makeText(this.mActivity, "未安装支付宝", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }else if (mPayType == PAY_TYPE_WECHAT){
                 if (!IsInstallUtils.isWeixinInstalled(this.mActivity)){
-                    logger.error("buildOrder error: 未安装微信");
+                    Logger.error(TAG,"buildOrder error: 未安装微信");
                     Toast.makeText(this.mActivity, "未安装微信", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -257,7 +257,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
             try {
                 String cpInfo = new JSONObject(mParams).toString();
-                logger.info("buildOrder cpInfo:" + cpInfo);
+                Logger.info(TAG,"buildOrder cpInfo:" + cpInfo);
 
                 //发送打点事件
                 Event event = Event.getEvent(EventCode.DATA_PAY_MAKETRADE_START);
@@ -266,7 +266,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                 event.setExt(ext);
                 MobclickAgent.sendEvent(event);
             }catch (Exception ex){
-                logger.error(ex.getMessage());
+                Logger.error(TAG,ex.getMessage());
             }
 
             //处理按钮
@@ -281,7 +281,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                     .setCallback(new AccountTask.ICallback() {
                         @Override
                         public void onResult(Map<String, Object> map) {
-                            logger.info("buildOrder resp:" + map!=null ? map.toString() : null );
+                            Logger.info(TAG,"buildOrder resp:" + map!=null ? map.toString() : null );
 
                             if (map!=null && map.containsKey("tradenum")) {
 
@@ -291,7 +291,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                                     event.setExt(map);
                                     MobclickAgent.sendEvent(event);
                                 }catch (Exception ex){
-                                    logger.error(ex.getMessage());
+                                    Logger.error(TAG,ex.getMessage());
                                 }
 
                                 String tradenum = map.get("tradenum").toString();
@@ -334,7 +334,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                                 event.setErrMsg(msg);
                                 MobclickAgent.sendEvent(event);
                             }catch (Exception ex){
-                                logger.error(ex.getMessage());
+                                Logger.error(TAG,ex.getMessage());
                             }
 
                         }
@@ -409,7 +409,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                             ext.put("uri", url);
                             MobclickAgent.sendEvent(event);
                         }catch (Exception ex){
-                            logger.error(ex.getMessage());
+                            Logger.error(TAG,ex.getMessage());
                         }
                         return true;
                     }
@@ -445,7 +445,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                     mPayState = PAY_STATE_ERROR;
                     err = errMsg;
 
-                    logger.error("payerror  " + url);
+                    Logger.error(TAG,"payerror  " + url);
 
                     try {
                         //发送打点事件
@@ -455,7 +455,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                         event.setExt(ext);
                         MobclickAgent.sendEvent(event);
                     }catch (Exception ex){
-                        logger.error(ex.getMessage());
+                        Logger.error(TAG,ex.getMessage());
                     }
 
                     return true;
@@ -498,10 +498,10 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                     ext.put("uri", requestUri);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception ex){
-                    logger.error(ex.getMessage());
+                    Logger.error(TAG,ex.getMessage());
                 }
 
-                logger.error("onReceivedError: " + msg + "\n" + " url:"+ requestUri);
+                Logger.error(TAG,"onReceivedError: " + msg + "\n" + " url:"+ requestUri);
             }
 
             @Override

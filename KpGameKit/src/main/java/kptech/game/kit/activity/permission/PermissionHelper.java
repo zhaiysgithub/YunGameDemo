@@ -16,7 +16,6 @@ import kptech.game.kit.utils.Logger;
 public class PermissionHelper {
     private static final boolean DEBUG = true;
     private static final String TAG = "PermissionHelper";
-    private static Logger logger = new Logger(TAG);
 
     private static final Map<Integer, PermissionCallbackWrapper> sCallbackMap = new HashMap<>();
 
@@ -36,7 +35,7 @@ public class PermissionHelper {
             }
 
             if (DEBUG) {
-                logger.info("checkPermission: " + permission + ", result: " + hasGranted);
+                Logger.info(TAG,"checkPermission: " + permission + ", result: " + hasGranted);
             }
 
             if (!hasGranted) {
@@ -75,7 +74,7 @@ public class PermissionHelper {
     public static boolean somePermissionPermanentlyDenied(Activity activity, List<String> perms) {
         for (String deniedPermission : perms) {
             if (permissionPermanentlyDenied(activity, deniedPermission)) {
-                logger.info("somePermissionPermanentlyDenied() perm = "+ deniedPermission);
+                Logger.info(TAG,"somePermissionPermanentlyDenied() perm = "+ deniedPermission);
                 return true;
             }
         }
@@ -100,7 +99,7 @@ public class PermissionHelper {
      */
     public static void requestPermission(Activity activity, String[] permissions,
                                          final PermissionHandler.PermissionCallback callback) {
-        logger.info("requestPermission permission: " + Arrays.asList(permissions));
+        Logger.info(TAG,"requestPermission permission: " + Arrays.asList(permissions));
 
         if (callback == null) {
             return;
@@ -123,7 +122,7 @@ public class PermissionHelper {
         if (handler != null) {
             handler.showPermissionDialog(activity, permissions, msg);
         } else {
-            logger.info("show guide dialog");
+            Logger.info(TAG,"show guide dialog");
             // showDefaultPermissionGuideDialog(activity, permissions, msg);
         }
     }
@@ -144,7 +143,7 @@ public class PermissionHelper {
                     for (int i : grants) {
                         grantsList.add(i);
                     }
-                    logger.info("PermissionCallback.onPermissionResult() perms = " + (perms != null ? Arrays.asList(perms) : "null") + ", grants = " + (grants != null ? grantsList : "null"));
+                    Logger.info(TAG,"PermissionCallback.onPermissionResult() perms = " + (perms != null ? Arrays.asList(perms) : "null") + ", grants = " + (grants != null ? grantsList : "null"));
                 }
 
                 callback.onPermissionResult(perms, grants);
@@ -160,7 +159,7 @@ public class PermissionHelper {
         if (strings != null && ints != null && strings.length > 0 && ints.length > 0) {
             for (int i = 0; i < strings.length; i++) {
                 if (DEBUG) {
-                    logger.info("requestPermission " + strings[i] + ": " + ints[i]);
+                    Logger.info(TAG,"requestPermission " + strings[i] + ": " + ints[i]);
                 }
                 if (ints[i] == PackageManager.PERMISSION_DENIED) {
                     return false;
@@ -173,7 +172,7 @@ public class PermissionHelper {
     public static void onRequestPermissionsResult(int requestCode,
                                                   String[] permissions, int[] grantResults) {
         if (DEBUG) {
-            logger.info("onRequestPermissionsResult() requestCode = " + requestCode);
+            Logger.info(TAG,"onRequestPermissionsResult() requestCode = " + requestCode);
         }
         PermissionCallbackWrapper callbackWrapper = sCallbackMap.get(requestCode);
         if (callbackWrapper != null) {

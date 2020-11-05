@@ -13,7 +13,7 @@ import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.utils.Logger;
 
 public class GameBox {
-    private static final Logger logger = new Logger("GameBox") ;
+//    private static final Logger logger = new Logger("GameBox") ;
 
     private static volatile GameBox box = null;
 
@@ -46,7 +46,7 @@ public class GameBox {
     }
     public void playGame(Activity activity, GameInfo gameInfo, Params params){
         if (activity==null || gameInfo==null){
-            logger.error("playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
+            Logger.error("GameBox", "playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
             return;
         }
 
@@ -55,15 +55,15 @@ public class GameBox {
             PackageManager packageManager = activity.getPackageManager();
             Intent intent = packageManager.getLaunchIntentForPackage(gameInfo.pkgName);
             if(intent!=null){
-                logger.info("本地已安装游戏："+gameInfo.pkgName);
+                Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
                 activity.startActivity(intent);
                 return;
             }
         }catch (Exception e){
-            logger.error("获取本地游戏，error:" + e.getMessage());
+            Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
         }
 
-        logger.info("启动云游戏，gameInfo:" + gameInfo.toString());
+        Logger.info("GameBox", "启动云游戏，gameInfo:" + gameInfo.toString());
 
         //启动云游戏
         Intent intent = new Intent(activity, GamePlay.class);
@@ -92,12 +92,12 @@ public class GameBox {
 
 
     public void setGameDownloader(GameDownloader downloader){
-        logger.info("setGameDownloader :" + downloader);
+        Logger.info("GameBox", "setGameDownloader :" + downloader);
         this.mDownloader = downloader;
     }
 
     public GameDownloader getGameDownloader(){
-        logger.info("getGameDownloader :" + this.mDownloader);
+        Logger.info("GameBox", "getGameDownloader :" + this.mDownloader);
         return this.mDownloader;
     }
 

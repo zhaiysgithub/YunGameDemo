@@ -18,7 +18,7 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
-    private static final Logger logger = new Logger("RequestAppInfoTask") ;
+    private static final String TAG = "RequestAppInfoTask";
     private Context mContext;
 
     public interface ICallback{
@@ -77,10 +77,10 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                 ret = true;
             }else {
                 String m = jsonObject.getString("m");
-                logger.error("requestAppInfo faile:" + m);
+                Logger.error(TAG,"requestAppInfo faile:" + m);
             }
         }catch (Exception e){
-            logger.error("requestAppInfo error:" + e.getMessage());
+            Logger.error(TAG,"requestAppInfo error:" + e.getMessage());
         }
 
 
@@ -104,10 +104,10 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
 
             }else {
                 String m = jsonObject.getString("m");
-                logger.error("requestAdInfo faile:" + m);
+                Logger.error(TAG,"requestAdInfo faile:" + m);
             }
         }catch (Exception e){
-            logger.error("requestAdInfo error:" + e.getMessage());
+            Logger.error(TAG,"requestAdInfo error:" + e.getMessage());
         }
 
         return ret;
@@ -162,10 +162,10 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
 //                ret = true;
 //            }else {
 //                String m = jsonObject.getString("m");
-//                logger.error(m);
+//                Logger.error(TAG,m);
 //            }
 //        }catch (Exception e){
-//            logger.error(e.getMessage());
+//            Logger.error(TAG,e.getMessage());
 //        }
 //
 //        if(mCallback!=null){
@@ -177,7 +177,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
     private String requestAppInfo(String corpKey) {
 
         String str = Urls.GET_CONFIG;
-        logger.info("url:" + str);
+        Logger.info(TAG,"url:" + str);
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
@@ -216,7 +216,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                     }
                     msg = buffer.toString();
                 }catch (Exception e){}
-                logger.error("appInfo response code:" + code + "msg:" + msg);
+                Logger.error(TAG,"appInfo response code:" + code + "msg:" + msg);
             }
 
         } catch (Exception e) {
@@ -229,7 +229,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
     private String requestAdInfo(String corpKey) {
 
         String str = Urls.GET_AD_CONFIG;
-        logger.info("url:" + str);
+        Logger.info(TAG,"url:" + str);
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
@@ -268,7 +268,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                     }
                     msg = buffer.toString();
                 }catch (Exception e){}
-                logger.error("appAdInfo response code:" + code + "msg:" + msg);
+                Logger.error(TAG,"appAdInfo response code:" + code + "msg:" + msg);
             }
 
         } catch (Exception e) {

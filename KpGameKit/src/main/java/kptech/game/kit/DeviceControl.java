@@ -33,7 +33,7 @@ import kptech.game.kit.utils.ProferencesUtils;
 
 public class DeviceControl {
     private static final String TAG = "GameControl";
-    private Logger logger = new Logger(TAG);
+//    private Logger logger = new Logger(TAG);
 
     private com.yd.yunapp.gameboxlib.DeviceControl mDeviceControl;
     private GameInfo mGameInfo;
@@ -108,7 +108,7 @@ public class DeviceControl {
             }
 
         }catch (Exception e){
-            logger.error("parseDeviceToken, error:"+e.getMessage());
+            Logger.error(TAG, "parseDeviceToken, error:"+e.getMessage());
         }
     }
 
@@ -215,7 +215,7 @@ public class DeviceControl {
                         .setCallback(new RequestClientNotice.ICallback() {
                             @Override
                             public void onResult(String ret) {
-                                logger.info("clientNotice, ret = " + ret);
+                                Logger.info(TAG, "clientNotice, ret = " + ret);
                                 //延时3秒
                                 mGameHandler.sendEmptyMessageDelayed(MSG_GAME_EXEC, 3000);
                             }
@@ -295,7 +295,7 @@ public class DeviceControl {
                         ProferencesUtils.setInt(activity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
                     }
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    Logger.error(TAG, e.getMessage());
                 }
 
 
@@ -571,7 +571,7 @@ public class DeviceControl {
                 }
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error(TAG, e.getMessage());
         }
 
         return new int[]{720, 1280};

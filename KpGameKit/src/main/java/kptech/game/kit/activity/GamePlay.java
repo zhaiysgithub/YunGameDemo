@@ -75,7 +75,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //    public static final String EXTRA_TIMEOUT = "extra.timeout";
     public static final String EXTRA_PARAMS = "extra.params";
 
-    private Logger logger = new Logger("GamePlay");
+//    private Logger logger = new Logger("GamePlay");
 
     private static final int MSG_SHOW_ERROR = 1;
     private static final int MSG_RELOAD_GAME = 2;
@@ -196,7 +196,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //        }
 //        logger.info("mGameDownloader " + mGameDownloader);
 
-        logger.info("Activity Process，pid:" + android.os.Process.myPid());
+        Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
 
         //注册下载
         IntentFilter intentFilter = new IntentFilter();
@@ -403,7 +403,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 MobclickAgent.sendEvent(event);
             }
         }catch (Exception e) {
-            logger.error(e.getMessage());
+            Logger.error("GamePlay",e.getMessage());
         }
     }
 
@@ -494,7 +494,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     }else {
                         //初始化失败，退出页面
 //                        Toast.makeText(GamePlay.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
-                        logger.error("初始化游戏失败,code = " + code + ", msg = " + msg);
+                        Logger.error("GamePlay","初始化游戏失败,code = " + code + ", msg = " + msg);
                         mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "初始化游戏失败,请稍后再试"));
                     }
                 }
@@ -520,7 +520,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                         mGameInfo = game;
                     }
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    Logger.error("GamePlay",e.getMessage());
                 }
 
                 //判断是否需要显示授权界面
@@ -559,7 +559,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                                 }
                             }
                         }else {
-                            logger.error("申请试玩设备失败,code = " + code);
+                            Logger.error("GamePlay","申请试玩设备失败,code = " + code);
 
                             if (mDeviceControl != null) {
                                 mDeviceControl.stopGame();
@@ -587,7 +587,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //                if (sensor < 210) {
 //                    return;
 //                }
-                logger.info("onSensorSamper = " + sensor + "  state = " + state);
+                Logger.info("GamePlay","onSensorSamper = " + sensor + "  state = " + state);
                 mHardwareManager.registerHardwareState(sensor, state);
             }
         });
@@ -602,7 +602,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     @Override
     public void onAPICallback(String msg, int code) {
 //        if (msg != null) {
-            logger.info("gameOnAPICallback, code = "+code+", apiResult = " + msg);
+        Logger.info("GamePlay","gameOnAPICallback, code = "+code+", apiResult = " + msg);
 //        }
         if (code == APIConstants.AD_LOADING){
             mLoadingView.setText("正在加载广告...");
@@ -631,7 +631,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mDeviceControl.stopGame();
             }
 
-            logger.info(msg);
+            Logger.error("GamePlay",msg);
 
             //取消游戏
             if (code == APIConstants.ERROR_GAME_CANCEL){
@@ -794,7 +794,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     @Override
     public boolean onNoOpsTimeout(int type, long timeout) {
-        logger.error("onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
+        Logger.info("GamePlay","onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
 
         exitPlay();
         Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout/1000), Toast.LENGTH_LONG).show();
@@ -804,7 +804,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     @Override
     public void onScreenChange(int orientation) {
-        logger.error("onScreenChange() orientation = " + orientation);
+        Logger.info("GamePlay","onScreenChange() orientation = " + orientation);
     }
 
     private void setFullScreen() {
@@ -1267,7 +1267,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             map.put(today, num+1);
             ProferencesUtils.setString(this, KEY_EXIT_NUM, new JSONObject(map).toString());
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("GamePlay",e.getMessage());
         }
     }
 
@@ -1309,7 +1309,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     })
                     .execute(mCorpID, mGameInfo.kpGameId);
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("GamePlay",e.getMessage());
         }
 
     }

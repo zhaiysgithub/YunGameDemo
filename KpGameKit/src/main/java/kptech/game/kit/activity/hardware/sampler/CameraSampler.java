@@ -12,8 +12,7 @@ import kptech.game.kit.activity.hardware.camera.CameraPreview;
 import kptech.game.kit.utils.Logger;
 
 public class CameraSampler extends Sampler implements SensorDataCallback<byte[]> {
-//    public static final String TAG = "CameraSampler";
-    Logger logger = new Logger("CameraSampler");
+    public static final String TAG = "CameraSampler";
     public static final int WIDTH_VIDEO = 720;
     public static final int HEIGHT_VIDEO = 480;
 
@@ -28,7 +27,7 @@ public class CameraSampler extends Sampler implements SensorDataCallback<byte[]>
 
     @Override
     public void onStart() {
-        logger.info("onStart========");
+        Logger.info(TAG,"onStart========");
     }
 
     @Override public void onResume() {
@@ -36,7 +35,7 @@ public class CameraSampler extends Sampler implements SensorDataCallback<byte[]>
             return;
         }
 
-        logger.info("onResume========");
+        Logger.info(TAG,"onResume========");
         mSurfaceView = new CameraPreview(mContext);
         mSurfaceView.setPreviewSize(WIDTH_VIDEO, HEIGHT_VIDEO);
         mSurfaceView.setSensorDataCallback(this);
@@ -52,7 +51,7 @@ public class CameraSampler extends Sampler implements SensorDataCallback<byte[]>
     }
 
     @Override public void onPause() {
-        logger.info("onPause========");
+        Logger.info(TAG,"onPause========");
         mIsVideoEncodeStarted = false;
         if (mSurfaceView != null) {
             FrameLayout contentView = (FrameLayout) mContext.findViewById(R.id.content_view);

@@ -18,7 +18,7 @@ import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.utils.Logger;
 
 public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
-    private static final Logger logger = new Logger("MsgManager") ;
+//    private static final Logger logger = new Logger("MsgManager") ;
 
     private static boolean inited = false;
     private static MsgManager mMsgManager;
@@ -32,7 +32,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 
     public static void start(Activity activity, String corpId, String token, String pkgName, String gameId, String gameName){
         if (!inited){
-            logger.error("kpckit messager not initialized");
+            Logger.error("MsgManager", "kpckit messager not initialized");
             return;
         }
 
@@ -52,7 +52,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 padCode = deviceId.substring(2,deviceId.length());
             }
         } catch (JSONException e) {
-            logger.error(e.getMessage());
+            Logger.error("MsgManager",e.getMessage());
         }
 
 
@@ -81,7 +81,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 mMsgManager = null;
             }
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("MsgManager",e.getMessage());
         }
     }
 
@@ -124,23 +124,23 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 
     @Override
     public void onMessage(String msg) {
-        logger.info("onMessage: " + msg);
+        Logger.info("MsgManager","onMessage: " + msg);
         sendHandle(msg);
     }
 
     @Override
     public void onConnect(int code, String s) {
-        logger.info("onConnect code: " + code +" msg: " + s);
+        Logger.info("MsgManager","onConnect code: " + code +" msg: " + s);
     }
 
     @Override
     public void onClose(int code, String s) {
-        logger.info("onClose code: " + code + " msg: " + s);
+        Logger.info("MsgManager","onClose code: " + code + " msg: " + s);
     }
 
     @Override
     public void onFailure(int code, String s) {
-        logger.error("onFailure code: " + code + " msg: " + s);
+        Logger.error("MsgManager","onFailure code: " + code + " msg: " + s);
     }
 
     private void sendHandle(String msg){
@@ -161,7 +161,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
             }
         } catch (JSONException e) {
-            logger.error(e.getMessage());
+            Logger.error("MsgManager",e.getMessage());
         }
     }
 

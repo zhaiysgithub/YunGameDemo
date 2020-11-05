@@ -25,8 +25,6 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class AdManager {
-    private static final Logger logger = new Logger("AdManager") ;
-
     //取消显示
     public static final int CB_AD_CANCELED = 2;
 
@@ -114,7 +112,7 @@ public class AdManager {
                     }
 
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    Logger.error("AdManager", e.getMessage());
                     err = e.getMessage();
                 }
             }
@@ -415,7 +413,7 @@ public class AdManager {
             showAdRemindDialog();
 
         }catch (Exception e){
-            logger.error("showAd error:" + e.getMessage());
+            Logger.error("AdManager", "showAd error:" + e.getMessage());
 
             if (mHandler!=null){
                 mHandler.sendEmptyMessage(CB_AD_FAILED);
@@ -479,7 +477,7 @@ public class AdManager {
         try {
             mAdCallback = null;
         }catch (Exception e){
-            logger.error("destory error:"+e.getMessage());
+            Logger.error("AdManager", "destory error:"+e.getMessage());
         }
     }
 

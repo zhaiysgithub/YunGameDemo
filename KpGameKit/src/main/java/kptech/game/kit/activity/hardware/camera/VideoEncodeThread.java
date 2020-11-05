@@ -22,8 +22,6 @@ public class VideoEncodeThread extends Thread {
 
     private static final String TAG = VideoEncodeThread.class.getSimpleName();
 
-    private Logger logger = new Logger(TAG);
-
     // 编码相关参数
     private static final String MIME_TYPE = "video/avc"; // H.264 Advanced Video
     private static final int FRAME_RATE = 60; // 帧率
@@ -68,12 +66,12 @@ public class VideoEncodeThread extends Thread {
 
     // 执行相关准备工作
     private void prepare() {
-        logger.info("VideoEncoderThread().prepare");
+        Logger.info(TAG,"VideoEncoderThread().prepare");
         mFrameData = new byte[this.mWidth * this.mHeight * 3 / 2];
         mBufferInfo = new MediaCodec.BufferInfo();
         mCodecInfo = selectCodec(MIME_TYPE);
         if (mCodecInfo == null) {
-            logger.error("Unable to find an appropriate codec for " + MIME_TYPE);
+            Logger.error(TAG,"Unable to find an appropriate codec for " + MIME_TYPE);
             return;
         }
 
@@ -133,7 +131,7 @@ public class VideoEncodeThread extends Thread {
                 mMediaCodec.start();
                 isStart = true;
                 synchronized (lock) {
-                    logger.error(Thread.currentThread().getId() + " video -- setConfigureReady...");
+                    Logger.error(TAG,Thread.currentThread().getId() + " video -- setConfigureReady...");
                     lock.notifyAll();
                 }
             } catch (Exception e) {
@@ -160,7 +158,7 @@ public class VideoEncodeThread extends Thread {
 
                 synchronized (lock) {
                     try {
-                        logger.error("video -- 等待混合器准备...");
+                        Logger.error(TAG,"video -- 等待混合器准备...");
                         lock.wait();
                     } catch (InterruptedException e) {
                     }
@@ -172,19 +170,19 @@ public class VideoEncodeThread extends Thread {
                 try {
                     encodeFrame(bytes);
                 } catch (Exception e) {
-                    logger.error("解码视频(Video)数据 失败 "+ e.getMessage());
+                    Logger.error(TAG,"解码视频(Video)数据 失败 "+ e.getMessage());
                     e.printStackTrace();
                 }
             }
         }
-        logger.error("Video 录制线程 退出...");
+        Logger.error(TAG,"Video 录制线程 退出...");
     }
 
     public void release() {
         isExit = true;
         frameBytes = null;
         synchronized (lock) {
-            logger.error(Thread.currentThread().getId() + " video -- setExitReady...");
+            Logger.error(TAG,Thread.currentThread().getId() + " video -- setExitReady...");
             lock.notifyAll();
         }
     }
@@ -210,21 +208,21 @@ public class VideoEncodeThread extends Thread {
             inputBuffer.put(mFrameData);
             mMediaCodec.queueInputBuffer(inputBufferIndex, 0, mFrameData.length, System.nanoTime() / 1000, 0);
         } else {
-            logger.error("input buffer not available");
+            Logger.error(TAG,"input buffer not available");
         }
 
         int outputBufferIndex = mMediaCodec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_ENCODE);
-        logger.info("outputBufferIndex-->" + outputBufferIndex);
+        Logger.info(TAG,"outputBufferIndex-->" + outputBufferIndex);
         do {
             if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // just continue
-                logger.info("outputBufferIndex = INFO_TRY_AGAIN_LATER");
+                Logger.info(TAG,"outputBufferIndex = INFO_TRY_AGAIN_LATER");
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                 outputBuffers = mMediaCodec.getOutputBuffers();
             } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 MediaFormat newFormat = mMediaCodec.getOutputFormat();
             } else if (outputBufferIndex < 0) {
-                logger.error("outputBufferIndex < 0");
+                Logger.error(TAG,"outputBufferIndex < 0");
             } else {
                 // Logger.d(TAG, "perform encoding");
                 ByteBuffer outputBuffer = outputBuffers[outputBufferIndex];
@@ -241,7 +239,7 @@ public class VideoEncodeThread extends Thread {
                     outputBuffer.position(mBufferInfo.offset);
                     outputBuffer.limit(mBufferInfo.offset + mBufferInfo.size);
                     handleVideoData(outputBuffer, mBufferInfo.offset, mBufferInfo.size);
-                    logger.info("encode size : " + mBufferInfo.size + " , pts : " + mBufferInfo.presentationTimeUs);
+                    Logger.info(TAG,"encode size : " + mBufferInfo.size + " , pts : " + mBufferInfo.presentationTimeUs);
                 }
 
                 mMediaCodec.releaseOutputBuffer(outputBufferIndex, false);
@@ -270,7 +268,7 @@ public class VideoEncodeThread extends Thread {
         mMediaCodec = null;
         mBufferInfo = null;
         mediaFormat = null;
-        logger.error("stop video 录制...");
+        Logger.error(TAG,"stop video 录制...");
     }
 
 
@@ -316,7 +314,7 @@ public class VideoEncodeThread extends Thread {
                     SaveLocalUtils.saveData2File(SaveLocalUtils.SAVE_VIDEO_PPS_PATH, mPPSData);
                 } else {
                     // just continue
-                    logger.info(" handleVideoData null");
+                    Logger.info(TAG," handleVideoData null");
                 }
 
             } else if ((data[4] & 0x1F) == 0x05) {

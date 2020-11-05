@@ -24,7 +24,7 @@ public abstract class GameDownloader {
     public static final int STATUS_WAITTING = 6;
     public static final int STATUS_ERROR = 7;
 
-    private Logger logger = new Logger("GameDownloader");
+//    private Logger logger = new Logger("GameDownloader");
 
     private ArrayList<WeakReference<GameDownloader.ICallback>> mCallbackList = new ArrayList<>();
     private CallbackHandler mHandler = null;
@@ -99,14 +99,14 @@ public abstract class GameDownloader {
             }
         }
         mCallbackList.add(new WeakReference(callback));
-        logger.info("addCallback" );
+        Logger.info("GameDownloader", "addCallback" );
     }
 
     public synchronized void removeCallback(ICallback callback){
         for (int i = 0; i < mCallbackList.size(); i++) {
             if(mCallbackList.get(i).get() == callback){
                 mCallbackList.remove(i);
-                logger.info("removeCallback" );
+                Logger.info("GameDownloader","removeCallback" );
                 return;
             }
         }
@@ -143,7 +143,7 @@ public abstract class GameDownloader {
                             }
                         }
                     }catch (Exception e){
-                        logger.error(""+e.getMessage());
+                        Logger.error("GameDownloader",""+e.getMessage());
                     }
                     break;
                 //下载进度
@@ -161,7 +161,7 @@ public abstract class GameDownloader {
                             }
                         }
                     }catch (Exception e){
-                        logger.error(""+e.getMessage());
+                        Logger.error("GameDownloader",""+e.getMessage());
                     }
                     break;
             }

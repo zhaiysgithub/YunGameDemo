@@ -13,7 +13,7 @@ import kptech.game.kit.activity.hardware.sampler.SensorDataCallback;
 import kptech.game.kit.utils.Logger;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    Logger logger = new Logger("CameraPreview");
+    private static final String TAG = "CameraPreview";
 
     private final SurfaceHolder mHolder;
     private Camera mCamera;
@@ -98,13 +98,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
                 @Override
                 public void onAutoFocus(boolean success, Camera camera) {
-                   logger.info("onAutoFocus");
+                   Logger.info(TAG,"onAutoFocus");
                 }
             });
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("exception: "+ e.getMessage());
+            Logger.error(TAG,"exception: "+ e.getMessage());
             return;
         }
 
@@ -120,7 +120,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mVideoEncodeThread.start();
         }
         SaveLocalUtils.openSaveDataFile(SaveLocalUtils.TYPE_VIDEO);
-        logger.info("surfaceCreated");
+        Logger.info(TAG,"surfaceCreated");
     }
 
     @Override
@@ -151,7 +151,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
             mVideoEncodeThread = null;
         }
-        logger.info("surfaceDestroyed");
+        Logger.info(TAG,"surfaceDestroyed");
     }
 
     public void release() {

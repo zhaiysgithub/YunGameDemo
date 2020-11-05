@@ -18,7 +18,7 @@ import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
 
 public class RequestTask {
-    private static final Logger logger = new Logger("RequestTask") ;
+    private static final String TAG = "RequestTask";
 
     public static List<GameInfo> queryGameList(String corpKey, int page, int limit){
         String str = Urls.GET_GAME_LIST +  "/" + corpKey;
@@ -68,10 +68,10 @@ public class RequestTask {
                         }
                     }else {
                         String m = jsonObject.getString("m");
-                        logger.error(m);
+                        Logger.error(TAG,m);
                     }
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    Logger.error(TAG,e.getMessage());
                 }
 
                 return list;
@@ -154,11 +154,11 @@ public class RequestTask {
                         inf = buildInfo(gameObj);
                     }else {
                         String m = jsonObject.getString("m");
-                        logger.error(m);
+                        Logger.error(TAG,m);
                     }
                 }catch (Exception e){
 //                    e.printStackTrace();
-                    logger.error(e.getMessage());
+                    Logger.error(TAG,e.getMessage());
                 }
                 //转成对象
                 return inf;
@@ -239,10 +239,10 @@ public class RequestTask {
                         }
                     }else {
                         String m = jsonObject.getString("m");
-                        logger.error(m);
+                        Logger.error(TAG,m);
                     }
                 }catch (Exception e){
-                    logger.error(e.getMessage());
+                    Logger.error(TAG,e.getMessage());
                 }
 
                 return list;

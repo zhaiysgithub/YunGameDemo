@@ -35,7 +35,7 @@ import kptech.game.kit.utils.StringUtil;
 
 public class GameBoxManager {
 
-    private static final Logger logger = new Logger("GameBoxManager") ;
+//    private static final Logger logger = new Logger("GameBoxManager") ;
 
     private static Application mApplication = null;
 
@@ -88,14 +88,14 @@ public class GameBoxManager {
         mApplication = application;
         mCorpID = appKey;
         if (mApplication == null){
-            logger.error("Init application is null");
+            Logger.error("GameBoxManager","Init application is null");
             if (callback != null){
                 callback.onAPICallback("Application is null", APIConstants.ERROR_SDK_INIT_ERROR);
             }
             return;
         }
         if (mCorpID==null || "".equals(mCorpID.trim())){
-            logger.error("Init appKey is null");
+            Logger.error("GameBoxManager","Init appKey is null");
             //回调初始化
             if (callback != null){
                 callback.onAPICallback("CorID is null", APIConstants.ERROR_SDK_INIT_ERROR);
@@ -120,7 +120,7 @@ public class GameBoxManager {
             //统计事件初始化
             Event.init(application, mCorpID);
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("GameBoxManager",e.getMessage());
         }
 
         TM_SDKINIT_START = new Date().getTime();
@@ -130,7 +130,7 @@ public class GameBoxManager {
             event.setExt(getDeviceInfo(application));
             MobclickAgent.sendEvent(event);
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("GameBoxManager",e.getMessage());
         }
 
         //发送请求
@@ -176,7 +176,7 @@ public class GameBoxManager {
             try {
                 switch (msg.what){
                     case 1:
-                        logger.info("gamebox request config corpId: "+ mCorpID);
+                        Logger.info("GameBoxManager","gamebox request config corpId: "+ mCorpID);
                         requestCount++;
                         //发送请求获取配置信息
                         new RequestAppInfoTask(mApplication, new RequestAppInfoTask.ICallback() {
@@ -188,11 +188,11 @@ public class GameBoxManager {
                                 }else {
                                     //重试2次
                                     if (requestCount > 2){
-                                        logger.error("retry request appinfo");
+                                        Logger.error("GameBoxManager","retry request appinfo");
                                         //获取数据失败，重试一次
                                         InitHandler.this.sendEmptyMessage(1);
                                     }else {
-                                        logger.error(" request appinfo faile");
+                                        Logger.error("GameBoxManager"," request appinfo faile");
                                         //使用本地缓存，初始化
                                         InitHandler.this.sendEmptyMessage(2);
                                     }
@@ -206,15 +206,15 @@ public class GameBoxManager {
 
                         //初始化游戏信息
                         if (GameBoxManager.getInstance(mApplication).initLibManager()){
-                            logger.info("gamebox initialized");
+                            Logger.info("GameBoxManager","gamebox initialized");
                             initState = 1;
                         }else {
-                            logger.error("gamebox init failure");
+                            Logger.error("GameBoxManager","gamebox init failure");
                         }
 
                         //初始化广告信息
                         if (AdManager.init(mApplication)) {
-                            logger.info("ad initialized");
+                            Logger.info("GameBoxManager","ad initialized");
                         }
 
                         //初始化通讯
@@ -233,7 +233,7 @@ public class GameBoxManager {
                         break;
                 }
             }catch (Exception e){
-                logger.error(e.getMessage());
+                Logger.error("GameBoxManager", e.getMessage());
             }
         }
     }
@@ -297,7 +297,7 @@ public class GameBoxManager {
     private com.yd.yunapp.gameboxlib.GameBoxManager getLibManager(){
         //处理未已初始化
         if (!isLibInited){
-            logger.error("gamebox not initialized");
+            Logger.error("GameBoxManager","gamebox not initialized");
             return null;
         }
         return mLibManager;

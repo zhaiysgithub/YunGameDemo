@@ -17,13 +17,12 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class RequestGameExitListTask extends AsyncTask<String,Void,List<GameInfo>> {
-    private static final Logger logger = new Logger("RequestGameExitListTask") ;
 
-    private Context mContext;
     private IRequestCallback<List<GameInfo>> mCallback;
 
     public RequestGameExitListTask(Context context){
-        this.mContext = context;
+
+
     }
 
     public RequestGameExitListTask setRequestCallback(IRequestCallback callback){
@@ -39,7 +38,7 @@ public class RequestGameExitListTask extends AsyncTask<String,Void,List<GameInfo
             List<GameInfo> info = RequestTask.queryGameExitList(corpId, gameId);
             return info;
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("RequestGameExitListTask",e.getMessage());
         }
         return null;
     }

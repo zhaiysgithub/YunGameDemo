@@ -26,8 +26,6 @@ public class HardwareManager implements SamplingCallback {
     private static final String TAG = "HardwareManager";
     private static final boolean DEBUG = true;
 
-    private Logger logger = new Logger("HardwareManager");
-
     private DeviceControl mDeviceControl;
     private Activity mActivity;
     private Map<Integer, Sampler> mSamplers;
@@ -47,7 +45,7 @@ public class HardwareManager implements SamplingCallback {
 
     public void registerHardwareState(int id, int state) {
         if (DEBUG) {
-            logger.info("registerHardwareState id = " + id + "  state = " + state);
+            Logger.info(TAG,"registerHardwareState id = " + id + "  state = " + state);
         }
         Sampler sampler = mSamplers.get(id);
         if (sampler == null) {
@@ -81,7 +79,7 @@ public class HardwareManager implements SamplingCallback {
 
     public void release() {
         if (DEBUG) {
-            logger.info("release all sampler");
+            Logger.info(TAG, "release all sampler");
         }
         Set<Integer> keys = mSamplers.keySet();
         for (Integer id : keys) {

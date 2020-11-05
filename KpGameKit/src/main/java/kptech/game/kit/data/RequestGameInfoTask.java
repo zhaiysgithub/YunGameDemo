@@ -9,7 +9,6 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class RequestGameInfoTask extends AsyncTask<String,Void,GameInfo> {
-    private static final Logger logger = new Logger("RequestGameInfoTask") ;
 
     private Context mContext;
     private IRequestCallback mCallback;
@@ -32,7 +31,7 @@ public class RequestGameInfoTask extends AsyncTask<String,Void,GameInfo> {
             GameInfo info = RequestTask.queryGameInfo(corpId, pkg, pass);
             return info;
         }catch (Exception e){
-            logger.error(e.getMessage());
+            Logger.error("RequestGameInfoTaske", e.getMessage());
         }
         return null;
     }

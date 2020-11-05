@@ -6,8 +6,6 @@ import android.os.Looper;
 import kptech.game.kit.utils.Logger;
 
 public class HeartThread extends HandlerThread {
-    private static final Logger logger = new Logger("GameBoxManager") ;
-
     private static volatile HeartThread thread = null;
 
     public static HeartThread getInstance() {
@@ -27,7 +25,8 @@ public class HeartThread extends HandlerThread {
 
             return thread;
         }catch (Exception e){
-            logger.error(e.getMessage());
+//            logger.error(e.getMessage());
+            Logger.error("HeartThread", e.getMessage());
         }
 
         return null;
