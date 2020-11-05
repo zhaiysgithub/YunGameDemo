@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 12
-        versionName "1.1.2.19"
+        versionName "1.1.2.21"
 
 //        versionName "1.1.3.3" //1.1.3为通用版本
     }
@@ -44,7 +44,7 @@ dependencies {
     //快盘定义接口
     implementation 'kptech.game.kit:kpinter:1.0.0'
 
-//    implementation 'kptech.game.kit:gamead-netease:1.0.0.5'
+    implementation 'kptech.game.kit:gamead-netease:1.0.0.5'
 }
 
 

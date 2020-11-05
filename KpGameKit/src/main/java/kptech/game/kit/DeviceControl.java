@@ -214,12 +214,13 @@ public class DeviceControl {
                 new RequestClientNotice()
                         .setCallback(new RequestClientNotice.ICallback() {
                             @Override
-                            public void onResult(boolean success) {
-                                mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
+                            public void onResult(String ret) {
+                                logger.info("clientNotice, ret = " + ret);
+                                //延时3秒
+                                mGameHandler.sendEmptyMessageDelayed(MSG_GAME_EXEC, 3000);
                             }
                         })
                         .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
-
                 return true;
             }catch (Exception e){
                 e.printStackTrace();

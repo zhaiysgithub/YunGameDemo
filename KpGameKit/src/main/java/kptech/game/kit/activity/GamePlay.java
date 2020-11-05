@@ -518,8 +518,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                             game.showAd = mGameInfo.showAd;
                         }
                         mGameInfo = game;
-                    }else {
-                        mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
                     }
                 }catch (Exception e){
                     logger.error(e.getMessage());
@@ -603,13 +601,15 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     @Override
     public void onAPICallback(String msg, int code) {
-        if (msg != null) {
-            logger.info("apiResult = " + msg);
-        }
+//        if (msg != null) {
+            logger.info("gameOnAPICallback, code = "+code+", apiResult = " + msg);
+//        }
         if (code == APIConstants.AD_LOADING){
             mLoadingView.setText("正在加载广告...");
-        }else if (code == APIConstants.GAME_LOADING || code == APIConstants.RECOVER_DATA_LOADING){
+        }else if (code == APIConstants.GAME_LOADING){
             mLoadingView.setText("正在加载游戏...");
+        }else if (code == APIConstants.RECOVER_DATA_LOADING) {
+            mLoadingView.setText("初始游戏数据...");
         }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
             this.mErrorMsg = null;
             mDeviceControl.setPlayListener(this);

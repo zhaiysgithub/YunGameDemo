@@ -64,7 +64,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String jidou = "2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
@@ -155,8 +155,6 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     //启动云游戏
     public void startGame(View view){
 
-        List<GameInfo> list = new ArrayList<GameInfo>();
-        list.addAll(mGameInfos.values());
 //        GameInfo info = new GameInfo();
 //        info.gid = 3273;
 //        info.pkgName = "com.kptach.cpgame.demo";
@@ -169,8 +167,6 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //
 //        dialog.show();
 
-        ExitDialog dialog1 = new ExitDialog(this);
-        dialog1.show();
 
 //        new RequestGameExitListTask(this)
 //                .setRequestCallback(new IRequestCallback<List<GameInfo>>() {
@@ -267,45 +263,31 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
 //        info.showAd = GameInfo.GAME_AD_SHOW_ON;
 
-//        GameInfo info = new GameInfo();
-//
-//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-//        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
-//        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-//
-//        info.gid = 3101;
-//        info.pkgName = "com.sy.fsyhj.yofun.mumu";
-//        info.name = "浮生妖世绘";
-//
+        GameInfo info = new GameInfo();
 
-//        Params params = new Params();
+        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
+        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+
+//        info.gid = 3104;
+//        info.pkgName = "com.netease.tom";
+//        info.name = "猫和老鼠";
+
+        info.gid = 3134;
+        info.pkgName = "com.playcrab.kos.guopan";
+        info.name = "一拳超人";
+
+
+//        info.gid = 3135;
+//        info.pkgName = "com.pwrd.mjjsl.guopan";
+//        info.name = "梦间集天鹅座";
+
+        Params params = new Params();
 //        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
 //        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
 //        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
-//        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
+        GameBox.getInstance().playGame(HorizontalHomeActivity.this,info,params);
     }
-
-//    void charge() {
-//        Map<String, String> paramMap = new HashMap<String, String>();
-//
-//        paramMap.put(SDKParamKey.PAY_CPID, "3");
-//        paramMap.put(SDKParamKey.PAY_AMOUNT, "25");
-//        paramMap.put(SDKParamKey.PAY_CP_ORDER_ID, "123123");
-//        paramMap.put(SDKParamKey.PAY_PRODUCT_CODE, "A1");
-//        paramMap.put(SDKParamKey.PAY_PRODUCT_NAME, "ABCDWEF");
-//        paramMap.put(SDKParamKey.PAY_TIME, new Date().getTime() + "");
-//
-////        SDKParams sdkParams = new SDKParams();
-////        Map<String, Object> map = new HashMap<String, Object>();
-////        map.putAll(paramMap);
-////        sdkParams.putAll(map);
-//
-//        //建议从服务器获取sign
-//        String sign = sign(paramMap, GameConfig.cpSecret);
-//        paramMap.put(SDKParamKey.PAY_SIGN, sign);
-//
-//        CpGameSDK.defaultSdk().pay(this, sdkParams);
-//    }
 
 
     private void initView() {

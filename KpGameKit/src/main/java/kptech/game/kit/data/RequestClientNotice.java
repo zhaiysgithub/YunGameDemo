@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class RequestClientNotice extends AsyncTask<String,Void,Void> {
     public interface ICallback{
-        void onResult(boolean success);
+        void onResult(String ret);
     }
 
     private ICallback mCallback;
@@ -29,6 +29,7 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
 
     @Override
     protected Void doInBackground(String... params) {
+        String ret = "";
         try {
             HashMap<String,Object> p = new HashMap<>();
             p.put("action", "usevm"); //string，固定值
@@ -41,18 +42,12 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
             m.put("corpkey",params[3]);
             p.put("clientinfo", m);//Object 客户端的相关信息，key-value值，例如：agent："xxxx",corpkey:"xxxx"
 
-            String ret = request(p);
-            try {
-                JSONObject obj = new JSONObject(ret);
-                Log.i("",obj.toString());
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            ret = request(p);
         }catch (Exception e){
         }
 
         if (mCallback != null){
-            mCallback.onResult(true);
+            mCallback.onResult(ret);
         }
 
         return null;

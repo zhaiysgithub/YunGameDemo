@@ -6,8 +6,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import kptach.game.kit.inter.ad.IAdLoader;
+import kptech.game.kit.utils.Logger;
 
 public class AdLoaderFactory {
+
+    private static Logger logger = new Logger("AdLoaderFactory");
 
     public static final String AD_TYPE_REWARD = "reward";
     public static final String AD_TYPE_FEED = "feed";
@@ -21,7 +24,7 @@ public class AdLoaderFactory {
                 obj = (IAdLoader) newInstance("kptech.game.kit.ad.loader.FeedAdLoader", new Class[]{String.class}, new Object[]{adcode});
             }
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("createrAdLoader adtype:" + adtype + ", adcode" + adcode + ", error: " + e.getMessage());
         }
 
         return obj;
@@ -34,7 +37,7 @@ public class AdLoaderFactory {
                     new Object[]{application, appkey, appToken});
             return true;
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("ad init appkey:" + appkey + ", appToken" + appToken + ", error: " + e.getMessage());
         }
         return false;
     }
