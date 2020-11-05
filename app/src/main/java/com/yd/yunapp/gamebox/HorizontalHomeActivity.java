@@ -66,7 +66,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
     static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
-    final String jidou = "2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
+    final String jidou = "2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
     final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
@@ -326,7 +326,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
                 game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-                game.showAd = GameInfo.GAME_AD_SHOW_ON;
+//                game.showAd = GameInfo.GAME_AD_SHOW_ON;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
 

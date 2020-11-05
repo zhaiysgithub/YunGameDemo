@@ -76,12 +76,12 @@ publishing {
 //            artifactId 'ZADSdk'
 //            artifact("../app/libs/ZADSdk-3.3.3260.29.aar")
 //        }
-//        ZADSdk(MavenPublication) {
-//            groupId 'kptech.game.kit'
-//            version '3.3.3261.6'
-//            artifactId 'ZADSdk'
-//            artifact("../app/libs/ZADSdk-3.3.3261.6.aar")
-//        }
+        ZADSdk(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '3.3.3271.7'
+            artifactId 'ZADSdk'
+            artifact("../app/libs/ZADSdk-3.3.3271.7.aar")
+        }
 //        MsaMdid(MavenPublication) {
 //            groupId 'kptech.game.kit'
 //            version '1.0.10'

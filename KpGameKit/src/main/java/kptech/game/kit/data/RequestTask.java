@@ -268,6 +268,7 @@ public class RequestTask {
             inf.showAd = gameObj.has("showAd") ? gameObj.getInt("showAd") : 0;
             inf.enableDownload = gameObj.has("showDown") ? gameObj.getInt("showDown") : 1;
             inf.coverUrl = gameObj.has("gameAppCoverImgUrl") ? gameObj.getString("gameAppCoverImgUrl") : null;
+            inf.recoverCloudData = gameObj.has("recoverCloudData") ? gameObj.getInt("recoverCloudData") : 1;
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -46,6 +46,8 @@ public class APIConstants {
     public static final int AD_LOADING = 11001;
     //游戏加载中
     public static final int GAME_LOADING = 11002;
+    //云手机数据恢复中
+    public static final int RECOVER_DATA_LOADING = 11003;
 
     public static final String DEVICE_VIDEO_QUALITY_HD = com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD;
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY;

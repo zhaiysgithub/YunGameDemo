@@ -608,7 +608,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
         if (code == APIConstants.AD_LOADING){
             mLoadingView.setText("正在加载广告...");
-        }else if (code == APIConstants.GAME_LOADING){
+        }else if (code == APIConstants.GAME_LOADING || code == APIConstants.RECOVER_DATA_LOADING){
             mLoadingView.setText("正在加载游戏...");
         }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
             this.mErrorMsg = null;

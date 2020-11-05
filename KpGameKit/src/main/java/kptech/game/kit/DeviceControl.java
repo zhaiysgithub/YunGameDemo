@@ -198,28 +198,33 @@ public class DeviceControl {
     }
 
     private boolean sendClientNotice(){
-        //发送打点事件
-        try {
-            Event event = Event.getEvent(EventCode.DATA_DEVICE_SEND_NOTICE, mGameInfo.pkgName, getPadcode());
-            MobclickAgent.sendEvent(event);
-        }catch (Exception e){}
+        if (mGameInfo.recoverCloudData == 1){
+            if (mGameStartCallback!=null){
+                mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);
+            }
 
-        //调用通知接口
-        try {
-            new RequestClientNotice()
-                    .setCallback(new RequestClientNotice.ICallback() {
-                        @Override
-                        public void onResult(boolean success) {
-                            mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
-                        }
-                    })
-                    .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
+            //发送打点事件
+            try {
+                Event event = Event.getEvent(EventCode.DATA_DEVICE_SEND_NOTICE, mGameInfo.pkgName, getPadcode());
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){}
 
-            return true;
-        }catch (Exception e){
-            e.printStackTrace();
+            //调用通知接口
+            try {
+                new RequestClientNotice()
+                        .setCallback(new RequestClientNotice.ICallback() {
+                            @Override
+                            public void onResult(boolean success) {
+                                mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
+                            }
+                        })
+                        .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
+
+                return true;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
-
         mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
         return false;
     }

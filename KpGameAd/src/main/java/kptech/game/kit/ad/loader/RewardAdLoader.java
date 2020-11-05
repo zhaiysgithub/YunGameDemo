@@ -75,11 +75,11 @@ public class RewardAdLoader implements IAdLoader {
 
     /**  各个类型广告的回调  **/
     private class MyZadRewardAdObserver extends ZadRewardAdObserver{
-        private boolean mRewardVerify = false;
-        private Activity mActivity;
+//        private boolean mRewardVerify = false;
+//        private Activity mActivity;
 
         public MyZadRewardAdObserver(Activity activity){
-            this.mActivity = activity;
+//            this.mActivity = activity;
         }
 
         @Override
@@ -112,7 +112,7 @@ public class RewardAdLoader implements IAdLoader {
         @Override
         public void onRewardVerify(String posId, boolean rewardVerify, int rewardAmount, String rewardName) {
 //            logger.info("onRewardVerify(),   rewardVerify = " + rewardVerify);
-            mRewardVerify = rewardVerify;
+//            mRewardVerify = rewardVerify;
 
             if (mCallback!=null){
                 mCallback.onRewardVerify(RewardAdLoader.this, posId, rewardVerify, rewardAmount, rewardName);
@@ -136,7 +136,7 @@ public class RewardAdLoader implements IAdLoader {
         @Override
         public void onPlayComplete(String posId, String info) {
 //            logger.info("onPlayComplete(),   posId = " + posId + ", info = " + info);
-            mRewardVerify = true;
+//            mRewardVerify = true;
 
 
             if (mCallback!=null){

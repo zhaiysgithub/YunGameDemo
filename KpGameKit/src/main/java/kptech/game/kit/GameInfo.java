@@ -45,6 +45,8 @@ public class GameInfo implements Parcelable {
     //快盘联运游戏 1是，0否
     public int kpUnionGame;
     public HashMap<String,String> ext;
+    //恢复用户云手机数据
+    public int recoverCloudData = 1;
 
     public GameInfo() {
     }
@@ -64,6 +66,7 @@ public class GameInfo implements Parcelable {
         this.size = var1.readLong();
         this.showAd = var1.readInt();
         this.addMockInfo = var1.readInt();
+        this.recoverCloudData = var1.readInt();
         this.ext = var1.readHashMap(HashMap.class.getClassLoader());
     }
 
@@ -90,6 +93,7 @@ public class GameInfo implements Parcelable {
         var1.writeLong(this.size);
         var1.writeInt(this.showAd);
         var1.writeInt(this.addMockInfo);
+        var1.writeInt(this.recoverCloudData);
         var1.writeMap(this.ext);
     }
 
