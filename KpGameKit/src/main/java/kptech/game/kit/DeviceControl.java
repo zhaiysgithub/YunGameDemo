@@ -215,9 +215,21 @@ public class DeviceControl {
                         .setCallback(new RequestClientNotice.ICallback() {
                             @Override
                             public void onResult(String ret) {
+                                long sleeptime = -1;
+                                try {
+                                    JSONObject obj = new JSONObject(ret);
+                                    if (obj.has("sleeptime")){
+                                        sleeptime = Long.parseLong(obj.getString("sleeptime"));
+                                    }
+                                }catch (Exception e){
+                                }
+                                //默认等待3秒
+                                if (sleeptime <= 0){
+                                    sleeptime = 3000;
+                                }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
                                 //延时3秒
-                                mGameHandler.sendEmptyMessageDelayed(MSG_GAME_EXEC, 3000);
+                                mGameHandler.sendEmptyMessageDelayed(MSG_GAME_EXEC, sleeptime);
                             }
                         })
                         .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);

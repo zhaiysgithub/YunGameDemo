@@ -563,8 +563,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
             }
 
-
-        }else if(code < 0){
+        }else{
             if (mDeviceControl!=null){
                 mDeviceControl.stopGame();
             }
