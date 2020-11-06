@@ -41,9 +41,9 @@ public class GameBoxManager {
 
     public static String mCorpID = "";
 
-    private Context context;
+//    private Context context;
     private static volatile GameBoxManager box = null;
-    private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
+//    private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private String mUniqueId;
 
     private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
@@ -59,11 +59,11 @@ public class GameBoxManager {
         MsgManager.setDebug(debug);
     }
 
-    public static GameBoxManager getInstance(Context context) {
+    public static GameBoxManager getInstance() {
         if (box == null) {
             synchronized(GameBoxManager.class) {
                 if (box == null) {
-                    box = new GameBoxManager(context);
+                    box = new GameBoxManager();
                 }
             }
         }
@@ -75,9 +75,8 @@ public class GameBoxManager {
         }
     }
 
-    private GameBoxManager(Context context){
-        this.context = context;
-        this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
+    private GameBoxManager(){
+//        this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
     }
 
     public boolean isGameBoxManagerInited(){
@@ -205,7 +204,7 @@ public class GameBoxManager {
                         int initState = 0;
 
                         //初始化游戏信息
-                        if (GameBoxManager.getInstance(mApplication).initLibManager()){
+                        if (initLibManager()){
                             Logger.info("GameBoxManager","gamebox initialized");
                             initState = 1;
                         }else {
@@ -254,14 +253,14 @@ public class GameBoxManager {
     private boolean initLibManager(){
 
         boolean ret = false;
-        String ak = tmpAK!=null ? tmpAK : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_KEY,null);
-        String sk = tmpSK!= null ? tmpSK : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_SECRET,null);
-        String ch = tmpCH!= null ? tmpCH : ProferencesUtils.getString(context, SharedKeys.KEY_GAME_APP_CHANNEL,null);
+        String ak = tmpAK!=null ? tmpAK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_KEY,null);
+        String sk = tmpSK!= null ? tmpSK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_SECRET,null);
+        String ch = tmpCH!= null ? tmpCH : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_CHANNEL,null);
         if (ak!=null && sk != null){
-            mLibManager.setDebug(mDebug);
+            com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication).setDebug(mDebug);
 
             //初始化游戏
-            mLibManager.init(ak, sk, ch);
+            com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication).init(ak, sk, ch);
             isLibInited = true;
 
             ret = true;
@@ -300,7 +299,7 @@ public class GameBoxManager {
             Logger.error("GameBoxManager","gamebox not initialized");
             return null;
         }
-        return mLibManager;
+        return com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication);
     }
 
     /**
@@ -352,9 +351,8 @@ public class GameBoxManager {
 
         try {
             //重置打点数据
-//            if (activity.getClass() != GamePlay.class){
-//                Event.createBaseEvent(activity, mCorpID);
-//            }
+
+
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}

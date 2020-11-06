@@ -197,4 +197,10 @@ public class ExitGameListDialog extends Dialog {
 
         }
     }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+    }
 }

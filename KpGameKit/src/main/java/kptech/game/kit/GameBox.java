@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.utils.Logger;
 
@@ -22,7 +23,11 @@ public class GameBox {
 
     private GameDownloader mDownloader = null;
 
+//    public static RefWatcher sRefWatcher;
+
     public static void init(@NonNull Application application, String appKey) {
+//        sRefWatcher = LeakCanary.install(application);
+
         if (box == null) {
             synchronized(GameBoxManager.class) {
                 if (box == null) {

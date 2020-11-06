@@ -69,6 +69,7 @@ public class LoadingView extends FrameLayout {
         }catch (Exception e){
             e.printStackTrace();
         }
+        iv = null;
     }
 
     public void setProgress(int mPro) {

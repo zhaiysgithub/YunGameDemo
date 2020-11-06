@@ -94,7 +94,7 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 
 
     private void destory(){
-        this.mHandler.setCallback(null);
+        this.mHandler.destory();
         this.mHandler = null;
     }
 

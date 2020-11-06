@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 import kptach.game.kit.inter.ad.IAdLoader;
@@ -138,7 +140,7 @@ public class AdManager {
     private static final int LOAD_STATE_SUCCESS = 2;
     private static final int LOAD_STATE_FAILED = 3;
 
-    private Activity mActivity;
+    private WeakReference<Activity> mActivityRef;
     private IAdCallback mAdCallback;
 
     private int loadState = LOAD_STATE_NONE; //0未加载，1加载中，2加载成功，3加载失败
@@ -147,9 +149,13 @@ public class AdManager {
     private String mPackageName = null;
 
     private IAdLoader mLoader = null;
+    private Handler mHandler = null;
+    private MyAdLoaderCallback mAdLoaderCallback;
 
     public AdManager(Activity activity){
-        this.mActivity = activity;
+        this.mActivityRef = new WeakReference<>(activity) ;
+        this.mHandler = new MyHandler();
+        this.mAdLoaderCallback = new MyAdLoaderCallback();
     }
 
     public void setPackageName(String packageName) {
@@ -191,7 +197,7 @@ public class AdManager {
 
                 loadState = LOAD_STATE_START;
                 mLoader.setLoaderCallback(mAdLoaderCallback);
-                mLoader.loadAd(mActivity);
+                mLoader.loadAd(mActivityRef.get());
                 return;
             }
 
@@ -202,17 +208,158 @@ public class AdManager {
         loadState = LOAD_STATE_FAILED;
         //加载失败
         if (mHandler!=null){
-            mHandler.sendEmptyMessage(CB_AD_FAILED);
+//            mHandler.sendEmptyMessage(CB_AD_FAILED);
+            mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
         }
     }
 
-    private IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback() {
+    private synchronized void showAd(){
+        waitingShow = true;
+        if (loadState == LOAD_STATE_SUCCESS && mLoader != null){
+            //显示广告
+            mLoader.showAd();
+        }else if (loadState == LOAD_STATE_FAILED && mHandler!=null){
+            //广告加载失败
+//            mHandler.sendEmptyMessage(CB_AD_FAILED);
+            mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
+        }else if (loadState == LOAD_STATE_START){
+            //广告加载中，什么都不做
+
+        }else if (loadState == LOAD_STATE_NONE) {
+            //广告未加载,开始加载
+            prepareAd();
+        }else {
+            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(CB_AD_FAILED);
+                mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
+            }
+        }
+    }
+
+    public void loadGameAd(IAdCallback adCallback){
+        this.mAdCallback = adCallback;
+        //判断是否打开广告
+        if (!AdManager.adEnable){
+            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(CB_AD_PASSED);
+                mHandler.sendMessage(Message.obtain(mHandler, CB_AD_PASSED, mAdCallback));
+            }
+            return;
+        }
+
+        try {
+            //判断是否已经看过广告了
+            int adVerify = ProferencesUtils.getIng(mActivityRef.get(), SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
+            if (adVerify > 0) {
+                if (mHandler!=null){
+//                    mHandler.sendEmptyMessage(CB_AD_PASSED);
+                    mHandler.sendMessage(Message.obtain(mHandler, CB_AD_PASSED, mAdCallback));
+                }
+                return;
+            }
+
+            //判断广告是否已经加载失败，加载失败后就不弹出弹窗
+            if (loadState == LOAD_STATE_FAILED){
+                if (mHandler!=null){
+//                    mHandler.sendEmptyMessage(CB_AD_FAILED);
+                    mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
+                }
+                return;
+            }
+
+            //加载广告
+            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(CB_AD_LOADING);
+                mHandler.sendMessage(Message.obtain(mHandler, CB_AD_LOADING, mAdCallback));
+            }
+
+            //显示广告弹窗
+            showAdRemindDialog();
+
+        }catch (Exception e){
+            Logger.error("AdManager", "showAd error:" + e.getMessage());
+
+            if (mHandler!=null){
+//                mHandler.sendEmptyMessage(CB_AD_FAILED);
+                mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
+            }
+        }
+    }
+
+    //显示广告弹窗
+    private void showAdRemindDialog() {
+        try {
+            AdRemindDialog dialog = new AdRemindDialog(mActivityRef.get());
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                }
+            });
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    try {
+                        //发送打点事件
+                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_DISPLAY, mPackageName));
+                    }catch (Exception e){}
+                }
+            });
+
+            dialog.setOnCancelListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        //发送打点事件
+                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_CANCEL, mPackageName));
+                    }catch (Exception e){}
+
+                    //取消按钮
+                    if (mHandler!=null){
+//                        mHandler.sendEmptyMessage(CB_AD_CANCELED);
+                        mHandler.sendMessage(Message.obtain(mHandler, CB_AD_CANCELED, mAdCallback));
+                    }
+                }
+            });
+            dialog.setOnSubmitListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    try {
+                        //发送打点事件
+                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_SUBMIT, mPackageName));
+                    }catch (Exception e){}
+
+                    //显示广告按钮
+                    showAd();
+                }
+            });
+            dialog.show();
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    public void destory() {
+        try {
+            mAdCallback = null;
+        }catch (Exception e){
+            Logger.error("AdManager", "destory error:"+e.getMessage());
+        }
+        mHandler = null;
+        mAdLoaderCallback = null;
+    }
+
+
+//    private static IAdLoaderCallback mAdLoaderCallback = new IAdLoaderCallback()
+
+    private class MyAdLoaderCallback implements IAdLoaderCallback {
         private boolean mRewardVerify = false;
 
         @Override
         public void onAdClosed(IAdLoader loader, String posId, String info) {
             if (mHandler!=null){
-                mHandler.sendEmptyMessage(mRewardVerify ? CB_AD_PASSED : CB_AD_CANCELED);
+//                mHandler.sendEmptyMessage(mRewardVerify ? CB_AD_PASSED : CB_AD_CANCELED);
+                mHandler.sendMessage(Message.obtain(mHandler, mRewardVerify ? CB_AD_PASSED : CB_AD_CANCELED, mAdCallback));
             }
 
             try {
@@ -233,9 +380,9 @@ public class AdManager {
         public void onRewardVerify(IAdLoader loader, String posId, boolean rewardVerify, int rewardAmount, String rewardName) {
             mRewardVerify = rewardVerify;
 
-            if (mActivity != null){
+            if (mActivityRef!=null && mActivityRef.toString() != null){
                 //保存到缓存中
-                ProferencesUtils.setInt(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 1);
+                ProferencesUtils.setInt(mActivityRef.get(), SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 1);
             }
 
             try {
@@ -349,151 +496,47 @@ public class AdManager {
             //加载失败
             if (waitingShow){
                 if (mHandler!=null){
-                    mHandler.sendEmptyMessage(CB_AD_FAILED);
+//                    mHandler.sendEmptyMessage(CB_AD_FAILED);
+                    mHandler.sendMessage(Message.obtain(mHandler, CB_AD_FAILED, mAdCallback));
                 }
             }
         }
     };
 
-    private synchronized void showAd(){
-        waitingShow = true;
-        if (loadState == LOAD_STATE_SUCCESS && mLoader != null){
-            //显示广告
-            mLoader.showAd();
-        }else if (loadState == LOAD_STATE_FAILED && mHandler!=null){
-            //广告加载失败
-            mHandler.sendEmptyMessage(CB_AD_FAILED);
-        }else if (loadState == LOAD_STATE_START){
-            //广告加载中，什么都不做
-
-        }else if (loadState == LOAD_STATE_NONE) {
-            //广告未加载,开始加载
-            prepareAd();
-        }else {
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(CB_AD_FAILED);
-            }
-        }
-    }
-
-    public void loadGameAd(IAdCallback adCallback){
-        this.mAdCallback = adCallback;
-        //判断是否打开广告
-        if (!AdManager.adEnable){
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(CB_AD_PASSED);
-            }
-            return;
+    private static class MyHandler extends Handler{
+        public MyHandler(){
+            super(Looper.getMainLooper());
         }
 
-        try {
-            //判断是否已经看过广告了
-            int adVerify = ProferencesUtils.getIng(mActivity, SharedKeys.KEY_AD_REWARD_VERIFY_FLAG, 0);
-            if (adVerify > 0) {
-                if (mHandler!=null){
-                    mHandler.sendEmptyMessage(CB_AD_PASSED);
-                }
-                return;
-            }
-
-            //判断广告是否已经加载失败，加载失败后就不弹出弹窗
-            if (loadState == LOAD_STATE_FAILED){
-                if (mHandler!=null){
-                    mHandler.sendEmptyMessage(CB_AD_FAILED);
-                }
-                return;
-            }
-
-            //加载广告
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(CB_AD_LOADING);
-            }
-
-            //显示广告弹窗
-            showAdRemindDialog();
-
-        }catch (Exception e){
-            Logger.error("AdManager", "showAd error:" + e.getMessage());
-
-            if (mHandler!=null){
-                mHandler.sendEmptyMessage(CB_AD_FAILED);
-            }
-        }
-    }
-
-    //显示广告弹窗
-    private void showAdRemindDialog() {
-        try {
-            AdRemindDialog dialog = new AdRemindDialog(mActivity);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                }
-            });
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialogInterface) {
-                    try {
-                        //发送打点事件
-                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_DISPLAY, mPackageName));
-                    }catch (Exception e){}
-                }
-            });
-
-            dialog.setOnCancelListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        //发送打点事件
-                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_CANCEL, mPackageName));
-                    }catch (Exception e){}
-
-                    //取消按钮
-                    if (mHandler!=null){
-                        mHandler.sendEmptyMessage(CB_AD_CANCELED);
-                    }
-                }
-            });
-            dialog.setOnSubmitListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    try {
-                        //发送打点事件
-                        MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_AD_DIALOG_SUBMIT, mPackageName));
-                    }catch (Exception e){}
-
-                    //显示广告按钮
-                    showAd();
-                }
-            });
-            dialog.show();
-        }catch (Exception e){
-            throw e;
-        }
-    }
-
-    public void destory() {
-        try {
-            mAdCallback = null;
-        }catch (Exception e){
-            Logger.error("AdManager", "destory error:"+e.getMessage());
-        }
-    }
-
-
-    private Handler mHandler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == 0){
                 return;
             }
-            //取消按钮
-            if (mAdCallback!=null){
-                mAdCallback.onAdCallback(null, msg.what);
+
+            if (msg.obj != null && msg.obj instanceof IAdCallback){
+                ((IAdCallback)msg.obj).onAdCallback(null, msg.what);
             }
+
+            //取消按钮
+//            if (mAdCallback!=null){
+//                mAdCallback.onAdCallback(null, msg.what);
+//            }
         }
-    };
+    }
+
+//    private Handler mHandler = new Handler(Looper.getMainLooper()){
+//        @Override
+//        public void handleMessage(@NonNull Message msg) {
+//            if (msg.what == 0){
+//                return;
+//            }
+//            //取消按钮
+//            if (mAdCallback!=null){
+//                mAdCallback.onAdCallback(null, msg.what);
+//            }
+//        }
+//    };
 
 }
 

@@ -125,7 +125,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
 
     private void startCloudPhone() {
         mLoadingText.setText("正在加载云手机");
-        GameBoxManager.getInstance(this).applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
+        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(DeviceControl deviceControl, final int code) {
                 mDeviceControl = deviceControl;
@@ -140,13 +140,13 @@ public class GameRunningActivity extends Activity implements APICallback<String>
                                 mDeviceControl.stopGame();
                             }
                         } else if (code == APIConstants.WAITING_QUEUE) {
-                            GameBoxManager.getInstance(GameRunningActivity.this).joinQueue(mGameInfo, 10,
+                            GameBoxManager.getInstance().joinQueue(mGameInfo, 10,
                                     new APICallback<QueueRankInfo>() {
                                         @Override
                                         public void onAPICallback(QueueRankInfo result, int code) {
                                             if (code == APIConstants.QUEUE_SUCCESS) {
                                                 startGame();
-                                                GameBoxManager.getInstance(GameRunningActivity.this).exitQueue();
+                                                GameBoxManager.getInstance().exitQueue();
                                             } else {
                                                 if (result != null) {
                                                     Toast.makeText(GameRunningActivity.this, "当前排名：" +
@@ -343,7 +343,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
-        GameBoxManager.getInstance(GameRunningActivity.this).exitQueue();
+        GameBoxManager.getInstance().exitQueue();
         mMenuView.dismissMenuDialog();
         if (mHardwareManager != null) {
             mHardwareManager.release();

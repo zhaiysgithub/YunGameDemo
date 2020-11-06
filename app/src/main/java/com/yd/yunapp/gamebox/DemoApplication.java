@@ -39,6 +39,14 @@ public class DemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+        GameBox.init(this, "2OQCrVnJuES1AVO-ac995a9fef8adcdb");
+
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);
         // 配置ak sk 渠道

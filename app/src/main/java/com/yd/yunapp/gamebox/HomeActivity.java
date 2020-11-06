@@ -130,7 +130,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     // 试玩结束后更新游戏信息
-                    GameBoxManager.getInstance(HomeActivity.this).updateGameInfo(info);
+                    GameBoxManager.getInstance().updateGameInfo(info);
                     mGameInfos.put(info.gid, info);
                     mHandler.sendEmptyMessage(MSG_REFRESH_LIST);
                 }
@@ -142,7 +142,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<GameInfo> result = GameBoxManager.getInstance(HomeActivity.this).queryGameList(mGameInfos.size(),
+                List<GameInfo> result = GameBoxManager.getInstance().queryGameList(mGameInfos.size(),
                         20);
                 if (result != null && result.size() > 0) {
                     for (GameInfo info : result) {

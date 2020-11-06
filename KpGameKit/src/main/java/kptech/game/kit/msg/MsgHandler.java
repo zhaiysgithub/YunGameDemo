@@ -45,6 +45,14 @@ public class MsgHandler extends Handler {
     private int systemUi = -1;
 
     private ICallback mCallback;
+
+    public void destory() {
+        mActivity = null;
+        mLoginDialog = null;
+        mPayDialog = null;
+        mCallback = null;
+    }
+
     protected interface ICallback {
         void onLogin(int code, String msg, Map<String, Object> map);
         void onPay(int code, String msg, Map<String, Object> map);
@@ -182,7 +190,7 @@ public class MsgHandler extends Handler {
 
     private void showLoginDialog(){
         //处理登录，判断是联运登录，还是本地登录
-        String uninqueId = GameBoxManager.getInstance(mActivity).getUniqueId();
+        String uninqueId = GameBoxManager.getInstance().getUniqueId();
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
             AccountActivity login = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);

@@ -83,4 +83,13 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
             }catch (Exception e){}
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        mBackListener = null;
+        mAuthListener = null;
+
+    }
 }

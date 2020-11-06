@@ -38,6 +38,7 @@ import java.util.Map;
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
+import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
@@ -145,6 +146,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        GameBox.sRefWatcher.watch(this);
+
         setFullScreen();
         setContentView(R.layout.activity_game_play);
 
@@ -165,7 +169,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
-        GameBoxManager.getInstance(this).setUniqueId(mUnionUUID);
+        GameBoxManager.getInstance().setUniqueId(mUnionUUID);
 
         initView();
         mHardwareManager = new HardwareManager(this);
@@ -407,86 +411,13 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
     }
 
-
-//    private void downloadApk(boolean error){
-////        Toast.makeText(GamePlay.this,"FloatDownView Clicked 1", Toast.LENGTH_SHORT).show();
-//        logger.info("downloadApk downloader:" + mGameDownloader + ",game："+mGameInfo);
-//        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
-//            //下载逻辑
-//            if (mGameDownloader == null){
-//                if (mGameBox==null){
-//                    mGameBox = GameBox.getInstance();
-//                }
-//                if (mGameBox!=null){
-//                    mGameDownloader = mGameBox.getGameDownloader();
-//                }
-//            }
-//
-//            //判断下载中，则暂停
-//            if (mGameDownloader != null){
-////                Toast.makeText(GamePlay.this,"FloatDownView Clicked 2", Toast.LENGTH_SHORT).show();
-//                if (mDownloadStatus == GameDownloader.STATUS_STARTED){
-//                    logger.info("downloadApk stop");
-//                    //点击停止
-//                    mGameDownloader.stop(mGameInfo);
-//                }else if(mDownloadStatus == GameDownloader.STATUS_FINISHED){
-//                    //点击安装
-//
-//                }else{
-////                    Toast.makeText(GamePlay.this,"FloatDownView Clicked 3", Toast.LENGTH_SHORT).show();
-//
-//
-//
-//                    //点击下载
-//                    boolean b = mGameDownloader.start(mGameInfo);
-//                    if (!b){
-//                        Toast.makeText(this,"下载失败", Toast.LENGTH_LONG).show();
-//                    }
-//                    logger.info("downloadApk start");
-//
-//                    try {
-//                        if (error){
-//                            //错误界面发送事件
-//                            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-//                            event.setErrMsg(GamePlay.this.mErrorMsg);
-//                            if (mDeviceControl!=null){
-//                                event.setPadcode(mDeviceControl.getPadcode());
-//                            }
-//                            HashMap ext = new HashMap();
-//                            ext.put("code", mErrorCode);
-//                            ext.put("msg", mErrorMsg);
-//                            event.setExt(ext);
-//                            MobclickAgent.sendEvent(event);
-//                        }else {
-//                            //游戏界面发送
-//                            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DOWNLOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
-//                            if (mDeviceControl!=null){
-//                                event.setPadcode(mDeviceControl.getPadcode());
-//                            }
-//                            MobclickAgent.sendEvent(event);
-//                        }
-//                    }catch (Exception e){
-//                    }
-//
-//                }
-//            }else {
-//                logger.info("downloadApk error: gameDownloader null");
-////                Toast.makeText(GamePlay.this,"FloatDownView Clicked 4", Toast.LENGTH_SHORT).show();
-//            }
-//        }else {
-//            //下载逻辑
-//            Toast.makeText(GamePlay.this, "未获取到下载地址", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
-
     private void checkInitCloudPhoneSDK(){
         //判断是否已经初始化
-        if (!GameBoxManager.getInstance(this).isGameBoxManagerInited()){
+        if (!GameBoxManager.getInstance().isGameBoxManagerInited()){
             //初始化
             mLoadingView.setText("正在设备初始化...");
 //            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
-            GameBoxManager.getInstance(this).init(getApplication(), this.mCorpID, new APICallback<String>() {
+            GameBoxManager.getInstance().init(getApplication(), this.mCorpID, new APICallback<String>() {
                 @Override
                 public void onAPICallback(String msg, int code) {
                     if (code == 1){
@@ -542,7 +473,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private void startCloudPhone() {
         mLoadingView.setText("正在连接设备...");
-        GameBoxManager.getInstance(this).applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
+        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(DeviceControl deviceControl, final int code) {
                 mDeviceControl = deviceControl;
@@ -616,7 +547,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             playSuccess();
         } else if(code == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
             if (mDeviceControl!=null){
-                mDeviceControl.setPlayListener(null);
+                mDeviceControl.removerListener();
             }
 
             if (mChangeGame){
@@ -627,7 +558,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         }else if(code < 0){
             if (mDeviceControl!=null){
-                mDeviceControl.setPlayListener(null);
                 mDeviceControl.stopGame();
             }
 
@@ -702,7 +632,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
-        GameBoxManager.getInstance(GamePlay.this).exitQueue();
+        GameBoxManager.getInstance().exitQueue();
         mMenuView.dismissMenuDialog();
 
         try{
@@ -722,6 +652,23 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         }
 
+        if (mExitGameList != null){
+            mExitGameList.clear();
+            mExitGameList = null;
+        }
+
+        mUserAuthView = null;
+        mLoadingView = null;
+        mErrorView = null;
+
+        if (mVideoContainer != null){
+            mVideoContainer.removeAllViews();
+        }
+
+        if (mHardwareManager != null){
+            mHardwareManager.release();
+            mHardwareManager = null;
+        }
     }
 
 //    @Override

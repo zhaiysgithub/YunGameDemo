@@ -231,6 +231,13 @@ public class DeviceControl {
     }
 
     private static final int MSG_GAME_EXEC = 1;
+
+    public void removerListener() {
+        if (mDeviceControl != null){
+            mDeviceControl.setPlayListener(null);
+        }
+    }
+
     private class GameHandler extends Handler{
         public GameHandler(){
             super(Looper.getMainLooper());
@@ -361,6 +368,7 @@ public class DeviceControl {
 
         mDeviceControl.stopGame();
 
+
         try {
             if (mAdManager != null){
                 mAdManager.destory();
@@ -371,6 +379,7 @@ public class DeviceControl {
 
         mActivity = null;
         mGameStartCallback = null;
+        mGameHandler = null;
 
     }
 

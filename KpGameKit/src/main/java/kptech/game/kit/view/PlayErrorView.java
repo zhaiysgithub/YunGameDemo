@@ -159,4 +159,13 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     }
 
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        mGameInfo = null;
+        mBackListener = null;
+        mDownListener = null;
+        mRetryListener = null;
+    }
 }

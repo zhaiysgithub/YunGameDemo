@@ -41,4 +41,9 @@ public class ExitDialog extends Dialog {
         });
     }
 
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+    }
 }
