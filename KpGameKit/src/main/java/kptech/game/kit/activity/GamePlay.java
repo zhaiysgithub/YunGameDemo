@@ -178,6 +178,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             //统计事件初始化
             Event.init(getApplication(), mCorpID);
 
+            //重置traceId
+            Event.resetBaseTraceId();
+
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
         }catch (Exception e){

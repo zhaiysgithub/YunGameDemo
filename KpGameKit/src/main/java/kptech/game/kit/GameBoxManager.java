@@ -351,7 +351,7 @@ public class GameBoxManager {
 
         try {
             //重置打点数据
-
+            Event.resetTrackIdFromBase();
 
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));

@@ -95,6 +95,8 @@ public class Event {
 
     private static boolean inited = false;
 
+    private static String mBaseTraceId = null;
+
     public static void init(Application application, String appKey) {
         if (inited) {
             return;
@@ -106,10 +108,13 @@ public class Event {
         if (application!=null && !StringUtil.isEmpty(appKey)){
             mContext = application;
             mCorpKey = appKey;
+            mBaseTraceId = createTraceId();
             createBaseEvent(application, appKey);
             inited = true;
         }
     }
+
+
 
     /**
      * 请求json
@@ -294,9 +299,24 @@ public class Event {
             base = new Event();
             base.clientId = corpId != null ? corpId : mCorpKey;
             base.userId = DeviceInfo.getUserId(context);
-            base.traceId = createTraceId();
+            base.traceId = mBaseTraceId;
         }
     }
+
+    public static void resetBaseTraceId(){
+        mBaseTraceId = createTraceId();
+        if (base!= null){
+            base.traceId = mBaseTraceId;
+        }
+    }
+
+    public static void resetTrackIdFromBase(){
+        if (base != null){
+            int random = (int)(Math.random()*900)+100;
+            base.traceId = mBaseTraceId + "-" + random;
+        }
+    }
+
 
     public static Event getEvent(String event, String gamePkg, String padcode, String errMsg, Map ext){
         if (base == null){
