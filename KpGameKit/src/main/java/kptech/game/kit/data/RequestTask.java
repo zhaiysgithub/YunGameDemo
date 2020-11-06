@@ -25,7 +25,7 @@ public class RequestTask {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
-            sb.append("?apiVer=" + BuildConfig.VERSION_NAME);
+            sb.append("?version=" + BuildConfig.VERSION_NAME);
 //            sb.append("&pageSize="+limit);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
@@ -128,6 +128,7 @@ public class RequestTask {
             sb.append("?corpKey=" + corpKey);
             sb.append("&paas=" + pass);
             sb.append("&pkgName=" + pkg);
+            sb.append("&version=" + BuildConfig.VERSION_NAME);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求
@@ -205,6 +206,7 @@ public class RequestTask {
             sb.append(str);
             sb.append("?corpKey=" + corpKey);
             sb.append("&gameId=" + gameId);
+            sb.append("&version=" + BuildConfig.VERSION_NAME);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求

@@ -122,6 +122,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private int systemUi = -1;
 
+    private String baseTraceId = null;
+
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
 
         @Override
@@ -182,7 +184,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             Event.resetBaseTraceId();
 
             //发送打点事件
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_ONCREATE, mGameInfo!=null ? mGameInfo.pkgName : "" );
+            Event cloneEvent = (Event) event.clone();
+            cloneEvent.traceId = Event.getBaseTraceId();
+            MobclickAgent.sendEvent(cloneEvent);
         }catch (Exception e){
         }
 
@@ -640,7 +645,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         try{
             //发送打点事件
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" ));
+            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYGAME_DESTORY, mGameInfo!=null ? mGameInfo.pkgName : "" );
+            Event cloneEvent = (Event) event.clone();
+            cloneEvent.traceId = Event.getBaseTraceId();
+            MobclickAgent.sendEvent(cloneEvent);
         }catch (Exception e){
         }
 

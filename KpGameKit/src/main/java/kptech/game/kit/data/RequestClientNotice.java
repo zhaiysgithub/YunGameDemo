@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import kptech.game.kit.BuildConfig;
+
 public class RequestClientNotice extends AsyncTask<String,Void,Void> {
     public interface ICallback{
         void onResult(String ret);
@@ -75,7 +77,8 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
             String postParms = "f=clientnotice" +
                     "&p=" + obj.toString() +
                     "&v=1.0.1" +
-                    "&token=";
+                    "&token=" +
+                    "&version=" + BuildConfig.VERSION_NAME;
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(postParms.getBytes());//把参数发送过去.
             outputStream.flush();

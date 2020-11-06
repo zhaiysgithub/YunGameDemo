@@ -3,6 +3,8 @@ package kptech.game.kit.analytic;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
@@ -17,7 +19,7 @@ import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
-public class Event {
+public class Event implements Cloneable {
     /**
      * 固定前缀，其他分段可作为行为标识，全部大写
      */
@@ -27,9 +29,13 @@ public class Event {
      */
     String clientId;
     /**
+     * groupId
+     */
+    String groupId;
+    /**
      * 随机数：h51597817231222，一次的用户行为
      */
-    String traceId;
+    public String traceId;
     /**
      * 用户唯一id, 当前设备生成，缓存到本地
      */
@@ -135,6 +141,7 @@ public class Event {
             obj.put("h5sdkversion", this.ver);
             obj.put("datafrom", this.datafrom);
             obj.put("debug", this.debug);
+            obj.put("groupid", this.groupId);
             JSONObject extObj = null;
             if (this.ext != null){
                 try { extObj = new JSONObject(this.ext); }catch (Exception e){}
@@ -272,6 +279,12 @@ public class Event {
         return "ar" + traceId;
     }
 
+    private static String createGroupId(){
+        int random = (int)(Math.random()*90)+10;
+        String  traceId = new Date().getTime() + "" + random;
+        return "ar" + traceId;
+    }
+
 //    private static String getUserId(Context context){
 //        try {
 //            String userId = ProferencesUtils.getString(context, SharedKeys.KEY_EVENT_USERID, null);
@@ -299,6 +312,7 @@ public class Event {
             base = new Event();
             base.clientId = corpId != null ? corpId : mCorpKey;
             base.userId = DeviceInfo.getUserId(context);
+            base.groupId = createGroupId();
             base.traceId = mBaseTraceId;
         }
     }
@@ -308,6 +322,10 @@ public class Event {
         if (base!= null){
             base.traceId = mBaseTraceId;
         }
+    }
+
+    public static String getBaseTraceId(){
+        return mBaseTraceId;
     }
 
     public static void resetTrackIdFromBase(){
@@ -334,7 +352,6 @@ public class Event {
 
         return new Event();
     }
-
 
     private static byte[] lock = new byte[0];
     public static Event getTMEvent(String event, long tmLen, Map data){
@@ -395,4 +412,9 @@ public class Event {
         this.tmData = data;
     }
 
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
