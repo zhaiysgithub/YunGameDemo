@@ -74,6 +74,16 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                     }catch (Exception e){}
                 }
 
+                try {
+                    //websocket URL
+                    String wsurl = dObj.has("wsurl") ? dObj.getString("wsurl") : null;
+                    if (wsurl != null){
+                        ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_WSURL, wsurl);
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 ret = true;
             }else {
                 String m = jsonObject.getString("m");

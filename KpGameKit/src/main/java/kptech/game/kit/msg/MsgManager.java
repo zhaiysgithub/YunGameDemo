@@ -15,7 +15,9 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
+import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.ProferencesUtils;
 
 public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 //    private static final Logger logger = new Logger("MsgManager") ;
@@ -63,8 +65,14 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             mMsgManager.setPkgName(pkgName);
         }
 
+        String wsurl = null;
+        try {
+            wsurl = ProferencesUtils.getString(activity, SharedKeys.KEY_GAME_APP_WSURL, null);
+        }catch (Exception e){}
+
         if (padCode!=null){
-            Messager.getInstance().start(1, padCode);
+//            Messager.getInstance().start(1, padCode);
+            Messager.getInstance().startWithUri(wsurl,1, padCode);
         }
 
     }

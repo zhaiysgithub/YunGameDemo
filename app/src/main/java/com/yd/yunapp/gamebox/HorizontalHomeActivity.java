@@ -64,7 +64,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String jidou = "2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
