@@ -45,7 +45,7 @@ public class DemoApplication extends Application {
 //            // You should not init your app in this process.
 //            return;
 //        }
-        GameBox.init(this, "2OQCrVnJuES1AVO-ac995a9fef8adcdb");
+//        GameBox.init(this, "2OQCrVnJuES1AVO-ac995a9fef8adcdb");
 
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);

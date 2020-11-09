@@ -686,6 +686,10 @@ public class GameBoxManager {
             manager.addDeviceMockInfo("buildHost", DeviceUtils.getBuildHost());
             manager.addDeviceMockInfo("buildTags", DeviceUtils.getBuildTags());
             manager.addDeviceMockInfo("buildType", DeviceUtils.getBuildType());
+
+            manager.addDeviceMockInfo("buildVersionInc", DeviceUtils.getVersionInc());
+//            manager.addDeviceMockInfo("buildVersionInc", DeviceUtils.getVersionInc());
+
             Map<String, String> map = manager.getDeviceMockInfo();
             Logger.info(TAG, map.toString());
 
@@ -693,8 +697,12 @@ public class GameBoxManager {
         }
     }
 
-    private void removeDeviceInfo(com.yd.yunapp.gameboxlib.GameBoxManager manager){
+    public void removeDeviceInfo(){
         try {
+            com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
+            if (manager==null){
+                return;
+            }
             manager.removeDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI);
             manager.removeDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID);
             manager.removeDeviceMockInfo("brand");
@@ -713,6 +721,7 @@ public class GameBoxManager {
             manager.removeDeviceMockInfo("buildHost");
             manager.removeDeviceMockInfo("buildTags");
             manager.removeDeviceMockInfo("buildType");
+            manager.removeDeviceMockInfo("buildVersionInc");
         }catch (Exception e){
 
         }

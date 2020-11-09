@@ -98,6 +98,8 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
                 success(map);
             }
         });
+
+        setCanceledOnTouchOutside(false);
     }
 
     private void success(Map<String, Object> map){

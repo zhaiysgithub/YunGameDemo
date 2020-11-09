@@ -264,6 +264,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mErrorView.setOnRetryListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 //重新加载游戏
                 mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
 
@@ -386,7 +387,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             intent.putExtra(EXTRA_GAME, mGameInfo);
             GamePlay.this.sendBroadcast(intent);
             stop = true;
-        }else {
+        } else {
             //发送下载广播
             Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Start_Action");
             intent.putExtra(EXTRA_GAME, mGameInfo);

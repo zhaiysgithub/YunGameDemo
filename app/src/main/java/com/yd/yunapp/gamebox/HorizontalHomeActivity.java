@@ -64,7 +64,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         }
     };
 
-    static final boolean wy = false;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
+    static final boolean wy = true;//BuildConfig.APPLICATION_ID.equals("com.netease.cloudmusic");
 
     final String jidou = "2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
@@ -79,7 +79,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_horizontal_main);
         mGameInfos = new LinkedHashMap<>();
         initView();
-//        GameBox.init(getApplication(),corpId);
+        GameBox.init(getApplication(),corpId);
 //        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
 //        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
@@ -266,16 +266,23 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         GameInfo info = new GameInfo();
 
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
-        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+//        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 3437;
+        info.gid = 3439;
         info.pkgName = "com.kptach.test";
+
+//        info.gid = 3437;
+//        info.pkgName = "com.kptach.test";
         info.name = "cloudTest";
 
 //        info.gid = 3104;
 //        info.pkgName = "com.netease.tom";
 //        info.name = "猫和老鼠";
+
+//        info.gid = 3427;
+//        info.pkgName = "com.netease.dwrg";
+//        info.name = "第五人格";
 
 //        info.gid = 3427;
 //        info.pkgName = "com.netease.dwrg";
@@ -312,12 +319,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
                 game.downloadUrl = null;//"https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
+//                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
 
                 Params params = new Params();
-                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
+//                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game, params);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));

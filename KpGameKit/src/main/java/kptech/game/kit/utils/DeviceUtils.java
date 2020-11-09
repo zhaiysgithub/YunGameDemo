@@ -473,7 +473,12 @@ public class DeviceUtils {
         return android.os.Build.TYPE;
     }
 
-
+    /**
+     * 获取手机 硬件序列号
+     * **/
+    public static String getVersionInc() {
+        return Build.VERSION.INCREMENTAL;
+    }
 
     /**
      * 获取当前App进程的Name

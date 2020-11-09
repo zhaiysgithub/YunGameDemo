@@ -10,8 +10,8 @@
     >
     <kptech.game.kit.view.RoundImageView
         android:id="@+id/img"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:scaleType="fitXY"
         app:radius="13dp"
         android:layout_gravity="center_horizontal"

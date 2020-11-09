@@ -157,46 +157,66 @@ public class DeviceControl {
         //连接设备
         MsgManager.start(activity, GameBoxManager.mCorpID, mDeviceControl.getDeviceToken(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
+        //同步设备信息
+        sendMockDeviceInfo();
+
+        //云存档接口
+        sendClientNotice();
+
         //加载广告
-        if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON){
-            this.mAdManager.loadGameAd(new IAdCallback<String>() {
-                @Override
-                public void onAdCallback(String msg, int code) {
-                    switch (code){
-                        //点击取消
-                        case AdManager.CB_AD_CANCELED:
-                            if (callback!=null){
-                                callback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
-                            }
-                            break;
-                        //加载广告弹窗
-                        case AdManager.CB_AD_LOADING:
-                            //显示广告
-                            if (callback!=null){
-                                callback.onAPICallback("", APIConstants.AD_LOADING);
-                            }
-                            break;
-                        //激励视频广告加载失败
-                        case AdManager.CB_AD_FAILED:
-                        //其它状态，加载游戏
-                        default:
-                            //调用通知接口
-                            sendClientNotice();
-                            //运行游戏
-//                            execStartGame(activity, res, callback);
-                            break;
+        loadGameAd();
 
-                    }
-                }
-            });
-        }else {
-            sendClientNotice();
-
-            //运行游戏
-//            execStartGame(activity, res, callback);
-        }
     }
 
+    /**
+     * 加载广告
+     */
+    private void loadGameAd(){
+        try {
+            //加载广告
+            if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON) {
+                this.mAdManager.loadGameAd(new IAdCallback<String>() {
+                    @Override
+                    public void onAdCallback(String msg, int code) {
+                        switch (code) {
+                            //点击取消
+                            case AdManager.CB_AD_CANCELED:
+                                if (mGameStartCallback != null) {
+                                    mGameStartCallback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
+                                }
+                                break;
+                            //加载广告弹窗
+                            case AdManager.CB_AD_LOADING:
+                                //显示广告
+                                if (mGameStartCallback != null) {
+                                    mGameStartCallback.onAPICallback("", APIConstants.AD_LOADING);
+                                }
+                                break;
+                            //激励视频广告加载失败
+                            case AdManager.CB_AD_FAILED:
+                                //其它状态，加载游戏
+                            default:
+                                if (mGameStartCallback!=null){
+                                    mGameStartCallback.onAPICallback("", APIConstants.GAME_LOADING);
+                                }
+                                //启动游戏
+                                mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+                                break;
+                        }
+                    }
+                });
+                return;
+            }
+        }catch (Exception e){}
+
+        //启动游戏
+         mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+    }
+
+    /**
+     * 云存档发送通知
+     * @return
+     */
     private boolean sendClientNotice(){
         if (mGameInfo.recoverCloudData == 1){
             if (mGameStartCallback!=null){
@@ -229,7 +249,7 @@ public class DeviceControl {
                                 }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
                                 //延时3秒
-                                mGameHandler.sendEmptyMessageDelayed(MSG_GAME_EXEC, sleeptime);
+                                mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
                             }
                         })
                         .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
@@ -238,11 +258,38 @@ public class DeviceControl {
                 e.printStackTrace();
             }
         }
-        mGameHandler.sendEmptyMessage(MSG_GAME_EXEC);
+
+        //启动游戏
+        mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE));
         return false;
     }
 
+    /**
+     * 发送云设备信息
+     */
+    private void sendMockDeviceInfo(){
+        try {
+            new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        mDeviceControl.mockDeviceInfo();
+                    }catch (Exception e){}
+                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), 3000);
+                }
+            }.start();
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+    }
+
     private static final int MSG_GAME_EXEC = 1;
+    private static final int MSG_FLAG_REST = 2;
+
+    private static final int FLAG_NOTICE = 1;
+    private static final int FLAG_AD = 2;
+    private static final int FLAG_MOCK = 4;
+    private static final int FLAG_SUCCESS = FLAG_NOTICE | FLAG_AD | FLAG_MOCK;
 
     public void removerListener() {
         if (mDeviceControl != null){
@@ -251,6 +298,9 @@ public class DeviceControl {
     }
 
     private class GameHandler extends Handler{
+        private int flag = 0;
+        private boolean isExec = false;
+
         public GameHandler(){
             super(Looper.getMainLooper());
         }
@@ -258,9 +308,22 @@ public class DeviceControl {
         @Override
         public void handleMessage(@NonNull Message msg) {
             switch (msg.what){
+                case MSG_FLAG_REST:
+                    flag = 0;
+                    isExec = false;
+                    break;
                 //运行游戏
                 case MSG_GAME_EXEC:
-                    execStartGame(mActivity,mGameRes,mGameStartCallback);
+                    try {
+                        int curFlag = (int) msg.obj;
+                        flag = flag | curFlag;
+                    }catch (Exception e){}
+
+                    if (flag == FLAG_SUCCESS && !isExec){
+                        //只运行1次
+                        isExec = true;
+                        execStartGame(mActivity,mGameRes,mGameStartCallback);
+                    }
                     break;
             }
 
@@ -393,6 +456,7 @@ public class DeviceControl {
         mGameStartCallback = null;
         mGameHandler = null;
 
+//        GameBoxManager.getInstance().removeDeviceInfo();
     }
 
     /**

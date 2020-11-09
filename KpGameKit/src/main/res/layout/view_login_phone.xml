@@ -51,8 +51,7 @@
             android:hint="请输入验证码"
             android:inputType="phone"
             android:textSize="13dp"
-            android:nextFocusForward="@id/regist_psw"
-            android:imeOptions="actionNext"
+            android:imeOptions="actionDone"
             />
         <Button
             android:id="@+id/phone_code_btn"
