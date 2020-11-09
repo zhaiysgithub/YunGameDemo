@@ -1,6 +1,5 @@
 package kptech.game.kit.analytic;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -59,8 +58,8 @@ public class DeviceInfo {
     public static Map<String,Object> getDeviceHardInfo(Context context){
         String imei = DeviceUtils.getIMEI(context);
         String androidId = DeviceUtils.getAndroidId(context);
-        String phoneBrand = DeviceUtils.getPhoneBrand();
-        String phoneType = DeviceUtils.getPhoneModel();
+        String phoneBrand = DeviceUtils.getDeviceBrand();
+        String phoneType = DeviceUtils.getDeviceModel();
         String screenSize = DeviceUtils.getPhysicsScreenSize(context)+"";
 
         HashMap<String,Object> map = new HashMap<>();
@@ -78,8 +77,8 @@ public class DeviceInfo {
         String userId = getUserId(context);
         String imei = DeviceUtils.getIMEI(context);
         String androidId = DeviceUtils.getAndroidId(context);
-        String phoneBrand = DeviceUtils.getPhoneBrand();
-        String phoneType = DeviceUtils.getPhoneModel();
+        String phoneBrand = DeviceUtils.getDeviceBrand();
+        String phoneType = DeviceUtils.getDeviceModel();
         String phoneOS = "android";
         String screenSize = DeviceUtils.getPhysicsScreenSize(context)+"";
         String systemVer = DeviceUtils.getBuildVersion();

@@ -485,6 +485,11 @@ public class DeviceControl {
                     listener.onScreenChange(i);
                 }
             }
+
+            @Override
+            public void onScreenCapture(byte[] bytes) {
+
+            }
         });
     }
 

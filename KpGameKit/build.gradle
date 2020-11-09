@@ -36,18 +36,14 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation 'androidx.appcompat:appcompat:1.2.0'
+    //    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
     //快盘定义接口
     implementation 'kptech.game.kit:kpinter:1.0.0'
-
     implementation 'kptech.game.kit:gamead-netease:1.0.0.5'
-
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 }
 
 

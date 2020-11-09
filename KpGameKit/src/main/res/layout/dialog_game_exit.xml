@@ -8,7 +8,7 @@
     android:background="@drawable/dialog_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="15dp"
     >
 
     <RelativeLayout
@@ -58,15 +58,15 @@
     <RelativeLayout
         android:id="@+id/bottom_ll"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/exit_game"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:textColor="#ff3a3a"
             android:background="@drawable/game_cancel_btn"
             android:text="退出游戏"/>
@@ -78,7 +78,7 @@
             android:textColor="#ffffff"
             android:background="@drawable/game_submit_btn"
             android:layout_alignParentRight="true"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:text="再想想"/>
 
     </RelativeLayout>

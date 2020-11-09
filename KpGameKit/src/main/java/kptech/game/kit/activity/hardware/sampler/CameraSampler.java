@@ -75,7 +75,7 @@ public class CameraSampler extends Sampler implements SensorDataCallback<byte[]>
 
     @Override public void sampling(int type, byte[] data) {
         if (callback != null) {
-            callback.onSamplerData(SensorConstants.HARDWARE_ID_VIDEO, type, data);
+            callback.onSamplerData(SensorConstants.HARDWARE_ID_VIDEO_BACK, type, data);
         }
         SaveLocalUtils.saveEncodeData(SaveLocalUtils.TYPE_VIDEO, data);
     }

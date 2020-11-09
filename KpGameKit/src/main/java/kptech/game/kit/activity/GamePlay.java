@@ -596,6 +596,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
         requestExitGameList();
+
+        try {
+            setFullScreen();
+        }catch (Exception e){}
+
     }
 
     private void exitPlay() {
@@ -842,6 +847,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 error = "调用服务出错，请稍后再试";
                 break;
             case APIConstants.ERROR_NO_DEVICE:
+            case APIConstants.ERROR_DEVICE_EXPIRED:
+            case APIConstants.ERROR_DEVICE_OTHER_ERROR:
             case APIConstants.WAITING_QUEUE:
                 error = "试玩人数过多，请稍后再试";
                 break;

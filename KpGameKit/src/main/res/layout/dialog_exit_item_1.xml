@@ -14,7 +14,6 @@
         android:layout_height="100dp"
         android:scaleType="fitXY"
         app:radius="13dp"
-        android:background="@drawable/icon_bg"
         android:layout_gravity="center_horizontal"
         />
 

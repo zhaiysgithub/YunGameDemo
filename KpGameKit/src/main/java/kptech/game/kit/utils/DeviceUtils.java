@@ -22,8 +22,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
-import androidx.core.app.ActivityCompat;
-
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -42,14 +40,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import static android.content.Context.TELEPHONY_SERVICE;
-
 public class DeviceUtils {
     @SuppressLint("MissingPermission")
     public static String getIMEI(Context context) {
         String imei = "";
         try {
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 imei = tm.getDeviceId();
             }else {
@@ -59,6 +55,32 @@ public class DeviceUtils {
         } catch (Exception e) {
         }
         return imei;
+    }
+
+    @SuppressLint("MissingPermission")
+    public static String getIMSI(Context context) {
+        String imsi = null;
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(android.content.Context.TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                imsi = tm.getSubscriberId();
+            }
+        } catch (Exception e) {
+        }
+        return imsi;
+    }
+
+    /**
+     * 获得设备序列号（如：WTK7N16923005607）, 个别设备无法获取
+     *
+     * @return 设备序列号
+     */
+    public static String getSERIAL() {
+        try {
+            return Build.SERIAL;
+        } catch (Exception ex) {
+        }
+        return "";
     }
 
     /**
@@ -141,13 +163,60 @@ public class DeviceUtils {
         return -1;
     }
 
+
     /**
-     * 返回版本名字
-     * 对应build.gradle中的versionName
-     *
-     * @param context
-     * @return
+     * 获取当前连接的wifi的mac地址
      */
+    public static String getBSSID(Context context) {
+        try {
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = wifi.getConnectionInfo();
+            String wifiName = info != null ? info.getBSSID() : "";
+            return wifiName;
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前连接的wifi的mac地址
+     */
+    public static String getWifiName(Context context) {
+        try {
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = wifi.getConnectionInfo();
+            String wifiName = info != null ? info.getSSID() : "";
+            return wifiName;
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前连接的wifi的mac地址
+     */
+    public static String getWifiMacAddress(Context context) {
+        try {
+            WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo info = wifi.getConnectionInfo();
+            String wifiName = info != null ? info.getMacAddress() : "";
+            return wifiName;
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
+
+        /**
+         * 返回版本名字
+         * 对应build.gradle中的versionName
+         *
+         * @param context
+         * @return
+         */
     public static String getVersionName(Context context) {
         String versionName = "";
         try {
@@ -237,11 +306,32 @@ public class DeviceUtils {
 //    }
 
     /**
+     * 获取厂商名
+     * **/
+    public static String getDeviceManufacturer() {
+        return android.os.Build.MANUFACTURER;
+    }
+
+    /**
+     * 获取厂商名
+     * **/
+    public static String getDeviceBootloader() {
+        return android.os.Build.BOOTLOADER;
+    }
+
+    /**
+     * 获取产品名
+     * **/
+    public static String getDeviceProduct() {
+        return android.os.Build.PRODUCT;
+    }
+
+    /**
      * 获取手机品牌
      *
      * @return
      */
-    public static String getPhoneBrand() {
+    public static String getDeviceBrand() {
         return android.os.Build.BRAND;
     }
 
@@ -250,8 +340,31 @@ public class DeviceUtils {
      *
      * @return
      */
-    public static String getPhoneModel() {
+    public static String getDeviceModel() {
         return android.os.Build.MODEL;
+    }
+
+    /**
+     * 获取手机主板名
+     */
+    public static String getDeviceBoard() {
+        return android.os.Build.BOARD;
+    }
+
+    /**
+     * 设备名
+     * **/
+    public static String getDeviceDevice() {
+        return android.os.Build.DEVICE;
+    }
+
+    /**
+     *
+     *
+     * fingerprit 信息
+     * **/
+    public static String getDeviceFingerprint() {
+        return android.os.Build.FINGERPRINT;
     }
 
     /**
@@ -280,6 +393,87 @@ public class DeviceUtils {
     public static int getAppProcessId() {
         return android.os.Process.myPid();
     }
+
+    /**
+     * 硬件名
+     *
+     * **/
+    public static String getDeviceHardware() {
+        return android.os.Build.HARDWARE;
+    }
+
+    /**
+     * 主机
+     *
+     * **/
+    public static String getBuildHost() {
+        return android.os.Build.HOST;
+    }
+
+    /**
+     *
+     * 显示ID
+     * **/
+    public static String getBuildDisplay() {
+        return android.os.Build.DISPLAY;
+    }
+
+    /**
+     * ID
+     *
+     * **/
+    public static String getBuildId() {
+        return android.os.Build.ID;
+    }
+
+    /**
+     * 获取手机用户名
+     *
+     * **/
+    public static String getDeviceUser() {
+        return android.os.Build.USER;
+    }
+
+    /**
+     * 获取手机 硬件序列号
+     * **/
+    public static String getBuildSerial() {
+        return android.os.Build.SERIAL;
+    }
+
+    /**
+     * 获取手机Android 系统SDK
+     *
+     * @return
+     */
+    public static int getDeviceSDK() {
+        return android.os.Build.VERSION.SDK_INT;
+    }
+
+    /**
+     * 获取手机Android 版本
+     *
+     * @return
+     */
+    public static String getDeviceAndroidVersion() {
+        return android.os.Build.VERSION.RELEASE;
+    }
+
+    /**
+     * 获取手机 硬件序列号
+     * **/
+    public static String getBuildTags() {
+        return android.os.Build.TAGS;
+    }
+
+    /**
+     * 获取手机 硬件序列号
+     * **/
+    public static String getBuildType() {
+        return android.os.Build.TYPE;
+    }
+
+
 
     /**
      * 获取当前App进程的Name

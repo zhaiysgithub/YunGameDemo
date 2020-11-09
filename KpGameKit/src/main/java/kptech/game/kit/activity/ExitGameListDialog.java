@@ -105,7 +105,7 @@ public class ExitGameListDialog extends Dialog {
 //                outRect.left = DisplayUtil.dip2px(getContext(),10);
 //                outRect.right = DisplayUtil.dip2px(getContext(),10);
                 outRect.top = DensityUtil.dip2px(getContext(),5);
-                outRect.bottom = DensityUtil.dip2px(getContext(),5);
+                outRect.bottom = DensityUtil.dip2px(getContext(),2);
             }
         });
 

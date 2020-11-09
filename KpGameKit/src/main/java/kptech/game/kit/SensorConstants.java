@@ -11,7 +11,8 @@ public class SensorConstants {
     public static final int HARDWARE_ID_GYROSCOPE = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_GYROSCOPE;
     public static final int HARDWARE_ID_MAGNETOMETER = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_MAGNETOMETER;
     public static final int HARDWARE_ID_MIC = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_MIC;
-    public static final int HARDWARE_ID_VIDEO = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_VIDEO;
+    public static final int HARDWARE_ID_VIDEO_BACK = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_VIDEO_BACK;
+    public static final int HARDWARE_ID_VIDEO_FRONT = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_VIDEO_FRONT;
     public static final int HARDWARE_ID_GRAVITY = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_GRAVITY;
     public static final int CAMERA_VIDEO_TYPE_SPS = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_SPS;
     public static final int CAMERA_VIDEO_TYPE_PPS = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_PPS;

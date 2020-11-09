@@ -269,13 +269,17 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
         info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
+        info.gid = 3437;
+        info.pkgName = "com.kptach.test";
+        info.name = "cloudTest";
+
 //        info.gid = 3104;
 //        info.pkgName = "com.netease.tom";
 //        info.name = "猫和老鼠";
 
-        info.gid = 3427;
-        info.pkgName = "com.netease.dwrg";
-        info.name = "第五人格";
+//        info.gid = 3427;
+//        info.pkgName = "com.netease.dwrg";
+//        info.name = "第五人格";
 
 
 //        info.gid = 3135;
@@ -307,7 +311,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
-                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+                game.downloadUrl = null;//"https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
                 game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);

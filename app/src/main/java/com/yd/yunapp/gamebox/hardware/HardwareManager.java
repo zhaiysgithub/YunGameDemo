@@ -103,7 +103,7 @@ public class HardwareManager implements SamplingCallback {
             case SensorConstants.HARDWARE_ID_MAGNETOMETER:
                 sampler = new SensorSampler(mActivity, this, id);
                 break;
-            case SensorConstants.HARDWARE_ID_VIDEO:
+            case SensorConstants.HARDWARE_ID_VIDEO_BACK:
                 sampler = new CameraSampler(mActivity, this);
                 break;
             case SensorConstants.HARDWARE_ID_LOCATION:
