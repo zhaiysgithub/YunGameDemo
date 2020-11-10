@@ -88,7 +88,7 @@
             android:id="@+id/close"
             android:layout_width="30dp"
             android:layout_height="20dp"
-            android:src="@mipmap/down_notify_close"
+            android:src="@mipmap/kp_down_notify_close"
             android:background="@null"/>
 
         <Button
@@ -100,7 +100,7 @@
             android:gravity="center"
             android:text="下载"
             android:textColor="@color/down_notify_common_white"
-            android:background="@drawable/down_notify_float_btn"
+            android:background="@drawable/kp_down_notify_float_btn"
             android:textSize="12sp" />
     </LinearLayout>
 

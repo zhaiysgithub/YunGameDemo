@@ -26,7 +26,7 @@ public class WebViewActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_webview);
+        setContentView(R.layout.kp_activity_webview);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +70,7 @@ public class WebViewActivity extends Activity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+        webSettings.setSavePassword(false);
         //webView.addJavascriptInterface(new JsObject(), "client");
         //webView.addJavascriptInterface(new WebViewJsObject(getActivity(),webView), "client");
         webView.clearCache(true);

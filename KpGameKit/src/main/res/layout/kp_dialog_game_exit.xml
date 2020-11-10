@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:minHeight="200dp"
     android:layout_gravity="center"
-    android:background="@drawable/dialog_bg"
+    android:background="@drawable/kp_dialog_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="15dp"
@@ -60,6 +60,8 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_marginTop="10dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:orientation="horizontal">
 
         <Button
@@ -68,7 +70,7 @@
             android:layout_height="match_parent"
             android:textSize="16sp"
             android:textColor="#ff3a3a"
-            android:background="@drawable/game_cancel_btn"
+            android:background="@drawable/kp_game_cancel_btn"
             android:text="退出游戏"/>
 
         <Button
@@ -76,7 +78,7 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:textColor="#ffffff"
-            android:background="@drawable/game_submit_btn"
+            android:background="@drawable/kp_game_submit_btn"
             android:layout_alignParentRight="true"
             android:textSize="16sp"
             android:text="再想想"/>

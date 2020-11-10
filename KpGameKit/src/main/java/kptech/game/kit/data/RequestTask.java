@@ -10,7 +10,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
@@ -271,6 +274,20 @@ public class RequestTask {
             inf.enableDownload = gameObj.has("showDown") ? gameObj.getInt("showDown") : 1;
             inf.coverUrl = gameObj.has("gameAppCoverImgUrl") ? gameObj.getString("gameAppCoverImgUrl") : null;
             inf.recoverCloudData = gameObj.has("recoverCloudData") ? gameObj.getInt("recoverCloudData") : 1;
+            inf.kpUnionGame = gameObj.has("isKpJointOpe") ? gameObj.getInt("isKpJointOpe") : 0;
+            if (gameObj.has("downloadExt")){
+                HashMap<String,String> ext = new HashMap<>();
+                try {
+                    JSONObject extObj = gameObj.getJSONObject("downloadExt");
+                    Iterator<String> keys = extObj.keys();
+                    while (keys.hasNext()){
+                        String key = keys.next();
+                        String value = extObj.getString(key);
+                        ext.put(key,value);
+                    }
+                }catch (Exception e){}
+                inf.ext = ext;
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

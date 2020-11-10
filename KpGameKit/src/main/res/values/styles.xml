@@ -16,9 +16,9 @@
 
     <style name="MyDialogAnimation">
         <!--进入 -->
-        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowEnterAnimation">@anim/kp_dialog_enter</item>
         <!--退出-->
-        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+        <item name="android:windowExitAnimation">@anim/kp_dialog_exit</item>
     </style>
 
     <style name="MyTheme.CustomDialog" parent="@android:style/Theme.Dialog">

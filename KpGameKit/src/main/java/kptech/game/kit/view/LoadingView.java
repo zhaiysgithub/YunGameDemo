@@ -1,8 +1,6 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,7 +20,7 @@ public class LoadingView extends FrameLayout {
         initView();
     }
     private void initView() {
-        inflate(getContext(), R.layout.view_loading, this);
+        inflate(getContext(), R.layout.kp_view_loading, this);
     }
 
 

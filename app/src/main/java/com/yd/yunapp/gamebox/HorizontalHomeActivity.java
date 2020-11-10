@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -27,6 +28,7 @@ import org.xutils.x;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -39,6 +41,7 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.activity.ExitDialog;
 import kptech.game.kit.activity.ExitGameListDialog;
+import kptech.game.kit.analytic.DeviceInfo;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -80,6 +83,13 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameInfos = new LinkedHashMap<>();
         initView();
         GameBox.init(getApplication(),corpId);
+
+
+
+        String str = DeviceInfo.getDeviceId(this);
+
+        Log.e("MainActivity",str);
+
 //        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
 //        GameBoxManager.setAppInfo("qpGwICisRHSMLv6jmoBKP9cU", "vfwBDe7YrVGLK4R89zphxCUba13cPTtM2dyOnIHu", "aa");
@@ -318,10 +328,14 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
-                game.downloadUrl = null;//"https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-//                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+game.ext = new HashMap<>();
+game.ext.put("version","aa");
+game.ext.put("md5","bb");
+                //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
+
 
                 Params params = new Params();
 //                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");

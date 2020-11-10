@@ -30,7 +30,7 @@ public class PayYouHuiDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_youhui);
+        setContentView(R.layout.kp_dialog_youhui);
         ListView listView = findViewById(R.id.list);
 
         List<String> data = new ArrayList<>();
@@ -94,7 +94,7 @@ public class PayYouHuiDialog extends Dialog {
         public View getView(final int position, View convertView, ViewGroup parent) {
             YhViewHodler holder = null;
             if(convertView ==null) {
-                convertView = View.inflate(mActivity,R.layout.layout_youhui_item, null);
+                convertView = View.inflate(mActivity,R.layout.kp_layout_youhui_item, null);
                 holder = new YhViewHodler(convertView);
             }else {
                 holder = (YhViewHodler) convertView.getTag();

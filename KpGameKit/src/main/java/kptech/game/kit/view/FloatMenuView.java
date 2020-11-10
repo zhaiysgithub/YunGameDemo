@@ -64,7 +64,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.view_float_menu, this);
+        inflate(getContext(), R.layout.kp_view_float_menu, this);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
                 R.color.float_menu_color_yellow, R.color.float_menu_color_red});
 
         mMenuDialog = new Dialog(getContext(), R.style.MyTheme_CustomDialog);
-        mMenuDialogContentView = mMenuDialog.getLayoutInflater().inflate(R.layout.dialog_float_menu_panel,
+        mMenuDialogContentView = mMenuDialog.getLayoutInflater().inflate(R.layout.kp_dialog_float_menu_panel,
                 null, false);
         mMenuDialog.setContentView(mMenuDialogContentView);
         mMenuDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -203,25 +203,25 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
     private void setSelectGradeLevel(String level) {
         if (level == APIConstants.DEVICE_VIDEO_QUALITY_AUTO) {
-            applyBtnStyle(mAutoBtn, R.drawable.blue_btn);
-            applyBtnStyle(mHDBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mOrdianryBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mLsBtn, R.drawable.translucent_btn);
+            applyBtnStyle(mAutoBtn, R.drawable.kp_blue_btn);
+            applyBtnStyle(mHDBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mOrdianryBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mLsBtn, R.drawable.kp_translucent_btn);
         } else if (level == APIConstants.DEVICE_VIDEO_QUALITY_LS) {
-            applyBtnStyle(mLsBtn, R.drawable.blue_btn);
-            applyBtnStyle(mHDBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mOrdianryBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mAutoBtn, R.drawable.translucent_btn);
+            applyBtnStyle(mLsBtn, R.drawable.kp_blue_btn);
+            applyBtnStyle(mHDBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mOrdianryBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mAutoBtn, R.drawable.kp_translucent_btn);
         } else if (level == APIConstants.DEVICE_VIDEO_QUALITY_HD) {
-            applyBtnStyle(mHDBtn, R.drawable.blue_btn);
-            applyBtnStyle(mAutoBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mOrdianryBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mLsBtn, R.drawable.translucent_btn);
+            applyBtnStyle(mHDBtn, R.drawable.kp_blue_btn);
+            applyBtnStyle(mAutoBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mOrdianryBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mLsBtn, R.drawable.kp_translucent_btn);
         } else if (level == APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY) {
-            applyBtnStyle(mOrdianryBtn, R.drawable.blue_btn);
-            applyBtnStyle(mHDBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mAutoBtn, R.drawable.translucent_btn);
-            applyBtnStyle(mLsBtn, R.drawable.translucent_btn);
+            applyBtnStyle(mOrdianryBtn, R.drawable.kp_blue_btn);
+            applyBtnStyle(mHDBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mAutoBtn, R.drawable.kp_translucent_btn);
+            applyBtnStyle(mLsBtn, R.drawable.kp_translucent_btn);
         }
         if (mDeviceControl != null) {
             mDeviceControl.switchQuality(level);

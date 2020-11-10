@@ -21,7 +21,7 @@ public class FloatDownView extends FrameLayout {
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.view_float_down, this);
+        inflate(getContext(), R.layout.kp_view_float_down, this);
         mDownBtn = findViewById(R.id.down_btn);
     }
 

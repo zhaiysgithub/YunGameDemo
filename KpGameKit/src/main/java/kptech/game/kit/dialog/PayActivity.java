@@ -10,9 +10,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -123,7 +120,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pay);
+        setContentView(R.layout.kp_activity_pay);
 
         try {
             //发送打点事件
@@ -381,6 +378,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+        webSettings.setSavePassword(false);
         //webView.addJavascriptInterface(new JsObject(), "client");
         webView.addJavascriptInterface(new JavascriptCallback(), "android");
         webView.clearCache(true);

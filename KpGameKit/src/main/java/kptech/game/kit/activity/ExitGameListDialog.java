@@ -2,7 +2,6 @@ package kptech.game.kit.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,12 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
@@ -68,7 +63,7 @@ public class ExitGameListDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_game_exit);
+        setContentView(R.layout.kp_dialog_game_exit);
 
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,9 +142,9 @@ public class ExitGameListDialog extends Dialog {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             if (mList.size() == 1 && mList.get(0).coverUrl!=null){
-                return new ItemViewHolder(LayoutInflater.from(this.mActivity).inflate(R.layout.dialog_exit_item_1, viewGroup, false));
+                return new ItemViewHolder(LayoutInflater.from(this.mActivity).inflate(R.layout.kp_dialog_exit_item_1, viewGroup, false));
             }
-            return new ItemViewHolder(LayoutInflater.from(this.mActivity).inflate(R.layout.dialog_exit_item, viewGroup, false));
+            return new ItemViewHolder(LayoutInflater.from(this.mActivity).inflate(R.layout.kp_dialog_exit_item, viewGroup, false));
         }
 
         @Override

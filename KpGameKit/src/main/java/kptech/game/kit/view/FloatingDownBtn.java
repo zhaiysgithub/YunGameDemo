@@ -1,15 +1,12 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import kptech.game.kit.R;
 
@@ -41,7 +38,7 @@ public class FloatingDownBtn extends FrameLayout {
     }
 
     private void initView() {
-        View view = inflate(getContext(), R.layout.view_floating_downbtn, this);
+        View view = inflate(getContext(), R.layout.kp_view_floating_downbtn, this);
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

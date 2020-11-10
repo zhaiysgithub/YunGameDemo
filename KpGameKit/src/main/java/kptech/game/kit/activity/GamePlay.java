@@ -19,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -38,7 +36,6 @@ import java.util.Map;
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.DeviceControl;
-import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
@@ -46,7 +43,6 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
-import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
@@ -120,7 +116,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private String mUnionUUID = null;
 
-    private int systemUi = -1;
+//    private int systemUi = -1;
 
     private String baseTraceId = null;
 
@@ -152,7 +148,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //        GameBox.sRefWatcher.watch(this);
 
         setFullScreen();
-        setContentView(R.layout.activity_game_play);
+        setContentView(R.layout.kp_activity_game_play);
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -233,7 +229,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 getResources().getResourceTypeName(iconRes);
                 mLoadingView.setIconImageResource(iconRes);
             }catch (Exception e){
-                mLoadingView.setIconImageResource(R.mipmap.loading_icon);
+                mLoadingView.setIconImageResource(R.mipmap.kp_loading_icon);
             }
         }
 
@@ -297,9 +293,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mFloatDownView.setOnDownListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 downloadApk(view);
-
             }
         });
 
@@ -375,11 +369,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     }
 
     private void downloadApk(View view){
-        //判断网络状态
-        if (DeviceUtils.getNetworkType(this) == ConnectivityManager.TYPE_MOBILE){
-            Toast.makeText(this,"您当前正在使用数据流量。", Toast.LENGTH_SHORT).show();
-        }
-
         boolean stop = false;
         if (mDownloadStatus == GameDownloader.STATUS_STARTED){
             //发送下载广播
@@ -393,6 +382,13 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             intent.putExtra(EXTRA_GAME, mGameInfo);
             GamePlay.this.sendBroadcast(intent);
             stop = false;
+
+            try {
+                //判断网络状态
+                if (DeviceUtils.getNetworkType(this) == ConnectivityManager.TYPE_MOBILE){
+                    Toast.makeText(this,"您当前正在使用数据流量，请在WiFi环境下下载。", Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception e){}
         }
 
         //发送打点数据
@@ -453,11 +449,30 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             public void onResult(GameInfo game, int code) {
                 try {
                     if (game!=null){
+                        mGameInfo.gid = game.gid;
+                        mGameInfo.pkgName = game.pkgName;
+                        mGameInfo.name = game.name;
+                        mGameInfo.iconUrl = game.iconUrl;
+                        mGameInfo.coverUrl = game.coverUrl;
+                        mGameInfo.downloadUrl = game.downloadUrl;
+                        mGameInfo.playCount = game.playCount;
+                        mGameInfo.totalTime = game.totalTime;
+                        mGameInfo.usedTime = game.usedTime;
+                        mGameInfo.kpGameId = game.kpGameId;
+                        mGameInfo.enableDownload = game.enableDownload;
+                        mGameInfo.addMockInfo = game.addMockInfo;
+                        mGameInfo.kpUnionGame = game.kpUnionGame;
+                        mGameInfo.recoverCloudData = game.recoverCloudData;
                         //处理广告显示
-                        if (mGameInfo.showAd != GameInfo.GAME_AD_SHOW_AUTO){
-                            game.showAd = mGameInfo.showAd;
+                        if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
+                            mGameInfo.showAd = game.showAd;
                         }
-                        mGameInfo = game;
+                        if (mGameInfo.ext == null || mGameInfo.ext.size() <= 0){
+                            mGameInfo.ext = new HashMap<>();
+                            if (game.ext != null){
+                                mGameInfo.ext.putAll(game.ext);
+                            }
+                        }
                     }
                 }catch (Exception e){
                     Logger.error("GamePlay",e.getMessage());
@@ -592,14 +607,17 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mMenuView.setDeviceControl(mDeviceControl);
 
         //显示下载按钮
-        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
+        if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.ext!=null && mGameInfo.ext.size()>0){
             mFloatDownView.setVisibility(View.VISIBLE);
         }
 
         requestExitGameList();
 
         try {
-            setFullScreen();
+//            int ui = getWindow().getDecorView().getSystemUiVisibility();
+//            if (systemUi!=-1 && ui != systemUi){
+                getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
+//            }
         }catch (Exception e){}
 
     }
@@ -731,16 +749,16 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                if (systemUi != -1){
-                    GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(systemUi);
-                    systemUi = -1;
-                }
+//                if (systemUi != -1){
+                    GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
+//                    systemUi = -1;
+//                }
             }
         });
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
-                systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
+//                systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
             }
         });
         dialog.show();
@@ -783,13 +801,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             this.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                 @Override
                 public void onSystemUiVisibilityChange(int visibility) {
-                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                    getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
                 }
             });
         } catch (Exception e) {
@@ -797,6 +809,15 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
     }
 
+    private int getSystemUi(){
+        return View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+    }
 
     private static final int CODE_REQUEST_PERMISSION = 1024;
     private void checkAndRequestPermission() {
@@ -1164,7 +1185,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
+//                    systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
 
                     //增加显示数量
                     addExitShowNum();
@@ -1180,10 +1201,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-                    if (systemUi != -1){
-                        GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(systemUi);
-                        systemUi = -1;
-                    }
+//                    if (systemUi != -1){
+                        GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
+//                        systemUi = -1;
+//                    }
                 }
             });
 

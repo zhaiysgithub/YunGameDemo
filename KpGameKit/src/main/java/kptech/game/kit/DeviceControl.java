@@ -200,7 +200,10 @@ public class DeviceControl {
                                     mGameStartCallback.onAPICallback("", APIConstants.GAME_LOADING);
                                 }
                                 //启动游戏
-                                mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+                                if (mGameHandler != null){
+                                    mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+                                }
+
                                 break;
                         }
                     }
@@ -210,14 +213,16 @@ public class DeviceControl {
         }catch (Exception e){}
 
         //启动游戏
-         mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+        if (mGameHandler != null) {
+            mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_AD));
+        }
     }
 
     /**
      * 云存档发送通知
      * @return
      */
-    private boolean sendClientNotice(){
+    private void sendClientNotice(){
         if (mGameInfo.recoverCloudData == 1){
             if (mGameStartCallback!=null){
                 mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);
@@ -249,19 +254,23 @@ public class DeviceControl {
                                 }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
                                 //延时3秒
-                                mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
+                                if (mGameHandler != null) {
+                                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
+                                }
                             }
                         })
                         .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
-                return true;
+                return;
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
 
         //启动游戏
-        mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE));
-        return false;
+        if (mGameHandler != null) {
+            mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE));
+        }
+        return;
     }
 
     /**
@@ -272,14 +281,25 @@ public class DeviceControl {
             new Thread(){
                 @Override
                 public void run() {
+                    long sleepTime = 3000;
                     try {
                         mDeviceControl.mockDeviceInfo();
+                        String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
+                        if (str != null){
+                            sleepTime = Long.parseLong(str);
+                        }
                     }catch (Exception e){}
-                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), 3000);
+                    if (mGameHandler != null) {
+                        mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), sleepTime);
+                    }
                 }
             }.start();
+            return;
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
+        }
+        if (mGameHandler != null) {
+            mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK));
         }
     }
 

@@ -8,7 +8,7 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="完整观看视频，获取免费试玩机会1次"
+        android:text="观看完整视频，即可领取免费试玩权益"
         android:textColor="#ffffff"
         android:textSize="15sp"
         android:textAlignment="center"
@@ -21,31 +21,31 @@
         android:layout_width="wrap_content"
         android:layout_height="200dp"
         android:orientation="vertical"
-        android:background="@mipmap/adremind_dialog_bg">
+        android:background="@mipmap/kp_adremind_dialog_bg">
 
         <ImageView
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
-            android:src="@mipmap/adremind_dialog_img"
+            android:src="@mipmap/kp_adremind_dialog_img"
             android:layout_gravity="center_horizontal"/>
 
         <Button
             android:id="@+id/submit"
             android:layout_width="120dp"
             android:layout_height="35dp"
-            android:background="@drawable/adremind_dialog_btn"
+            android:background="@drawable/kp_adremind_dialog_btn"
             android:layout_gravity="center_horizontal"
             android:textSize="15sp"
             android:textColor="#ffffff"
-            android:text="增加一次"/>
+            android:text="立即领取"/>
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/cancel"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@mipmap/adremind_dialog_close_btn"
+        android:src="@mipmap/kp_adremind_dialog_close_btn"
         android:layout_gravity="center_horizontal"
         android:scaleType="centerInside"
         android:background="@null"

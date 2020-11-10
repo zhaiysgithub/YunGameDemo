@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.0.5"
+        versionName "1.0.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -34,7 +34,7 @@ dependencies {
 
     //网易专用广告SDK
     implementation 'kptech.game.kit:msa_mdid:1.0.10@aar'
-    implementation 'kptech.game.kit:ZADSdk:3.3.3271.7@aar'
+    implementation 'kptech.game.kit:ZADSdk:3.3.3281.7@aar'
     implementation 'kptech.game.kit:BDMobAdsSDK:0.0.0.1@aar'
     implementation 'kptech.game.kit:GDTSdk:4.232.1102@aar'
 

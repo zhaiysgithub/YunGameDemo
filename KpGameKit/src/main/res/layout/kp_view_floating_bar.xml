@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="90dp"
               android:layout_height="35dp"
-              android:background="@drawable/floating_bar_bg"
+              android:background="@drawable/kp_floating_bar_bg"
               android:paddingRight="5dp"
               android:gravity="center"
               android:orientation="horizontal">

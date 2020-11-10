@@ -56,7 +56,7 @@ public class LoadingRoundImageView extends View {
 
     public void initDrawable() {
         circleRing = new Paint();
-        bitmaps = BitmapFactory.decodeResource(getResources(), R.mipmap.loading_icon);
+        bitmaps = BitmapFactory.decodeResource(getResources(), R.mipmap.kp_loading_icon);
     }
 
     public void setImageResource(int resId) {

@@ -57,7 +57,7 @@ public class FloatingBarView extends SurfaceView implements SurfaceHolder.Callba
     }
 
     private void initView() {
-        mFloatingView = (LinearLayout) inflate(getContext(), R.layout.view_floating_bar, null);
+        mFloatingView = (LinearLayout) inflate(getContext(), R.layout.kp_view_floating_bar, null);
         mIcon = (ImageView) mFloatingView.findViewById(R.id.floating_icon);
         mText = (TextView) mFloatingView.findViewById(R.id.floating_text);
         mSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -105,7 +105,7 @@ public class FloatingBarView extends SurfaceView implements SurfaceHolder.Callba
     private void updateView(int color) {
         mText.setText(mLastPing + "ms");
         mText.setTextColor(getContext().getResources().getColor(color));
-        mIcon.setImageResource(R.mipmap.floating_bar_menu);
+        mIcon.setImageResource(R.mipmap.kp_floating_bar_menu);
 
         if (mDrawingThread != null) {
             mDrawingThread.draw();

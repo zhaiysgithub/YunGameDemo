@@ -2,8 +2,6 @@ package kptech.game.kit.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -59,7 +57,7 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
+        setContentView(R.layout.kp_activity_account);
 
         Logger.info(TAG,"onCreate " + mCorpKey);
 

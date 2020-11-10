@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:layout_gravity="center"
-    android:background="@drawable/cloud_phone_float_view_bg"
+    android:background="@drawable/kp_cloud_phone_float_view_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -19,7 +19,7 @@
             android:id="@+id/clarity_hd"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            android:background="@drawable/blue_btn"
+            android:background="@drawable/kp_blue_btn"
             android:text="超清"
             android:textColor="@color/common_white" />
 
@@ -28,7 +28,7 @@
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
-            android:background="@drawable/translucent_btn"
+            android:background="@drawable/kp_translucent_btn"
             android:text="高清"
             android:textColor="@color/common_white" />
 
@@ -37,7 +37,7 @@
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
-            android:background="@drawable/translucent_btn"
+            android:background="@drawable/kp_translucent_btn"
             android:text="流畅"
             android:textColor="@color/common_white" />
 
@@ -46,7 +46,7 @@
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginLeft="16dp"
-            android:background="@drawable/translucent_btn"
+            android:background="@drawable/kp_translucent_btn"
             android:text="自动"
             android:textColor="@color/common_white" />
     </LinearLayout>

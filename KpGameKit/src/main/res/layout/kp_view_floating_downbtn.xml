@@ -8,7 +8,7 @@
         android:indeterminateOnly="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:progressDrawable="@drawable/down_pb_bg"
+        android:progressDrawable="@drawable/kp_down_pb_bg"
         android:max="100"
         android:progress="0"/>
 

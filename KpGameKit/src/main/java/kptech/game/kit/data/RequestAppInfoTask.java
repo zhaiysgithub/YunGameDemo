@@ -84,6 +84,17 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+
+                try {
+                    //mockSleepTime
+                    String mockSleepTime = dObj.has("mockSleepTime") ? dObj.getString("mockSleepTime") : null;
+                    if (mockSleepTime != null){
+                        ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_MOCK_SLEEPTIME, mockSleepTime);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 ret = true;
             }else {
                 String m = jsonObject.getString("m");

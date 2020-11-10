@@ -6,7 +6,7 @@
     android:minHeight="200dp"
     android:layout_centerInParent="true"
     android:layout_gravity="center"
-    android:background="@drawable/dialog_bg"
+    android:background="@drawable/kp_dialog_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingTop="10dp"
@@ -19,13 +19,13 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/dialog_kp_logo"
+            android:src="@mipmap/kp_dialog_kp_logo"
             android:layout_centerInParent="true"/>
         <ImageButton
             android:id="@+id/close"
             android:layout_width="30dp"
             android:layout_height="20dp"
-            android:src="@mipmap/down_notify_close"
+            android:src="@mipmap/kp_down_notify_close"
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
             android:visibility="gone"/>
@@ -33,12 +33,12 @@
 
     <include
         android:id="@+id/login_layout"
-        layout="@layout/view_login"
+        layout="@layout/kp_view_login"
         android:visibility="visible" />
 
     <include
         android:id="@+id/regist_layout"
-        layout="@layout/view_regist"
+        layout="@layout/kp_view_regist"
         android:visibility="gone" />
 
 </LinearLayout>

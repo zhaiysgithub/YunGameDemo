@@ -87,7 +87,7 @@ public class Loading extends Dialog{
         public Loading create(){
 
             LayoutInflater inflater = LayoutInflater.from(context);
-            View view=inflater.inflate(R.layout.dialog_loading,null);
+            View view=inflater.inflate(R.layout.kp_dialog_loading,null);
             Loading loadingDailog=new Loading(context,R.style.MyDialogLoadingStyle);
             TextView msgText= (TextView) view.findViewById(R.id.tipTextView);
             if(isShowMessage){

@@ -4,7 +4,7 @@
     android:layout_height="300dp"
     android:layout_centerInParent="true"
     android:layout_gravity="center"
-    android:background="@drawable/dialog_bg"
+    android:background="@drawable/kp_dialog_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="10dp">
@@ -26,13 +26,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/dialog_kp_logo"
+                android:src="@mipmap/kp_dialog_kp_logo"
                 android:layout_centerInParent="true"/>
             <ImageButton
                 android:id="@+id/close"
                 android:layout_width="30dp"
                 android:layout_height="20dp"
-                android:src="@mipmap/down_notify_close"
+                android:src="@mipmap/kp_down_notify_close"
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"/>
         </RelativeLayout>
@@ -140,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:src="@mipmap/item_opt_arrow"
+                android:src="@mipmap/kp_item_opt_arrow"
                 />
             <TextView
                 android:id="@+id/yhj_btn"
@@ -180,9 +180,9 @@
                 android:text="微信"
                 android:textColor="#FF4A4A4A"
                 android:textSize="14sp"
-                android:button="@mipmap/pay_dialog_wx"
+                android:button="@mipmap/kp_pay_dialog_wx"
                 android:checked="true"
-                android:background="@drawable/btn_white_withdraw_radiogroup"/>
+                android:background="@drawable/kp_btn_white_withdraw_radiogroup"/>
 
             <RadioButton
                 android:id="@+id/radio_alipay"
@@ -196,8 +196,8 @@
                 android:text="支付宝"
                 android:textColor="#FF4A4A4A"
                 android:textSize="14sp"
-                android:button="@mipmap/pay_dialog_ali"
-                android:background="@drawable/btn_white_withdraw_radiogroup"/>
+                android:button="@mipmap/kp_pay_dialog_ali"
+                android:background="@drawable/kp_btn_white_withdraw_radiogroup"/>
 
         </RadioGroup>
 
@@ -232,7 +232,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dip"
             android:layout_marginTop="5dp"
-            android:progressDrawable="@drawable/webview_probar_bg"
+            android:progressDrawable="@drawable/kp_webview_probar_bg"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:progress="50"
@@ -242,7 +242,7 @@
             android:id="@+id/confirm_the_payment"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/dialog_btn_bg"
+            android:background="@drawable/kp_dialog_btn_bg"
             android:textSize="16sp"
             android:textColor="#ffffff"
             android:layout_marginTop="5dp"

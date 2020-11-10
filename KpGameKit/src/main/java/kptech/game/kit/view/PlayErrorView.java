@@ -8,19 +8,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-
-import kptech.game.kit.GameBox;
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.utils.StringUtil;
 
 public class PlayErrorView extends LinearLayout implements View.OnClickListener {
@@ -48,7 +42,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.view_play_error, this);
+        inflate(getContext(), R.layout.kp_view_play_error, this);
     }
 
     public void setOnBackListener(OnClickListener listener){
@@ -76,11 +70,11 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
                     Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
                 }catch (Exception e){}
             }
-            if (!StringUtil.isEmpty(mGameInfo.downloadUrl)){
+            if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.ext!=null && mGameInfo.ext.size()>0){
                 //显示下载按钮
                 mErrorDownBtn.setTag("down");
                 mErrorDownText.setText("下载游戏直接玩");
-            }else {
+            } else {
                 //显示重试按钮
                 mErrorDownBtn.setTag("reload");
                 mErrorDownText.setText("重新加载游戏");

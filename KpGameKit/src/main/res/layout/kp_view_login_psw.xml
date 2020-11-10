@@ -8,12 +8,12 @@
 
     <include
         android:id="@+id/login_layout"
-        layout="@layout/view_login"
+        layout="@layout/kp_view_login"
         android:visibility="visible" />
 
     <include
         android:id="@+id/regist_layout"
-        layout="@layout/view_regist"
+        layout="@layout/kp_view_regist"
         android:visibility="gone" />
 
 </LinearLayout>

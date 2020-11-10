@@ -96,7 +96,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
     }
 
     private void init(){
-        View.inflate(mActivity, R.layout.view_login_psw, this);
+        View.inflate(mActivity, R.layout.kp_view_login_psw, this);
     }
 
     @Override

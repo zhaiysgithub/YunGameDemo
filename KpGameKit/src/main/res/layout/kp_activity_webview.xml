@@ -7,12 +7,12 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:orientation="horizontal"
-        android:background="@drawable/titlebar_bg">
+        android:background="@drawable/kp_titlebar_bg">
         <ImageButton
             android:id="@+id/back"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:src="@mipmap/title_bar_close"
+            android:src="@mipmap/kp_title_bar_close"
             android:scaleType="center"
             android:background="@null"
             />

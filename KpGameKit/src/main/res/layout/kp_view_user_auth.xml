@@ -15,7 +15,7 @@
             android:id="@+id/btn_back"
             android:layout_width="70dp"
             android:layout_height="60dp"
-            android:src="@mipmap/game_play_back_img"
+            android:src="@mipmap/kp_game_play_back_img"
             android:background="@null"/>
         <TextView
             android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
             android:layout_height="75dp"
             android:scaleType="fitXY"
             app:radius="10dp"
-            android:background="@drawable/icon_bg"
+            android:background="@drawable/kp_icon_bg"
             android:layout_gravity="center_horizontal"
             />
         <TextView
@@ -71,7 +71,7 @@
             android:layout_width="170dp"
             android:layout_height="34dp"
             android:textColor="#ffffff"
-            android:background="@drawable/game_submit_btn"
+            android:background="@drawable/kp_game_submit_btn"
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
             android:textSize="14sp"

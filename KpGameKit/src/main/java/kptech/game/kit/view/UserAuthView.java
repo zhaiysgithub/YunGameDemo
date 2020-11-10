@@ -31,7 +31,7 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
     }
 
     private void initView() {
-        inflate(getContext(), R.layout.view_user_auth, this);
+        inflate(getContext(), R.layout.kp_view_user_auth, this);
     }
 
     public void setOnBackListener(OnClickListener listener){

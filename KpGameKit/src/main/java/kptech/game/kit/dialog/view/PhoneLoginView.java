@@ -68,7 +68,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
     }
 
     private void init(){
-        View.inflate(mActivity, R.layout.view_login_phone, this);
+        View.inflate(mActivity, R.layout.kp_view_login_phone, this);
     }
 
     public void setCorpKey(String corpKey, String pkgName, String padCode){

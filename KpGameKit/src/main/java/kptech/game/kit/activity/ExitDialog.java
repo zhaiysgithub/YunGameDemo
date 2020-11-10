@@ -22,7 +22,7 @@ public class ExitDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_exit);
+        setContentView(R.layout.kp_dialog_exit);
 
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override

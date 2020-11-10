@@ -15,7 +15,7 @@ public class AdRemindDialog extends AlertDialog implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ad_remind_dialog);
+        setContentView(R.layout.kp_ad_remind_dialog);
         initView();
         this.setCanceledOnTouchOutside(false);
     }

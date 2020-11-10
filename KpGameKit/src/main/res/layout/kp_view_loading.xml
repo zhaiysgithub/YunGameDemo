@@ -36,7 +36,7 @@
                 android:id="@+id/icon"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@mipmap/loading_icon"
+                android:src="@mipmap/kp_loading_icon"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"/>
         </FrameLayout>

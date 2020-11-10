@@ -24,7 +24,7 @@ public class DeviceIdUtil {
         StringBuilder sbDeviceId = new StringBuilder();
 
         //获得设备默认IMEI（>=6.0 需要ReadPhoneState权限）
-        String imei = getIMEI(context);
+//        String imei = getIMEI(context);
         //获得AndroidId（无需权限）
         String androidid = getAndroidId(context);
         //获得设备序列号（无需权限）
@@ -33,10 +33,10 @@ public class DeviceIdUtil {
         String uuid = getDeviceUUID().replace("-", "");
 
         //追加imei
-        if (imei != null && imei.length() > 0) {
-            sbDeviceId.append(imei);
-            sbDeviceId.append("|");
-        }
+//        if (imei != null && imei.length() > 0) {
+//            sbDeviceId.append(imei);
+//            sbDeviceId.append("|");
+//        }
         //追加androidid
         if (androidid != null && androidid.length() > 0) {
             sbDeviceId.append(androidid);
@@ -55,6 +55,7 @@ public class DeviceIdUtil {
         //生成SHA1，统一DeviceId长度
         if (sbDeviceId.length() > 0) {
             try {
+                Logger.info("DeviceIdUtils", sbDeviceId.toString());
                 byte[] hash = getHashByString(sbDeviceId.toString());
                 String sha1 = bytesToHex(hash);
                 if (sha1 != null && sha1.length() > 0) {
