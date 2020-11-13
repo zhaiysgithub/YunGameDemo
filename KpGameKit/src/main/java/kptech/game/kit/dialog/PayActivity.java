@@ -374,7 +374,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
         //其他细节操作
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); //关闭webview中缓存
-        webSettings.setAllowFileAccess(true); //设置可以访问文件
+        webSettings.setAllowFileAccess(false); //设置可以访问文件
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
         webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
