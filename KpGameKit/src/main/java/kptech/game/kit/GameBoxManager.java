@@ -658,7 +658,7 @@ public class GameBoxManager {
             manager.addDeviceMockInfo("manufacturer", DeviceUtils.getDeviceManufacturer());
             manager.addDeviceMockInfo("bootloader", DeviceUtils.getDeviceBootloader());
 
-            manager.addDeviceMockInfo("seriaino", DeviceUtils.getSERIAL());
+            manager.addDeviceMockInfo("serialno", DeviceUtils.getSERIAL());
 
             manager.addDeviceMockInfo("board", DeviceUtils.getDeviceBoard());
             manager.addDeviceMockInfo("device", DeviceUtils.getDeviceDevice());
