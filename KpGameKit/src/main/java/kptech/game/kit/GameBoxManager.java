@@ -709,7 +709,7 @@ public class GameBoxManager {
             manager.removeDeviceMockInfo("model");
             manager.removeDeviceMockInfo("manufacturer");
             manager.removeDeviceMockInfo("bootloader");
-            manager.removeDeviceMockInfo("seriaino");
+            manager.removeDeviceMockInfo("serialno");
             manager.removeDeviceMockInfo("device");
             manager.removeDeviceMockInfo("fingerprint");
             manager.removeDeviceMockInfo("productName");
