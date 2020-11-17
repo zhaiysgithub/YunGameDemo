@@ -460,7 +460,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                         mGameInfo.usedTime = game.usedTime;
                         mGameInfo.kpGameId = game.kpGameId;
                         mGameInfo.enableDownload = game.enableDownload;
-                        mGameInfo.addMockInfo = game.addMockInfo;
+                        mGameInfo.mockSleepTime = game.mockSleepTime;
                         mGameInfo.kpUnionGame = game.kpUnionGame;
                         mGameInfo.recoverCloudData = game.recoverCloudData;
                         //处理广告显示

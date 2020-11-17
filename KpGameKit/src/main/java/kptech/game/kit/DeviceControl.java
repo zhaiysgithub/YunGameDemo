@@ -277,27 +277,57 @@ public class DeviceControl {
      * 发送云设备信息
      */
     private void sendMockDeviceInfo(){
+
+        long sleepTime = 3000;
         try {
-            new Thread(){
-                @Override
-                public void run() {
-                    long sleepTime = 3000;
-                    try {
-                        mDeviceControl.mockDeviceInfo();
-                        String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
-                        if (str != null){
-                            sleepTime = Long.parseLong(str);
-                        }
-                    }catch (Exception e){}
-                    if (mGameHandler != null) {
-                        mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), sleepTime);
-                    }
+            if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){
+                //获取整体时间
+                String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
+                if (str != null){
+                    sleepTime = Long.parseLong(str);
                 }
-            }.start();
-            return;
+            }else if (mGameInfo!=null){
+                //获取游戏设置的时间
+                sleepTime = mGameInfo.mockSleepTime;
+            }
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
+
+        try {
+            //不同步信息
+            if (sleepTime == -3){
+
+            }
+            //同步信息，不等待
+            else if (sleepTime == -2){
+                //上传信息并等待
+                new Thread(){
+                    @Override
+                    public void run() {
+                        mDeviceControl.mockDeviceInfo();
+                    }
+                }.start();
+            }
+            //同步信息，等待
+            else {
+                final long time = sleepTime >= 0 ? sleepTime : 3000;
+                //上传信息并等待
+                new Thread(){
+                    @Override
+                    public void run() {
+                        mDeviceControl.mockDeviceInfo();
+                        if (mGameHandler != null) {
+                            mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
+                        }
+                    }
+                }.start();
+                return;
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+
         if (mGameHandler != null) {
             mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK));
         }

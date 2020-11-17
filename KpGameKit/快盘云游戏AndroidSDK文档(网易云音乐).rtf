@@ -215,7 +215,7 @@ dependencies
 \f6 \cf7 \
     
 \f7\b implementation 
-\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.1.8\'94\cf7 \
+\f6\b0 \cf10 "kptech.game.kit:gamebox:1.1.2.47\'94\cf7 \
 \}
 \f2 \
 
@@ -322,6 +322,34 @@ dependencies
 \f7\b \cf11 playGame
 \f6\b0 \cf7 (Activity activity, GameInfo game);\
 \
+
+\f8\i \cf9     /**
+\f6\i0 \cf7 \
+
+\f8\i \cf9      * 
+\f2\i0 \'c6\'f4\'b6\'af\'d3\'ce\'cf\'b7
+\f6 \cf7 \
+
+\f8\i \cf9      * \cf10 @param\cf9  activity
+\f6\i0 \cf7 \
+
+\f8\i \cf9      * \cf10 @param\cf9  game 
+\f2\i0 \'d3\'ce\'cf\'b7\'d0\'c5\'cf\'a2\
+
+\f8\i      * \cf10 @param\cf9  params 
+\f2\i0 \'d3\'ce\'cf\'b7\'b2\'ce\'ca\'fd, \'d3\'c3\'bb\'a7\'d2\'bb\'bc\'fc\'b5\'c7\'c2\'bc\'b4\'ab\'c8\'ebuid
+\f6 \cf7 \
+
+\f8\i \cf9      */
+\f6\i0 \cf7 \
+
+\f7\b     public
+\f6\b0  
+\f7\b void
+\f6\b0  
+\f7\b \cf11 playGame
+\f6\b0 \cf7 (Activity activity, GameInfo game, Params params);\
+\
 \
 
 \f8\i \cf9     //
@@ -411,7 +439,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'bf\'aa\'ca\'bc
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_STARTED = 1;  \
@@ -420,7 +448,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'d4\'dd\'cd\'a3
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_PAUSED = 2;\
@@ -429,7 +457,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'cd\'a3\'d6\'b9
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_STOPED = 3;\
@@ -438,7 +466,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'cf\'c2\'d4\'d8\'cd\'ea\'b3\'c9
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_FINISHED = 4;\
@@ -447,7 +475,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'c8\'a1\'cf\'fb\'cf\'c2\'d4\'d8
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_CANCEL = 5;\
@@ -456,7 +484,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'b5\'c8\'b4\'fd\'cf\'c2\'d4\'d8
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_WAITTING = 6;\
@@ -465,7 +493,7 @@ dependencies
 \f8\i \cf9 //
 \f2\i0 \'cf\'c2\'d4\'d8\'b3\'f6\'b4\'ed
 \f6 \cf7 \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 	
 \f7\b public static final int
 \f6\b0  STATUS_ERROR = 7;\
@@ -474,7 +502,7 @@ dependencies
 \
     
 \f8\i \cf9 /**\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf9      * 
 \f2\i0 \'bf\'aa\'ca\'bc\'cf\'c2\'d4\'d8
 \f8\i \
@@ -490,7 +518,7 @@ dependencies
 \f6\b0  
 \f7\b \cf11 start
 \f6\b0 \cf7 (String url)\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 \
 \pard\pardeftab720\sl340\partightenfactor0
 \cf7    
@@ -506,7 +534,7 @@ dependencies
 \f6\b0  
 \f7\b \cf11 stop
 \f6\b0 \cf7 (String url)\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 \
 \pard\pardeftab720\sl340\partightenfactor0
 \cf7     
@@ -514,7 +542,7 @@ dependencies
      * 
 \f2\i0 \'d4\'dd\'cd\'a3
 \f8\i \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf9      */
 \f6\i0 \cf7 \
 \pard\pardeftab720\sl340\partightenfactor0
@@ -526,7 +554,7 @@ dependencies
 \
     
 \f8\i \cf9 /**\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf9      * 
 \f2\i0 \'bc\'cc\'d0\'f8
 \f8\i \
@@ -538,7 +566,7 @@ dependencies
 \f6\b0  
 \f7\b \cf11 resume
 \f6\b0 \cf7 ()\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 \
 \pard\pardeftab720\sl340\partightenfactor0
 \cf7    
@@ -552,14 +580,14 @@ dependencies
      * \cf10 @param\cf9  total  
 \f2\i0 \'ce\'c4\'bc\'fe\'d7\'dc\'b4\'f3\'d0\'a1
 \f8\i \
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf9      */\
 \pard\pardeftab720\sl340\partightenfactor0
 
 \f6\i0 \cf7     
 \f7\b public synchronized void \cf11 onProgresss
 \f6\b0 \cf7 (long current, long total)\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 \cf7 \
 \pard\pardeftab720\sl340\partightenfactor0
 \cf7     
@@ -623,6 +651,12 @@ dependencies
 20200901: v1.1
 \f2 .1.9
 \f3 , 
-\f2 \'d4\'f6\'bc\'d3\'cf\'c2\'d4\'d8\'b9\'a6\'c4\'dc\'a3\'ac\'d0\'de\'b8\'c4\'ce\'aa\'b0\'d9\'b6\'c8\'b9\'e3\'b8\'e6SDK\'a1\'a3
+\f2 \'d4\'f6\'bc\'d3\'cf\'c2\'d4\'d8\'b9\'a6\'c4\'dc\'a3\'ac\'d0\'de\'b8\'c4\'ce\'aa\'b0\'d9\'b6\'c8\'b9\'e3\'b8\'e6SDK\'a1\'a3\
+\ls3\ilvl0
+\f3 \kerning1\expnd0\expndtw0 {\listtext	\uc0\u8226 	}\expnd0\expndtw0\kerning0
+20201112: v1.1
+\f2 .2.47
+\f3 , 
+\f2 \'d3\'c5\'bb\'af\'ca\'fd\'be\'dd\'b4\'f2\'b5\'e3\'a3\'ac\'d4\'f6\'bc\'d3\'cd\'ec\'c1\'f4\'b4\'b0\'a1\'a3
 \f3 \uc0\u8232 \
 }

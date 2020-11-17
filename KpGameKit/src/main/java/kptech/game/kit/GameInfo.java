@@ -41,12 +41,14 @@ public class GameInfo implements Parcelable {
     public int enableDownload = 1;
     public int showAd = GAME_AD_SHOW_AUTO;
     //自动本地IMEI\AndroidID到云设备，0不添加，1添加
-    public int addMockInfo = 1;
+//    public int addMockInfo = 1;
     //快盘联运游戏 1是，0否
     public int kpUnionGame;
     public HashMap<String,String> ext;
     //恢复用户云手机数据
     public int recoverCloudData = 1;
+    //同步云手机信息等待时间， -1使用全局默认值， -2不等待返回，-3不同步数据
+    public int mockSleepTime = -1;
 
     public GameInfo() {
     }
@@ -65,7 +67,7 @@ public class GameInfo implements Parcelable {
         this.usedTime = var1.readInt();
         this.size = var1.readLong();
         this.showAd = var1.readInt();
-        this.addMockInfo = var1.readInt();
+        this.mockSleepTime = var1.readInt();
         this.recoverCloudData = var1.readInt();
         this.ext = var1.readHashMap(HashMap.class.getClassLoader());
     }
@@ -92,7 +94,7 @@ public class GameInfo implements Parcelable {
         var1.writeInt(this.usedTime);
         var1.writeLong(this.size);
         var1.writeInt(this.showAd);
-        var1.writeInt(this.addMockInfo);
+        var1.writeInt(this.mockSleepTime);
         var1.writeInt(this.recoverCloudData);
         var1.writeMap(this.ext);
     }
