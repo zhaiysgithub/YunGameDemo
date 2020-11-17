@@ -275,6 +275,7 @@ public class RequestTask {
             inf.coverUrl = gameObj.has("gameAppCoverImgUrl") ? gameObj.getString("gameAppCoverImgUrl") : null;
             inf.recoverCloudData = gameObj.has("recoverCloudData") ? gameObj.getInt("recoverCloudData") : 1;
             inf.kpUnionGame = gameObj.has("isKpJointOpe") ? gameObj.getInt("isKpJointOpe") : 0;
+            inf.mockSleepTime = gameObj.has("mockSleepTime") ? gameObj.getInt("mockSleepTime") : -1;
             if (gameObj.has("downloadExt")){
                 HashMap<String,String> ext = new HashMap<>();
                 try {
