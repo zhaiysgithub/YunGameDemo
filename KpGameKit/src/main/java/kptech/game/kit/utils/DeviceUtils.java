@@ -75,12 +75,23 @@ public class DeviceUtils {
      *
      * @return 设备序列号
      */
+    @SuppressLint({"NewApi", "MissingPermission"})
     public static String getSERIAL() {
+        String serial = "";
         try {
-            return Build.SERIAL;
-        } catch (Exception ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {//9.0+
+                serial = Build.getSerial();
+            } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {//8.0+
+                serial = Build.SERIAL;
+            } else {//8.0-
+                Class<?> c = Class.forName("android.os.SystemProperties");
+                Method get = c.getMethod("get", String.class);
+                serial = (String) get.invoke(c, "ro.serialno");
+            }
+        } catch (Exception e) {
+            Logger.error("DeviceUtils", "读取设备序列号异常：" + e.toString());
         }
-        return "";
+        return serial;
     }
 
     /**
