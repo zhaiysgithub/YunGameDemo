@@ -26,6 +26,7 @@ import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestAppInfoTask;
 import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.utils.DeviceIdUtil;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
@@ -127,6 +128,9 @@ public class GameBoxManager {
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
             event.setExt(getDeviceInfo(application));
             MobclickAgent.sendEvent(event);
+
+            Logger.info("GameBoxManager","deviceId: " + DeviceInfo.getDeviceId(mApplication));
+
         }catch (Exception e){
             Logger.error("GameBoxManager",e.getMessage());
         }
@@ -154,6 +158,7 @@ public class GameBoxManager {
                     break;
             }
             params.put("nettype", netStr);
+            params.put("deviceId", DeviceInfo.getDeviceId(context));
         }catch (Exception e){
         }
         return params;
