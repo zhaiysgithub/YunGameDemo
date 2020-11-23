@@ -76,8 +76,8 @@ public class RequestPayTask extends AsyncTask<HashMap,Void,String> {
             URL url = new URL(str);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
-            postConnection.setConnectTimeout(1000*5);
-            postConnection.setReadTimeout(1000*5);
+            postConnection.setConnectTimeout(1000*10);
+            postConnection.setReadTimeout(1000*10);
             postConnection.setDoInput(true);//允许从服务端读取数据
             postConnection.setDoOutput(true);//允许写入
 //            postConnection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");//以表单形式传递参数

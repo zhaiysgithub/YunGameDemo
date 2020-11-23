@@ -344,7 +344,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && mPayState == PAY_STATE_LOAD_WEB) {
-            mConfirmPaymentBtn.setText("支付完成");
+            mConfirmPaymentBtn.setText("操作完成");
             mConfirmPaymentBtn.setEnabled(true);
             mPayState = PAY_STATE_FINISHED;
 

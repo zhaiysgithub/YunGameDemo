@@ -119,6 +119,7 @@ public class EventCode {
     public static final String DATA_USER_LOGIN_START = "DATA_USER_LOGIN_START";
     public static final String DATA_USER_LOGIN_SUCCESS = "DATA_USER_LOGIN_SUCCESS";
     public static final String DATA_USER_LOGIN_FAILED = "DATA_USER_LOGIN_FAILED";
+    public static final String DATA_USER_LOGIN_CACHE = "DATA_USER_LOGIN_CACHE";
 
     //获取验证码失败
     public static final String DATA_GET_CREDIT_FAILED = "DATA_GET_CREDIT_FAILED";

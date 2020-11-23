@@ -14,6 +14,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.analytic.Event;
+import kptech.game.kit.analytic.EventCode;
+import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.dialog.AccountActivity;
 import kptech.game.kit.dialog.PayActivity;
@@ -121,6 +124,13 @@ public class MsgHandler extends Handler {
                 if (mCallback!=null){
                     mCallback.onLogin(1, "", loginData);
                 }
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_CACHE, mPkgName, mPadCode);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
                 return;
             }
         }catch (Exception e){

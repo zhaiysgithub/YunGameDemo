@@ -188,8 +188,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             URL url = new URL(Urls.HTTP_URL);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
-            postConnection.setConnectTimeout(1000*5);
-            postConnection.setReadTimeout(1000*5);
+            postConnection.setConnectTimeout(1000*10);
+            postConnection.setReadTimeout(1000*10);
             postConnection.setDoInput(true);//允许从服务端读取数据
 
             params.put("ctime", new Date().getTime());

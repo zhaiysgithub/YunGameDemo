@@ -25,7 +25,7 @@
             android:src="@mipmap/kp_down_notify_close"
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
     </RelativeLayout>
 
     <kptech.game.kit.dialog.view.PhoneLoginView
