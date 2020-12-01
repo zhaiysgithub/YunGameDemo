@@ -115,6 +115,7 @@ public class EventCode {
     public static final String DATA_USER_REGIST_START = "DATA_USER_REGIST_START";
     public static final String DATA_USER_REGIST_SUCCESS = "DATA_USER_REGIST_SUCCESS";
     public static final String DATA_USER_REGIST_FAILED = "DATA_USER_REGIST_FAILED";
+
     //用户登录
     public static final String DATA_USER_LOGIN_START = "DATA_USER_LOGIN_START";
     public static final String DATA_USER_LOGIN_SUCCESS = "DATA_USER_LOGIN_SUCCESS";
@@ -127,7 +128,14 @@ public class EventCode {
     //用户手机号登录
     public static final String DATA_USER_LOGINPHONE_START = "DATA_USER_LOGINPHONE_START";
     public static final String DATA_USER_LOGINPHONE_SUCCESS = "DATA_USER_LOGINPHONE_SUCCESS";
+    public static final String DATA_USER_LOGINPHONE_SUCCESSREG = "DATA_USER_LOGINPHONE_SUCCESSREG";
     public static final String DATA_USER_LOGINPHONE_FAILED = "DATA_USER_LOGINPHONE_FAILED";
+
+    //第三方帐号登录
+    public static final String DATA_USER_LOGINUSIGN_START = "DATA_USER_LOGINUSIGN_START";
+    public static final String DATA_USER_LOGINUSIGN_SUCCESS = "DATA_USER_LOGINUSIGN_SUCCESS";
+    public static final String DATA_USER_LOGINUSIGN_SUCCESSREG = "DATA_USER_LOGINUSIGN_SUCCESSREG";
+    public static final String DATA_USER_LOGINUSIGN_FAILED = "DATA_USER_LOGINUSIGN_FAILED";
 
     //支付生成订单
     public static final String DATA_PAY_MAKETRADE_START = "DATA_PAY_MAKETRADE_START";
@@ -135,14 +143,15 @@ public class EventCode {
     public static final String DATA_PAY_MAKETRADE_FAILED = "DATA_PAY_MAKETRADE_FAILED";
 
     //支付
-    public static final String DATA_PAY_APP_WX = "DATA_PAY_APP_WX";
-    public static final String DATA_PAY_APP_ZFB = "DATA_PAY_APP_ZFB";
-    public static final String DATA_PAY_APP_ERROR = "DATA_PAY_APP_ERROR";
     public static final String DATA_PAY_APP_FINISH = "DATA_PAY_APP_FINISH";
 
     //调用支付
     public static final String DATA_PAY_APP_START = "DATA_PAY_APP_START";
+    public static final String DATA_PAY_APP_WXSTART = "DATA_PAY_APP_WXSTART";
+    public static final String DATA_PAY_APP_ZFBSTART = "DATA_PAY_APP_ZFBSTART";
     public static final String DATA_PAY_APP_FAILED = "DATA_PAY_APP_FAILED";
+    public static final String DATA_PAY_APP_WXFAILED = "DATA_PAY_APP_WXFAILED";
+    public static final String DATA_PAY_APP_ZFBFAILED = "DATA_PAY_APP_ZFBFAILED";
     public static final String DATA_PAY_WEB_FAILED = "DATA_PAY_WEB_FAILED";
 
 

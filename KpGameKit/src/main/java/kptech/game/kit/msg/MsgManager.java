@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
@@ -22,6 +23,10 @@ import kptech.game.kit.utils.ProferencesUtils;
 public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 //    private static final Logger logger = new Logger("MsgManager") ;
 
+//    public interface IMessageReceiver {
+//        void onMessageReceived(String msg);
+//    }
+
     private static boolean inited = false;
     private static MsgManager mMsgManager;
     public static void init(Application application, String corpId){
@@ -30,6 +35,9 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
     }
     public static void setDebug(boolean debug){
         Messager.setDebug(debug);
+    }
+    public static MsgManager getInstance(){
+        return mMsgManager;
     }
 
     public static void start(Activity activity, String corpId, String token, String pkgName, String gameId, String gameName){
@@ -77,6 +85,14 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 
     }
 
+    public static void sendMessage(String msg){
+        try {
+            Messager.getInstance().send(msg);
+        }catch (Exception e){
+            Logger.error("MsgManager",e.getMessage());
+        }
+    }
+
     public static void stop(){
         try {
             if (Messager.getInstance().isConnected()){
@@ -104,6 +120,14 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
     private void destory(){
         this.mHandler.destory();
         this.mHandler = null;
+        try {
+            if (mReceiverRef != null){
+                mReceiverRef.clear();
+                mReceiverRef = null;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void setPadCode(String padCode){
@@ -127,6 +151,13 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
     private void setPkgName(String pkgName){
         if (mHandler!=null){
             mHandler.setPkgName(pkgName);
+        }
+    }
+
+    private WeakReference<IMsgReceiver>  mReceiverRef;
+    public void setMessageReceiver(IMsgReceiver receiver){
+        if (receiver != null){
+            mReceiverRef = new WeakReference<>(receiver);
         }
     }
 
@@ -155,9 +186,22 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         if (msg == null) {
             return;
         }
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(msg);
+        }catch (Exception e){
+            Logger.error("MsgManager",e.getMessage());
+        }
+
+        if (obj == null || !obj.has("event")) {
+            if (mReceiverRef!=null && mReceiverRef.get()!=null){
+                mReceiverRef.get().onMessageReceived(msg);
+            }
+            return;
+        }
 
         try {
-            JSONObject obj = new JSONObject(msg);
+
             String event = obj.getString("event");
             if ("login".equals(event)){
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGIN);
@@ -167,52 +211,81 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY,msg));
             }else if ("logout".equals(event)){
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
+            }else if ("exit".equals(event)){
+                if (mReceiverRef!=null && mReceiverRef.get()!=null){
+                    mReceiverRef.get().onMessageReceived(event, null);
+                }
             }
         } catch (JSONException e) {
             Logger.error("MsgManager",e.getMessage());
         }
     }
 
+
+
     @Override
     public void onLogout() {
         JSONObject obj = new JSONObject();
         try {
             obj.put("event","logout");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Messager.getInstance().send(obj.toString());
-    }
-
-
-    @Override
-    public void onLogin(int code, String msg, Map<String, Object> map) {
-        if (code != 1){
-            return;
-        }
-
-        JSONObject obj = new JSONObject(map);
-        try {
-            obj.put("event","login");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Messager.getInstance().send(obj.toString());
-    }
-
-    @Override
-    public void onPay(int code, String msg, Map<String, Object> map) {
-        if (code != 1){
-            return;
-        }
-
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("event","payover");
             obj.put("result", 1);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         Messager.getInstance().send(obj.toString());
     }
+
+
+    @Override
+    public void onLogin(int code, String err, Map<String, Object> map) {
+        JSONObject obj = null;
+        try {
+            if (map!=null){
+                obj = new JSONObject(map);
+            }else {
+                obj = new JSONObject();
+            }
+
+            obj.put("event","login");
+            obj.put("result", code);
+            if (code == 0){
+                obj.put("error", err);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (obj == null){
+                obj = new JSONObject();
+            }
+        }
+        if (obj != null){
+            Messager.getInstance().send(obj.toString());
+        }
+    }
+
+    @Override
+    public void onPay(int code, String err, Map<String, Object> map) {
+        JSONObject obj = null;
+        try {
+            if (map!=null){
+                obj = new JSONObject(map);
+            }else {
+                obj = new JSONObject();
+            }
+
+            obj.put("event","payover");
+            obj.put("result", code);
+            if (code == 0){
+                obj.put("error", err);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (obj == null){
+                obj = new JSONObject();
+            }
+        }
+        if (obj != null){
+            Messager.getInstance().send(obj.toString());
+        }
+    }
+
 }

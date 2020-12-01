@@ -46,6 +46,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
 
     private Handler mHandler = null;
 
+    private boolean mLockCodeBtn = false;
     private int mCodeTimerCount = 60;
     private String smsCodeId = "";
 
@@ -55,6 +56,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
 
     public interface OnLoginListener{
         void onLoginSuccess(Map<String, Object> map);
+        void onLoginFailed(Map<String, Object> map);
     }
     private OnLoginListener mOnLoginListener;
     public void setOnLoginListener(OnLoginListener callback){
@@ -96,7 +98,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 11){
+                if (!mLockCodeBtn && charSequence.length() == 11){
                     mPLoginCodeBtn.setEnabled(true);
                     if (mPLoginCodeText.getText().toString().length() > 0){
                         mPLoginBtn.setEnabled(true);
@@ -200,12 +202,35 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
                                 event.setExt(ext);
                                 MobclickAgent.sendEvent(event);
                             }catch (Exception e){}
+
+                            if (mOnLoginListener!=null){
+                                mOnLoginListener.onLoginFailed(map);
+                            }
+
                             return;
                         }
 
                         try {
+                            //设置打点guid
+                            if (map.containsKey("guid")){
+                                Object guid = map.get("guid");
+                                if (guid != null){
+                                    Event.setGuid(guid+"");
+                                }
+                            }
+                        }catch (Exception e){}
+
+                        try {
+                            int reg = 0;
+                            try {
+                                if (map.containsKey("doreg")) {
+                                    reg = (int) map.get("doreg");
+                                }
+                            } catch (Exception e) {
+                            }
+                            String eventCode = reg == 1 ? EventCode.DATA_USER_LOGINPHONE_SUCCESSREG : EventCode.DATA_USER_LOGINPHONE_SUCCESS;
                             //发送打点事件
-                            Event event = Event.getEvent(EventCode.DATA_USER_LOGINPHONE_SUCCESS, mPkgName, mPadCode);
+                            Event event = Event.getEvent(eventCode, mPkgName, mPadCode);
                             HashMap<String,String> ext = new HashMap<>();
                             ext.put("acct", phone);
                             event.setExt(ext);
@@ -288,6 +313,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
                                     }else {
                                         mPLoginCodeBtn.setText("获取验证码");
                                         mPLoginCodeBtn.setEnabled(true);
+                                        mLockCodeBtn = false;
                                     }
                                 }
                             };
@@ -295,6 +321,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
 
                         mCodeTimerCount = 60;
                         mHandler.sendEmptyMessage(1);
+                        mLockCodeBtn = true;
                     }
                 })
                 .execute(phone, AccountTask.SENDSMS_TYPE_PHONELOGIN);

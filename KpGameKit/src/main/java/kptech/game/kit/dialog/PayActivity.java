@@ -44,7 +44,7 @@ import kptech.game.kit.utils.Logger;
 
 public class PayActivity extends Dialog implements View.OnClickListener {
     public interface ICallback {
-        void onResult(int ret, String msg);
+        void onResult(int payState, String err, Map<String,Object> map);
     }
 
     private static final String TAG = "PayActivity";
@@ -52,11 +52,11 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     private static int PAY_TYPE_WECHAT = 1;
     private static int PAY_TYPE_ALIPAY = 3;
 
-    private static int PAY_STATE_NONE = 0;
-    private static int PAY_STATE_CREATE_ORDER = 1;
-    private static int PAY_STATE_LOAD_WEB = 2;
-    private static int PAY_STATE_FINISHED = 3;
-    private static int PAY_STATE_ERROR = 4;
+    public static int PAY_STATE_NONE = 0;
+    public static int PAY_STATE_CREATE_ORDER = 1;
+    public static int PAY_STATE_LOAD_WEB = 2;
+    public static int PAY_STATE_FINISHED = 3;
+    public static int PAY_STATE_ERROR = 4;
 
     private ProgressBar mProBar;
     private WebView webView;
@@ -84,6 +84,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
     private String err = null;
 
+    private String mCpOrderId;
     private String mTradeNum;
 
     private OnDismissListener mOnDismissListener;
@@ -144,9 +145,18 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                     Logger.error(TAG,ex.getMessage());
                 }
 
-                if (mPayState == PAY_STATE_FINISHED) {
-                    if (mCallback != null) {
-                        mCallback.onResult(1, "");
+
+                if (mCallback != null) {
+                    String cpOrderID = (mParams!=null && mParams.containsKey("orderID")) ?  mParams.get("orderID")+"" : "";
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("cpOrderId", cpOrderID);
+
+                    if (mPayState == PAY_STATE_FINISHED){
+                        map.put("tradenum", mTradeNum);
+                        mCallback.onResult(1, "", map);
+                    }else {
+                        String errStr = mPayState == PAY_STATE_NONE ? "cancel" : err;
+                        mCallback.onResult(0, errStr, map);
                     }
                 }
 
@@ -255,6 +265,8 @@ public class PayActivity extends Dialog implements View.OnClickListener {
             try {
                 String cpInfo = new JSONObject(mParams).toString();
                 Logger.info(TAG,"buildOrder cpInfo:" + cpInfo);
+
+
 
                 //发送打点事件
                 Event event = Event.getEvent(EventCode.DATA_PAY_MAKETRADE_START);
@@ -402,7 +414,13 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
                         try {
                             //发送打点事件
-                            Event event = Event.getEvent(EventCode.DATA_PAY_APP_START);
+                            String code = EventCode.DATA_PAY_APP_START;
+                            if (url.startsWith("weixin://")){
+                                code = EventCode.DATA_PAY_APP_WXSTART;
+                            }else if (url.startsWith("alipays://")){
+                                code = EventCode.DATA_PAY_APP_ZFBSTART;
+                            }
+                            Event event = Event.getEvent(code);
                             HashMap<String,Object> ext = new HashMap<>();
                             ext.put("uri", url);
                             MobclickAgent.sendEvent(event);
@@ -469,12 +487,15 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
                 String msg = "支付失败";
                 String requestUri = null;
+                String type = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Uri uri = request.getUrl();
                     if (uri.toString().startsWith("weixin://")) {
                         msg = "支付失败，未安装微信";
+                        type = "wx";
                     }else if (uri.toString().startsWith("alipays://")) {
                         msg = "支付失败，未安装支付宝";
+                        type = "zfb";
                     }
                     requestUri = uri.toString();
                 }
@@ -490,7 +511,15 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
                 try {
                     //发送打点事件
-                    Event event = Event.getEvent(EventCode.DATA_PAY_APP_FAILED);
+                    String code = EventCode.DATA_PAY_APP_FAILED;
+                    if (type!=null){
+                        if ("wx".equals(type)){
+                            code = EventCode.DATA_PAY_APP_WXFAILED;
+                        }else if ("zfb".equals(type)){
+                            code = EventCode.DATA_PAY_APP_ZFBFAILED;
+                        }
+                    }
+                    Event event = Event.getEvent(code);
                     event.setErrMsg(msg);
                     HashMap<String,Object> ext = new HashMap<>();
                     ext.put("uri", requestUri);

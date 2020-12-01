@@ -165,143 +165,20 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     //启动云游戏
     public void startGame(View view){
 
-//        GameInfo info = new GameInfo();
-//        info.gid = 3273;
-//        info.pkgName = "com.kptach.cpgame.demo";
-//        info.name = "植物";
-//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
-//        list.add(info);
-
-//        ExitGameListDialog dialog = new ExitGameListDialog(this, list);
-//
-//        dialog.show();
-
-
-//        new RequestGameExitListTask(this)
-//                .setRequestCallback(new IRequestCallback<List<GameInfo>>() {
-//                    @Override
-//                    public void onResult(List<GameInfo> list, int code) {
-//                        Log.i("AA", list.toString());
-//                    }
-//                })
-//                .execute(corpId, "51");
-
-//        ProferencesUtils.setInt(this, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, 3);
-
-
-//        showExitGameListDialog();
-
-//        AccountActivity mLoginDialog = new AccountActivity(this, corpId, "aaa", "bbb");
-//        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialogInterface) {
-//
-//            }
-//        });
-//            mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
-//                @Override
-//                public void onLoginSuccess(HashMap<String, Object> map) {
-//                    //缓存数据
-//                    cacheLoginData(map);
-//
-//                    //回调
-//                    if (mCallback!=null){
-//                        mCallback.onLogin(1, "", map);
-//                    }
-//                }
-//            });
-//        mLoginDialog.show();
-
-//        new RequestClientNotice()
-//                .execute("VM110110110","com.tencent.YiRen","h51038462",corpId);
-
-//        String str = DeviceIdUtil.getDeviceId(this);
-//        Log.i("HorizontalHomeActivity", str);
-//
-//        //初始化设备信息，并发送
-//        if (!DeviceInfo.hasDeviceId(this)){
-//            DeviceInfo.sendDeviceInfo(this,corpId);
-//        }
-
-//        startActivity(new Intent(this,TestActivity.class));
-
-//        LoginDialog mLoginDialog = new LoginDialog(this, corpId);
-//        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialogInterface) {
-//
-//            }
-//        });
-//        mLoginDialog.setCallback(new LoginDialog.OnLoginListener() {
-//            @Override
-//            public void onLoginSuccess(HashMap<String, Object> map) {
-//                Log.i("", map.toString());
-//            }
-//        });
-//        mLoginDialog.show();
-//
-//        PayDialog mPayDialog = new PayDialog(this);
-//        mPayDialog.cp_orderid = "test111";
-//        mPayDialog.guid = guid;
-//        mPayDialog.gameId = "3075";
-//        mPayDialog.gameName = "MT2";
-//        mPayDialog.gamePkg = "com.mt2.kp";
-//        mPayDialog.corpKey = corpId;
-//        mPayDialog.productcode = "test111";
-//        mPayDialog.productname = "test商品1001";
-//        mPayDialog.productprice = "81";
-//        mPayDialog.phone = "13811571397";
-//        mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//            @Override
-//            public void onDismiss(DialogInterface dialogInterface) {
-//
-//            }
-//        });
-//        mPayDialog.setCallback(new PayDialog.ICallback() {
-//            @Override
-//            public void onResult(int ret, String msg) {
-//
-//            }
-//        });
-//        mPayDialog.show();
-
-//        GameInfo info = new GameInfo();
-//        info.gid = 3273;
-//        info.pkgName = "com.kptach.cpgame.demo";
-//        info.name = "植物";
-//        info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-//        info.showAd = GameInfo.GAME_AD_SHOW_ON;
-
         GameInfo info = new GameInfo();
 
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 3439;
+        info.gid = 3702;
         info.pkgName = "com.kptach.test";
 
 //        info.gid = 3437;
 //        info.pkgName = "com.kptach.test";
         info.name = "cloudTest";
 
-//        info.gid = 3104;
-//        info.pkgName = "com.netease.tom";
-//        info.name = "猫和老鼠";
 
-//        info.gid = 3427;
-//        info.pkgName = "com.netease.dwrg";
-//        info.name = "第五人格";
-
-//        info.gid = 3427;
-//        info.pkgName = "com.netease.dwrg";
-//        info.name = "第五人格";
-
-
-//        info.gid = 3135;
-//        info.pkgName = "com.pwrd.mjjsl.guopan";
-//        info.name = "梦间集天鹅座";
 
         Params params = new Params();
 //        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);

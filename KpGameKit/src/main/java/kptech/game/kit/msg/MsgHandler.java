@@ -57,8 +57,8 @@ public class MsgHandler extends Handler {
     }
 
     protected interface ICallback {
-        void onLogin(int code, String msg, Map<String, Object> map);
-        void onPay(int code, String msg, Map<String, Object> map);
+        void onLogin(int code, String err, Map<String, Object> map);
+        void onPay(int code, String err, Map<String, Object> map);
         void onLogout();
     }
 
@@ -108,6 +108,7 @@ public class MsgHandler extends Handler {
             case MSG_LOGOUT:
                 handleLogout();
                 break;
+
         }
     }
 
@@ -121,11 +122,14 @@ public class MsgHandler extends Handler {
 
             //发送缓存数据
             if (guid!=null && token!=null){
+
                 if (mCallback!=null){
                     mCallback.onLogin(1, "", loginData);
                 }
 
                 try {
+                    Event.setGuid(guid);
+
                     //发送打点事件
                     Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_CACHE, mPkgName, mPadCode);
                     MobclickAgent.sendEvent(event);
@@ -207,12 +211,21 @@ public class MsgHandler extends Handler {
             login.setCallback(new AccountActivity.OnLoginListener() {
                 @Override
                 public void onLoginSuccess(Map<String, Object> map) {
+
                     //缓存数据
                     cacheLoginData(map);
 
                     //回调
                     if (mCallback!=null){
                         mCallback.onLogin(1, "", map);
+                    }
+                }
+
+                @Override
+                public void onLoginFailed(String err) {
+                    //回调
+                    if (mCallback!=null){
+                        mCallback.onLogin(0, err, null);
                     }
                 }
             });
@@ -244,12 +257,22 @@ public class MsgHandler extends Handler {
             mLoginDialog.setCallback(new AccountActivity.OnLoginListener() {
                 @Override
                 public void onLoginSuccess(Map<String, Object> map) {
+
                     //缓存数据
                     cacheLoginData(map);
 
                     //回调
                     if (mCallback!=null){
                         mCallback.onLogin(1, "", map);
+                    }
+                }
+
+                @Override
+                public void onLoginFailed(String err) {
+                    //回调
+                    if (mCallback!=null){
+
+                        mCallback.onLogin(0, err, null);
                     }
                 }
             });
@@ -294,7 +317,7 @@ public class MsgHandler extends Handler {
             Toast.makeText(mActivity, "用户未登录", Toast.LENGTH_SHORT).show();
             //回调
             if (mCallback!=null){
-                mCallback.onPay(0, "Error params: guid,gloabid", null);
+                mCallback.onPay(0, "Error params: guid", null);
             }
             return;
         }
@@ -314,16 +337,10 @@ public class MsgHandler extends Handler {
         });
         mPayDialog.setCallback(new PayActivity.ICallback() {
             @Override
-            public void onResult(int ret, String msg) {
-                if (ret == 1){
-                    //回调
-                    if (mCallback!=null){
-                        mCallback.onPay(1, "", null);
-                    }
-                }else if (msg != null){
-                    Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(mActivity, "支付失败", Toast.LENGTH_LONG).show();
+            public void onResult(int result, String err, Map<String,Object> map) {
+                //支付完成
+                if (mCallback!=null){
+                    mCallback.onPay(result==1?1:0, err, map);
                 }
             }
         });

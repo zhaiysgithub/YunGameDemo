@@ -51,6 +51,7 @@ import kptech.game.kit.data.AccountTask;
 import kptech.game.kit.data.IRequestCallback;
 import kptech.game.kit.data.RequestGameExitListTask;
 import kptech.game.kit.data.RequestGameInfoTask;
+import kptech.game.kit.msg.BaseMsgReceiver;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.DeviceUtils;
@@ -78,6 +79,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private static final int MSG_SHOW_ERROR = 1;
     private static final int MSG_RELOAD_GAME = 2;
     private static final int MSG_SHOW_AUTH = 3;
+    private static final int MSG_GAME_EXIT = 4;
 
     private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
@@ -137,6 +139,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     break;
                 case MSG_SHOW_AUTH:
                    showUserAuthView();
+                    break;
+                case MSG_GAME_EXIT:
+                    onBackPressed();
                     break;
             }
         }
@@ -604,6 +609,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
                 mDeviceControl.setPlayListener(this);
+                mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
             } else if(code == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
                 if (mDeviceControl!=null){
@@ -1384,6 +1390,15 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }catch (Exception e){
             Logger.error("GamePlay",e.getMessage());
         }
-
     }
+
+    private BaseMsgReceiver mMsgReceiver = new BaseMsgReceiver(){
+        @Override
+        public void onMessageReceived(String event, Map<String,Object> params){
+            //退出游戏事件
+            if (event.equals(BaseMsgReceiver.EVENT_EXIT)){
+                mHandler.sendEmptyMessage(MSG_GAME_EXIT);
+            }
+        }
+    };
 }

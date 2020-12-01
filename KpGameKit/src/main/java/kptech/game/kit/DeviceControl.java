@@ -25,6 +25,7 @@ import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestClientNotice;
+import kptech.game.kit.msg.IMsgReceiver;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.thread.HeartThread;
 import kptech.game.kit.utils.DeviceUtils;
@@ -715,6 +716,33 @@ public class DeviceControl {
         }
 
         return new int[]{720, 1280};
+    }
+
+    /**
+     * 发送消息
+     * @param msg
+     */
+    public void sendMessage(String msg){
+        try {
+            MsgManager.sendMessage(msg);
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+    }
+
+    /**
+     * 设置消息接收器
+     * @param receiver
+     */
+    public void setMessageReceiver(IMsgReceiver receiver) {
+        try {
+            MsgManager manager = MsgManager.getInstance();
+            if (manager != null){
+                manager.setMessageReceiver(receiver);
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     /**

@@ -77,6 +77,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
 
     public interface OnLoginListener{
         void onLoginSuccess(Map<String, Object> map);
+        void onLoginFailed(Map<String, Object> map);
     }
     private OnLoginListener mOnLoginListener;
     public void setOnLoginListener(OnLoginListener callback){
@@ -160,7 +161,6 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
         mRegistLayout.findViewById(R.id.go_login).setOnClickListener(this);
 
         argumentView();
-
     }
 
     private OnClickListener mGoPhoneLoginListener;
@@ -337,8 +337,22 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
                                 MobclickAgent.sendEvent(event);
                             }catch (Exception e){}
 
+                            if (mOnLoginListener!=null){
+                                mOnLoginListener.onLoginFailed(map);
+                            }
+
                             return;
                         }
+
+                        try {
+                            //设置打点guid
+                            if (map.containsKey("guid")){
+                                Object guid = map.get("guid");
+                                if (guid != null){
+                                    Event.setGuid(guid+"");
+                                }
+                            }
+                        }catch (Exception e){}
 
                         try {
                             //发送打点事件

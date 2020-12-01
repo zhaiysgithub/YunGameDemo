@@ -98,6 +98,7 @@ public class Event implements Cloneable {
 
     private static Context mContext;
     private static String mCorpKey;
+    private static String mGuid;
 
     private static boolean inited = false;
 
@@ -120,7 +121,9 @@ public class Event implements Cloneable {
         }
     }
 
-
+    public static void setGuid(String guid) {
+        mGuid = guid;
+    }
 
     /**
      * 请求json
@@ -142,6 +145,7 @@ public class Event implements Cloneable {
             obj.put("datafrom", this.datafrom);
             obj.put("debug", this.debug);
             obj.put("groupid", this.groupId);
+            obj.put("guid", mGuid!=null?mGuid:"");
             JSONObject extObj = null;
             if (this.ext != null){
                 try { extObj = new JSONObject(this.ext); }catch (Exception e){}
