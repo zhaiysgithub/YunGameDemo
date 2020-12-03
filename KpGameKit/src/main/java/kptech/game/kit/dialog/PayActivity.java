@@ -149,7 +149,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                 if (mCallback != null) {
                     String cpOrderID = (mParams!=null && mParams.containsKey("orderID")) ?  mParams.get("orderID")+"" : "";
                     Map<String, Object> map = new HashMap<>();
-                    map.put("cpOrderId", cpOrderID);
+                    map.put("cporder", cpOrderID);
 
                     if (mPayState == PAY_STATE_FINISHED){
                         map.put("tradenum", mTradeNum);
