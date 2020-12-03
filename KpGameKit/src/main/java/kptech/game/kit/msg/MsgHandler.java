@@ -234,7 +234,7 @@ public class MsgHandler extends Handler {
             if (mActivity == null || mActivity.isFinishing()){
                 //回调
                 if (mCallback!=null){
-                    mCallback.onLogin(0, "Error params: activity ", null);
+                    mCallback.onLogin(0, "页面参数错误", null);
                 }
                 return;
             }
@@ -288,7 +288,7 @@ public class MsgHandler extends Handler {
         if (mActivity == null || mActivity.isFinishing()){
             //回调
             if (mCallback!=null){
-                mCallback.onPay(0, "Error params: activity ", null);
+                mCallback.onPay(0, "页面参数错误", null);
             }
             return;
         }
@@ -317,7 +317,7 @@ public class MsgHandler extends Handler {
             Toast.makeText(mActivity, "用户未登录", Toast.LENGTH_SHORT).show();
             //回调
             if (mCallback!=null){
-                mCallback.onPay(0, "Error params: guid", null);
+                mCallback.onPay(0, "用户未登录", null);
             }
             return;
         }

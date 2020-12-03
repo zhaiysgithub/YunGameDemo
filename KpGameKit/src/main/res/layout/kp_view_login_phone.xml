@@ -30,7 +30,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:nextFocusForward="@id/phone_code"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         />
 
     <LinearLayout
@@ -108,8 +108,8 @@
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:background="@null"
-            android:textSize="12sp"
-            android:textColor="#8B8A8A"
+            android:textSize="13sp"
+            android:textColor="#464545"
             android:text="密码登录"/>
         <!--<View-->
             <!--android:layout_width="0.5dp"-->

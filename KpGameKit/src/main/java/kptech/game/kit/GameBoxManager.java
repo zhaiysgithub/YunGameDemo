@@ -260,7 +260,7 @@ public class GameBoxManager {
         String ak = tmpAK!=null ? tmpAK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_KEY,null);
         String sk = tmpSK!= null ? tmpSK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_SECRET,null);
         String ch = tmpCH!= null ? tmpCH : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_CHANNEL,null);
-        if (ak!=null && sk != null){
+        if (!StringUtil.isEmpty(ak) && !StringUtil.isEmpty(sk)){
             com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication).setDebug(mDebug);
 
             //初始化游戏

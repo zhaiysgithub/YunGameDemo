@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -201,25 +202,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         checkAndRequestPermission();
 
-//        mGameBox = GameBox.getInstance();
-//        if (mGameBox!=null){
-//            mGameDownloader = mGameBox.getGameDownloader();
-//        }
-//        if (mGameDownloader != null){
-//            mGameDownloader.addCallback(this);
-//        }
-//        logger.info("mGameDownloader " + mGameDownloader);
-
         Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
 
-        //注册下载
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Start");
-        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Fail");
-        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Stop");
-
-        registerReceiver(mDownloadReceiver, intentFilter);
-
+        registNeteaseBroadcase();
 
     }
 
@@ -608,8 +593,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mLoadingView.setText("初始游戏数据...");
             }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
+                this.mMsgReceiver = new MsgReceiver(this);
                 mDeviceControl.setPlayListener(this);
-                mDeviceControl.setMessageReceiver(mMsgReceiver);
+                mDeviceControl.setMessageReceiver(this.mMsgReceiver);
                 playSuccess();
             } else if(code == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
                 if (mDeviceControl!=null){
@@ -745,8 +731,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 //        }
 
             try{
-                unregisterReceiver(mDownloadReceiver);
-                mDownloadReceiver = null;
+                unregisterReceiver(mNeteaseBroadcase);
+                mNeteaseBroadcase = null;
             }catch (Exception e) {
 
             }
@@ -960,76 +946,14 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         return error;
     }
 
-//    private int mDownloadStatus;
-//    @Override
-//    public void onDownloadStatusChanged(int status, String msg, GameInfo game) {
-//        logger.info("onDownloadStatusChanged: " + status + ", game:" + game);
-//
-//        if (game != null && game.gid != mGameInfo.gid){
-//            return;
-//        }
-//        mDownloadStatus = status;
-//        switch (status){
-//            case GameDownloader.STATUS_STARTED:
-//                setDownProgress(0,"下载中...", true);
-//                break;
-//            case GameDownloader.STATUS_PAUSED:
-//                setDownProgress(0,"已暂停，点击继续", false);
-//                break;
-//            case GameDownloader.STATUS_FINISHED:
-//                setDownProgress(100,"下载完成", true);
-//                break;
-//            case GameDownloader.STATUS_STOPED:
-//            case GameDownloader.STATUS_CANCEL:
-//                setDownProgress(0,"已停止，点击下载", false);
-//                break;
-//            case GameDownloader.STATUS_WAITTING:
-//                setDownProgress(0,"等待下载", false);
-//                break;
-//            case GameDownloader.STATUS_ERROR:
-//                setDownProgress(0,"下载出错", false);
-//                break;
-//        }
-//    }
-//
-//    @Override
-//    public void onDownloadProgress(long total, long current, GameInfo game) {
-//        logger.info("onDownloadProgress: " + current + ", game:" + game);
-//        if (game != null && game.gid != mGameInfo.gid){
-//            return;
-//        }
-//
-//        if (mDownloadStatus != GameDownloader.STATUS_STARTED){
-//            return;
-//        }
-//
-//        float prcent = (float) total / (float)current;
-//        if (prcent > 1){
-//            prcent = 1;
-//        }else if(prcent < 0){
-//            prcent = 0;
-//        }
-//
-//        int num = (int)(prcent * 100);
-//
-//        logger.info("onDownloadProgress: "+num+"%");
-//        setDownProgress(num, ""+num+"%", true);
-//    }
-//
-//    private void setDownProgress(int progress, String text, boolean downing){
-//        if (mErrorView!=null && mErrorView.isShown()){
-//            mErrorView.setProgress(progress, text);
-//        }
-//
-//        if (mFloatDownView!=null && mFloatDownView.isShown()){
-//            if (downing){
-//                mFloatDownView.setProgress(progress, text);
-//            }else {
-//                mFloatDownView.setProgress(progress, "边玩边下");
-//            }
-//        }
-//    }
+    private String getPkgName(){
+        if (mGameInfo != null){
+            return mGameInfo.pkgName;
+        }
+        return "";
+    }
 
+/*
     private BroadcastReceiver mDownloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1065,6 +989,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }
         }
     };
+   */
 
     private int mDownloadStatus;
     private void updateDownStatus(int status){
@@ -1391,14 +1316,178 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             Logger.error("GamePlay",e.getMessage());
         }
     }
+    private MsgReceiver mMsgReceiver;
+    private static class MsgReceiver extends BaseMsgReceiver{
+        WeakReference<GamePlay> mRef = null;
+        public MsgReceiver(GamePlay activity){
+            mRef = new WeakReference<>(activity);
+        }
 
-    private BaseMsgReceiver mMsgReceiver = new BaseMsgReceiver(){
         @Override
-        public void onMessageReceived(String event, Map<String,Object> params){
-            //退出游戏事件
-            if (event.equals(BaseMsgReceiver.EVENT_EXIT)){
-                mHandler.sendEmptyMessage(MSG_GAME_EXIT);
+        public void onMessageReceived(String msg) {
+            if (msg == null){
+                return;
+            }
+            if (mRef==null || mRef.get()==null || mRef.get().isFinishing()){
+                return;
+            }
+
+            try {
+                JSONObject obj = new JSONObject(msg);
+                if (obj.has("channel")){
+                    String ch = obj.getString("channel");
+                    if ("netease".equals(ch)){
+                        Object data = obj.get("data");
+                        //发送广播
+                        String str = data==null?"":data.toString();
+                        Intent intent = new Intent("KpTech_Game_Kit_NetEase_Msg_Received");
+                        intent.putExtra("data", str);
+                        mRef.get().sendBroadcast(intent);
+
+                        try{
+                            //发送打点事件
+                            Event event = Event.getEvent(EventCode.DATA_ACTIVITY_ONMESSAGE_NETEASE,  mRef.get().getPkgName());
+                            HashMap<String,Object> ext = new HashMap<>();
+                            ext.put("data", str);
+                            event.setExt(ext);
+                            MobclickAgent.sendEvent(event);
+                        }catch (Exception e){
+                        }
+                    }
+                }
+
+            }catch (Exception e){
+                Logger.error(TAG, e.getMessage());
             }
         }
+
+        @Override
+        public void onMessageReceived(String event, Map<String,Object> params){
+            if (mRef==null || mRef.get()==null || mRef.get().isFinishing()){
+                return;
+            }
+
+            try {
+                //退出游戏事件
+                if (event.equals(BaseMsgReceiver.EVENT_EXIT)){
+                    mRef.get().mHandler.sendEmptyMessage(MSG_GAME_EXIT);
+                }
+            }catch (Exception e){
+                Logger.error(TAG, e.getMessage());
+            }
+
+        }
     };
+
+    private BroadcastReceiver mNeteaseBroadcase;
+    private void registNeteaseBroadcase(){
+        try {
+            if (mNeteaseBroadcase != null){
+                unregisterReceiver(mNeteaseBroadcase);
+                mNeteaseBroadcase = null;
+            }
+        }catch (Exception e){}
+
+        mNeteaseBroadcase = new NeteaseBroadcaseReceiver(this);
+        //注册下载
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Start");
+        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Fail");
+        intentFilter.addAction("Cloud_Music_Cloud_Game_DownLoad_Stop");
+        intentFilter.addAction("Cloud_Music_Cloud_Game_NetEase_Msg_Send");
+        registerReceiver(mNeteaseBroadcase, intentFilter);
+
+    }
+
+    private static class NeteaseBroadcaseReceiver extends BroadcastReceiver {
+        WeakReference<GamePlay> mRef = null;
+        public NeteaseBroadcaseReceiver(GamePlay activity){
+            mRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String pkgName = "";
+            if (mRef != null && mRef.get()!=null){
+                pkgName = mRef.get().getPkgName();
+            }
+
+            if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Start")){
+
+                //开始下载
+                if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()){
+                    mRef.get().updateDownStatus(GameDownloader.STATUS_STARTED);
+                }
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTART,  pkgName));
+                }catch (Exception e){
+                }
+
+            }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Fail")){
+                //下载失败
+                if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()) {
+                    mRef.get().updateDownStatus(GameDownloader.STATUS_ERROR);
+                }
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADERROR,  pkgName));
+                }catch (Exception e){
+                }
+
+            }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Stop")){
+                //停止下载
+                if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()) {
+                    mRef.get().updateDownStatus(GameDownloader.STATUS_STOPED);
+                }
+
+                try{
+                    //发送打点事件
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP,  pkgName));
+                }catch (Exception e){
+                }
+            }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_NetEase_Msg_Send")){
+
+                //收到网易的登录消息
+                if (!intent.hasExtra("data")){
+                    return;
+                }
+
+                String data = intent.getStringExtra("data");
+                JSONObject dataObj = null;
+                try {
+                    dataObj = new JSONObject(data);
+                }catch (Exception e){}
+
+                //发送消息
+                if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()) {
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("channel", "netease");
+                        obj.put("data", dataObj != null ? dataObj : data);
+                    }catch (Exception e){}
+                    mRef.get().sendMessage(obj.toString());
+                }
+
+                try{
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_NETEASEMSGSEND,  pkgName);
+                    HashMap<String,Object> ext = new HashMap<>();
+                    ext.put("data", data);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){
+                }
+            }
+
+        }
+    }
+
+    private void sendMessage(String msg){
+        if (mDeviceControl != null){
+            mDeviceControl.sendMessage(msg);
+        }
+    }
 }

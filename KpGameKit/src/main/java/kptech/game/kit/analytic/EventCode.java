@@ -25,6 +25,10 @@ public class EventCode {
     //接收到下载出错
     public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADERROR = "DATA_ACTIVITY_RECEIVE_DOWNLOADERROR";
 
+    //接收到网易云游戏发送消息广播
+    public static final String DATA_ACTIVITY_ONMESSAGE_NETEASE = "DATA_ACTIVITY_ONMESSAGE_NETEASE";
+    public static final String DATA_ACTIVITY_RECEIVE_NETEASEMSGSEND = "DATA_ACTIVITY_RECEIVE_NETEASEMSGSEND";
+
     //显示授权页面
     public static final String DATA_ACTIVITY_USERAUTH_DISPLAY= "DATA_ACTIVITY_USERAUTH_DISPLAY";
     //取消授权

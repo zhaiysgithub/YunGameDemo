@@ -122,7 +122,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.kp_activity_pay);
-
+        setCanceledOnTouchOutside(false);
         try {
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_DIALOG_PAY_DISPLAY);

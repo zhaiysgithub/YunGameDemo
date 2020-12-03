@@ -123,7 +123,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() == 11 && mLoginPswText.getText().toString().length() > 0){
+                if (charSequence.length() == 11 && mLoginPswText.getText().toString().length() > 7){
                     mLoginBtn.setEnabled(true);
                 }else {
                     mLoginBtn.setEnabled(false);
@@ -137,7 +137,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {  }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 0 && mLoginPhoneText.getText().toString().length() == 11){
+                if (charSequence.length() > 7 && mLoginPhoneText.getText().toString().length() == 11){
                     mLoginBtn.setEnabled(true);
                 }else {
                     mLoginBtn.setEnabled(false);
