@@ -70,7 +70,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
                     Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
                 }catch (Exception e){}
             }
-            if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.ext!=null && mGameInfo.ext.size()>0){
+            if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
                 //显示下载按钮
                 mErrorDownBtn.setTag("down");
                 mErrorDownText.setText("下载游戏直接玩");

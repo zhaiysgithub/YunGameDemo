@@ -572,7 +572,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             mDeviceControl.startGame(GamePlay.this, R.id.play_container, GamePlay.this);
 
             //设置前后台无操作超时时间
-            mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
+            mDeviceControl.setNoOpsTimeout(60, backTimeout);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -641,7 +641,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             mMenuView.setDeviceControl(mDeviceControl);
 
             //显示下载按钮
-            if (mGameInfo!=null && !StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.ext!=null && mGameInfo.ext.size()>0){
+            if (mGameInfo!=null && mGameInfo.enableDownload==1 && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
                 mFloatDownView.setVisibility(View.VISIBLE);
             }
 
@@ -826,6 +826,34 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         return true;
     }
 
+    private boolean showTimeoutDialog() {
+        try {
+            TimeoutDialog dialog = new TimeoutDialog(this);
+            dialog.setOnExitListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    exitPlay();
+                }
+            });
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
+//                }
+                }
+            });
+            dialog.setOnReloadListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
+                }
+            });
+            dialog.show();
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+        return true;
+    }
 
     @Override
     public void onPingUpdate(int ping) {
@@ -837,6 +865,15 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     @Override
     public boolean onNoOpsTimeout(int type, long timeout) {
         Logger.info("GamePlay","onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
+
+        //前台未操作超时
+        if (type == 2){
+            showTimeoutDialog();
+            if (mDeviceControl != null){
+                mDeviceControl.stopGame();
+            }
+            return true;
+        }
 
         exitPlay();
         Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout/1000), Toast.LENGTH_LONG).show();
