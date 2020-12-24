@@ -57,7 +57,7 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
     }
 
     public AccountActivity(Activity context, String corpId, String pkgName, String padCode) {
-        super(context, R.style.MyTheme_CustomDialog);
+        super(context, R.style.MyTheme_CustomDialog_Background);
         this.mActivity = context;
         this.mCorpKey = corpId;
         this.mPkgName = pkgName;
