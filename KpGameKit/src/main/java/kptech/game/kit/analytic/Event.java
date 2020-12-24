@@ -99,6 +99,7 @@ public class Event implements Cloneable {
     private static Context mContext;
     private static String mCorpKey;
     private static String mGuid;
+    private static String mDeviceId;
 
     private static boolean inited = false;
 
@@ -116,6 +117,7 @@ public class Event implements Cloneable {
             mContext = application;
             mCorpKey = appKey;
             mBaseTraceId = createTraceId();
+            mDeviceId = DeviceInfo.getDeviceId(application);
             createBaseEvent(application, appKey);
             inited = true;
         }
@@ -146,6 +148,7 @@ public class Event implements Cloneable {
             obj.put("debug", this.debug);
             obj.put("groupid", this.groupId);
             obj.put("guid", mGuid!=null?mGuid:"");
+            obj.put("deviceid", mDeviceId!=null?mDeviceId:"");
             JSONObject extObj = null;
             if (this.ext != null){
                 try { extObj = new JSONObject(this.ext); }catch (Exception e){}
@@ -169,6 +172,8 @@ public class Event implements Cloneable {
             map.put("padcode", (this.padcode != null ? this.padcode : ""));
             map.put("usertype", this.userType);
             map.put("h5sdkversion", this.ver);
+            map.put("guid", mGuid!=null?mGuid:"");
+            map.put("deviceid", mDeviceId!=null?mDeviceId:"");
         }catch (Exception e){
         }
         return map;

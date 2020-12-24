@@ -50,10 +50,24 @@ public class MsgHandler extends Handler {
     private ICallback mCallback;
 
     public void destory() {
-        mActivity = null;
-        mLoginDialog = null;
-        mPayDialog = null;
-        mCallback = null;
+        try {
+            if (mPayDialog!=null){
+                if (mPayDialog.isShowing()){
+                    mPayDialog.dismiss();
+                }
+                mPayDialog = null;
+            }
+            if (mLoginDialog!=null){
+                if (mLoginDialog.isShowing()){
+                    mLoginDialog.dismiss();
+                }
+                mLoginDialog = null;
+            }
+            mCallback = null;
+            mActivity = null;
+        }catch (Exception e){
+            Logger.error("MsgHandler", e.getMessage());
+        }
     }
 
     protected interface ICallback {
@@ -108,7 +122,6 @@ public class MsgHandler extends Handler {
             case MSG_LOGOUT:
                 handleLogout();
                 break;
-
         }
     }
 
@@ -249,8 +262,12 @@ public class MsgHandler extends Handler {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
                     mLoginDialog = null;
-                    if (systemUi != -1){
-                        mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                    try {
+                        if (systemUi != -1 && mActivity != null){
+                            mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                        }
+                    }catch (Exception e){
+                        Logger.error("MsgHandler", e.getMessage());
                     }
                 }
             });
@@ -330,9 +347,14 @@ public class MsgHandler extends Handler {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 mPayDialog = null;
-                if (systemUi != -1){
-                    mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                try {
+                    if (systemUi != -1){
+                        mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                    }
+                }catch (Exception e){
+                    Logger.error("MsgHandler", e.getMessage());
                 }
+
             }
         });
         mPayDialog.setCallback(new PayActivity.ICallback() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="270dp"
+    android:layout_width="280dp"
     android:layout_height="wrap_content"
     android:background="@drawable/kp_dialog_bg"
     android:padding="20dp"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="您长时间未操作，游戏已释放。"
             android:textColor="#333333"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textAlignment="center"
             />
     </LinearLayout>
@@ -40,7 +40,7 @@
             android:textSize="16sp"
             android:textColor="#ff3a3a"
             android:background="@drawable/kp_game_cancel_btn"
-            android:text="退出"/>
+            android:text="退出游戏"/>
 
         <Button
             android:id="@+id/reload"
@@ -50,7 +50,7 @@
             android:background="@drawable/kp_game_submit_btn"
             android:layout_alignParentRight="true"
             android:textSize="16sp"
-            android:text="重新加载"/>
+            android:text="重新连接"/>
 
     </RelativeLayout>
 

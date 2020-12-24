@@ -47,11 +47,20 @@ public class TimeoutDialog extends Dialog {
                 }
             }
         });
+        setCanceledOnTouchOutside(false);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mListener != null){
+            mListener.onClick(null);
+        }
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
     }
 }

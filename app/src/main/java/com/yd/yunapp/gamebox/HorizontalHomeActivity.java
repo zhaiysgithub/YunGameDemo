@@ -209,6 +209,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 game.ext = new HashMap<>();
 game.ext.put("version","aa");
 game.ext.put("md5","bb");
+                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
                 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);

@@ -572,11 +572,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             mDeviceControl.startGame(GamePlay.this, R.id.play_container, GamePlay.this);
 
             //设置前后台无操作超时时间
-            mDeviceControl.setNoOpsTimeout(60, backTimeout);
+            mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
-
     }
 
     @Override
@@ -789,10 +788,11 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 return;
             }
 
-            exitPlay();
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
+
+        exitPlay();
     }
 
     private boolean showExitDialog() {

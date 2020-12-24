@@ -49,9 +49,11 @@ public class DeviceInfo {
     }
 
     public static String getDeviceId(Context context){
-        if (mDeviceId == null){
-            mDeviceId = DeviceIdUtil.getDeviceId(context);
-        }
+        try {
+            if (mDeviceId == null){
+                mDeviceId = DeviceIdUtil.getDeviceId(context);
+            }
+        }catch (Exception e){}
         return mDeviceId;
     }
 
