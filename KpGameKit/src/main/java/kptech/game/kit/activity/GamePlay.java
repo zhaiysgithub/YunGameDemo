@@ -64,6 +64,7 @@ import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
 import kptech.game.kit.view.LoadingView;
 import kptech.game.kit.view.PlayErrorView;
+import kptech.game.kit.view.PlaySettingsView;
 import kptech.game.kit.view.UserAuthView;
 
 
@@ -90,6 +91,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private PlayErrorView mErrorView;
     private FloatDownView mFloatDownView;
     private UserAuthView mUserAuthView;
+    private PlaySettingsView mSettingsView;
 
     private HardwareManager mHardwareManager;
 
@@ -200,7 +202,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             return;
         }
 
-        checkAndRequestPermission();
+//        checkAndRequestPermission();
 
         Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
 
@@ -213,6 +215,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mContentView = findViewById(R.id.content_view);
 
         mLoadingView = findViewById(R.id.loading_view);
+
+        mSettingsView = findViewById(R.id.setting_view);
 
         int iconRes = mCustParams.get(ParamKey.ACTIVITY_LOADING_ICON,-1);
         if (iconRes > 0){
@@ -606,6 +610,14 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
                 }
 
+            }else if (code == com.yd.yunapp.gameboxlib.APIConstants.ERROR_NETWORK_ERROR) {
+                //网络错误，弹出提示窗口
+                if (mDeviceControl!=null){
+                    mDeviceControl.stopGame();
+                }
+
+                showTimeoutDialog("网络不稳定，请检查网络配置。");
+
             }else{
                 if (mDeviceControl!=null){
                     mDeviceControl.stopGame();
@@ -826,9 +838,10 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         return true;
     }
 
-    private boolean showTimeoutDialog() {
+    private boolean showTimeoutDialog(String msg) {
         try {
             TimeoutDialog dialog = new TimeoutDialog(this);
+            dialog.setTitle(msg);
             dialog.setOnExitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -868,7 +881,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
         //前台未操作超时
         if (type == 2){
-            showTimeoutDialog();
+            showTimeoutDialog("您长时间未操作，游戏已释放。");
             if (mDeviceControl != null){
                 mDeviceControl.stopGame();
             }
@@ -885,6 +898,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     public void onScreenChange(int orientation) {
         Logger.info("GamePlay","onScreenChange() orientation = " + orientation);
     }
+
+
 
     private void setFullScreen() {
         if (Build.VERSION.SDK_INT < 14) {
@@ -1114,6 +1129,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         resizeVideoContainer(mMenuView.mVideoScale);
+
+//        mSettingsView.onConfigurationChanged(newConfig);
     }
 
     /**

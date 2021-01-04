@@ -29,7 +29,9 @@ public class Logger {
     }
 
     public static void error(String tag, String err){
-        Log.e(TAG, err);
+        if (err != null){
+            Log.e(TAG, err);
+        }
     }
 
 //    public void setEnableLog(boolean enable){

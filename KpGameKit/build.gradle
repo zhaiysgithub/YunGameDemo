@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-//    implementation 'org.xutils:xutils:3.3.36'
+    //    implementation 'org.xutils:xutils:3.3.36'
     //快盘定义接口
     implementation 'kptech.game.kit:kpinter:1.0.0'
     implementation 'kptech.game.kit:gamead-netease:1.0.0.7'

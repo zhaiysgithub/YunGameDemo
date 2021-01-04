@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import kptech.game.kit.R;
 
@@ -24,10 +25,20 @@ public class TimeoutDialog extends Dialog {
         super(context, R.style.MyTheme_CustomDialog_Background);
     }
 
+    private String mTitle = null;
+    public void setTitle(String msg) {
+        this.mTitle = msg;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.kp_dialog_timeout);
+
+        TextView tv = findViewById(R.id.title);
+        if (mTitle != null){
+            tv.setText(this.mTitle);
+        }
 
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override
