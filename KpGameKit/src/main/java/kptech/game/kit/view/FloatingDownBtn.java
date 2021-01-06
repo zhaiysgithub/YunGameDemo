@@ -1,14 +1,23 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import java.lang.ref.WeakReference;
+
 import kptech.game.kit.R;
+import kptech.game.kit.utils.DensityUtil;
 
 
 /**
@@ -25,6 +34,7 @@ public class FloatingDownBtn extends FrameLayout {
 
     private ProgressBar mProgressBar;
     private TextView mTextView;
+    private ImageView mSmallImg;
 
     private OnClickListener mListener;
 
@@ -43,9 +53,16 @@ public class FloatingDownBtn extends FrameLayout {
             @Override
             public void onClick(View view) {
 
+                if (mSmallImg.isShown()){
+                    //显示大图
+                    toggleLayout();
+                    return;
+                }
+
                 if (mListener != null){
                     mListener.onClick(view);
                 }
+
 //                Toast.makeText(getContext(), "下载", Toast.LENGTH_SHORT).show();
 //
 //                mHandler.sendEmptyMessageDelayed(1, 1000);
@@ -54,6 +71,61 @@ public class FloatingDownBtn extends FrameLayout {
 
         mTextView = view.findViewById(R.id.floating_text);
         mProgressBar = view.findViewById(R.id.pb_progressbar);
+        mSmallImg = view.findViewById(R.id.down_img);
+    }
+
+    public void toggleLayout(){
+        LayoutParams lp = (LayoutParams) getLayoutParams();
+        int preWidth = lp.width;
+        float targetX = getX();
+
+        if (mSmallImg.isShown()){
+            lastOptTime = System.currentTimeMillis();
+            startTimeout();
+
+            //显示大按钮
+            mSmallImg.setVisibility(GONE);
+            mTextView.setVisibility(VISIBLE);
+            mProgressBar.setVisibility(VISIBLE);
+            lp.width = DensityUtil.dip2px(getContext(),90);
+            lp.height = DensityUtil.dip2px(getContext(),30);
+        }else {
+            stopTimeout();
+
+            //显示小按钮
+            mSmallImg.setVisibility(VISIBLE);
+            mTextView.setVisibility(GONE);
+            mProgressBar.setVisibility(GONE);
+            lp.width = DensityUtil.dip2px(getContext(),30);
+            lp.height = DensityUtil.dip2px(getContext(),30);
+        }
+
+        FloatingDownBtn.this.setLayoutParams(lp);
+
+        if (targetX < (((View) getParent()).getWidth() / 2)){
+            targetX += lp.width - preWidth;
+            setX(targetX);
+        }
+    }
+
+    public synchronized void startTimeout(){
+        if (mTimeHandler!=null && mTimeHandler.hasMessages(1)){
+            return;
+        }
+
+        if (mTimeHandler==null) {
+            mTimeHandler = new MyHandler(this);
+        }
+
+        lastOptTime = System.currentTimeMillis() - 300;
+        mTimeHandler.sendEmptyMessageDelayed(1, 15 * 1000);
+    }
+
+    public synchronized void stopTimeout(){
+        if (mTimeHandler!=null){
+            mTimeHandler.removeMessages(1);
+            mTimeHandler = null;
+        }
     }
 
     public void setOnDownListener(OnClickListener listener){
@@ -63,6 +135,53 @@ public class FloatingDownBtn extends FrameLayout {
     public void setProgress(int num, String text){
         mProgressBar.setProgress(num);
         mTextView.setText(text);
+    }
+
+    private boolean mEnableTimeout = true;
+    public void setEnableTimeout(boolean enableTimeout){
+        if (mEnableTimeout == enableTimeout) {
+            return;
+        }
+
+        this.mEnableTimeout = enableTimeout;
+        if (this.mEnableTimeout){
+            startTimeout();
+        }else {
+            stopTimeout();
+        }
+    }
+
+    private MyHandler mTimeHandler;
+    private long lastOptTime = 0;
+    private class MyHandler extends Handler {
+        private WeakReference<FloatingDownBtn> ref;
+
+        protected MyHandler(FloatingDownBtn obj) {
+            super(Looper.getMainLooper());
+            ref = new WeakReference<>(obj);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            if (ref == null || ref.get() == null || !ref.get().isShown()){
+                return;
+            }
+
+            if (!ref.get().mEnableTimeout){
+                return;
+            }
+
+            long timeout = System.currentTimeMillis() - lastOptTime;
+            if (timeout > 15 * 1000) {
+                ref.get().toggleLayout();
+            }else{
+                if (ref.get().mTimeHandler!=null){
+                    ref.get().mTimeHandler.sendEmptyMessageDelayed(1, 15 * 1000 - timeout);
+                }
+            }
+        }
     }
 
 //    private int pro = 0;
@@ -83,6 +202,7 @@ public class FloatingDownBtn extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        lastOptTime = System.currentTimeMillis();
         int eventAction = event.getAction();
         switch (eventAction) {
             case MotionEvent.ACTION_DOWN:

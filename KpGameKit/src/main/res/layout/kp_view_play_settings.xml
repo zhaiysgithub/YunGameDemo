@@ -7,6 +7,7 @@
     android:background="@android:color/transparent"
     android:focusableInTouchMode="true"
     android:id="@+id/main_layout"
+
     >
 
     <LinearLayout
@@ -43,29 +44,32 @@
                 android:orientation="horizontal">
                 <RadioButton
                     android:id="@+id/video_quality_auto"
-                    android:layout_width="60dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
                     android:text="自动"/>
                 <RadioButton
                     android:id="@+id/video_quality_ls"
-                    android:layout_width="60dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
                     android:text="标清"/>
                 <RadioButton
                     android:id="@+id/video_quality_ordinary"
-                    android:layout_width="60dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
                     android:text="高清"/>
                 <RadioButton
                     android:id="@+id/video_quality_hd"
-                    android:layout_width="60dp"
+                    android:layout_width="40dp"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
                     android:text="超清"/>

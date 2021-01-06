@@ -348,6 +348,9 @@ public class PlaySettingsView extends LinearLayout {
 
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (mSize < DensityUtil.dip2px(getContext(),360)){
+                mSize = DensityUtil.dip2px(getContext(),360);
+            }
             //横屏
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(mSize, ViewGroup.LayoutParams.MATCH_PARENT);
             lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
@@ -356,6 +359,9 @@ public class PlaySettingsView extends LinearLayout {
             mLayout.setBackgroundResource(R.drawable.kp_view_settings_left_bg);
         }
         else if (this.getResources().getConfiguration().orientation ==Configuration.ORIENTATION_PORTRAIT) {
+            if (mSize < DensityUtil.dip2px(getContext(),320)) {
+                mSize = DensityUtil.dip2px(getContext(),320);
+            }
             //竖屏
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mSize);
             lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);

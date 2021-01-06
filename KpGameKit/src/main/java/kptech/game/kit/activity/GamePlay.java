@@ -649,6 +649,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             //显示下载按钮
             if (mGameInfo!=null && mGameInfo.enableDownload==1 && !StringUtil.isEmpty(mGameInfo.downloadUrl)){
                 mFloatDownView.setVisibility(View.VISIBLE);
+                mFloatDownView.startTimeoutLayout();
             }
 
             requestExitGameList();

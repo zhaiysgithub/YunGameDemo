@@ -1,8 +1,16 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+
+import java.lang.ref.WeakReference;
 
 import kptech.game.kit.GameDownloader;
 import kptech.game.kit.R;
@@ -41,15 +49,36 @@ public class FloatDownView extends FrameLayout {
         switch (status){
             case GameDownloader.STATUS_STARTED:
                 mDownBtn.setProgress(0,"下载中...");
+                mDownBtn.setEnableTimeout(false);
                 break;
             case GameDownloader.STATUS_ERROR:
                 mDownBtn.setProgress(0, "下载出错");
+                mDownBtn.setEnableTimeout(false);
                 break;
             case GameDownloader.STATUS_FINISHED:
                 mDownBtn.setProgress(0, "下载完成");
+                mDownBtn.setEnableTimeout(false);
                 break;
             default:
                 mDownBtn.setProgress(0, "边玩边下");
+                mDownBtn.setEnableTimeout(true);
         }
     }
+
+    @Override
+    protected void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+    }
+
+    public void startTimeoutLayout() {
+        mDownBtn.startTimeout();
+    }
+
+//    public void enableView(){
+//        if (visibility == VISIBLE){
+//            mDownBtn.startTimeout();
+//        }else {
+//            mDownBtn.stopTimeout();
+//        }
+//    }
 }
