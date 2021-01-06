@@ -208,6 +208,7 @@ public class PlaySettingsView extends LinearLayout {
             public void onClick(View v) {
                 dismiss();
                 if (mDeviceControl != null){
+                    mDeviceControl.sendPadKey(APIConstants.PAD_KEY_BACK);
                 }
 
             }

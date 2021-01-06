@@ -11,6 +11,8 @@ import android.view.Display;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.yd.yunapp.gameboxlib.GamePadKey;
+
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -717,6 +719,21 @@ public class DeviceControl {
 
         return new int[]{720, 1280};
     }
+
+    public void sendPadKey(int key){
+        try {
+            if (mDeviceControl != null){
+                if (key == APIConstants.PAD_KEY_BACK){
+                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_BACK);
+                }else if (key == APIConstants.PAD_KEY_HOME){
+                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_HOME);
+                }
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+    }
+
 
     /**
      * 发送消息

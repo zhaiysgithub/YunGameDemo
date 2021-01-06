@@ -1,5 +1,7 @@
 package kptech.game.kit;
 
+import com.yd.yunapp.gameboxlib.GamePadKey;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -57,6 +59,8 @@ public class APIConstants {
     public static final String MOCK_IMEI = com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI;
     public static final String MOCK_ANDROID_ID = com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID;
 
+    public static final int PAD_KEY_HOME = GamePadKey.GAMEPAD_HOME.getKey();
+    public static final int PAD_KEY_BACK = GamePadKey.GAMEPAD_BACK.getKey();
 
     public APIConstants() {
     }
