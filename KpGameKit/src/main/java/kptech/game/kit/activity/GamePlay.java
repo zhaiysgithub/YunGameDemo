@@ -91,11 +91,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private PlayErrorView mErrorView;
     private FloatDownView mFloatDownView;
     private UserAuthView mUserAuthView;
-    private PlaySettingsView mSettingsView;
 
     private HardwareManager mHardwareManager;
 
-    private long mBackClickTime;
     private DeviceControl mDeviceControl;
 
     private GameInfo mGameInfo;
@@ -202,7 +200,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             return;
         }
 
-//        checkAndRequestPermission();
+        checkAndRequestPermission();
 
         Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
 
@@ -215,9 +213,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         mContentView = findViewById(R.id.content_view);
 
         mLoadingView = findViewById(R.id.loading_view);
-
-        mSettingsView = findViewById(R.id.setting_view);
-
         int iconRes = mCustParams.get(ParamKey.ACTIVITY_LOADING_ICON,-1);
         if (iconRes > 0){
             try {
@@ -228,7 +223,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }
         }
 
-        mMenuView = (FloatMenuView) findViewById(R.id.float_menu);
+        mMenuView = findViewById(R.id.float_menu);
         mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
             @Override
             public void onVideoResize(boolean scale) {
@@ -242,7 +237,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }
         });
 
-        mVideoContainer = (FrameLayout) findViewById(R.id.play_container);
+        mVideoContainer = findViewById(R.id.play_container);
 
         mErrorView = findViewById(R.id.error_view);
         mErrorView.setGameInfo(mGameInfo);
@@ -726,6 +721,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mDeviceControl.stopGame();
             }
             GameBoxManager.getInstance().exitQueue();
+
             mMenuView.dismissMenuDialog();
 
             try{
@@ -898,7 +894,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     public void onScreenChange(int orientation) {
         Logger.info("GamePlay","onScreenChange() orientation = " + orientation);
     }
-
 
 
     private void setFullScreen() {
@@ -1125,13 +1120,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     }
 
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        resizeVideoContainer(mMenuView.mVideoScale);
-
-//        mSettingsView.onConfigurationChanged(newConfig);
-    }
 
     /**
      * 修改显示画面比例
@@ -1169,6 +1157,17 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
     }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        resizeVideoContainer(mMenuView.mVideoScale);
+
+//        mSettingsView.onConfigurationChanged(newConfig);
+    }
+
+
 
     /**
      * 切换游戏

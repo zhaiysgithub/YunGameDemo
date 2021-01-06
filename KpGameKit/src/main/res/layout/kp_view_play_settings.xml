@@ -3,15 +3,284 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:focusableInTouchMode="true"
+    android:id="@+id/main_layout"
+    >
 
     <LinearLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:background="@drawable/kp_view_settings_left_bg">
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/kp_view_settings_left_bg"
+        android:focusableInTouchMode="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#31868686"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:textColor="#a4a3a9"
+                android:text="清晰度："/>
+
+            <RadioGroup
+                android:id="@+id/video_quality_group"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/video_quality_auto"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="自动"/>
+                <RadioButton
+                    android:id="@+id/video_quality_ls"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="标清"/>
+                <RadioButton
+                    android:id="@+id/video_quality_ordinary"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="高清"/>
+                <RadioButton
+                    android:id="@+id/video_quality_hd"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="超清"/>
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#31868686"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:textColor="#a4a3a9"
+                android:text="画面比例："/>
+
+            <RadioGroup
+                android:id="@+id/video_size_group"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/video_size_full"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="全屏显示"/>
+                <RadioButton
+                    android:id="@+id/video_size_scale"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:textColor="@color/kp_settings_video_radiobutton"
+                    android:text="按比例显示"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#31868686"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            >
+
+            <TextView
+                android:id="@+id/set_tv"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="#a4a3a9"
+                android:text="声音："/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/set_tv">
+                <CheckBox
+                    android:id="@+id/sound_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/kp_view_settings_checkbox"
+                    android:textColor="#FFFFFF"
+                    android:checked="true"
+                    android:text="开启"/>
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/kp_view_settings_checkbox"
+                    android:checked="true"
+                    android:textColor="#FFFFFF"
+                    android:text="显示网络延时"
+                    android:layout_marginLeft="20dp"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#31868686"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:textColor="#a4a3a9"
+                android:text="录屏："/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="我的录屏"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/kp_view_settings_record_img"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:gravity="center"
+                        android:text="录制精彩瞬间"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#31868686"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            >
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textColor="#a4a3a9"
+                android:text="云手机控制："/>
+
+            <LinearLayout
+                android:id="@+id/send_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/kp_view_settings_sendback_img"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:text="后退"/>
+            </LinearLayout>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="30dp"-->
+                <!--android:gravity="center_vertical">-->
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/kp_view_settings_sendmenu_img"/>-->
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="#FFFFFF"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="菜单"/>-->
+            <!--</LinearLayout>-->
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="30dp">
+            <Button
+                android:id="@+id/exit_btn"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/kp_view_settings_white_btn"
+                android:layout_gravity="bottom"
+                android:text="退出游戏"
+                android:textColor="@color/common_white" />
+        </LinearLayout>
 
     </LinearLayout>
 

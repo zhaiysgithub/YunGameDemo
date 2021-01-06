@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="KpLeftDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/kp_view_enter_left</item>
+        <item name="android:windowExitAnimation">@anim/kp_view_exit_left</item>
+    </style>
+    <style name="KpRightDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/kp_view_enter_right</item>
+        <item name="android:windowExitAnimation">@anim/kp_view_exit_right</item>
+    </style>
+    <style name="KpTopDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/kp_view_enter_top</item>
+        <item name="android:windowExitAnimation">@anim/kp_view_exit_top</item>
+    </style>
+    <style name="KpBottomDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/kp_view_enter_bottom</item>
+        <item name="android:windowExitAnimation">@anim/kp_view_exit_bottom</item>
+    </style>
+</resources>

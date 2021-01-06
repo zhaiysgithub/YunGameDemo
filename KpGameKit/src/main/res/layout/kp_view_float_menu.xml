@@ -4,10 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <kptech.game.kit.view.PlaySettingsView
+        android:id="@+id/setting_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
     <kptech.game.kit.view.FloatingBarView
         android:id="@+id/menu_icon"
         android:layout_gravity="top|left"
         android:layout_width="90dp"
         android:layout_height="35dp"
         android:layout_marginTop="30dp"/>
+
 </FrameLayout>
