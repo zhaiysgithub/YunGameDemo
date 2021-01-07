@@ -50,6 +50,9 @@ public class GameInfo implements Parcelable {
     //同步云手机信息等待时间， -1使用全局默认值， -2不等待返回，-3不同步数据
     public int mockSleepTime = -1;
 
+    public String enterRemind;  //游戏启动后，显示的公告提醒
+    public String exitRemind;   //退出游戏时，显示的公告提醒
+
     public GameInfo() {
     }
 

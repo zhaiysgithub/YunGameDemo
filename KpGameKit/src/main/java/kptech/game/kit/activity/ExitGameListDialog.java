@@ -24,6 +24,7 @@ import java.util.List;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.utils.StringUtil;
 
 
 public class ExitGameListDialog extends Dialog {
@@ -38,6 +39,7 @@ public class ExitGameListDialog extends Dialog {
     private ListAdapter mAdapter;
 
     private List<GameInfo> mGames;
+    private String mText;
 
 
     private ICallback mCallback;
@@ -46,13 +48,18 @@ public class ExitGameListDialog extends Dialog {
     }
 
 
-    public ExitGameListDialog(@NonNull Activity context, List<GameInfo> list) {
+    public ExitGameListDialog(@NonNull Activity context, List<GameInfo> list, String text) {
         super(context, R.style.MyTheme_CustomDialog_Background);
         this.mContext = context;
+        if (!StringUtil.isEmpty(text)){
+            this.mText = text;
+        }
+
         mGames = new ArrayList<>();
         if (list!=null){
+            int len = this.mText!=null ? 3 : 6;
             for (int i = 0; i < list.size(); i++) {
-                if (i >= 6){
+                if (i >= len){
                     break;
                 }
                 mGames.add(list.get(i));
@@ -81,6 +88,18 @@ public class ExitGameListDialog extends Dialog {
                 }
             }
         });
+
+        TextView gameTitle = findViewById(R.id.game_title);
+        ViewGroup textLayout = findViewById(R.id.text_layout);
+        TextView textView = findViewById(R.id.text);
+        if (this.mText != null){
+            textLayout.setVisibility(View.VISIBLE);
+            textView.setText(this.mText);
+            gameTitle.setTextSize(13);
+        }else {
+            textLayout.setVisibility(View.GONE);
+            gameTitle.setTextSize(17);
+        }
 
         RecyclerView recyclerView = findViewById(R.id.list);
 

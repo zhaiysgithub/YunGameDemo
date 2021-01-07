@@ -469,6 +469,8 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                             mGameInfo.mockSleepTime = game.mockSleepTime;
                             mGameInfo.kpUnionGame = game.kpUnionGame;
                             mGameInfo.recoverCloudData = game.recoverCloudData;
+                            mGameInfo.enterRemind = game.enterRemind;
+                            mGameInfo.exitRemind = game.exitRemind;
                             //处理广告显示
                             if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
                                 mGameInfo.showAd = game.showAd;
@@ -807,6 +809,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private boolean showExitDialog() {
         try {
             ExitDialog dialog = new ExitDialog(this);
+            if (mGameInfo != null){
+                dialog.setText(mGameInfo.exitRemind);
+            }
             dialog.setOnExitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -831,6 +836,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.show();
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
+            return false;
         }
         return true;
     }
@@ -1220,8 +1226,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
 
         try {
-
-            final ExitGameListDialog dialog = new ExitGameListDialog(activity, mExitGameList);
+            final ExitGameListDialog dialog = new ExitGameListDialog(activity, mExitGameList, mGameInfo.exitRemind);
             dialog.setCallback(new ExitGameListDialog.ICallback() {
                 @Override
                 public void onGameItem(GameInfo gameInfo) {

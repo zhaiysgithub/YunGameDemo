@@ -4,12 +4,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import kptech.game.kit.R;
 
 public class ExitDialog extends Dialog {
 
     private View.OnClickListener mListener;
+    private String mText;
 
     public void setOnExitListener(View.OnClickListener listener) {
         this.mListener = listener;
@@ -39,11 +41,22 @@ public class ExitDialog extends Dialog {
                 dismiss();
             }
         });
+        TextView tv = findViewById(R.id.text);
+        if (mText != null){
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(mText);
+        }else {
+            tv.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
+    }
+
+    public void setText(String exitRemind) {
+        this.mText = exitRemind;
     }
 }
