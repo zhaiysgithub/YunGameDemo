@@ -5,28 +5,28 @@ import java.lang.annotation.RetentionPolicy;
 
 public class SensorConstants {
 
-    public static final int HARDWARE_ID_LOCATION = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_LOCATION;
-    public static final int HARDWARE_ID_ACCELEROMETER = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_ACCELEROMETER;
-    public static final int HARDWARE_ID_PRESSURE = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_PRESSURE;
-    public static final int HARDWARE_ID_GYROSCOPE = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_GYROSCOPE;
-    public static final int HARDWARE_ID_MAGNETOMETER = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_MAGNETOMETER;
-    public static final int HARDWARE_ID_MIC = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_MIC;
-    public static final int HARDWARE_ID_VIDEO_BACK = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_VIDEO_BACK;
-    public static final int HARDWARE_ID_VIDEO_FRONT = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_VIDEO_FRONT;
-    public static final int HARDWARE_ID_GRAVITY = com.yd.yunapp.gameboxlib.SensorConstants.HARDWARE_ID_GRAVITY;
-    public static final int CAMERA_VIDEO_TYPE_SPS = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_SPS;
-    public static final int CAMERA_VIDEO_TYPE_PPS = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_PPS;
-    public static final int CAMERA_VIDEO_TYPE_IFRAME = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_IFRAME;
-    public static final int CAMERA_VIDEO_TYPE_PFRAME = com.yd.yunapp.gameboxlib.SensorConstants.CAMERA_VIDEO_TYPE_PFRAME;
-    public static final int AUDIO_TYPE_ACC_SPECIAL_DATA = com.yd.yunapp.gameboxlib.SensorConstants.AUDIO_TYPE_ACC_SPECIAL_DATA;
-    public static final int AUDIO_TYPE_ACC_FRAME = com.yd.yunapp.gameboxlib.SensorConstants.AUDIO_TYPE_ACC_FRAME;
-    public static final int SENSOR_ENABLE = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_ENABLE;
-    public static final int SENSOR_DISABLE = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_DISABLE;
-    public static final int SENSOR_TYPE_GRAVITY = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_TYPE_GRAVITY;
-    public static final int SENSOR_TYPE_MAGNETOMETER = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_TYPE_MAGNETOMETER;
-    public static final int SENSOR_TYPE_GYROSCOPE = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_TYPE_GYROSCOPE;
-    public static final int SENSOR_TYPE_PRESSURE = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_TYPE_PRESSURE;
-    public static final int SENSOR_TYPE_ACCELEROMETER = com.yd.yunapp.gameboxlib.SensorConstants.SENSOR_TYPE_ACCELEROMETER;
+    public static final int HARDWARE_ID_LOCATION = 201;
+    public static final int HARDWARE_ID_ACCELEROMETER = 202;
+    public static final int HARDWARE_ID_PRESSURE = 203;
+    public static final int HARDWARE_ID_GYROSCOPE = 204;
+    public static final int HARDWARE_ID_MAGNETOMETER = 205;
+    public static final int HARDWARE_ID_MIC = 211;
+    public static final int HARDWARE_ID_VIDEO_BACK = 212;
+    public static final int HARDWARE_ID_VIDEO_FRONT = 199;
+    public static final int HARDWARE_ID_GRAVITY = 213;
+    public static final int CAMERA_VIDEO_TYPE_SPS = 0;
+    public static final int CAMERA_VIDEO_TYPE_PPS = 1;
+    public static final int CAMERA_VIDEO_TYPE_IFRAME = 2;
+    public static final int CAMERA_VIDEO_TYPE_PFRAME = 3;
+    public static final int AUDIO_TYPE_ACC_SPECIAL_DATA = 0;
+    public static final int AUDIO_TYPE_ACC_FRAME = 1;
+    public static final int SENSOR_ENABLE = 1;
+    public static final int SENSOR_DISABLE = 0;
+    public static final int SENSOR_TYPE_GRAVITY = 0;
+    public static final int SENSOR_TYPE_MAGNETOMETER = 1;
+    public static final int SENSOR_TYPE_GYROSCOPE = 2;
+    public static final int SENSOR_TYPE_PRESSURE = 3;
+    public static final int SENSOR_TYPE_ACCELEROMETER = 4;
 
     public SensorConstants() {
     }

@@ -8,14 +8,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -39,14 +36,13 @@ import java.util.List;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
-import kptech.game.kit.DeviceControl;
 import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.QueueRankInfo;
 
 
 public class GameRunningActivity extends Activity implements APICallback<String>,
-        View.OnClickListener, DeviceControl.PlayListener {
+        View.OnClickListener, IDeviceControl.PlayListener {
 
     public static final String EXTRA_GAME = "extra.game";
     private static final String TAG = "GameRunningActivity";
@@ -66,7 +62,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
     private HardwareManager mHardwareManager;
 
     private long mBackClickTime;
-    private DeviceControl mDeviceControl;
+    private IDeviceControl mDeviceControl;
     private GameInfo mGameInfo;
     private Handler mHandler = new Handler() {
         @Override
@@ -125,9 +121,9 @@ public class GameRunningActivity extends Activity implements APICallback<String>
 
     private void startCloudPhone() {
         mLoadingText.setText("正在加载云手机");
-        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
+        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
             @Override
-            public void onAPICallback(DeviceControl deviceControl, final int code) {
+            public void onAPICallback(IDeviceControl deviceControl, final int code) {
                 mDeviceControl = deviceControl;
                 mHandler.post(new Runnable() {
                     @Override
@@ -139,23 +135,23 @@ public class GameRunningActivity extends Activity implements APICallback<String>
                                 // 如果界面推出之后才收到回调，请调用这个方法
                                 mDeviceControl.stopGame();
                             }
-                        } else if (code == APIConstants.WAITING_QUEUE) {
-                            GameBoxManager.getInstance().joinQueue(mGameInfo, 10,
-                                    new APICallback<QueueRankInfo>() {
-                                        @Override
-                                        public void onAPICallback(QueueRankInfo result, int code) {
-                                            if (code == APIConstants.QUEUE_SUCCESS) {
-                                                startGame();
-                                                GameBoxManager.getInstance().exitQueue();
-                                            } else {
-                                                if (result != null) {
-                                                    Toast.makeText(GameRunningActivity.this, "当前排名：" +
-                                                            result.queueRanking + "  预计时间： " +
-                                                            result.queueWaitTime, Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        }
-                                    });
+//                        } else if (code == APIConstants.WAITING_QUEUE) {
+//                            GameBoxManager.getInstance().joinQueue(mGameInfo, 10,
+//                                    new APICallback<QueueRankInfo>() {
+//                                        @Override
+//                                        public void onAPICallback(QueueRankInfo result, int code) {
+//                                            if (code == APIConstants.QUEUE_SUCCESS) {
+//                                                startGame();
+//                                                GameBoxManager.getInstance().exitQueue();
+//                                            } else {
+//                                                if (result != null) {
+//                                                    Toast.makeText(GameRunningActivity.this, "当前排名：" +
+//                                                            result.queueRanking + "  预计时间： " +
+//                                                            result.queueWaitTime, Toast.LENGTH_SHORT).show();
+//                                                }
+//                                            }
+//                                        }
+//                                    });
                         } else {
                             Toast.makeText(GameRunningActivity.this,
                                     "申请试玩设备失败,code = " + code, Toast.LENGTH_LONG).show();
@@ -169,16 +165,16 @@ public class GameRunningActivity extends Activity implements APICallback<String>
     }
 
     private void startGame() {
-        mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
-            @Override
-            public void onSensorSamper(int sensor, int state) {
-//                if (sensor < 210) {
-//                    return;
-//                }
-                Logger.d(TAG, "onSensorSamper = " + sensor + "  state = " + state);
-                mHardwareManager.registerHardwareState(sensor, state);
-            }
-        });
+//        mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
+//            @Override
+//            public void onSensorSamper(int sensor, int state) {
+////                if (sensor < 210) {
+////                    return;
+////                }
+//                Logger.d(TAG, "onSensorSamper = " + sensor + "  state = " + state);
+//                mHardwareManager.registerHardwareState(sensor, state);
+//            }
+//        });
         mHardwareManager.setDeviceControl(mDeviceControl);
         mDeviceControl.startGame(GameRunningActivity.this,
                 R.id.play_container, GameRunningActivity.this);
@@ -210,7 +206,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         mLoadingLL.setVisibility(View.GONE);
         mVideoContainer.setVisibility(View.VISIBLE);
         mMenuView.setVisibility(View.VISIBLE);
-        mMenuView.setDeviceControl(mDeviceControl);
+//        mMenuView.setDeviceControl(mDeviceControl);
     }
 
     @Override
@@ -218,14 +214,14 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         if (msg != null) {
             Log.e(TAG, "apiResult = " + msg);
         }
-        if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
-            mDeviceControl.setPlayListener(this);
-            playSuccess();
-        } else {
-            mDeviceControl.setPlayListener(null);
-            exitPlay();
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        }
+//        if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
+//            mDeviceControl.setPlayListener(this);
+//            playSuccess();
+//        } else {
+//            mDeviceControl.setPlayListener(null);
+//            exitPlay();
+//            Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+//        }
     }
 
     private void exitPlay() {
@@ -343,7 +339,7 @@ public class GameRunningActivity extends Activity implements APICallback<String>
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
-        GameBoxManager.getInstance().exitQueue();
+//        GameBoxManager.getInstance().exitQueue();
         mMenuView.dismissMenuDialog();
         if (mHardwareManager != null) {
             mHardwareManager.release();

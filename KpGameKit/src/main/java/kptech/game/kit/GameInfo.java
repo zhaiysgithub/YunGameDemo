@@ -103,31 +103,31 @@ public class GameInfo implements Parcelable {
     }
 
 
-    protected com.yd.yunapp.gameboxlib.GameInfo getLibGameInfo(){
-        com.yd.yunapp.gameboxlib.GameInfo inf = new com.yd.yunapp.gameboxlib.GameInfo();
-        inf.gid = this.gid;
-        inf.pkgName = this.pkgName;
-        inf.name = this.name;
-        inf.iconUrl = this.iconUrl;
-        inf.downloadUrl = this.downloadUrl;
-        inf.playCount = this.playCount;
-        inf.totalTime = this.totalTime;
-        inf.usedTime = this.usedTime;
-        inf.size = this.size;
-        return inf;
-    }
-
-    protected GameInfo(com.yd.yunapp.gameboxlib.GameInfo info){
-        this.gid = info.gid;
-        this.pkgName = info.pkgName;
-        this.name = info.name;
-        this.iconUrl = info.iconUrl;
-        this.downloadUrl = info.downloadUrl;
-        this.playCount = info.playCount;
-        this.totalTime = info.totalTime;
-        this.usedTime = info.usedTime;
-        this.size = info.size;
-    }
+//    protected com.yd.yunapp.gameboxlib.GameInfo getLibGameInfo(){
+//        com.yd.yunapp.gameboxlib.GameInfo inf = new com.yd.yunapp.gameboxlib.GameInfo();
+//        inf.gid = this.gid;
+//        inf.pkgName = this.pkgName;
+//        inf.name = this.name;
+//        inf.iconUrl = this.iconUrl;
+//        inf.downloadUrl = this.downloadUrl;
+//        inf.playCount = this.playCount;
+//        inf.totalTime = this.totalTime;
+//        inf.usedTime = this.usedTime;
+//        inf.size = this.size;
+//        return inf;
+//    }
+//
+//    protected GameInfo(com.yd.yunapp.gameboxlib.GameInfo info){
+//        this.gid = info.gid;
+//        this.pkgName = info.pkgName;
+//        this.name = info.name;
+//        this.iconUrl = info.iconUrl;
+//        this.downloadUrl = info.downloadUrl;
+//        this.playCount = info.playCount;
+//        this.totalTime = info.totalTime;
+//        this.usedTime = info.usedTime;
+//        this.size = info.size;
+//    }
 
     @Override
     public String toString() {

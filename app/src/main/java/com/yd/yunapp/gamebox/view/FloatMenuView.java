@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import com.kuaipan.game.demo.R;
 
 import kptech.game.kit.APIConstants;
-import kptech.game.kit.DeviceControl;
+import kptech.game.kit.IDeviceControl;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
@@ -33,7 +33,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
     private Dialog mMenuDialog;
     private View mMenuDialogContentView;
-    private DeviceControl mDeviceControl;
+    private IDeviceControl mDeviceControl;
     private boolean mAudioSwitch = true;
 
     public FloatMenuView(@NonNull Context context) {
@@ -121,7 +121,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public void setDeviceControl(DeviceControl deviceControl) {
+    public void setDeviceControl(IDeviceControl deviceControl) {
         mDeviceControl = deviceControl;
     }
 

@@ -2,10 +2,8 @@ package kptech.game.kit;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -20,8 +18,6 @@ public class GameBox {
 
     public Application mApplication = null;
     public String appKey = null;
-
-    private GameDownloader mDownloader = null;
 
 //    public static RefWatcher sRefWatcher;
 
@@ -77,33 +73,6 @@ public class GameBox {
         intent.putExtra(GamePlay.EXTRA_PARAMS, params);
 
         activity.startActivity(intent);
-    }
-
-//    public void playGame(Activity activity, int gid, String pkgName){
-//        this.playGame(activity,gid,pkgName,null, 0);
-//    }
-//
-//    public void playGame(Activity activity, int gid, String pkgName, String downUrl){
-//        this.playGame(activity,gid,pkgName,downUrl, 0);
-//    }
-//    public void playGame(Activity activity, int gid, String pkgName, String downUrl, int showAd){
-//        GameInfo info = new GameInfo();
-//        info.gid = gid;
-//        info.pkgName = pkgName;
-//        info.downloadUrl = downUrl;
-//        info.showAd = showAd;
-//        this.playGame(activity,info);
-//    }
-
-
-    public void setGameDownloader(GameDownloader downloader){
-        Logger.info("GameBox", "setGameDownloader :" + downloader);
-        this.mDownloader = downloader;
-    }
-
-    public GameDownloader getGameDownloader(){
-        Logger.info("GameBox", "getGameDownloader :" + this.mDownloader);
-        return this.mDownloader;
     }
 
 }

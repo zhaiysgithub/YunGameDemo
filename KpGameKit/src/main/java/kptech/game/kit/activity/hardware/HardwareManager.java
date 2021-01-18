@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import kptech.game.kit.DeviceControl;
+import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.SensorConstants;
 import kptech.game.kit.activity.hardware.sampler.CameraSampler;
 import kptech.game.kit.activity.hardware.sampler.LocationSampler;
@@ -26,7 +26,7 @@ public class HardwareManager implements SamplingCallback {
     private static final String TAG = "HardwareManager";
     private static final boolean DEBUG = true;
 
-    private DeviceControl mDeviceControl;
+    private IDeviceControl mDeviceControl;
     private Activity mActivity;
     private Map<Integer, Sampler> mSamplers;
 
@@ -35,11 +35,11 @@ public class HardwareManager implements SamplingCallback {
         mSamplers = new HashMap<>();
     }
 
-    public DeviceControl getDeviceControl() {
+    public IDeviceControl getDeviceControl() {
         return mDeviceControl;
     }
 
-    public void setDeviceControl(DeviceControl mDeviceControl) {
+    public void setDeviceControl(IDeviceControl mDeviceControl) {
         this.mDeviceControl = mDeviceControl;
     }
 

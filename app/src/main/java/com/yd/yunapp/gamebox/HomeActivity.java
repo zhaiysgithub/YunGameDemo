@@ -130,9 +130,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     // 试玩结束后更新游戏信息
-                    GameBoxManager.getInstance().updateGameInfo(info);
-                    mGameInfos.put(info.gid, info);
-                    mHandler.sendEmptyMessage(MSG_REFRESH_LIST);
+//                    GameBoxManager.getInstance().updateGameInfo(info);
+//                    mGameInfos.put(info.gid, info);
+//                    mHandler.sendEmptyMessage(MSG_REFRESH_LIST);
                 }
             }.start();
         }

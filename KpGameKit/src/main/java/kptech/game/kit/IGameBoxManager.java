@@ -1,0 +1,46 @@
+package kptech.game.kit;
+
+import android.app.Activity;
+import android.app.Application;
+
+import java.util.List;
+
+public interface IGameBoxManager {
+    /**
+     * 初始化
+     * @param application
+     * @param appKey
+     * @param callback
+     */
+    void init(Application application, String appKey, APICallback<String> callback);
+
+    /**
+     * 申请云设备
+     * @param activity
+     * @param inf
+     * @param callback
+     */
+    void applyCloudDevice(Activity activity, GameInfo inf, APICallback<IDeviceControl> callback);
+
+    /**
+     * 游戏列表获取，游戏列表支持分页获取。
+     * @param page
+     * @param limit
+     * @return
+     */
+    List<GameInfo> queryGameList(int page, int limit);
+
+    /**
+     * 根据gid获取运营平台配置的游戏
+     * @param gid
+     * @return
+     */
+    GameInfo queryGame(int gid);
+
+    /**
+     * 根据包名获取运营平台配置的游戏列表
+     * @param pkg
+     * @return
+     */
+    List<GameInfo> queryGames(String pkg);
+}

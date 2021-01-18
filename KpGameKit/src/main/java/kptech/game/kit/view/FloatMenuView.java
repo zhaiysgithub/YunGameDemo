@@ -1,20 +1,12 @@
 package kptech.game.kit.view;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import kptech.game.kit.APIConstants;
-import kptech.game.kit.DeviceControl;
+import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
-import kptech.game.kit.utils.StringUtil;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 
@@ -232,7 +224,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 //        }
 //    }
 //
-    public void setDeviceControl(DeviceControl deviceControl) {
+    public void setDeviceControl(IDeviceControl deviceControl) {
         mSettingsView.setDeviceControl(deviceControl);
 //        mDeviceControl = deviceControl;
 //

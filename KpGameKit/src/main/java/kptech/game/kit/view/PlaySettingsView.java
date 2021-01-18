@@ -1,7 +1,6 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -21,17 +19,15 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import kptech.game.kit.APIConstants;
-import kptech.game.kit.DeviceControl;
+import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
 
 public class PlaySettingsView extends LinearLayout {
 
-    private DeviceControl mDeviceControl;
+    private IDeviceControl mDeviceControl;
     private int mSize = 0;
 
     private ViewGroup mLayout;
@@ -89,7 +85,7 @@ public class PlaySettingsView extends LinearLayout {
         initView();
     }
 
-    public void setDeviceControl(DeviceControl deviceControl) {
+    public void setDeviceControl(IDeviceControl deviceControl) {
         mDeviceControl = deviceControl;
         if (mDeviceControl != null){
             initAudioEnable();

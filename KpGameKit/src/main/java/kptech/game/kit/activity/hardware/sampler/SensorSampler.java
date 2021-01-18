@@ -10,7 +10,6 @@ import android.util.Log;
 
 import kptech.game.kit.SensorConstants;
 
-
 /**
  * Created by zhouzhiyong on 19-5-13.
  * Project: GameBox

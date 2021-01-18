@@ -45,6 +45,7 @@ dependencies {
     implementation 'kptech.game.kit:gamead-netease:1.0.0.7'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    implementation (name:'commonPlaySdk_v1.0.7.8',ext:'aar')
 }
 
 

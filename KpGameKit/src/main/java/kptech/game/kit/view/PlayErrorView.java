@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
+import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.utils.StringUtil;
 
@@ -93,13 +93,13 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
     public void setDownloadStatus(int status){
         switch (status){
-            case GameDownloader.STATUS_STARTED:
+            case GamePlay.STATUS_STARTED:
                 mErrorDownText.setText("下载中...");
                 break;
-            case GameDownloader.STATUS_ERROR:
+            case GamePlay.STATUS_ERROR:
                 mErrorDownText.setText("下载出错");
                 break;
-            case GameDownloader.STATUS_FINISHED:
+            case GamePlay.STATUS_FINISHED:
                 mErrorDownText.setText("下载完成");
                 break;
             default:

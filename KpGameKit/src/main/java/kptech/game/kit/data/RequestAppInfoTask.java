@@ -139,59 +139,6 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
         if(mCallback!=null){
             mCallback.onResult(ret);
         }
-
-//        boolean ret = false;
-//        try {
-//            JSONObject jsonObject = new JSONObject(str);
-//            int c = jsonObject.getInt("c");
-//            if (c == 0){
-//                JSONObject dObj = jsonObject.getJSONObject("d");
-//                String ak = dObj.has("ak") ? dObj.getString("ak") : null;
-//                String sk = dObj.has("sk") ? dObj.getString("sk") : null;
-//                String ch = dObj.has("ch") ? dObj.getString("ch") : null;
-//                String paas =  dObj.has("paas") ? dObj.getString("paas") : null;
-//                String adJson = dObj.has("adJson") ? dObj.getString("adJson") : null;
-//                String adEnable = dObj.has("adEnable") ? dObj.getString("adEnable") : null;
-//
-//                if (dObj.has("BD")){
-//                    JSONObject DBObj =  dObj.getJSONObject("BD");
-//                    if (DBObj.has("ak")){
-//                        ak = DBObj.getString("ak");
-//                    }
-//                    if (DBObj.has("sk")){
-//                        sk = DBObj.getString("sk");
-//                    }
-//                    paas = "BD";
-//                }
-//
-//                //缓存数据
-//                ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_KEY, ak);
-//                ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_SECRET, sk);
-//                if (ch != null){
-//                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_CHANNEL, ch);
-//                }
-//                if (paas != null){
-//                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_PAAS, paas);
-//                }
-//                if (adJson != null){
-//                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_ADJSON, adJson);
-//                }
-//                if (adEnable != null){
-//                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_ADENABLE, adEnable);
-//                }
-//
-//                ret = true;
-//            }else {
-//                String m = jsonObject.getString("m");
-//                Logger.error(TAG,m);
-//            }
-//        }catch (Exception e){
-//            Logger.error(TAG,e.getMessage());
-//        }
-//
-//        if(mCallback!=null){
-//            mCallback.onResult(ret);
-//        }
     }
 
     //获取扩展配置信息

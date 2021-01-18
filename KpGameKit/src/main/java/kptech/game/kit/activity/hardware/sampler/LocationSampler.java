@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import kptech.game.kit.SensorConstants;
 
-
 /**
  * Created by zhouzhiyong on 20-4-14.
  * Project: GameBoxSDK

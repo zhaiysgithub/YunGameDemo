@@ -1,7 +1,8 @@
 package kptech.game.kit.activity;
 
 import android.Manifest;
-import android.app.Activity;import android.content.BroadcastReceiver;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,13 +37,13 @@ import java.util.Map;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
-import kptech.game.kit.DeviceControl;
+import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.GameBoxManager;
-import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
+//import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
@@ -64,11 +65,21 @@ import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
 import kptech.game.kit.view.LoadingView;
 import kptech.game.kit.view.PlayErrorView;
-import kptech.game.kit.view.PlaySettingsView;
 import kptech.game.kit.view.UserAuthView;
 
 
-public class GamePlay extends Activity implements APICallback<String>, DeviceControl.PlayListener{
+public class GamePlay extends Activity implements APICallback<String>, IDeviceControl.PlayListener{
+
+    /**
+     * 下载状态
+     */
+    public static final int STATUS_STARTED = 1;
+    public static final int STATUS_PAUSED = 2;
+    public static final int STATUS_STOPED = 3;
+    public static final int STATUS_FINISHED = 4;
+    public static final int STATUS_CANCEL = 5;
+    public static final int STATUS_WAITTING = 6;
+    public static final int STATUS_ERROR = 7;
 
 
     public static final String EXTRA_CORPID = "extra.corpid";
@@ -94,7 +105,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private HardwareManager mHardwareManager;
 
-    private DeviceControl mDeviceControl;
+    private IDeviceControl mDeviceControl;
 
     private GameInfo mGameInfo;
     private String mCorpID;
@@ -105,14 +116,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     private int mErrorCode = -1;
     private String mErrorMsg = null;
 
-//    private boolean mVideoContainerScale = false;
-
-//    private int mPro = 0;
-//    private boolean mPuasePro = false;
-
-//    private GameDownloader mGameDownloader;
-//    private GameBox mGameBox;
-
     private Params mCustParams;
 
     private boolean mEnableExitGameAlert = false;
@@ -120,9 +123,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private String mUnionUUID = null;
 
-//    private int systemUi = -1;
-
-    private String baseTraceId = null;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
 
@@ -364,7 +364,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
     private void downloadApk(View view){
         boolean stop = false;
-        if (mDownloadStatus == GameDownloader.STATUS_STARTED){
+        if (mDownloadStatus == STATUS_STARTED){
             //发送下载广播
             Intent intent = new Intent("KpTech_Game_Kit_DownLoad_Stop_Action");
             intent.putExtra(EXTRA_GAME, mGameInfo);
@@ -410,6 +410,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
     }
 
+    /**
+     * 初始化SDK
+     */
     private void checkInitCloudPhoneSDK(){
         try {
             //判断是否已经初始化
@@ -419,7 +422,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                     mLoadingView.setText("正在设备初始化...");
                 }
 
-//            mHandler.sendMessage(Message.obtain(mHandler, PROGRESS_BAR_, 0));
                 GameBoxManager.getInstance().init(getApplication(), this.mCorpID, new APICallback<String>() {
                     @Override
                     public void onAPICallback(String msg, int code) {
@@ -427,7 +429,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                             getGameInfo();
                         }else {
                             //初始化失败，退出页面
-//                        Toast.makeText(GamePlay.this,"初始化游戏失败", Toast.LENGTH_LONG).show();
                             Logger.error("GamePlay","初始化游戏失败,code = " + code + ", msg = " + msg);
                             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "初始化游戏失败,请稍后再试"));
                         }
@@ -498,7 +499,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
                     //启动游戏
                     startCloudPhone();
-
                 }
             }).execute(mCorpID, mGameInfo.pkgName);
         }catch (Exception e){
@@ -506,6 +506,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
     }
 
+    /**
+     * 申请云设备
+     */
     private void startCloudPhone() {
         try {
             if (this.isFinishing()){
@@ -516,9 +519,9 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mLoadingView.setText("正在连接设备...");
             }
 
-            GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, false, new APICallback<DeviceControl>() {
+            GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
                 @Override
-                public void onAPICallback(DeviceControl deviceControl, final int code) {
+                public void onAPICallback(IDeviceControl deviceControl, final int code) {
                     mDeviceControl = deviceControl;
                     mHandler.post(new Runnable() {
                         @Override
@@ -559,7 +562,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             //获取云手机分辨率，按比例显示画面
             initVideoSize();
 
-            mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
+            mDeviceControl.registerSensorSamplerListener(new IDeviceControl.SensorSamplerListener() {
                 @Override
                 public void onSensorSamper(int sensor, int state) {
 //                if (sensor < 210) {
@@ -570,10 +573,12 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 }
             });
             mHardwareManager.setDeviceControl(mDeviceControl);
+
             mDeviceControl.startGame(GamePlay.this, R.id.play_container, GamePlay.this);
 
             //设置前后台无操作超时时间
             mDeviceControl.setNoOpsTimeout(fontTimeout, backTimeout);
+
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -597,17 +602,17 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(this.mMsgReceiver);
                 playSuccess();
-            } else if(code == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
-                if (mDeviceControl!=null){
-                    mDeviceControl.removerListener();
-                }
+            } else if(code == APIConstants.RELEASE_SUCCESS){
+//                if (mDeviceControl!=null){
+//                    mDeviceControl.removerListener();
+//                }
 
                 if (mChangeGame){
                     mChangeGame = false;
                     mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
                 }
 
-            }else if (code == com.yd.yunapp.gameboxlib.APIConstants.ERROR_NETWORK_ERROR) {
+            }else if (code == APIConstants.ERROR_NETWORK_ERROR) {
                 //网络错误，弹出提示窗口
                 if (mDeviceControl!=null){
                     mDeviceControl.stopGame();
@@ -657,10 +662,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             requestExitGameList();
 
             try {
-//            int ui = getWindow().getDecorView().getSystemUiVisibility();
-//            if (systemUi!=-1 && ui != systemUi){
                 getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
-//            }
             }catch (Exception e){}
 
         }catch (Exception e){
@@ -723,7 +725,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             if (mDeviceControl != null) {
                 mDeviceControl.stopGame();
             }
-            GameBoxManager.getInstance().exitQueue();
+//            GameBoxManager.getInstance().exitQueue();
 
             mMenuView.dismissMenuDialog();
 
@@ -769,20 +771,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         }
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if ((System.currentTimeMillis() - mBackClickTime) > 3000) {
-//            //弹出挽留窗口,从挽留窗口启动的，不弹界面
-//            if (!showExitGameListDialog(this)){
-//                mBackClickTime = System.currentTimeMillis();
-//                //退出
-//                Toast.makeText(this, "再按一次退出游戏", Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            exitPlay();
-//        }
-//    }
-
     @Override
     public void onBackPressed() {
         try {
@@ -821,16 +809,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-//                if (systemUi != -1){
                     GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
-//                    systemUi = -1;
-//                }
-                }
-            });
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialogInterface) {
-//                systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
                 }
             });
             dialog.show();
@@ -986,7 +965,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             case APIConstants.ERROR_NO_DEVICE:
             case APIConstants.ERROR_DEVICE_EXPIRED:
             case APIConstants.ERROR_DEVICE_OTHER_ERROR:
-            case APIConstants.WAITING_QUEUE:
                 error = "试玩人数过多，请稍后再试";
                 break;
             case APIConstants.ERROR_NETWORK_ERROR:
@@ -1007,54 +985,16 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
         return "";
     }
 
-/*
-    private BroadcastReceiver mDownloadReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Start")){
-                //开始下载
-                updateDownStatus(GameDownloader.STATUS_STARTED);
-
-                try{
-                    //发送打点事件
-                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTART,  mGameInfo!=null ? mGameInfo.pkgName : ""));
-                }catch (Exception e){
-                }
-
-            }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Fail")){
-                //下载失败
-                updateDownStatus(GameDownloader.STATUS_ERROR);
-
-                try{
-                    //发送打点事件
-                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADERROR,  mGameInfo!=null ? mGameInfo.pkgName : ""));
-                }catch (Exception e){
-                }
-
-            }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Stop")){
-                //停止下载
-                updateDownStatus(GameDownloader.STATUS_STOPED);
-
-                try{
-                    //发送打点事件
-                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP,  mGameInfo!=null ? mGameInfo.pkgName : ""));
-                }catch (Exception e){
-                }
-            }
-        }
-    };
-   */
-
     private int mDownloadStatus;
     private void updateDownStatus(int status){
         try {
             mDownloadStatus = status;
 
-            if (status == GameDownloader.STATUS_STARTED){
+            if (status == STATUS_STARTED){
                 Toast.makeText(this,"下载中...", Toast.LENGTH_SHORT).show();
-            }else if (status == GameDownloader.STATUS_ERROR){
+            }else if (status == STATUS_ERROR){
                 Toast.makeText(this,"下载失败", Toast.LENGTH_SHORT).show();
-            }else if (status == GameDownloader.STATUS_STOPED){
+            }else if (status == STATUS_STOPED){
                 Toast.makeText(this,"停止下载", Toast.LENGTH_SHORT).show();
             }
 
@@ -1069,7 +1009,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             Logger.error(TAG, e.getMessage());
         }
     }
-
 
     int resizeWidth = 0;
     int resizeHeight = 0;
@@ -1168,10 +1107,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         resizeVideoContainer(mMenuView.mVideoScale);
-
-//        mSettingsView.onConfigurationChanged(newConfig);
     }
 
 
@@ -1262,8 +1198,6 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-//                    systemUi = GamePlay.this.getWindow().getDecorView().getSystemUiVisibility();
-
                     //增加显示数量
                     addExitShowNum();
 
@@ -1278,10 +1212,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
-//                    if (systemUi != -1){
                         GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
-//                        systemUi = -1;
-//                    }
                 }
             });
 
@@ -1475,7 +1406,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
 
                 //开始下载
                 if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()){
-                    mRef.get().updateDownStatus(GameDownloader.STATUS_STARTED);
+                    mRef.get().updateDownStatus(STATUS_STARTED);
                 }
 
                 try{
@@ -1487,7 +1418,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Fail")){
                 //下载失败
                 if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()) {
-                    mRef.get().updateDownStatus(GameDownloader.STATUS_ERROR);
+                    mRef.get().updateDownStatus(STATUS_ERROR);
                 }
 
                 try{
@@ -1499,7 +1430,7 @@ public class GamePlay extends Activity implements APICallback<String>, DeviceCon
             }else if (intent.getAction().equals("Cloud_Music_Cloud_Game_DownLoad_Stop")){
                 //停止下载
                 if (mRef != null && mRef.get()!=null && !mRef.get().isFinishing()) {
-                    mRef.get().updateDownStatus(GameDownloader.STATUS_STOPED);
+                    mRef.get().updateDownStatus(STATUS_STOPED);
                 }
 
                 try{

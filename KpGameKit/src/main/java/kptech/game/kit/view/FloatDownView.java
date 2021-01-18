@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
-import kptech.game.kit.GameDownloader;
 import kptech.game.kit.R;
+import kptech.game.kit.activity.GamePlay;
 
 public class FloatDownView extends FrameLayout {
 
@@ -47,15 +47,15 @@ public class FloatDownView extends FrameLayout {
 
     public void setDownloadStatus(int status){
         switch (status){
-            case GameDownloader.STATUS_STARTED:
+            case GamePlay.STATUS_STARTED:
                 mDownBtn.setProgress(0,"下载中...");
                 mDownBtn.setEnableTimeout(false);
                 break;
-            case GameDownloader.STATUS_ERROR:
+            case GamePlay.STATUS_ERROR:
                 mDownBtn.setProgress(0, "下载出错");
                 mDownBtn.setEnableTimeout(false);
                 break;
-            case GameDownloader.STATUS_FINISHED:
+            case GamePlay.STATUS_FINISHED:
                 mDownBtn.setProgress(0, "下载完成");
                 mDownBtn.setEnableTimeout(false);
                 break;

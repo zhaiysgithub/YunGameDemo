@@ -27,7 +27,6 @@ import org.xutils.x;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,12 +34,8 @@ import java.util.List;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
-import kptech.game.kit.GameDownloader;
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.activity.ExitDialog;
-import kptech.game.kit.activity.ExitGameListDialog;
 import kptech.game.kit.analytic.DeviceInfo;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -58,7 +53,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     private HorizontalGameAdapter mGameAdapter;
     private LinkedHashMap<Integer, GameInfo> mGameInfos;
 
-    private GameDownloader mGameDownloader;
+//    private GameDownloader mGameDownloader;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -171,7 +166,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 3004;
+        info.gid = 4150;
         info.pkgName = "com.kptach.test";
 
 //        info.gid = 3437;
@@ -286,9 +281,9 @@ game.ext.put("md5","bb");
                 @Override
                 public void run() {
                     // 试玩结束后更新游戏信息
-                    GameBoxManager.getInstance().updateGameInfo(info);
-                    mGameInfos.put(info.gid, info);
-                    mHandler.sendEmptyMessage(MSG_REFRESH_LIST);
+//                    GameBoxManager.getInstance().updateGameInfo(info);
+//                    mGameInfos.put(info.gid, info);
+//                    mHandler.sendEmptyMessage(MSG_REFRESH_LIST);
                 }
             }.start();
         }
@@ -375,26 +370,26 @@ game.ext.put("md5","bb");
             @Override
             public void onSuccess(File result) {
 
-                if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_FINISHED, null, gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_FINISHED, null, gameInfo);
+//                }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
 
-                if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_ERROR, ex.getMessage(), gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_ERROR, ex.getMessage(), gameInfo);
+//                }
 
                 sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Fail"));
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-                if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_CANCEL, null, gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_CANCEL, null, gameInfo);
+//                }
                 sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Stop"));
             }
 
@@ -405,25 +400,25 @@ game.ext.put("md5","bb");
 
             @Override
             public void onWaiting() {
-                if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_WAITTING, null, gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_WAITTING, null, gameInfo);
+//                }
             }
 
             @Override
             public void onStarted() {
-                if (mGameDownloader!=null){
-                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_STARTED, null, gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onStatusChanged(GameDownloader.STATUS_STARTED, null, gameInfo);
+//                }
 
                 sendBroadcast(new Intent("Cloud_Music_Cloud_Game_DownLoad_Start"));
             }
 
             @Override
             public void onLoading(long total, long current, boolean isDownloading) {
-                if (mGameDownloader!=null){
-                    mGameDownloader.onProgresss(current, total, gameInfo);
-                }
+//                if (mGameDownloader!=null){
+//                    mGameDownloader.onProgresss(current, total, gameInfo);
+//                }
             }
         });
     }
