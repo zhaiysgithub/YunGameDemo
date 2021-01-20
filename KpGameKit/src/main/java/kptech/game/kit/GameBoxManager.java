@@ -7,20 +7,14 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.mci.commonplaysdk.PlayMCISdkManager;
-
-import org.json.JSONObject;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
+import kptach.game.kit.inter.game.IGameBoxManager;
+import kptach.game.kit.inter.game.IGameCallback;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
@@ -30,12 +24,11 @@ import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.data.RequestAppInfoTask;
 import kptech.game.kit.data.RequestDeviceTask;
 import kptech.game.kit.data.RequestTask;
+import kptech.game.kit.fatory.GameBoxManagerFactory;
 import kptech.game.kit.msg.MsgManager;
-import kptech.game.kit.redfinger.BaiDuUtils;
-import kptech.game.kit.redfinger.KpHttp;
-import kptech.game.kit.redfinger.RedDeviceControl;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.MillisecondsDuration;
 import kptech.game.kit.utils.ProferencesUtils;
 
 
@@ -52,7 +45,8 @@ public class GameBoxManager {
 //    private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private String mUniqueId;
 
-    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
+//    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
+    private MillisecondsDuration mTimeDuration;
     private boolean isLibInited = false;
 
     private boolean devLoading = false;
@@ -130,7 +124,7 @@ public class GameBoxManager {
             Logger.error("GameBoxManager",e.getMessage());
         }
 
-        TM_SDKINIT_START = new Date().getTime();
+        mTimeDuration = new MillisecondsDuration();
         try {
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
@@ -299,27 +293,20 @@ public class GameBoxManager {
 
         try {
             //发送事件耗时统计
-            TM_SDKINIT_END = new Date().getTime();
-            long useTm = (TM_SDKINIT_END - TM_SDKINIT_START);
+            long useTm = mTimeDuration.duration();
             HashMap data = new HashMap();
             data.put("state", ret ? "ok" : "failed");
-            data.put("stime", TM_SDKINIT_START);
-            data.put("etime", TM_SDKINIT_END);
+            data.put("stime", mTimeDuration.getSavedTime());
+            data.put("etime", mTimeDuration.getCurentTime());
             Event event = Event.getTMEvent(EventCode.DATA_TMDATA_SDKINIT_END, useTm, data);
             MobclickAgent.sendTMEvent(event);
+
+            mTimeDuration = new MillisecondsDuration();
+
         }catch (Exception e){}
 
         return ret;
     }
-
-//    private com.yd.yunapp.gameboxlib.GameBoxManager getLibManager(){
-//        //处理未已初始化
-//        if (!isLibInited){
-//            Logger.error("GameBoxManager","gamebox not initialized");
-//            return null;
-//        }
-//        return com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication);
-//    }
 
     /**
      * 申请游戏的云设备
@@ -338,20 +325,10 @@ public class GameBoxManager {
             return;
         }
 
-//        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
-//        if (manager == null){
-//            //sdk未初始化
-//            if (callback!=null){
-//                callback.onAPICallback(null, APIConstants.ERROR_SDK_INIT_ERROR);
-//            }
-//            return;
-//        }
-//
 //        try {
 //            addDeviceInfo(manager);
 //        }catch (Exception e){
 //        }
-
 
         try {
             //重置打点数据
@@ -361,16 +338,21 @@ public class GameBoxManager {
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
         }catch (Exception e){}
 
+        if (mTimeDuration == null) {
+            mTimeDuration = new MillisecondsDuration();
+        }
+
         try {
             //发送事件耗时统计
-            TM_DEVICE_START = new Date().getTime();
-            long useTm = (TM_DEVICE_START - TM_SDKINIT_END);
+            long useTm = mTimeDuration.duration();
             HashMap data = new HashMap();
-            data.put("stime", TM_SDKINIT_END);
-            data.put("etime", TM_DEVICE_START);
+            data.put("stime", mTimeDuration.getSavedTime());
+            data.put("etime", mTimeDuration.getCurentTime());
             Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_START, useTm, data);
             event.setGamePkg(inf.pkgName);
             MobclickAgent.sendTMEvent(event);
+
+            mTimeDuration = new MillisecondsDuration();
         }catch (Exception e){}
 
 
@@ -381,15 +363,17 @@ public class GameBoxManager {
             adManager.prepareAd();
         }
 
-        devLoading = true;
-        new RequestDeviceTask(new RequestDeviceTask.ICallback() {
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK);
+        kptach.game.kit.inter.game.GameInfo game = new kptach.game.kit.inter.game.GameInfo();
+        game.kpGameId = inf.kpGameId;
+        game.pkgName = inf.pkgName;
+        gameBoxManager.applyCloudDevice(activity, game, new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override
-            public void onResult(int code, String devInfo) {
-                devLoading = false;
+            public void onGameCallback(kptach.game.kit.inter.game.IDeviceControl innerControl, int code) {
 
-                IDeviceControl control = null;
-                if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-                    control = DeviceControlFactory.getDeviceControl(devInfo,inf);
+                DeviceControl control = null;
+                if (innerControl != null){
+                    control = new DeviceControl(innerControl);
                 }
 
                 try {
@@ -407,20 +391,69 @@ public class GameBoxManager {
 
                 try {
                     //发送事件耗时统计
-                    TM_DEVICE_END = new Date().getTime();
-                    long useTm = (TM_DEVICE_END - TM_DEVICE_START );
+                    long useTm = mTimeDuration.duration();
                     HashMap data = new HashMap();
-                    data.put("stime", TM_DEVICE_START);
-                    data.put("etime", TM_DEVICE_END);
+                    data.put("stime", mTimeDuration.getSavedTime());
+                    data.put("etime", mTimeDuration.getCurentTime());
                     data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
                     data.put("code", code);
                     Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
                     event.setGamePkg(inf.pkgName);
                     if (control != null){
                         event.setPadcode(control.getPadcode());
-//TODO                        control.setTM_DEVICE_END(TM_DEVICE_END);
                     }
                     MobclickAgent.sendTMEvent(event);
+
+                    mTimeDuration = null;
+                }catch (Exception e){}
+
+                //回调方法
+                if (callback!=null){
+                    callback.onAPICallback(control, code);
+                }
+            }
+        });
+
+        devLoading = true;
+        new RequestDeviceTask(new RequestDeviceTask.ICallback() {
+            @Override
+            public void onResult(int code, String devInfo) {
+                devLoading = false;
+
+                IDeviceControl control = null;
+                if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
+//                    control = DeviceControlFactory.getDeviceControl(devInfo,inf);
+                }
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+                    }
+                    event.setErrMsg(""+code);
+                    HashMap ext = new HashMap<>();
+                    ext.put("code", code);
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
+                try {
+                    //发送事件耗时统计
+                    long useTm = mTimeDuration.duration();
+                    HashMap data = new HashMap();
+                    data.put("stime", mTimeDuration.getSavedTime());
+                    data.put("etime", mTimeDuration.getCurentTime());
+                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
+                    data.put("code", code);
+                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
+                    event.setGamePkg(inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+                    }
+                    MobclickAgent.sendTMEvent(event);
+
+                    mTimeDuration = null;
                 }catch (Exception e){}
 
                 //回调方法
@@ -430,58 +463,6 @@ public class GameBoxManager {
             }
 
         }).execute(mCorpID, inf.pkgName, DeviceInfo.getUserId(activity), inf.kpGameId);
-
-
-//        //申请云手机
-//        com.yd.yunapp.gameboxlib.GameInfo game = inf.getLibGameInfo();
-//        manager.applyCloudDevice(game, playQueue, new com.yd.yunapp.gameboxlib.APICallback<com.yd.yunapp.gameboxlib.DeviceControl>() {
-//            @Override
-//            public void onAPICallback(com.yd.yunapp.gameboxlib.DeviceControl deviceControl, int code) {
-//
-//                DeviceControl control = null;
-//                if (deviceControl!=null) {
-//                    control = new DeviceControl(deviceControl, inf);
-//                    control.setAdManager(adManager);
-//                    control.setCorpKey(mCorpID);
-//                }
-//
-//                try {
-//                    //发送打点事件
-//                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
-//                    if (control != null){
-//                        event.setPadcode(control.getPadcode());
-//                    }
-//                    event.setErrMsg(""+code);
-//                    HashMap ext = new HashMap<>();
-//                    ext.put("code", code);
-//                    event.setExt(ext);
-//                    MobclickAgent.sendEvent(event);
-//                }catch (Exception e){}
-//
-//                try {
-//                    //发送事件耗时统计
-//                    TM_DEVICE_END = new Date().getTime();
-//                    long useTm = (TM_DEVICE_END - TM_DEVICE_START );
-//                    HashMap data = new HashMap();
-//                    data.put("stime", TM_DEVICE_START);
-//                    data.put("etime", TM_DEVICE_END);
-//                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
-//                    data.put("code", code);
-//                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
-//                    event.setGamePkg(inf.pkgName);
-//                    if (control != null){
-//                        event.setPadcode(control.getPadcode());
-//                        control.setTM_DEVICE_END(TM_DEVICE_END);
-//                    }
-//                    MobclickAgent.sendTMEvent(event);
-//                }catch (Exception e){}
-//
-//                //回调方法
-//                if (callback!=null){
-//                    callback.onAPICallback(control, code);
-//                }
-//            }
-//        });
     }
 
 

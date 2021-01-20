@@ -1,20 +1,15 @@
-package kptech.game.kit;
+package kptach.game.kit.inter.game;
 
 import android.app.Activity;
 
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import kptech.game.kit.msg.IMsgReceiver;
-
 public interface IDeviceControl {
-
     /**
      * 启动游戏
      * @param activity
      * @param res
      * @param callback
      */
-    void startGame(@NonNull final Activity activity, @IdRes final int res, @NonNull final APICallback<String> callback);
+    void startGame(Activity activity, int res, IGameCallback<String> callback);
 
     /**
      * 停止试玩，在退出试玩的时候必须回调，否则无法进行下一次试玩
@@ -61,13 +56,8 @@ public interface IDeviceControl {
     /**
      * 调整试玩的码率
      * @param level 等级，目前支持5档
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_AUTO} 自动
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_HD} 高清
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_ORDINARY} 普通
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_HS} 一般
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_LS} 流畅
      */
-    void switchQuality(@APIConstants.VideoQuality String level);
+    void switchQuality(String level);
 
     /**
      * 试玩声音开关
@@ -89,8 +79,8 @@ public interface IDeviceControl {
      * @return
      */
     void sendSensorInputData(@SensorConstants.CloudPhoneSensorId int sendor,
-                                    @SensorConstants.AudioType @SensorConstants.CameraVideoType int type,
-                                    byte[] data);
+                             @SensorConstants.CameraVideoType int type,
+                             byte[] data);
 
     /**
      * 发送硬件传感器信息，此接口针对陀螺仪、加速器、重力感应等传感器
@@ -99,8 +89,8 @@ public interface IDeviceControl {
      * @param data 传感器数据参数
      */
     void sendSensorInputData(@SensorConstants.CloudPhoneSensorId int sendor,
-                                    @SensorConstants.SensorType int sensorType,
-                                    float... data);
+                             @SensorConstants.SensorType int sensorType,
+                             float... data);
 
     /**
      * 注册监听，接收硬件采集信息
@@ -115,17 +105,6 @@ public interface IDeviceControl {
      */
     void setPlayListener(PlayListener listener);
 
-    /**
-     * 消息接收
-     * @param receiver
-     */
-    void setMessageReceiver(IMsgReceiver receiver);
-
-    /**
-     * 发送消息
-     * @param msg
-     */
-    void sendMessage(String msg);
 
     /**
      * 试玩监听
@@ -159,7 +138,6 @@ public interface IDeviceControl {
          * @param sensor 硬件类型  @SensorConstants.CloudPhoneSensorId
          * @param state  硬件状态  @SensorConstants.SensorState
          */
-        void onSensorSamper(@SensorConstants.CloudPhoneSensorId int sensor,
-                            @SensorConstants.SensorState int state);
+        void onSensorSamper(@SensorConstants.CloudPhoneSensorId int sensor, @SensorConstants.SensorState int state);
     }
 }

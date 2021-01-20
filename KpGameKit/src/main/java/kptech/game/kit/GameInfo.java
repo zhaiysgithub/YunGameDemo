@@ -53,6 +53,8 @@ public class GameInfo implements Parcelable {
     public String enterRemind;  //游戏启动后，显示的公告提醒
     public String exitRemind;   //退出游戏时，显示的公告提醒
 
+    public int useSDK = 0; //0使用红手指，1使用百度
+
     public GameInfo() {
     }
 
