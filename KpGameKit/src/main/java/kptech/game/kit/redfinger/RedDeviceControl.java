@@ -7,6 +7,8 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
+import com.mci.commonplaysdk.PlayMCISdkManager;
+
 import java.lang.ref.WeakReference;
 
 import kptech.game.kit.APICallback;
@@ -15,6 +17,7 @@ import kptech.game.kit.DeviceInfo;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
+import kptech.game.kit.SensorConstants;
 import kptech.game.kit.msg.IMsgReceiver;
 import kptech.game.kit.redfinger.fragment.PlayFragment;
 import kptech.game.kit.utils.Logger;
@@ -32,6 +35,8 @@ public class RedDeviceControl implements IDeviceControl {
 
     private APICallback<String> mCallback;
     private IDeviceControl.PlayListener mPlayListener;
+
+    private IDeviceControl.SensorSamplerListener mSensorListener;
 
 //    private int mApiLevel = 2;
 //    private int mUseSSL = 0;
@@ -154,7 +159,8 @@ public class RedDeviceControl implements IDeviceControl {
     @Override
     public void setNoOpsTimeout(long font, long back) {
         if (font > 0 && back > 0) {
-            PlaySDKManager.getInstance().setNoOpsTimeout(font, back);
+            PlaySDKManager.backTime = back * 1000;
+            PlaySDKManager.fontTime = font * 1000;
         }
     }
 
@@ -162,16 +168,18 @@ public class RedDeviceControl implements IDeviceControl {
     public void switchQuality(@APIConstants.VideoQuality String str) {
 
         int ordinal = DeviceInfo.VideoQuality.valueOf(str).ordinal();
-        PlaySDKManager.getInstance().setVideoBitrateMode(ordinal, false);
+//        PlaySDKManager.getInstance().setVideoBitrateMode(ordinal, false);
 
         DeviceInfo.ResolutionLevel level = DeviceInfo.ResolutionLevel.LEVEL_720_1280;
         if (ordinal == DeviceInfo.VideoQuality.GRADE_LEVEL_ORDINARY.ordinal()) {
             level = DeviceInfo.ResolutionLevel.LEVEL_480_856;
         } else if (ordinal == DeviceInfo.VideoQuality.GRADE_LEVEL_LS.ordinal()) {
-            level = DeviceInfo.ResolutionLevel.LEVEL_288_512;
+            level = DeviceInfo.ResolutionLevel.LEVEL_368_652;
         }
 
-        PlaySDKManager.getInstance().setResolutionLevel(level);
+        int i = PlaySDKManager.getInstance().getVideoLevel();
+        PlaySDKManager.getInstance().setVideoLevel(level.ordinal());
+//        PlaySDKManager.getInstance().setResolutionLevel(level);
     }
 
     @Override
@@ -239,40 +247,41 @@ public class RedDeviceControl implements IDeviceControl {
         }
     }
 
-    private void doStop(){
-        PlaySDKManager.getInstance().stop();
-    }
-
-
-
     /**
      * 注册监听，接收硬件采集信息
      *
      * @param listener
      */
     public void registerSensorSamplerListener(final SensorSamplerListener listener){
-//        mDeviceControl.registerSensorSamplerListener(new com.yd.yunapp.gameboxlib.DeviceControl.SensorSamplerListener() {
-//            @Override
-//            public void onSensorSamper(int sensor, int state) {
-//                if (listener != null) {
-//                    listener.onSensorSamper(sensor, state);
-//                }
-//            }
-//        });
+        this.mSensorListener = listener;
     }
 
     @Override
     public void sendSensorInputData(int sendor, int type, byte[] data) {
-//        if (mPlayMCISdkManager!=null){
-//            mPlayMCISdkManager.sendSensorData();
-//        }
+        if (sendor == SensorConstants.HARDWARE_ID_MIC){
+            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_AUDIO, type, data);
+        }else if (sendor == SensorConstants.HARDWARE_ID_VIDEO_BACK || sendor == SensorConstants.HARDWARE_ID_VIDEO_FRONT){
+            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_VIDEO, type, data);
+        }
     }
 
     @Override
     public void sendSensorInputData(int sendor, int sensorType, float... data) {
-//        if (mPlayMCISdkManager!=null){
-//            mPlayMCISdkManager.send
-//        }
+        if (sendor == SensorConstants.HARDWARE_ID_LOCATION) {
+            PlaySDKManager.getInstance().sendLocationData(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+        }else if (sendor == SensorConstants.HARDWARE_ID_ACCELEROMETER){
+            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_ACCELEROMETER, data);
+        }else if (sendor == SensorConstants.HARDWARE_ID_PRESSURE){
+            //压力传感器
+//            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_, data);
+        }else if (sendor == SensorConstants.HARDWARE_ID_GYROSCOPE){
+            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_GYRO, data);
+        }else if (sendor == SensorConstants.HARDWARE_ID_MAGNETOMETER){
+            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_MAGNETOMETER, data);
+        }else if (sendor == SensorConstants.HARDWARE_ID_GRAVITY){
+            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_GRAVITY, data);
+        }
+
     }
 
     @Override
@@ -359,7 +368,9 @@ public class RedDeviceControl implements IDeviceControl {
 
         @Override
         public void onSensorInput(int i, int i2) {
-
+            if(ref!=null && ref.get()!=null && ref.get().mSensorListener!=null){
+                ref.get().mSensorListener.onSensorSamper(i,i2);
+            }
         }
 
         @Override

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -24,7 +25,9 @@ import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
+import kptech.game.kit.SensorConstants;
 import kptech.game.kit.redfinger.PlaySDKManager;
+import kptech.game.kit.utils.Logger;
 
 public class PlayFragment extends Fragment {
     private static final String TAG = "PlayFragment";
@@ -45,6 +48,8 @@ public class PlayFragment extends Fragment {
 
     private BackstageTimer backstageTimer;
     private DownstageTimer downstageTimer;
+
+    private boolean isResumedStatus;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +75,16 @@ public class PlayFragment extends Fragment {
         mMCISdkView = new MCISdkView(getActivity());
         mMCISdkView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         rootLayout.addView(mMCISdkView);
+        mMCISdkView.getSwDisplay().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Logger.info(TAG, "onTouch");
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    resetTimer(isResumedStatus);
+                }
+                return false;
+            }
+        });
 
         this.mPlaySDKManager = PlaySDKManager.getInstance();
 
@@ -87,19 +102,32 @@ public class PlayFragment extends Fragment {
         }
     }
 
+    private void stopPlay(){
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        this.isResumedStatus = true;
         if (mPlaySDKManager != null){
             mPlaySDKManager.resume();
         }
+
+        resetTimer(this.isResumedStatus);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        this.isResumedStatus = false;
         if (mPlaySDKManager != null){
             mPlaySDKManager.pause();
+        }
+
+        resetTimer(this.isResumedStatus);
+        if (getActivity() != null && getActivity().isFinishing()) {
+            stopPlay();
         }
     }
 
@@ -111,39 +139,33 @@ public class PlayFragment extends Fragment {
         }
         mPlaySDKManager = null;
 
-        DownstageTimer downstageTimer2 = this.downstageTimer;
-        if (downstageTimer2 != null) {
-            downstageTimer2.cancel();
+        if (this.downstageTimer != null) {
+            this.downstageTimer.cancel();
         }
-        BackstageTimer backstageTimer2 = this.backstageTimer;
-        if (backstageTimer2 != null) {
-            backstageTimer2.cancel();
+        if (this.backstageTimer != null) {
+            this.backstageTimer.cancel();
         }
 
         super.onDestroy();
     }
 
-    private void resetTimer(boolean z) {
-        if (z) {
-            DownstageTimer downstageTimer2 = this.downstageTimer;
-            if (downstageTimer2 != null) {
-                downstageTimer2.cancel();
+    private void resetTimer(boolean font) {
+        if (font) {
+            if (this.downstageTimer != null) {
+                this.downstageTimer.cancel();
                 this.downstageTimer.start();
             }
-            BackstageTimer backstageTimer2 = this.backstageTimer;
-            if (backstageTimer2 != null) {
-                backstageTimer2.cancel();
+            if (this.backstageTimer != null) {
+                this.backstageTimer.cancel();
                 return;
             }
             return;
         }
-        DownstageTimer downstageTimer3 = this.downstageTimer;
-        if (downstageTimer3 != null) {
-            downstageTimer3.cancel();
+        if (this.downstageTimer != null) {
+            this.downstageTimer.cancel();
         }
-        BackstageTimer backstageTimer3 = this.backstageTimer;
-        if (backstageTimer3 != null) {
-            backstageTimer3.start();
+        if (this.backstageTimer != null) {
+            this.backstageTimer.start();
         }
     }
 
@@ -154,32 +176,63 @@ public class PlayFragment extends Fragment {
         }
 
         public void onFinish() {
-//            PlayFragment.this.stopPlay();
-//            if (PlayFragment.this.playCallback != null) {
-//                PlayFragment.this.playCallback.a(1, t.j);
-//            }
+            if (PlayFragment.this.mPlaySDKManager != null) {
+                PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(1, PlaySDKManager.backTime);
+            }
+            Logger.info(TAG, "BackstageTimer onFinish");
         }
 
         public void onTick(long j) {
+            Logger.info(TAG, "BackstageTimer ontick:"+j);
         }
     }
 
+
     /* access modifiers changed from: protected */
     public class DownstageTimer extends CountDownTimer {
+        private long lastAliveTime = 0;
+
         public DownstageTimer(long j, long j2) {
             super(j, j2);
+            lastAliveTime = System.currentTimeMillis();
         }
 
         public void onFinish() {
-//            PlayFragment.this.countDownLayout.setVisibility(8);
-//            v.d("ControlTimer onFinish");
-//            PlayFragment.this.stopPlay();
-//            if (PlayFragment.this.playCallback != null) {
-//                PlayFragment.this.playCallback.a(2, t.k);
-//            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (PlayFragment.this.mPlaySDKManager != null) {
+                        PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(2, PlaySDKManager.fontTime);
+                    }
+                }
+            });
+
+            Logger.info(TAG, "DownstageTimer onFinish");
         }
 
         public void onTick(long j) {
+            Logger.info(TAG, "DownstageTimer ontick:"+j);
+            //如果超过5分钟没有操作，发送一个消息，保持游戏继续
+            if ((System.currentTimeMillis() - lastAliveTime) > 4 * 60 * 1000) {
+                lastAliveTime = System.currentTimeMillis();
+                PlayFragment.this.sendAliveMsg();
+            }
+        }
+    }
+
+    private void sendAliveMsg(){
+        Logger.info(TAG, "sendAliveMsg");
+        if (mPlaySDKManager != null){
+            mPlaySDKManager.sendLocationData(
+                    (float) 108.5229, // longitude
+                    (float) 38.4166, // latitude
+                    0.0f, // altitude
+                    0.0f, // floor
+                    0.0f, // horizontalaccuracy
+                    0.0f, // verticalaccuracy
+                    0.0f, // speed
+                    0.0f // direction
+            );
         }
     }
 

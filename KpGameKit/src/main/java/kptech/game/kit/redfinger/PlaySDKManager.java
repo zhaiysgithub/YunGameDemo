@@ -2,11 +2,14 @@ package kptech.game.kit.redfinger;
 
 import android.app.Activity;
 import android.app.Application;
+import android.os.Looper;
 
 import com.mci.commonplaysdk.MCISdkView;
 import com.mci.commonplaysdk.PlayMCISdkManager;
 import com.mci.commonplaysdk.PlaySdkCallbackInterface;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -15,6 +18,7 @@ import java.lang.ref.WeakReference;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.DeviceInfo;
+import kptech.game.kit.redfinger.fragment.PlayFragment;
 import kptech.game.kit.utils.Logger;
 
 public class PlaySDKManager {
@@ -73,8 +77,52 @@ public class PlaySDKManager {
         //初始化SDK
         mPlayMCISdkManager = new PlayMCISdkManager(activity, false);
 
+
+        JSONObject jo = null;
+        try {
+            jo = new JSONObject(this.mDeviceInfo.deviceParams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        jo.remove("appConfigList");
+        try {
+            JSONArray jarr = jo.getJSONArray("appConfigList");
+            for (int i = 0; i < jarr.length(); i++) {
+                JSONObject obj = jarr.getJSONObject(i);
+                String level = obj.optString("level");
+                if (level.equals("high")){
+                    obj.put("bitrate", 4800);
+                    obj.put("maxFPS", 30);
+                    obj.put("minFPS", 20);
+                    obj.put("gameVideoQuality", 0);
+                    obj.put("resolutionRatio", "720 X 1280");
+                    obj.put("width", 720);
+                    obj.put("height", 1280);
+                }else if (level.equals("medium")){
+                    obj.put("bitrate", 3600);
+                    obj.put("maxFPS", 20);
+                    obj.put("minFPS", 10);
+                    obj.put("gameVideoQuality", 1);
+                    obj.put("resolutionRatio", "480 X 850");
+                    obj.put("width", 480);
+                    obj.put("height", 850);
+                }else if (level.equals("low")){
+                    obj.put("bitrate", 2400);
+                    obj.put("maxFPS", 10);
+                    obj.put("minFPS", 5);
+                    obj.put("gameVideoQuality", 2);
+                    obj.put("resolutionRatio", "360 X 652");
+                    obj.put("width", 360);
+                    obj.put("height", 652);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         //5、set game parameters
-        if (mPlayMCISdkManager.setParams(this.mDeviceInfo.deviceParams, this.mGamePkg, this.mDeviceInfo.apiLevel, this.mDeviceInfo.useSSL, mciSdkView, new InnerPlayListener(this)) != 0) {
+        if (mPlayMCISdkManager.setParams(jo.toString(), this.mGamePkg, this.mDeviceInfo.apiLevel, this.mDeviceInfo.useSSL, mciSdkView, new InnerPlayListener(this)) != 0) {
             //设置参数错误，返回
             return;
         }
@@ -97,10 +145,6 @@ public class PlaySDKManager {
             mPlayMCISdkManager.release();
             mPlayMCISdkManager = null;
         }
-
-        if (mPlayListener != null){
-            mPlayListener.onRelease();
-        }
     }
 
     public void resume(){
@@ -117,6 +161,9 @@ public class PlaySDKManager {
 
     public void destory(){
         Logger.info(TAG, "PlaySDKManager destory");
+        if (mPlayListener != null){
+            mPlayListener.onRelease();
+        }
         this.mPlayListener = null;
         this.mVideoListener = null;
         this.mDeviceInfo = null;
@@ -129,21 +176,59 @@ public class PlaySDKManager {
 
 
     public void setAudioSwitch(boolean enable) {
+
     }
 
+    public void sendSensorData(int type, float[] data){
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.sendSensorData(type, data);
+        }
+    }
 
-    public void setResolutionLevel(DeviceInfo.ResolutionLevel level) {
-//        v.b("sendResolutionLevel level:" + fVar);
-//        if (l == null) {
-//            v.b("sendEncodeType mPlayer=null");
-//        } else if (f.LEVEL_DEFAULT == fVar) {
-//            l.setPadResolutionLevel(1);
-//        } else {
-//            l.setPadResolutionLevel(fVar.ordinal());
+    public void sendAVData(int avType, int frameType, byte[] data){
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.sendAVData(avType, frameType, data);
+        }
+    }
+
+    public void sendLocationData(float longitude, float latitude, float altitude, float floor, float horizontalAccuracy,
+                                 float verticalAccuracy, float speed, float direction) {
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.sendLocationData(longitude, latitude,altitude,floor,horizontalAccuracy,verticalAccuracy, speed, direction,System.currentTimeMillis() + "");
+        }
+    }
+
+//    public void sendMsg(){
+//        if (mPlayMCISdkManager != null){
+//            mPlayMCISdkManager.sendTransparentMsgReq("");
 //        }
+//    }
+
+    public int getVideoLevel(){
+        if (mPlayMCISdkManager != null){
+            return mPlayMCISdkManager.getVideoLevel();
+        }
+        return -1;
     }
 
-    public void setVideoBitrateMode(int i2, boolean z2) {
+    public void setVideoLevel(int level){
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.setVideoLevel(level);
+        }
+    }
+
+//    public void setResolutionLevel(DeviceInfo.ResolutionLevel level) {
+//        Logger.info(TAG, "sendResolutionLevel level:" + level);
+//        if (mPlayMCISdkManager == null) {
+//            v.b("sendEncodeType mPlayer=null");
+//        } else if (DeviceInfo.ResolutionLevel.LEVEL_DEFAULT == level) {
+//            mPlayMCISdkManager.setVideoLevel().setPadResolutionLevel(1);
+//        } else {
+//            mPlayMCISdkManager.setPadResolutionLevel(level.ordinal());
+//        }
+//    }
+//
+//    public void setVideoBitrateMode(int i2, boolean z2) {
 //        int i3 = 1;
 //        if (B != i2) {
 //            v.b("setVideoBitrateMode");
@@ -173,10 +258,13 @@ public class PlaySDKManager {
 //                }
 //            }
 //        }
-    }
+//    }
 
-    public void setNoOpsTimeout(long font, long back) {
-
+    public void onNoOpsTimeout(int type, long timeout){
+        stop();
+        if (mPlayListener != null){
+            mPlayListener.onNoOpsTimeout(type, timeout);
+        }
     }
 
 
@@ -211,11 +299,7 @@ public class PlaySDKManager {
                     info = obj.toString();
                 }catch (Exception e){
                 }
-                if (code == 196614) {
-                    //超时
-                }else {
-                    ref.get().mPlayListener.onConnectError(info, APIConstants.ERROR_DEVICE_OTHER_ERROR);
-                }
+                ref.get().mPlayListener.onConnectError(info, APIConstants.ERROR_DEVICE_OTHER_ERROR);
                 ref.get().isStarted = false;
             }
         }
@@ -238,7 +322,7 @@ public class PlaySDKManager {
 
         @Override
         public void onPlayInfo(String s) {
-            Logger.info(TAG, "onPlayInfo s = " + s);
+//            Logger.info(TAG, "onPlayInfo s = " + s);
             //解析延时
             if (ref!=null && ref.get()!=null && ref.get().mPlayListener!=null){
                 try {

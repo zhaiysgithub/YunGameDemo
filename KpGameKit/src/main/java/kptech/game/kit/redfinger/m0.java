@@ -47,11 +47,19 @@ public class m0 implements Serializable {
     }
 
     /* compiled from: PlaySDKManager */
+//    public enum PicQuality {
+//        VIDEO_LEVEL_AUTO,
+//        VIDEO_LEVEL_HD,
+//        VIDEO_LEVEL_STANDARD,
+//        VIDEO_LEVEL_FLUENCY,
+//    }
+
     public enum PicQuality {
-        VIDEO_LEVEL_AUTO,
-        VIDEO_LEVEL_HD,
-        VIDEO_LEVEL_STANDARD,
-        VIDEO_LEVEL_FLUENCY,
+        GRADE_LEVEL_HD,
+        GRADE_LEVEL_ORDINARY,
+        GRADE_LEVEL_HS,
+        GRADE_LEVEL_LS,
+        GRADE_LEVEL_AUTO
     }
 
     public static final int VIDEO_LEVEL_AUTO = 0;
@@ -159,25 +167,47 @@ public class m0 implements Serializable {
         return this.picQuality;
     }
 
+//    public void setPicQuality(int picQuality) {
+//        switch (picQuality) {
+//            case 0:
+//                this.picQuality = PicQuality.VIDEO_LEVEL_AUTO;
+//                return;
+//            case 1:
+//                this.picQuality = PicQuality.VIDEO_LEVEL_HD;
+//                return;
+//            case 2:
+//                this.picQuality = PicQuality.VIDEO_LEVEL_STANDARD;
+//                return;
+//            case 3:
+//                this.picQuality = PicQuality.VIDEO_LEVEL_FLUENCY;
+//                return;
+//            case 4:
+//                this.picQuality = PicQuality.GRADE_LEVEL_AUTO;
+//                return;
+//            default:
+//                this.picQuality = PicQuality.VIDEO_LEVEL_AUTO;
+//                return;
+//        }
+//    }
     public void setPicQuality(int picQuality) {
         switch (picQuality) {
             case 0:
-                this.picQuality = PicQuality.VIDEO_LEVEL_AUTO;
+                this.picQuality = PicQuality.GRADE_LEVEL_HD;
                 return;
             case 1:
-                this.picQuality = PicQuality.VIDEO_LEVEL_HD;
+                this.picQuality = PicQuality.GRADE_LEVEL_ORDINARY;
                 return;
             case 2:
-                this.picQuality = PicQuality.VIDEO_LEVEL_STANDARD;
+                this.picQuality = PicQuality.GRADE_LEVEL_HS;
                 return;
             case 3:
-                this.picQuality = PicQuality.VIDEO_LEVEL_FLUENCY;
+                this.picQuality = PicQuality.GRADE_LEVEL_LS;
                 return;
-//            case 4:
-//                this.picQuality = PicQuality.e;
-//                return;
+            case 4:
+                this.picQuality = PicQuality.GRADE_LEVEL_AUTO;
+                return;
             default:
-                this.picQuality = PicQuality.VIDEO_LEVEL_AUTO;
+                this.picQuality = PicQuality.GRADE_LEVEL_HD;
                 return;
         }
     }
@@ -366,6 +396,6 @@ public class m0 implements Serializable {
         } else if (resolution == Resolution.LEVEL_720_1280) {
             return "720 X 1280";
         }
-        return "default";
+        return "720 X 1280";
     }
 }
