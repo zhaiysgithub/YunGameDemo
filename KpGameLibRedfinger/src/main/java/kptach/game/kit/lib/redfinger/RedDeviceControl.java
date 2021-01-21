@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.KeyEvent;
 
 import com.mci.commonplaysdk.PlayMCISdkManager;
 
 import java.lang.ref.WeakReference;
 
-import kptach.game.kit.inter.game.GameInfo;
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameCallback;
 import kptach.game.kit.inter.game.SensorConstants;
@@ -136,7 +137,11 @@ public class RedDeviceControl implements IDeviceControl {
 
     @Override
     public void sendPadKey(int padKey) {
-
+        if (padKey == APIConstants.PAD_KEY_BACK){
+            PlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
+        }else if (padKey == APIConstants.PAD_KEY_HOME){
+            PlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HOME);
+        }
     }
 
     @Override

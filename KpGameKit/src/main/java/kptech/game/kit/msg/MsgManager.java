@@ -40,31 +40,25 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         return mMsgManager;
     }
 
-    public static void start(Activity activity, String corpId, String token, String pkgName, String gameId, String gameName){
+    public static void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
         if (!inited){
             Logger.error("MsgManager", "kpckit messager not initialized");
             return;
+        }
+
+        if (padCode == null || "".equals(padCode)){
+            Logger.error("MsgManager", "padcode is null");
+            return;
+        }
+
+        if (padCode.toLowerCase().startsWith("vm")) {
+            padCode = padCode.substring(2,padCode.length());
         }
 
         if (mMsgManager == null){
             mMsgManager = new MsgManager(activity, corpId, pkgName);
         }
         Messager.getInstance().addCallback(mMsgManager);
-
-
-        String padCode = null;
-        try {
-            JSONObject obj = new JSONObject(token);
-            JSONObject tokenObj =  new JSONObject(obj.getString("token"));
-            String deviceId = tokenObj.getString("deviceId");
-
-            if (deviceId!=null && deviceId.startsWith("VM")){
-                padCode = deviceId.substring(2,deviceId.length());
-            }
-        } catch (JSONException e) {
-            Logger.error("MsgManager",e.getMessage());
-        }
-
 
         if (mMsgManager != null){
             mMsgManager.setPadCode("VM"+padCode);

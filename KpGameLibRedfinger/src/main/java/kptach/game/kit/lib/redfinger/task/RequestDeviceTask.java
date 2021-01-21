@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-import kptach.game.kit.lib.redfinger.APIConstants;
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.lib.redfinger.utils.Logger;
 
 public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {

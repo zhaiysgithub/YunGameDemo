@@ -2,6 +2,7 @@ package kptach.game.kit.lib.redfinger;
 
 import java.lang.ref.WeakReference;
 
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.lib.redfinger.play.IPlayListener;
 import kptach.game.kit.lib.redfinger.play.IVideoListener;
 import kptach.game.kit.lib.redfinger.utils.ThreadUtils;
@@ -39,8 +40,15 @@ public class SDKListener implements IPlayListener, IVideoListener {
     }
 
     @Override
-    public void onScreenCapture(byte[] bArr) {
-
+    public void onScreenCapture(final byte[] bArr) {
+        ThreadUtils.runUi(new Runnable() {
+            @Override
+            public void run() {
+                if (ref != null && ref.get() != null && ref.get().mPlayListener!=null){
+                    ref.get().mPlayListener.onScreenCapture(bArr);
+                }
+            }
+        });
     }
 
     @Override

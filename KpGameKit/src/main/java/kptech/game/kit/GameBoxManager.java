@@ -15,12 +15,14 @@ import java.util.List;
 
 import kptach.game.kit.inter.game.IGameBoxManager;
 import kptach.game.kit.inter.game.IGameCallback;
+import kptech.game.kit.activity.hardware.sampler.SensorSampler;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
+import kptech.game.kit.constants.Urls;
 import kptech.game.kit.data.RequestAppInfoTask;
 import kptech.game.kit.data.RequestDeviceTask;
 import kptech.game.kit.data.RequestTask;
@@ -247,14 +249,14 @@ public class GameBoxManager {
         }
     }
 
-    private static String tmpAK;
-    private static String tmpSK;
-    private static String tmpCH;
+    private static String AK;
+    private static String SK;
+    private static String CH;
 
     public static void setAppInfo(String ak, String sk, String ch){
-        tmpAK = ak;
-        tmpSK = sk;
-        tmpCH = ch;
+        AK = ak;
+        SK = sk;
+        CH = ch;
     }
 
     /**
@@ -262,30 +264,18 @@ public class GameBoxManager {
      */
     private boolean initLibManager(){
 
-        boolean ret = false;
-        String ak = tmpAK!=null ? tmpAK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_KEY,null);
-        String sk = tmpSK!= null ? tmpSK : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_SECRET,null);
-        String ch = tmpCH!= null ? tmpCH : ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_CHANNEL,null);
-//        if (!StringUtil.isEmpty(ak) && !StringUtil.isEmpty(sk)){
-//            com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication).setDebug(mDebug);
-//
-//            //初始化游戏
-//            com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication).init(ak, sk, ch);
-//            isLibInited = true;
-//
-//            ret = true;
-//        }
+        if (AK == null || SK == null){
+            AK = ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_KEY,null);
+            SK = ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_SECRET,null);
+        }
 
-//        PlayMCISdkManager.init(mApplication, null, PlayMCISdkManager.LOG_DEFAULT, true);
-        ret = true;
-
+        boolean ret = true;
         try {
             //发送打点事件
             Event event = Event.getEvent(ret ? EventCode.DATA_SDK_INIT_OK : EventCode.DATA_SDK_INIT_FAILED);
             HashMap ext = new HashMap();
-            ext.put("ak",ak);
-            ext.put("sk",sk);
-            ext.put("ch",ch);
+            ext.put("ak",AK);
+            ext.put("sk",SK);
             event.setExt(ext);
             MobclickAgent.sendEvent(event);
         }catch (Exception e){}
@@ -305,7 +295,7 @@ public class GameBoxManager {
 
         }catch (Exception e){}
 
-        return ret;
+        return true;
     }
 
     /**
@@ -324,11 +314,6 @@ public class GameBoxManager {
             }
             return;
         }
-
-//        try {
-//            addDeviceInfo(manager);
-//        }catch (Exception e){
-//        }
 
         try {
             //重置打点数据
@@ -355,25 +340,25 @@ public class GameBoxManager {
             mTimeDuration = new MillisecondsDuration();
         }catch (Exception e){}
 
+        devLoading = true;
+        HashMap sdkParams = new HashMap();
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
 
-        //预加载广告
-        final AdManager adManager = (AdManager.adEnable && inf.showAd == GameInfo.GAME_AD_SHOW_ON)  ? new AdManager(activity) : null;
-        if (adManager!=null){
-            adManager.setPackageName(inf.pkgName);
-            adManager.prepareAd();
-        }
-
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK);
-        kptach.game.kit.inter.game.GameInfo game = new kptach.game.kit.inter.game.GameInfo();
-        game.kpGameId = inf.kpGameId;
-        game.pkgName = inf.pkgName;
-        gameBoxManager.applyCloudDevice(activity, game, new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
+        gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override
             public void onGameCallback(kptach.game.kit.inter.game.IDeviceControl innerControl, int code) {
+                devLoading = false;
 
                 DeviceControl control = null;
                 if (innerControl != null){
-                    control = new DeviceControl(innerControl);
+                    control = new DeviceControl(innerControl, inf);
                 }
 
                 try {
@@ -414,55 +399,6 @@ public class GameBoxManager {
             }
         });
 
-        devLoading = true;
-        new RequestDeviceTask(new RequestDeviceTask.ICallback() {
-            @Override
-            public void onResult(int code, String devInfo) {
-                devLoading = false;
-
-                IDeviceControl control = null;
-                if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-//                    control = DeviceControlFactory.getDeviceControl(devInfo,inf);
-                }
-
-                try {
-                    //发送打点事件
-                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
-                    if (control != null){
-                        event.setPadcode(control.getPadcode());
-                    }
-                    event.setErrMsg(""+code);
-                    HashMap ext = new HashMap<>();
-                    ext.put("code", code);
-                    event.setExt(ext);
-                    MobclickAgent.sendEvent(event);
-                }catch (Exception e){}
-
-                try {
-                    //发送事件耗时统计
-                    long useTm = mTimeDuration.duration();
-                    HashMap data = new HashMap();
-                    data.put("stime", mTimeDuration.getSavedTime());
-                    data.put("etime", mTimeDuration.getCurentTime());
-                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
-                    data.put("code", code);
-                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
-                    event.setGamePkg(inf.pkgName);
-                    if (control != null){
-                        event.setPadcode(control.getPadcode());
-                    }
-                    MobclickAgent.sendTMEvent(event);
-
-                    mTimeDuration = null;
-                }catch (Exception e){}
-
-                //回调方法
-                if (callback!=null){
-                    callback.onAPICallback(control, code);
-                }
-            }
-
-        }).execute(mCorpID, inf.pkgName, DeviceInfo.getUserId(activity), inf.kpGameId);
     }
 
 

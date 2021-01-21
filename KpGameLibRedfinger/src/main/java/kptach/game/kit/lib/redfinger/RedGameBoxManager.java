@@ -3,55 +3,72 @@ package kptach.game.kit.lib.redfinger;
 import android.app.Activity;
 import android.app.Application;
 
-import com.mci.commonplaysdk.PlayMCISdkManager;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import kptach.game.kit.inter.game.GameInfo;
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameBoxManager;
 import kptach.game.kit.inter.game.IGameCallback;
 import kptach.game.kit.lib.redfinger.task.RequestDeviceTask;
+import kptach.game.kit.lib.redfinger.utils.Logger;
 
 public class RedGameBoxManager implements IGameBoxManager {
 
-    public static boolean debug = false;
-    public static String mCorpID = "";
-    public static String mUserID = "";
-    public static String mSdkUrl = "";
-    public static String mSdkVer = "";
+    private boolean debug = false;
+    private String mCorpID = "";
+    private String mUserID = "";
+    private String mSdkUrl = "";
+    private String mSdkVer = "";
 
     private boolean devLoading;
+    private boolean isInited = false;
 
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> callback) {
+        if (isInited){
+            return;
+        }
         try {
             if (params != null){
-                if (params.containsKey("debug")){
-                    debug = (Boolean) params.get("debug");
+                if (params.containsKey(PARAMS_KEY_DEBUG)){
+                    debug = (Boolean) params.get(PARAMS_KEY_DEBUG);
                 }
-                if (params.containsKey("corpId")){
-                    mCorpID = (String) params.get("corpId");
+                if (params.containsKey(PARAMS_KEY_CORPID)){
+                    mCorpID = (String) params.get(PARAMS_KEY_CORPID);
                 }
-                if (params.containsKey("userId")){
-                    mUserID = (String) params.get("userId");
+                if (params.containsKey(PARAMS_KEY_USERID)){
+                    mUserID = (String) params.get(PARAMS_KEY_USERID);
                 }
-                if (params.containsKey("sdkUrl")){
-                    mSdkUrl = (String) params.get("sdkUrl");
+                if (params.containsKey(PARAMS_KEY_SDKURL)){
+                    mSdkUrl = (String) params.get(PARAMS_KEY_SDKURL);
                 }
-                if (params.containsKey("sdkVer")){
-                    mSdkVer = (String) params.get("sdkVer");
+                if (params.containsKey(PARAMS_KEY_SDKVER)){
+                    mSdkVer = (String) params.get(PARAMS_KEY_SDKVER);
                 }
             }
         }catch (Exception e){}
+
+        isInited = true;
     }
 
     @Override
-    public void applyCloudDevice(Activity activity, final GameInfo inf, final IGameCallback<IDeviceControl> callback) {
+    public void applyCloudDevice(Activity activity, String inf, final IGameCallback<IDeviceControl> callback) {
         if (devLoading){
             return;
         }
+        String pkgName = "";
+        String kpGameId = "";
+        try {
+            JSONObject obj = new JSONObject(inf);
+            pkgName = obj.optString("pkgName");
+            kpGameId = obj.optString("kpGameId");
+        }catch (Exception e){
+            Logger.error("RedGameBoxManager", e.getMessage());
+        }
         devLoading = true;
+        final String finalPkgName = pkgName;
         new RequestDeviceTask()
                 .setSdkUrl(mSdkUrl)
                 .setSdkVer(mSdkVer)
@@ -62,7 +79,7 @@ public class RedGameBoxManager implements IGameBoxManager {
 
                         IDeviceControl control = null;
                         if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-                            control = new RedDeviceControl(devInfo, inf);
+                            control = new RedDeviceControl(devInfo, finalPkgName);
                         }
 
                         if (callback != null) {
@@ -70,7 +87,7 @@ public class RedGameBoxManager implements IGameBoxManager {
                         }
                     }
                 })
-                .execute(mCorpID, inf.pkgName, mUserID, inf.kpGameId);
+                .execute(mCorpID, pkgName, mUserID, kpGameId);
     }
 
 }

@@ -1,4 +1,4 @@
-package kptach.game.kit.lib.redfinger;
+package kptach.game.kit.inter.game;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,17 +22,7 @@ public class APIConstants {
     public static final int ERROR_OTHER_DEVICE_WAITING = -1009;
     public static final int ERROR_DEVICE_TOKEN_VALID_FAILED = -1010;
 
-
     public static final int ERROR_GAME_INF_EMPTY = -2001;
-    public static final int ERROR_GAME_CANCEL = -2002;
-    public static final int ERROR_AD_FAILE = -2003;
-
-    //广告加载中
-    public static final int AD_LOADING = 11001;
-    //游戏加载中
-    public static final int GAME_LOADING = 11002;
-    //云手机数据恢复中
-    public static final int RECOVER_DATA_LOADING = 11003;
 
     public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = "GRADE_LEVEL_ORDINARY";
@@ -63,6 +53,7 @@ public class APIConstants {
 
     public static final int AV_DATA_TYPE_VIDEO = 0;
     public static final int AV_DATA_TYPE_AUDIO = 1;
+
     public static final int AV_ENCODE_TYPE_IDR_FRAME = 0;
     public static final int AV_ENCODE_TYPE_P_FRAME = 1;
     public static final int AV_ENCODE_TYPE_PPS_FRAME = 2;

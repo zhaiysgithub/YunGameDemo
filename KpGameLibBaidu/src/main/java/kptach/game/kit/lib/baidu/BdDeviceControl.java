@@ -2,15 +2,13 @@ package kptach.game.kit.lib.baidu;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 
-import com.yd.yunapp.gameboxlib.APIConstants;
+import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
 
 import org.json.JSONObject;
 
-import kptach.game.kit.inter.game.GameInfo;
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameCallback;
 import kptach.game.kit.lib.baidu.utils.Logger;
@@ -25,15 +23,8 @@ public class BdDeviceControl implements IDeviceControl {
     private boolean mIsSoundEnable = true;
     private String mPicQuality = "";
 
-    private Handler mGameHandler;
-    private Activity mActivity;
-    private int mGameRes;
-//    private APICallback<String> mGameStartCallback;
-
-    protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control, GameInfo game){
+    protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this.mDeviceControl = control;
-//        this.mGameInfo = game;
-        //解析deviceToken
         parseDeviceToken();
     }
 
@@ -73,11 +64,13 @@ public class BdDeviceControl implements IDeviceControl {
     }
 
     @Override
-    public void startGame(Activity activity, int res, IGameCallback<String> callback) {
+    public void startGame(Activity activity, int res, final IGameCallback<String> callback) {
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>(){
             @Override
             public void onAPICallback(String s, int i) {
-
+                if (callback != null){
+                    callback.onGameCallback(s, i);
+                }
             }
         });
     }
@@ -147,11 +140,11 @@ public class BdDeviceControl implements IDeviceControl {
     public void sendPadKey(int key) {
         try {
             if (mDeviceControl != null){
-//                if (key == APIConstants.PAD_KEY_BACK){
-//                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_BACK);
-//                }else if (key == APIConstants.PAD_KEY_HOME){
-//                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_HOME);
-//                }
+                if (key == APIConstants.PAD_KEY_BACK){
+                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_BACK);
+                }else if (key == APIConstants.PAD_KEY_HOME){
+                    mDeviceControl.setGamePadKey(GamePadKey.GAMEPAD_HOME);
+                }
             }
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
@@ -169,13 +162,49 @@ public class BdDeviceControl implements IDeviceControl {
     }
 
     @Override
-    public void registerSensorSamplerListener(SensorSamplerListener listener) {
-
+    public void registerSensorSamplerListener(final SensorSamplerListener listener) {
+        mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
+            @Override
+            public void onSensorSamper(int i, int i1) {
+                if (listener != null){
+                    listener.onSensorSamper(i, i1);
+                }
+            }
+        });
     }
 
     @Override
-    public void setPlayListener(PlayListener listener) {
+    public void setPlayListener(final PlayListener listener) {
+        mDeviceControl.setPlayListener(new DeviceControl.PlayListener() {
+            @Override
+            public void onPingUpdate(int i) {
+                if (listener != null){
+                    listener.onPingUpdate(i);
+                }
+            }
 
+            @Override
+            public boolean onNoOpsTimeout(int i, long l) {
+                if (listener != null){
+                    listener.onNoOpsTimeout(i, l);
+                }
+                return false;
+            }
+
+            @Override
+            public void onScreenChange(int i) {
+                if (listener != null){
+                    listener.onScreenChange(i);
+                }
+            }
+
+            @Override
+            public void onScreenCapture(byte[] bytes) {
+                if (listener != null){
+                    listener.onScreenCapture(bytes);
+                }
+            }
+        });
     }
 
 }

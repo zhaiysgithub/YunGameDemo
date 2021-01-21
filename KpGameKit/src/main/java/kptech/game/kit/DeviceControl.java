@@ -26,6 +26,7 @@ import kptech.game.kit.msg.IMsgReceiver;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.MillisecondsDuration;
 import kptech.game.kit.utils.ProferencesUtils;
 
 public class DeviceControl implements IDeviceControl{
@@ -49,7 +50,7 @@ public class DeviceControl implements IDeviceControl{
 
     //耗时统计
     private boolean sendTmEvent = false;
-    private long TM_DEVICE_END, TM_VIDEO_START, TM_VIDEO_END;
+    private MillisecondsDuration mTimeDuration;
 
     protected DeviceControl(kptach.game.kit.inter.game.IDeviceControl control){
         this(control,null);
@@ -59,6 +60,9 @@ public class DeviceControl implements IDeviceControl{
         this.mInnerControl = control;
         this.mGameInfo = game;
         this.mGameHandler = new GameHandler();
+
+        mTimeDuration = new MillisecondsDuration();
+
         //解析deviceToken
 //        parseDeviceToken();
     }
@@ -77,6 +81,13 @@ public class DeviceControl implements IDeviceControl{
         this.mGameRes = res;
         this.mGameStartCallback = callback;
 
+        //预加载广告
+        final AdManager adManager = (AdManager.adEnable && mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON)  ? new AdManager(activity) : null;
+        if (adManager!=null){
+            adManager.setPackageName(mGameInfo.pkgName);
+            adManager.prepareAd();
+        }
+
         //连接设备
         MsgManager.start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
@@ -93,7 +104,26 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void stopGame() {
+
+        try {
+            MsgManager.stop();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         mInnerControl.stopGame();
+
+        try {
+            if (mAdManager != null){
+                mAdManager.destory();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        mActivity = null;
+        mGameStartCallback = null;
+        mGameHandler = null;
     }
 
     @Override
@@ -186,6 +216,11 @@ public class DeviceControl implements IDeviceControl{
                 if (listener != null){
                     listener.onScreenChange(value);
                 }
+            }
+
+            @Override
+            public void onScreenCapture(byte[] bytes) {
+
             }
         });
     }
@@ -417,23 +452,24 @@ public class DeviceControl implements IDeviceControl{
 
         //发送事件耗时统计
         if (!sendTmEvent) {
-            if (TM_DEVICE_END  == 0){
-                TM_DEVICE_END = new Date().getTime();
+            sendTmEvent = true;
+            if (mTimeDuration == null){
+                mTimeDuration = new MillisecondsDuration();
             }
 
-            sendTmEvent = true;
             try {
                 //发送事件耗时统计
-                TM_VIDEO_START = new Date().getTime();
-                long useTm = ( TM_VIDEO_START - TM_DEVICE_END );
+                long useTm = mTimeDuration.duration();
                 HashMap data = new HashMap();
-                data.put("stime", TM_DEVICE_END);
-                data.put("etime", TM_VIDEO_START);
+                data.put("stime", mTimeDuration.getSavedTime());
+                data.put("etime", mTimeDuration.getCurentTime());
                 Event event = Event.getTMEvent(EventCode.DATA_TMDATA_VIDEO_START, useTm, data);
                 event.setPadcode(getPadcode());
                 event.setGamePkg(mGameInfo.pkgName);
                 MobclickAgent.sendTMEvent(event);
             }catch (Exception e){}
+
+            mTimeDuration = new MillisecondsDuration();
         }
 
         if (callback!=null){
@@ -481,11 +517,10 @@ public class DeviceControl implements IDeviceControl{
                         }
 
                         //发送事件耗时统计
-                        TM_VIDEO_END = new Date().getTime();
-                        long useTm = ( TM_VIDEO_END - TM_VIDEO_START );
+                        long useTm = mTimeDuration.duration();
                         HashMap data = new HashMap();
-                        data.put("stime", TM_VIDEO_START);
-                        data.put("etime", TM_VIDEO_END);
+                        data.put("stime", mTimeDuration.getSavedTime());
+                        data.put("etime", mTimeDuration.getCurentTime());
                         data.put("state", ret ? "ok" : "failed");
                         data.put("code", code);
                         Event event = Event.getTMEvent(EventCode.DATA_TMDATA_VIDEO_END, useTm, data);
@@ -493,6 +528,8 @@ public class DeviceControl implements IDeviceControl{
                         event.setGamePkg(mGameInfo.pkgName);
                         MobclickAgent.sendTMEvent(event);
                     }catch (Exception e){}
+
+                    mTimeDuration = null;
                 }
 
 

@@ -642,7 +642,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
-
     }
 
     private void playSuccess() {

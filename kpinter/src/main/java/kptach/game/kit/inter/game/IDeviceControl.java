@@ -124,7 +124,17 @@ public interface IDeviceControl {
          */
         boolean onNoOpsTimeout(int type, long timeout);
 
+        /**
+         * 屏幕旋转
+         * @param value
+         */
         void onScreenChange(int value);
+
+        /**
+         * 屏幕截图
+         * @param bytes
+         */
+        void onScreenCapture(byte[] bytes);
     }
 
     /**

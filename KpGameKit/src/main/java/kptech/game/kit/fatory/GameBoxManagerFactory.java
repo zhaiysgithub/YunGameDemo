@@ -1,8 +1,14 @@
 package kptech.game.kit.fatory;
 
+import android.app.Application;
+
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 
 import kptach.game.kit.inter.game.IGameBoxManager;
+
+import kptach.game.kit.lib.redfinger.RedGameBoxManager;
+import kptach.game.kit.lib.baidu.BdGameBoxManager;
 
 public class GameBoxManagerFactory {
     private static IGameBoxManager bdManager = null;
@@ -10,24 +16,29 @@ public class GameBoxManagerFactory {
 
     private static byte[] lock = new byte[0];
 
-    public static IGameBoxManager getGameBoxManager(int sdkType){
+    public static IGameBoxManager getGameBoxManager(int sdkType, Application app, HashMap params){
         synchronized (lock){
             IGameBoxManager instance = null;
             try {
                 if (sdkType == 1 ){
                     if (bdManager == null) {
-                        bdManager = (IGameBoxManager) newInstance("", null, null);
+                        bdManager = (IGameBoxManager) newInstance(BdGameBoxManager.class.getName(), null, null);
                     }
                     instance = bdManager;
                 }else {
                     if (rfManager == null) {
-                        rfManager = (IGameBoxManager) newInstance("kptach.game.kit.lib.redfinger.RedGameBoxManager", null, null);
+                        rfManager = (IGameBoxManager) newInstance(RedGameBoxManager.class.getName(), null, null);
                     }
                     instance = rfManager;
                 }
             }catch (Exception e){
                 e.printStackTrace();
             }
+
+            if (instance != null){
+                instance.initLib(app, params, null);
+            }
+
             return instance;
         }
     }

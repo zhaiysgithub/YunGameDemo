@@ -87,7 +87,9 @@ public class PlayFragment extends Fragment {
     }
 
     private void stopPlay(){
-
+        if (mPlaySDKManager != null) {
+            mPlaySDKManager.stop();
+        }
     }
 
     @Override
@@ -118,7 +120,6 @@ public class PlayFragment extends Fragment {
     @Override
     public void onDestroy() {
         if (mPlaySDKManager != null){
-            mPlaySDKManager.stop();
             mPlaySDKManager.destory();
         }
         mPlaySDKManager = null;

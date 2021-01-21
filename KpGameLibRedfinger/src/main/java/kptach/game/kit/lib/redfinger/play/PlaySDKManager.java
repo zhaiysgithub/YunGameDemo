@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import kptach.game.kit.lib.redfinger.APIConstants;
+import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.lib.redfinger.BuildConfig;
 import kptach.game.kit.lib.redfinger.model.DeviceInfo;
 import kptach.game.kit.lib.redfinger.utils.DeviceUtils;
@@ -144,6 +144,10 @@ public class PlaySDKManager {
             mPlayMCISdkManager.stop();
             mPlayMCISdkManager.release();
             mPlayMCISdkManager = null;
+
+            if (mPlayListener != null){
+                mPlayListener.onRelease();
+            }
         }
     }
 
@@ -161,9 +165,6 @@ public class PlaySDKManager {
 
     public void destory(){
         Logger.info(TAG, "PlaySDKManager destory");
-        if (mPlayListener != null){
-            mPlayListener.onRelease();
-        }
         this.mPlayListener = null;
         this.mVideoListener = null;
         this.mDeviceInfo = null;
@@ -176,7 +177,12 @@ public class PlaySDKManager {
 
 
     public void setAudioSwitch(boolean enable) {
+    }
 
+    public void sendPadKey(int action, int keycode) {
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.sendKeyEvent(action, keycode);
+        }
     }
 
     public void sendSensorData(int type, float[] data){

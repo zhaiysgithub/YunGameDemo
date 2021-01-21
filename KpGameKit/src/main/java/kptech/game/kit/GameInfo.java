@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import kptech.game.kit.utils.Logger;
+
 public class GameInfo implements Parcelable {
     public static int GAME_AD_SHOW_AUTO = 0;    //按服务器配置信息显示
     public static int GAME_AD_SHOW_ON = 1;    //显示广告
@@ -139,5 +141,23 @@ public class GameInfo implements Parcelable {
                 +",usedTime:" + this.usedTime + ",size:" + this.size
                 +",showAd:" + this.showAd;
         return super.toString();
+    }
+
+    public String toJsonString(){
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("kpGameId", this.kpGameId);
+            obj.put("gid", this.gid);
+            obj.put("pkgName", this.pkgName);
+            obj.put("name", this.name);
+            obj.put("iconUrl", this.iconUrl);
+            obj.put("playCount", this.playCount);
+            obj.put("totalTime", this.totalTime);
+            obj.put("usedTime", this.usedTime);
+            return obj.toString();
+        }catch (Exception e){
+            Logger.error("GameInfo", e.getMessage());
+        }
+        return "";
     }
 }
