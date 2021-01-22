@@ -7,8 +7,12 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +35,7 @@ import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
+import kptech.game.kit.utils.PadModel;
 import kptech.game.kit.utils.ProferencesUtils;
 
 
@@ -49,7 +54,7 @@ public class GameBoxManager {
 
 //    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
     private MillisecondsDuration mTimeDuration;
-    private boolean isLibInited = false;
+    private boolean isInited = false;
 
     private boolean devLoading = false;
 
@@ -84,10 +89,18 @@ public class GameBoxManager {
     }
 
     public boolean isGameBoxManagerInited(){
-        return this.isLibInited;
+        return this.isInited;
     }
 
     public synchronized void init(@NonNull Application application, String appKey, APICallback<String> callback){
+        //判断已经初始化完成
+        if (isGameBoxManagerInited()){
+            if (callback != null){
+                callback.onAPICallback("", 1);
+            }
+            return;
+        }
+
         mApplication = application;
         mCorpID = appKey;
         if (mApplication == null){
@@ -102,14 +115,6 @@ public class GameBoxManager {
             //回调初始化
             if (callback != null){
                 callback.onAPICallback("CorID is null", APIConstants.ERROR_SDK_INIT_ERROR);
-            }
-            return;
-        }
-
-        //判断已经初始化完成
-        if (box!=null && box.isGameBoxManagerInited()){
-            if (callback != null){
-                callback.onAPICallback("", 1);
             }
             return;
         }
@@ -295,6 +300,8 @@ public class GameBoxManager {
 
         }catch (Exception e){}
 
+        isInited = true;
+
         return true;
     }
 
@@ -349,8 +356,13 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
+        PadModel padModel = PadModel.createPadModel(mApplication);
+        if (padModel  != null){
+            sdkParams.put(IGameBoxManager.PARAMS_KEY_PADINF, padModel.combPadModel());
+        }
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
+
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override
             public void onGameCallback(kptach.game.kit.inter.game.IDeviceControl innerControl, int code) {

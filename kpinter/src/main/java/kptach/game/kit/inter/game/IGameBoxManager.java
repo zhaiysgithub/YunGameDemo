@@ -16,6 +16,8 @@ public interface IGameBoxManager {
     public static final String PARAMS_KEY_BD_AK = "ak";
     public static final String PARAMS_KEY_BD_SK = "sk";
 
+    public static final String PARAMS_KEY_PADINF = "padInf";
+
     /**
      * 初始化sdk
      * @param application

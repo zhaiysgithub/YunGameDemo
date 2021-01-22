@@ -8,6 +8,8 @@ import com.yd.yunapp.gameboxlib.GamePadKey;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameCallback;
@@ -205,6 +207,11 @@ public class BdDeviceControl implements IDeviceControl {
                 }
             }
         });
+    }
+
+    @Override
+    public void mockDeviceInfo() {
+        mDeviceControl.mockDeviceInfo();
     }
 
 }

@@ -181,6 +181,11 @@ public class RedDeviceControl implements IDeviceControl {
         this.mPlayListener = listener;
     }
 
+    @Override
+    public void mockDeviceInfo() {
+
+    }
+
     public void callback(String text, int code){
         if (mHandler != null){
             Object[] objs = new Object[]{code, text};

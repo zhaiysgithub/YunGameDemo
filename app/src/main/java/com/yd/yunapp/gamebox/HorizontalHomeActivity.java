@@ -163,11 +163,12 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         GameInfo info = new GameInfo();
 
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_ON;
+        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 4150;
+        info.gid = 4188;
         info.pkgName = "com.kptach.test";
+        info.useSDK = 1;
 
 //        info.gid = 3437;
 //        info.pkgName = "com.kptach.test";

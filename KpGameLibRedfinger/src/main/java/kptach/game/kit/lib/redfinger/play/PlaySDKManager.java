@@ -2,6 +2,7 @@ package kptach.game.kit.lib.redfinger.play;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.mci.commonplaysdk.MCISdkView;
 import com.mci.commonplaysdk.PlayMCISdkManager;
@@ -12,13 +13,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.util.Properties;
 
 import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.lib.redfinger.BuildConfig;
 import kptach.game.kit.lib.redfinger.model.DeviceInfo;
+import kptach.game.kit.lib.redfinger.task.HttpDownload;
 import kptach.game.kit.lib.redfinger.utils.DeviceUtils;
 import kptach.game.kit.lib.redfinger.utils.DynamicLoadLibHelper;
+import kptach.game.kit.lib.redfinger.utils.FilePathUtils;
 import kptach.game.kit.lib.redfinger.utils.Logger;
 
 public class PlaySDKManager {
@@ -177,6 +182,13 @@ public class PlaySDKManager {
 
 
     public void setAudioSwitch(boolean enable) {
+        if (mPlayMCISdkManager != null){
+            if (enable){
+                mPlayMCISdkManager.resume();
+            }else {
+                mPlayMCISdkManager.pause();
+            }
+        }
     }
 
     public void sendPadKey(int action, int keycode) {
@@ -377,8 +389,9 @@ public class PlaySDKManager {
             return;
         }
 
-        boolean isArm64 = DeviceUtils.is64Bit();
-        loadSo();
+//        loadSo();
+
+        requestSo(application);
     }
 
     private void sdkInitSuccess(){
@@ -389,6 +402,7 @@ public class PlaySDKManager {
             this.mInitListener.success();
         }
     }
+
     private void sdkInitFailed(int code, String err) {
         if (this.mInitListener != null){
             this.mInitListener.failed(code, err);
@@ -401,7 +415,7 @@ public class PlaySDKManager {
             String soPath = null;
             if (this.mSoFile!=null && this.mSoFile.exists()){
                 soPath = this.mSoFile.getAbsolutePath();
-                System.load(soPath);
+//                System.load(soPath);
             }
             Logger.info(TAG,"init play start");
             try {
@@ -422,8 +436,79 @@ public class PlaySDKManager {
         void success(String str);
     }
 
-    private void requestSoVersion(){
+    private void requestSo(Context context){
+        boolean isArm64 = DeviceUtils.is64Bit();
+        String url = "";
+        if (isArm64){
+            url = "https://osspic.kuaipantech.com/android/kpscorp/REDF-LIB/arm64-v8a/libmci.so";
+        }else {
+            url = "https://osspic.kuaipantech.com/android/kpscorp/REDF-LIB/armeabi-v7a/libmci.so";
+        }
 
+        String filePath = FilePathUtils.getLibMciFilePath(context);
+        File file = new File(filePath);
+        if (file.exists()){
+            mSoFile = file;
+            loadSo();
+            return;
+        }
+
+        HttpDownload down = new HttpDownload(url, filePath);
+        down.setCallback(new HttpDownload.ICallback() {
+            @Override
+            public void onSuccess(String file) {
+                Logger.info(TAG, "下载完成");
+                mSoFile = new File(file);
+                if (!mSoFile.exists()){
+
+                }
+                loadSo();
+
+//                //验证文件
+//                String str = FileUtils.getMD5(new File(file));
+//                if (str.equals(newMd5)){
+//                    String verFile = SdkPath.getInstance().getUpdateVerFile();
+//                    //保存版本文件
+//                    FileOutputStream out = null;
+//                    try {
+//                        Properties properties = new Properties();
+//                        properties.put(SdkPath.prop_key_ver, newVer);
+//                        properties.put(SdkPath.prop_key_md5, newMd5);
+//                        out = new FileOutputStream(verFile, false);
+//                        properties.store(out,null);
+//                        Logger.info(TAG, "保存版本信息，"+newVer+","+newMd5);
+//
+//                        //更新stable版本
+//                        SdkPath.getInstance().updateStablePath(SdkPath.getInstance().getUpdatePath());
+//
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }finally {
+//                        StreamUtil.close(out);
+//                    }
+//                }else {
+//                    Logger.error(TAG, "校验新版本失败," + newMd5 + "," + str);
+//                }
+//
+//                //同步加载sdk
+//                if (mDownType == DOWN_TYPE_SYNC){
+//                    mHandler.sendEmptyMessage(MSG_LOAD);
+//                }
+
+            }
+
+            @Override
+            public void onFailed() {
+                Logger.error(TAG, "下载SDK失败");
+
+                //同步加载sdk
+//                if (mDownType == DOWN_TYPE_SYNC){
+//                    mHandler.sendEmptyMessage(MSG_LOAD);
+//                }
+
+            }
+        });
+        down.start();
     }
 
     private class SoVersionResult implements  NetworkRequest {

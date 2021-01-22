@@ -6,15 +6,18 @@ import android.app.Application;
 import com.yd.yunapp.gameboxlib.APICallback;
 import com.yd.yunapp.gameboxlib.APIConstants;
 import com.yd.yunapp.gameboxlib.DeviceControl;
+import com.yd.yunapp.gameboxlib.GameBoxManager;
 import com.yd.yunapp.gameboxlib.GameInfo;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameBoxManager;
 import kptach.game.kit.inter.game.IGameCallback;
+import kptach.game.kit.lib.baidu.utils.DeviceUtils;
 import kptach.game.kit.lib.baidu.utils.Logger;
 
 public class BdGameBoxManager implements IGameBoxManager {
@@ -27,6 +30,7 @@ public class BdGameBoxManager implements IGameBoxManager {
     private String ak = "";
     private String sk = "";
     private String ch = "";
+    private String padInf = null;
 
     private Application mApplication;
 
@@ -47,6 +51,9 @@ public class BdGameBoxManager implements IGameBoxManager {
                 }
                 if (params.containsKey(PARAMS_KEY_BD_SK)){
                     sk = (String) params.get(PARAMS_KEY_BD_SK);
+                }
+                if (params.containsKey(PARAMS_KEY_PADINF)){
+                    padInf = (String) params.get(PARAMS_KEY_PADINF);
                 }
             }
         }catch (Exception e){
@@ -77,6 +84,7 @@ public class BdGameBoxManager implements IGameBoxManager {
 
         devLoading = true;
         com.yd.yunapp.gameboxlib.GameBoxManager manager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(mApplication);
+        addDeviceInfo(manager);
         manager.applyCloudDevice(game, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(DeviceControl inner, int code) {
@@ -111,6 +119,90 @@ public class BdGameBoxManager implements IGameBoxManager {
         }
 
         return null;
+
+    }
+
+
+    private void addDeviceInfo(com.yd.yunapp.gameboxlib.GameBoxManager manager){
+        //获取设备id, 发送到云手机，用来解决风控问题
+        //297ebd358f8d1d5f,  //864131034311009 //VM010127052028
+        //DeviceInfo{id=0, status=0, deviceId='VM010127052028', token='{"webControlList":[{"webControlCode":"XA-WEBSOCKET-CONTROL-41","webControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9741}]}],"controlList":[{"controlCode":"XA-USER-CONTROL-41","controlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9641}]}],"padList":[{"controlCode":"XA-USER-CONTROL-41","padCode":"VM010127052028","padStatus":"1","padType":"0","videoCode":"GZ-TEST-USER-VIDEO-01"}],"videoList":[{"videoCode":"GZ-TEST-USER-VIDEO-01","videoInfoList":[{"videoUrl":"rtmp://117.48.196.66:110/live","videoProtocol":"2","videoDomain":"live","videoPort":110,"videoContext":"1"},{"videoUrl":"rtmp://117.48.196.66:1936/live","videoProtocol":"","videoDomain":"","videoPort":-1,"videoContext":""}]}],"wssWebControlList":[{"wssWebControlInfoList":[{"controlIp":"xian.cloud-control.top","controlPort":9841}],"wssWebControlCode":"XA-WSS-CONTROL-41"}],"webRtcControlList":[{"webRtcControlInfoList":[{"controlIp":"10.3.98.1","controlPort":9641}],"controlCode":"XA-USER-CONTROL-41","gateway":{"gatewayWssPort":8191,"gatewayIp":"xian.cloud-control.top","gatewayPort":8190}}],"sessionId":"b6d822fcc481462ead6c57741bf6d3f0","userId":11357855}', type=0, usedTime=0, totalTime=86400, gop=50, bitRate=3600, compressionType=VPU, maxDescentFrame=1, maxFrameRate=30, minDescentFrame=1, minFrameRate=20, picQuality=GRADE_LEVEL_HD, resolution=LEVEL_720_1280, sound=true, queueInfo=null}
+        try {
+            String ANDROID_ID = DeviceUtils.getAndroidId(mApplication);;//Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
+            String Imei = DeviceUtils.getIMEI(mApplication);
+
+            manager.addDeviceMockInfo(APIConstants.MOCK_IMEI, Imei);
+            manager.addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
+
+            manager.addDeviceMockInfo("brand", DeviceUtils.getDeviceBrand());
+            manager.addDeviceMockInfo("model", DeviceUtils.getDeviceModel());
+            manager.addDeviceMockInfo("manufacturer", DeviceUtils.getDeviceManufacturer());
+            manager.addDeviceMockInfo(APIConstants.MOCK_BOOTLOADER, DeviceUtils.getDeviceBootloader());
+
+            manager.addDeviceMockInfo(APIConstants.MOCK_SERIALNO, DeviceUtils.getSERIAL());
+
+            manager.addDeviceMockInfo(APIConstants.MOCK_BOARD, DeviceUtils.getDeviceBoard());
+            manager.addDeviceMockInfo(APIConstants.MOCK_DEVICE, DeviceUtils.getDeviceDevice());
+            manager.addDeviceMockInfo(APIConstants.MOCK_FINGERPRINT, DeviceUtils.getDeviceFingerprint());
+            manager.addDeviceMockInfo(APIConstants.MOCK_PRODUCTNAME, DeviceUtils.getDeviceProduct());
+
+            String imsi = DeviceUtils.getIMSI(mApplication);
+            if (imsi != null){
+                manager.addDeviceMockInfo(APIConstants.MOCK_IMEI, imsi);
+            }
+            String wifimac = DeviceUtils.getWifiMacAddress(mApplication);
+            if (wifimac != null){
+                manager.addDeviceMockInfo(APIConstants.MOCK_WIFIMAC, wifimac);
+            }
+            String wifiname = DeviceUtils.getWifiName(mApplication);
+            if (wifiname != null){
+                manager.addDeviceMockInfo(APIConstants.MOCK_WIFINAME, wifiname);
+            }
+            String bssid = DeviceUtils.getBSSID(mApplication);
+            if (bssid != null){
+                manager.addDeviceMockInfo(APIConstants.MOCK_BSSID, bssid);
+            }
+
+            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDID, DeviceUtils.getBuildId());
+            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDHOST, DeviceUtils.getBuildHost());
+            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDTAGS, DeviceUtils.getBuildTags());
+            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDTYPE, DeviceUtils.getBuildType());
+
+            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDVERSIONINC, DeviceUtils.getVersionInc());
+//            manager.addDeviceMockInfo("buildVersionInc", DeviceUtils.getVersionInc());
+
+            Map<String, String> map = manager.getDeviceMockInfo();
+            Logger.info(TAG, map.toString());
+
+        }catch (Exception e){
+        }
+    }
+
+    public void removeDeviceInfo(){
+        try {
+            com.yd.yunapp.gameboxlib.GameBoxManager manager = GameBoxManager.getInstance(mApplication);
+            manager.removeDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_IMEI);
+            manager.removeDeviceMockInfo(com.yd.yunapp.gameboxlib.APIConstants.MOCK_ANDROID_ID);
+            manager.removeDeviceMockInfo("brand");
+            manager.removeDeviceMockInfo("model");
+            manager.removeDeviceMockInfo("manufacturer");
+            manager.removeDeviceMockInfo("bootloader");
+            manager.removeDeviceMockInfo("serialno");
+            manager.removeDeviceMockInfo("device");
+            manager.removeDeviceMockInfo("fingerprint");
+            manager.removeDeviceMockInfo("productName");
+            manager.removeDeviceMockInfo("imsi");
+            manager.removeDeviceMockInfo("wifimac");
+            manager.removeDeviceMockInfo("wifiname");
+            manager.removeDeviceMockInfo("bssid");
+            manager.removeDeviceMockInfo("buildId");
+            manager.removeDeviceMockInfo("buildHost");
+            manager.removeDeviceMockInfo("buildTags");
+            manager.removeDeviceMockInfo("buildType");
+            manager.removeDeviceMockInfo("buildVersionInc");
+        }catch (Exception e){
+
+        }
 
     }
 }

@@ -82,10 +82,10 @@ public class DeviceControl implements IDeviceControl{
         this.mGameStartCallback = callback;
 
         //预加载广告
-        final AdManager adManager = (AdManager.adEnable && mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON)  ? new AdManager(activity) : null;
-        if (adManager!=null){
-            adManager.setPackageName(mGameInfo.pkgName);
-            adManager.prepareAd();
+        mAdManager = (AdManager.adEnable && mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON)  ? new AdManager(activity) : null;
+        if (mAdManager!=null){
+            mAdManager.setPackageName(mGameInfo.pkgName);
+            mAdManager.prepareAd();
         }
 
         //连接设备
@@ -372,7 +372,7 @@ public class DeviceControl implements IDeviceControl{
                 new Thread(){
                     @Override
                     public void run() {
-//                        mDeviceControl.mockDeviceInfo();
+                        mInnerControl.mockDeviceInfo();
                     }
                 }.start();
             }
@@ -383,7 +383,7 @@ public class DeviceControl implements IDeviceControl{
                 new Thread(){
                     @Override
                     public void run() {
-//                        mDeviceControl.mockDeviceInfo();
+                        mInnerControl.mockDeviceInfo();
                         if (mGameHandler != null) {
                             mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
                         }

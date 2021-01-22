@@ -105,6 +105,7 @@ public interface IDeviceControl {
      */
     void setPlayListener(PlayListener listener);
 
+    void mockDeviceInfo();
 
     /**
      * 试玩监听
