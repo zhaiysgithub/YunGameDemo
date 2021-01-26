@@ -21,6 +21,7 @@ public class RedGameBoxManager implements IGameBoxManager {
     private String mUserID = "";
     private String mSdkUrl = "";
     private String mSdkVer = "";
+    private String mPadInfo = "";
 
     private boolean devLoading;
     private boolean isInited = false;
@@ -46,6 +47,9 @@ public class RedGameBoxManager implements IGameBoxManager {
                 }
                 if (params.containsKey(PARAMS_KEY_SDKVER)){
                     mSdkVer = (String) params.get(PARAMS_KEY_SDKVER);
+                }
+                if (params.containsKey(PARAMS_KEY_PADINF)){
+                    mPadInfo = (String) params.get(PARAMS_KEY_PADINF);
                 }
             }
         }catch (Exception e){}
@@ -87,7 +91,7 @@ public class RedGameBoxManager implements IGameBoxManager {
                         }
                     }
                 })
-                .execute(mCorpID, pkgName, mUserID, kpGameId);
+                .execute(mCorpID, pkgName, mUserID, kpGameId, mPadInfo);
     }
 
 }

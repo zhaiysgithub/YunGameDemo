@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 
-import com.mci.commonplaysdk.MCISdkView;
 import com.mci.commonplaysdk.PlayMCISdkManager;
 import com.mci.commonplaysdk.PlaySdkCallbackInterface;
+import com.mci.play.MCISdkView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,40 +90,40 @@ public class PlaySDKManager {
             e.printStackTrace();
         }
 //        jo.remove("appConfigList");
-        try {
-            JSONArray jarr = jo.getJSONArray("appConfigList");
-            for (int i = 0; i < jarr.length(); i++) {
-                JSONObject obj = jarr.getJSONObject(i);
-                String level = obj.optString("level");
-                if (level.equals("high")){
-                    obj.put("bitrate", 4800);
-                    obj.put("maxFPS", 30);
-                    obj.put("minFPS", 20);
-                    obj.put("gameVideoQuality", 0);
-                    obj.put("resolutionRatio", "720 X 1280");
-                    obj.put("width", 720);
-                    obj.put("height", 1280);
-                }else if (level.equals("medium")){
-                    obj.put("bitrate", 3600);
-                    obj.put("maxFPS", 20);
-                    obj.put("minFPS", 10);
-                    obj.put("gameVideoQuality", 1);
-                    obj.put("resolutionRatio", "480 X 850");
-                    obj.put("width", 480);
-                    obj.put("height", 850);
-                }else if (level.equals("low")){
-                    obj.put("bitrate", 2400);
-                    obj.put("maxFPS", 10);
-                    obj.put("minFPS", 5);
-                    obj.put("gameVideoQuality", 2);
-                    obj.put("resolutionRatio", "288 X 512");
-                    obj.put("width", 288);
-                    obj.put("height", 512);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            JSONArray jarr = jo.getJSONArray("appConfigList");
+//            for (int i = 0; i < jarr.length(); i++) {
+//                JSONObject obj = jarr.getJSONObject(i);
+//                String level = obj.optString("level");
+//                if (level.equals("high")){
+//                    obj.put("bitrate", 4800);
+//                    obj.put("maxFPS", 30);
+//                    obj.put("minFPS", 20);
+//                    obj.put("gameVideoQuality", 0);
+//                    obj.put("resolutionRatio", "720 X 1280");
+//                    obj.put("width", 720);
+//                    obj.put("height", 1280);
+//                }else if (level.equals("medium")){
+//                    obj.put("bitrate", 3600);
+//                    obj.put("maxFPS", 20);
+//                    obj.put("minFPS", 10);
+//                    obj.put("gameVideoQuality", 1);
+//                    obj.put("resolutionRatio", "480 X 850");
+//                    obj.put("width", 480);
+//                    obj.put("height", 850);
+//                }else if (level.equals("low")){
+//                    obj.put("bitrate", 2400);
+//                    obj.put("maxFPS", 10);
+//                    obj.put("minFPS", 5);
+//                    obj.put("gameVideoQuality", 2);
+//                    obj.put("resolutionRatio", "288 X 512");
+//                    obj.put("width", 288);
+//                    obj.put("height", 512);
+//                }
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
 
 
         //5、set game parameters

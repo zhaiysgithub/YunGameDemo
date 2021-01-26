@@ -51,18 +51,18 @@ public class GameBox {
             return;
         }
 
-        try {
-            //判断本地是否已经安装
-            PackageManager packageManager = activity.getPackageManager();
-            Intent intent = packageManager.getLaunchIntentForPackage(gameInfo.pkgName);
-            if(intent!=null){
-                Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
-                activity.startActivity(intent);
-                return;
-            }
-        }catch (Exception e){
-            Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
-        }
+//        try {
+//            //判断本地是否已经安装
+//            PackageManager packageManager = activity.getPackageManager();
+//            Intent intent = packageManager.getLaunchIntentForPackage(gameInfo.pkgName);
+//            if(intent!=null){
+//                Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
+//                activity.startActivity(intent);
+//                return;
+//            }
+//        }catch (Exception e){
+//            Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
+//        }
 
         Logger.info("GameBox", "启动云游戏，gameInfo:" + gameInfo.toString());
 

@@ -358,10 +358,10 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
         PadModel padModel = PadModel.createPadModel(mApplication);
         if (padModel  != null){
-            sdkParams.put(IGameBoxManager.PARAMS_KEY_PADINF, padModel.combPadModel());
+            sdkParams.put(IGameBoxManager.PARAMS_KEY_PADINF, padModel.combPadModel().toString());
         }
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
 
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override

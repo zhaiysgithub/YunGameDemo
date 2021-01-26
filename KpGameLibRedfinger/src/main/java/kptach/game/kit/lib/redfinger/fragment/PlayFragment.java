@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.mci.commonplaysdk.MCISdkView;
+import com.mci.play.MCISdkView;
 
 import kptach.game.kit.lib.redfinger.play.PlaySDKManager;
 import kptach.game.kit.lib.redfinger.utils.Logger;

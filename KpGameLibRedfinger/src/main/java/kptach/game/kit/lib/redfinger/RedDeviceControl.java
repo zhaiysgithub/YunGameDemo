@@ -149,7 +149,7 @@ public class RedDeviceControl implements IDeviceControl {
         if (sendor == SensorConstants.HARDWARE_ID_MIC){
             PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_AUDIO, type, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_VIDEO_BACK || sendor == SensorConstants.HARDWARE_ID_VIDEO_FRONT){
-            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_VIDEO, type, data);
+            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_BACK_VIDEO, type, data);
         }
     }
 

@@ -52,8 +52,9 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
             String pkgName = args[1];
             String uid = args[2];
             String gameId = args[3];
+            String padInf = args[4];
 
-            String str = requestAppInfo(corpKey, pkgName, uid, gameId);
+            String str = requestAppInfo(corpKey, pkgName, uid, gameId, padInf);
 
             JSONObject jsonObject = new JSONObject(str);
             int c = jsonObject.getInt("c");
@@ -108,7 +109,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     }
 
     //获取扩展配置信息
-    private String requestAppInfo(String corpKey, String pkgName, String uid, String gameId) {
+    private String requestAppInfo(String corpKey, String pkgName, String uid, String gameId, String padInf) {
 
         String str = mSdkUrl;
         Logger.info(TAG,"device connect :" + str);
@@ -130,6 +131,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
             map.put("pkgName", pkgName);
             map.put("gameId", gameId);
             map.put("uuid", uid);
+            map.put("padModel", padInf);
             String dataStr = new JSONObject(map).toString();
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(dataStr.getBytes());//把参数发送过去.
