@@ -52,7 +52,7 @@ dependencies {
 
     implementation project(path: ':kpinter')
     implementation project(path: ':KpGameLibRedfinger')
-//    implementation project(path: ':KpGameLibBaidu')
+    implementation project(path: ':KpGameLibBaidu')
     implementation project(path: ':KpGameAd')
 
 }

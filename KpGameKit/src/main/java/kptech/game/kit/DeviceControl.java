@@ -290,48 +290,48 @@ public class DeviceControl implements IDeviceControl{
      * @return
      */
     private void sendClientNotice(){
-//        if (mGameInfo.recoverCloudData == 1){
-//            if (mGameStartCallback!=null){
-//                mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);
-//            }
-//
-//            //发送打点事件
-//            try {
-//                Event event = Event.getEvent(EventCode.DATA_DEVICE_SEND_NOTICE, mGameInfo.pkgName, getPadcode());
-//                MobclickAgent.sendEvent(event);
-//            }catch (Exception e){}
-//
-//            //调用通知接口
-//            try {
-//                new RequestClientNotice()
-//                        .setCallback(new RequestClientNotice.ICallback() {
-//                            @Override
-//                            public void onResult(String ret) {
-//                                long sleeptime = -1;
-//                                try {
-//                                    JSONObject obj = new JSONObject(ret);
-//                                    if (obj.has("sleeptime")){
-//                                        sleeptime = Long.parseLong(obj.getString("sleeptime"));
-//                                    }
-//                                }catch (Exception e){
-//                                }
-//                                //默认等待3秒
-//                                if (sleeptime <= 0){
-//                                    sleeptime = 3000;
-//                                }
-//                                Logger.info(TAG, "clientNotice, ret = " + ret);
-//                                //延时3秒
-//                                if (mGameHandler != null) {
-//                                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
-//                                }
-//                            }
-//                        })
-//                        .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
-//                return;
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
+        if (mGameInfo.recoverCloudData == 1){
+            if (mGameStartCallback!=null){
+                mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);
+            }
+
+            //发送打点事件
+            try {
+                Event event = Event.getEvent(EventCode.DATA_DEVICE_SEND_NOTICE, mGameInfo.pkgName, getPadcode());
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){}
+
+            //调用通知接口
+            try {
+                new RequestClientNotice()
+                        .setCallback(new RequestClientNotice.ICallback() {
+                            @Override
+                            public void onResult(String ret) {
+                                long sleeptime = -1;
+                                try {
+                                    JSONObject obj = new JSONObject(ret);
+                                    if (obj.has("sleeptime")){
+                                        sleeptime = Long.parseLong(obj.getString("sleeptime"));
+                                    }
+                                }catch (Exception e){
+                                }
+                                //默认等待3秒
+                                if (sleeptime <= 0){
+                                    sleeptime = 3000;
+                                }
+                                Logger.info(TAG, "clientNotice, ret = " + ret);
+                                //延时3秒
+                                if (mGameHandler != null) {
+                                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
+                                }
+                            }
+                        })
+                        .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
+                return;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
         //启动游戏
         if (mGameHandler != null) {
@@ -345,55 +345,55 @@ public class DeviceControl implements IDeviceControl{
      */
     private void sendMockDeviceInfo(){
 
-//        long sleepTime = 3000;
-//        try {
-//            if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){
-//                //获取整体时间
-//                String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
-//                if (str != null){
-//                    sleepTime = Long.parseLong(str);
-//                }
-//            }else if (mGameInfo!=null){
-//                //获取游戏设置的时间
-//                sleepTime = mGameInfo.mockSleepTime;
-//            }
-//        }catch (Exception e){
-//            Logger.error(TAG, e.getMessage());
-//        }
-//
-//        try {
-//            //不同步信息
-//            if (sleepTime == -3){
-//
-//            }
-//            //同步信息，不等待
-//            else if (sleepTime == -2){
-//                //上传信息并等待
-//                new Thread(){
-//                    @Override
-//                    public void run() {
-//                        mInnerControl.mockDeviceInfo();
-//                    }
-//                }.start();
-//            }
-//            //同步信息，等待
-//            else {
-//                final long time = sleepTime >= 0 ? sleepTime : 3000;
-//                //上传信息并等待
-//                new Thread(){
-//                    @Override
-//                    public void run() {
-//                        mInnerControl.mockDeviceInfo();
-//                        if (mGameHandler != null) {
-//                            mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
-//                        }
-//                    }
-//                }.start();
-//                return;
-//            }
-//        }catch (Exception e){
-//            Logger.error(TAG, e.getMessage());
-//        }
+        long sleepTime = 3000;
+        try {
+            if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){
+                //获取整体时间
+                String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
+                if (str != null){
+                    sleepTime = Long.parseLong(str);
+                }
+            }else if (mGameInfo!=null){
+                //获取游戏设置的时间
+                sleepTime = mGameInfo.mockSleepTime;
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
+
+        try {
+            //不同步信息
+            if (sleepTime == -3){
+
+            }
+            //同步信息，不等待
+            else if (sleepTime == -2){
+                //上传信息并等待
+                new Thread(){
+                    @Override
+                    public void run() {
+                        mInnerControl.mockDeviceInfo();
+                    }
+                }.start();
+            }
+            //同步信息，等待
+            else {
+                final long time = sleepTime >= 0 ? sleepTime : 3000;
+                //上传信息并等待
+                new Thread(){
+                    @Override
+                    public void run() {
+                        mInnerControl.mockDeviceInfo();
+                        if (mGameHandler != null) {
+                            mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
+                        }
+                    }
+                }.start();
+                return;
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
 
         if (mGameHandler != null) {
             mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK));

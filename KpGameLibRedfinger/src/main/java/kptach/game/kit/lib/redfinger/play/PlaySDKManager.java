@@ -24,6 +24,7 @@ import kptach.game.kit.lib.redfinger.task.HttpDownload;
 import kptach.game.kit.lib.redfinger.utils.DeviceUtils;
 import kptach.game.kit.lib.redfinger.utils.DynamicLoadLibHelper;
 import kptach.game.kit.lib.redfinger.utils.FilePathUtils;
+import kptach.game.kit.lib.redfinger.utils.FileUtils;
 import kptach.game.kit.lib.redfinger.utils.Logger;
 
 public class PlaySDKManager {
@@ -180,14 +181,16 @@ public class PlaySDKManager {
         return !isStarted;
     }
 
+    public boolean isAudio(){
+        if (mPlayMCISdkManager != null){
+            return mPlayMCISdkManager.mIsAudioResume;
+        }
+        return true;
+    }
 
     public void setAudioSwitch(boolean enable) {
         if (mPlayMCISdkManager != null){
-            if (enable){
-                mPlayMCISdkManager.resume();
-            }else {
-                mPlayMCISdkManager.pause();
-            }
+            mPlayMCISdkManager.audioPauseOrResume(enable);
         }
     }
 
@@ -216,12 +219,6 @@ public class PlaySDKManager {
         }
     }
 
-//    public void sendMsg(){
-//        if (mPlayMCISdkManager != null){
-//            mPlayMCISdkManager.sendTransparentMsgReq("");
-//        }
-//    }
-
     public int getVideoLevel(){
         if (mPlayMCISdkManager != null){
             return mPlayMCISdkManager.getVideoLevel();
@@ -235,56 +232,12 @@ public class PlaySDKManager {
         }
     }
 
-//    public void setResolutionLevel(DeviceInfo.ResolutionLevel level) {
-//        Logger.info(TAG, "sendResolutionLevel level:" + level);
-//        if (mPlayMCISdkManager == null) {
-//            v.b("sendEncodeType mPlayer=null");
-//        } else if (DeviceInfo.ResolutionLevel.LEVEL_DEFAULT == level) {
-//            mPlayMCISdkManager.setVideoLevel().setPadResolutionLevel(1);
-//        } else {
-//            mPlayMCISdkManager.setPadResolutionLevel(level.ordinal());
-//        }
-//    }
-//
-//    public void setVideoBitrateMode(int i2, boolean z2) {
-//        int i3 = 1;
-//        if (B != i2) {
-//            v.b("setVideoBitrateMode");
-//            v.d("PlaySDKManager setVideoBitrateMode quality:" + i2 + "\tnIsAutoChangeMode:" + z2);
-//            r = z2;
-//            PlayFragment playFragment = this.f;
-//            if ( playFragment != null) {
-//                playFragment.getDisconnectNumber();
-//                this.f.getReconnectNumber();
-//            }
-//            if (l != null) {
-//                try {
-//                    if (i2 == g.GRADE_LEVEL_AUTO.ordinal()) {
-//                        u = true;
-//                        i2 = g.GRADE_LEVEL_ORDINARY.ordinal();
-//                    } else {
-//                        u = false;
-//                    }
-//                    Player player = l;
-//                    if (!z2) {
-//                        i3 = 0;
-//                    }
-//                    player.setupPlay(i2, i3, x);
-//                } catch (Exception e2) {
-//                    e2.printStackTrace();
-//                    v.b("setVideoBitrateMode error:" + e2.getMessage());
-//                }
-//            }
-//        }
-//    }
-
     public void onNoOpsTimeout(int type, long timeout){
         stop();
         if (mPlayListener != null){
             mPlayListener.onNoOpsTimeout(type, timeout);
         }
     }
-
 
     private static class InnerPlayListener implements PlaySdkCallbackInterface {
         WeakReference<PlaySDKManager> ref = null;
@@ -375,25 +328,6 @@ public class PlaySDKManager {
         }
     }
 
-
-    public void loadSdk(Application application, IPlayInitListener initListener) {
-        Logger.info(TAG, "PlaySDK_VERSION:" + BuildConfig.VERSION_NAME);
-        Logger.info(TAG, "PlaySDKManager.init");
-
-        this.mApplication = application;
-        this.mInitListener = initListener;
-
-        if (this.isInited){
-            Logger.info(TAG, "isInit = true");
-            sdkInitSuccess();
-            return;
-        }
-
-//        loadSo();
-
-        requestSo(application);
-    }
-
     private void sdkInitSuccess(){
         if (!this.isInited){
             this.isInited = true;
@@ -408,6 +342,39 @@ public class PlaySDKManager {
             this.mInitListener.failed(code, err);
         }
     }
+
+    public void loadSdk(Application application, IPlayInitListener initListener) {
+        Logger.info(TAG, "PlaySDK_VERSION:" + BuildConfig.VERSION_NAME);
+        Logger.info(TAG, "PlaySDKManager.init");
+
+        this.mApplication = application;
+        this.mInitListener = initListener;
+
+        if (this.isInited){
+            Logger.info(TAG, "isInit = true");
+            sdkInitSuccess();
+            return;
+        }
+
+        requestSo(application);
+    }
+//
+//    private void loadLibSo(Context context){
+//        //验证本地文件是否存在
+//        String filePath = FilePathUtils.getLibMciFilePath(context);
+//        File file = new File(filePath);
+//        if (file.exists()){
+//            String md5 = mApplication.getSharedPreferences("RED_FINGER", 0).getString("libMD5", "");
+//            if (FileUtils.checkFileMd5(file, md5)){
+//                return;
+//            }
+//        }
+//
+//        //下载文件
+//        downloadLib();
+//    }
+
+
 
     private void loadSo(){
         Logger.info(TAG,"加载so");
@@ -435,6 +402,8 @@ public class PlaySDKManager {
         void faile(int code, String str);
         void success(String str);
     }
+
+    private static final String SO_VER = "";
 
     private void requestSo(Context context){
         boolean isArm64 = DeviceUtils.is64Bit();
@@ -556,8 +525,7 @@ public class PlaySDKManager {
         public void success(String str) {
             try {
                 String md5 = "";
-                PlaySDKManager.this.mApplication.getSharedPreferences("RED_FINGER", 0).edit()
-                        .putString("libMD5", md5).apply();
+                PlaySDKManager.this.mApplication.getSharedPreferences("RED_FINGER", 0).edit().putString("libMD5", md5).apply();
                 if (DynamicLoadLibHelper.getInstance(mApplication).zip(mZipFile, mSoFile.getParent())) {
                     loadSo();
                 } else {

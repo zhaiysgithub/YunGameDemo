@@ -79,6 +79,14 @@ public class RedDeviceControl implements IDeviceControl {
     }
 
     @Override
+    public void setAudioSwitch(boolean enable) {
+        PlaySDKManager.getInstance().setAudioSwitch(enable);
+        if (mDeviceInfo != null){
+            mDeviceInfo.isAudio = enable;
+        }
+    }
+
+    @Override
     public String getVideoQuality() {
         if (mDeviceInfo != null){
             return mDeviceInfo.videoQuality;
@@ -128,11 +136,6 @@ public class RedDeviceControl implements IDeviceControl {
         int i = PlaySDKManager.getInstance().getVideoLevel();
         PlaySDKManager.getInstance().setVideoLevel(level.ordinal());
 //        PlaySDKManager.getInstance().setResolutionLevel(level);
-    }
-
-    @Override
-    public void setAudioSwitch(boolean enable) {
-        PlaySDKManager.getInstance().setAudioSwitch(enable);
     }
 
     @Override

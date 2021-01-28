@@ -64,7 +64,7 @@
                     android:layout_marginLeft="20dp"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
-                    android:text="标清"/>
+                    android:text="高清"/>
                 <RadioButton
                     android:id="@+id/video_quality_hd"
                     android:layout_width="40dp"
@@ -72,7 +72,7 @@
                     android:layout_marginLeft="20dp"
                     android:button="@null"
                     android:textColor="@color/kp_settings_video_radiobutton"
-                    android:text="高清"/>
+                    android:text="超清"/>
             </RadioGroup>
 
         </LinearLayout>
@@ -178,6 +178,7 @@
             android:layout_height="40dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="80dp"

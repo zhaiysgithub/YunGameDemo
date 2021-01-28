@@ -8,7 +8,7 @@ import java.util.HashMap;
 import kptach.game.kit.inter.game.IGameBoxManager;
 
 import kptach.game.kit.lib.redfinger.RedGameBoxManager;
-//import kptach.game.kit.lib.baidu.BdGameBoxManager;
+import kptach.game.kit.lib.baidu.BdGameBoxManager;
 
 public class GameBoxManagerFactory {
     private static IGameBoxManager bdManager = null;
@@ -22,7 +22,7 @@ public class GameBoxManagerFactory {
             try {
                 if (sdkType == 1 ){
                     if (bdManager == null) {
-//                        bdManager = (IGameBoxManager) newInstance(BdGameBoxManager.class.getName(), null, null);
+                        bdManager = (IGameBoxManager) newInstance(BdGameBoxManager.class.getName(), null, null);
                     }
                     instance = bdManager;
                 }else {

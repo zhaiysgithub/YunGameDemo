@@ -361,7 +361,7 @@ public class GameBoxManager {
             sdkParams.put(IGameBoxManager.PARAMS_KEY_PADINF, padModel.combPadModel().toString());
         }
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
 
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override

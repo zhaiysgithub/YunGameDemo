@@ -166,8 +166,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 9;
-        info.pkgName = "com.tencent.mobileqq";
+        info.gid = 147;
+        info.pkgName = "com.aa.bb";
         info.useSDK = 0;
 
 //        info.gid = 3437;
@@ -205,7 +205,9 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 game.ext = new HashMap<>();
 game.ext.put("version","aa");
 game.ext.put("md5","bb");
+
                 game.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                game.useSDK = 1;
                 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
