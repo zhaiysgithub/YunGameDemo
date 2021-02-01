@@ -127,6 +127,8 @@ public interface IDeviceControl {
      */
     void sendMessage(String msg);
 
+    String getDeviceInfo();
+
     /**
      * 试玩监听
      */

@@ -7,11 +7,9 @@ import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import kptach.game.kit.inter.game.IGameBoxManager;
 import kptach.game.kit.inter.game.IGameCallback;
-import kptech.game.kit.activity.hardware.sampler.SensorSampler;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
@@ -28,14 +25,12 @@ import kptech.game.kit.analytic.MobclickAgent;
 import kptech.game.kit.constants.SharedKeys;
 import kptech.game.kit.constants.Urls;
 import kptech.game.kit.data.RequestAppInfoTask;
-import kptech.game.kit.data.RequestDeviceTask;
 import kptech.game.kit.data.RequestTask;
 import kptech.game.kit.fatory.GameBoxManagerFactory;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
-import kptech.game.kit.utils.PadModel;
 import kptech.game.kit.utils.ProferencesUtils;
 
 
@@ -356,12 +351,8 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
-        PadModel padModel = PadModel.createPadModel(mApplication);
-        if (padModel  != null){
-            sdkParams.put(IGameBoxManager.PARAMS_KEY_PADINF, padModel.combPadModel().toString());
-        }
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
 
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
             @Override

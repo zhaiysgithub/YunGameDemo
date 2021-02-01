@@ -32,6 +32,6 @@ android {
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(path: ':kpinter')
-    implementation (name:'commonPlaySdk_v1.0.7.9',ext:'aar')
-//    implementation files('libs/commonPlaySdk_v1.0.7.9.jar')
+//    implementation (name:'commonPlaySdk_v1.0.7.9',ext:'aar')
+    implementation files('libs/commonPlaySdk_v1.0.8.0.jar')
 }

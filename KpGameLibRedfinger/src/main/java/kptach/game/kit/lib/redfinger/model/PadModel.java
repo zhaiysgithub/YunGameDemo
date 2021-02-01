@@ -1,4 +1,4 @@
-package kptech.game.kit.utils;
+package kptach.game.kit.lib.redfinger.model;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kptech.game.kit.GameBoxManager;
+import kptach.game.kit.lib.redfinger.utils.DeviceUtils;
 
 public class PadModel {
     private int mParamsNum = 0;

@@ -235,6 +235,8 @@ public class DeviceControl implements IDeviceControl{
 
     }
 
+
+
     /**
      * 加载广告
      */
@@ -344,55 +346,57 @@ public class DeviceControl implements IDeviceControl{
      * 发送云设备信息
      */
     private void sendMockDeviceInfo(){
-
-        long sleepTime = 3000;
-        try {
-            if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){
-                //获取整体时间
-                String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
-                if (str != null){
-                    sleepTime = Long.parseLong(str);
+        //百度SDK调用一键新机功能
+        if (mInnerControl!=null && mInnerControl.getSdkType() == kptach.game.kit.inter.game.IDeviceControl.SdkType.BD ){
+            long sleepTime = 3000;
+            try {
+                if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){
+                    //获取整体时间
+                    String str = ProferencesUtils.getString(mActivity, SharedKeys.KEY_GAME_MOCK_SLEEPTIME,null);
+                    if (str != null){
+                        sleepTime = Long.parseLong(str);
+                    }
+                }else if (mGameInfo!=null){
+                    //获取游戏设置的时间
+                    sleepTime = mGameInfo.mockSleepTime;
                 }
-            }else if (mGameInfo!=null){
-                //获取游戏设置的时间
-                sleepTime = mGameInfo.mockSleepTime;
+            }catch (Exception e){
+                Logger.error(TAG, e.getMessage());
             }
-        }catch (Exception e){
-            Logger.error(TAG, e.getMessage());
-        }
 
-        try {
-            //不同步信息
-            if (sleepTime == -3){
+            try {
+                //不同步信息
+                if (sleepTime == -3){
 
-            }
-            //同步信息，不等待
-            else if (sleepTime == -2){
-                //上传信息并等待
-                new Thread(){
-                    @Override
-                    public void run() {
-                        mInnerControl.mockDeviceInfo();
-                    }
-                }.start();
-            }
-            //同步信息，等待
-            else {
-                final long time = sleepTime >= 0 ? sleepTime : 3000;
-                //上传信息并等待
-                new Thread(){
-                    @Override
-                    public void run() {
-                        mInnerControl.mockDeviceInfo();
-                        if (mGameHandler != null) {
-                            mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
+                }
+                //同步信息，不等待
+                else if (sleepTime == -2){
+                    //上传信息并等待
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            mInnerControl.mockDeviceInfo();
                         }
-                    }
-                }.start();
-                return;
+                    }.start();
+                }
+                //同步信息，等待
+                else {
+                    final long time = sleepTime >= 0 ? sleepTime : 3000;
+                    //上传信息并等待
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            mInnerControl.mockDeviceInfo();
+                            if (mGameHandler != null) {
+                                mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_MOCK), time);
+                            }
+                        }
+                    }.start();
+                    return;
+                }
+            }catch (Exception e){
+                Logger.error(TAG, e.getMessage());
             }
-        }catch (Exception e){
-            Logger.error(TAG, e.getMessage());
         }
 
         if (mGameHandler != null) {
@@ -600,5 +604,12 @@ public class DeviceControl implements IDeviceControl{
             }
             mPlayTimeHandler = null;
         }
+    }
+
+    public String getDeviceInfo(){
+        if (mInnerControl == null){
+            return "";
+        }
+        return mInnerControl.getDeviceInfo();
     }
 }

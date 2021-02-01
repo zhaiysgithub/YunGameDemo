@@ -189,6 +189,16 @@ public class RedDeviceControl implements IDeviceControl {
 
     }
 
+    @Override
+    public SdkType getSdkType() {
+        return SdkType.REDF;
+    }
+
+    @Override
+    public String getDeviceInfo() {
+        return mDeviceInfo.deviceParams;
+    }
+
     public void callback(String text, int code){
         if (mHandler != null){
             Object[] objs = new Object[]{code, text};

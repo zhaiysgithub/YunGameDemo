@@ -241,16 +241,14 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mErrorView = findViewById(R.id.error_view);
         mErrorView.setGameInfo(mGameInfo);
-        mErrorView.setOnBackListener(new View.OnClickListener() {
+        mErrorView.setClickListener(new PlayErrorView.ClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onBack() {
                 finish();
             }
-        });
-        mErrorView.setOnRetryListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
+            @Override
+            public void onRetry() {
                 //重新加载游戏
                 mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
 
@@ -269,15 +267,56 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }catch (Exception e){
                 }
             }
-        });
-        mErrorView.setOnDownListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-
+            public void onDown(View view) {
                 downloadApk(view);
+            }
 
+            @Override
+            public void onCopyInf() {
+                if (mDeviceControl != null){
+                    String info = mDeviceControl.getDeviceInfo();
+                    StringUtil.copy(GamePlay.this, info);
+                    Toast.makeText(GamePlay.this, "info", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+//        mErrorView.setOnBackListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+//        mErrorView.setOnRetryListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //重新加载游戏
+//                mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
+//
+//                try {
+//                    //发送打点事件
+//                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo!=null ? mGameInfo.pkgName : "" );
+//                    event.setErrMsg(GamePlay.this.mErrorMsg);
+//                    if (mDeviceControl!=null){
+//                        event.setPadcode(mDeviceControl.getPadcode());
+//                    }
+//                    HashMap ext = new HashMap();
+//                    ext.put("code", mErrorCode);
+//                    ext.put("msg", mErrorMsg);
+//                    event.setExt(ext);
+//                    MobclickAgent.sendEvent(event);
+//                }catch (Exception e){
+//                }
+//            }
+//        });
+//        mErrorView.setOnDownListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                downloadApk(view);
+//            }
+//        });
 
         mFloatDownView = findViewById(R.id.float_down);
         mFloatDownView.setOnDownListener(new View.OnClickListener() {

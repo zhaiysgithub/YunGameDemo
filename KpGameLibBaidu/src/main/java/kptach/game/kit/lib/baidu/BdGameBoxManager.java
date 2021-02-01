@@ -30,7 +30,6 @@ public class BdGameBoxManager implements IGameBoxManager {
     private String ak = "";
     private String sk = "";
     private String ch = "";
-    private String padInf = null;
 
     private Application mApplication;
 
@@ -52,9 +51,9 @@ public class BdGameBoxManager implements IGameBoxManager {
                 if (params.containsKey(PARAMS_KEY_BD_SK)){
                     sk = (String) params.get(PARAMS_KEY_BD_SK);
                 }
-                if (params.containsKey(PARAMS_KEY_PADINF)){
-                    padInf = (String) params.get(PARAMS_KEY_PADINF);
-                }
+//                if (params.containsKey(PARAMS_KEY_PADINF)){
+//                    padInf = (String) params.get(PARAMS_KEY_PADINF);
+//                }
             }
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());

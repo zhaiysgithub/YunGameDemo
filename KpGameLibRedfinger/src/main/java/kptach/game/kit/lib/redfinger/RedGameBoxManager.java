@@ -11,17 +11,19 @@ import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.inter.game.IDeviceControl;
 import kptach.game.kit.inter.game.IGameBoxManager;
 import kptach.game.kit.inter.game.IGameCallback;
+import kptach.game.kit.lib.redfinger.model.PadModel;
 import kptach.game.kit.lib.redfinger.task.RequestDeviceTask;
 import kptach.game.kit.lib.redfinger.utils.Logger;
+import kptach.game.kit.lib.redfinger.utils.dx.DXStatService;
 
 public class RedGameBoxManager implements IGameBoxManager {
 
-    private boolean debug = false;
-    private String mCorpID = "";
-    private String mUserID = "";
-    private String mSdkUrl = "";
-    private String mSdkVer = "";
-    private String mPadInfo = "";
+    public static boolean debug = false;
+    public static String mCorpID = "";
+    public static String mUserID = "";
+    public static String mSdkUrl = "";
+    public static String mSdkVer = "";
+//    private String mPadInfo = "";
 
     private boolean devLoading;
     private boolean isInited = false;
@@ -48,9 +50,9 @@ public class RedGameBoxManager implements IGameBoxManager {
                 if (params.containsKey(PARAMS_KEY_SDKVER)){
                     mSdkVer = (String) params.get(PARAMS_KEY_SDKVER);
                 }
-                if (params.containsKey(PARAMS_KEY_PADINF)){
-                    mPadInfo = (String) params.get(PARAMS_KEY_PADINF);
-                }
+//                if (params.containsKey(PARAMS_KEY_PADINF)){
+//                    mPadInfo = (String) params.get(PARAMS_KEY_PADINF);
+//                }
             }
         }catch (Exception e){}
 
@@ -72,6 +74,16 @@ public class RedGameBoxManager implements IGameBoxManager {
             Logger.error("RedGameBoxManager", e.getMessage());
         }
         devLoading = true;
+
+        PadModel padModel = PadModel.createPadModel(activity);
+        HashMap padInfo = new HashMap();
+        padInfo.put("devData",padModel.combPadModel().toString());
+        String devInf = DXStatService.b(activity);
+        padInfo.put("devInf",devInf);
+
+        String padModelStr = padModel.combPadModel().toString();
+        String padInfoStr = devInf;//new JSONObject(padInfo).toString();
+
         final String finalPkgName = pkgName;
         new RequestDeviceTask()
                 .setSdkUrl(mSdkUrl)
@@ -91,7 +103,7 @@ public class RedGameBoxManager implements IGameBoxManager {
                         }
                     }
                 })
-                .execute(mCorpID, pkgName, mUserID, kpGameId, mPadInfo);
+                .execute(mCorpID, pkgName, mUserID, kpGameId, padInfoStr, padModelStr);
     }
 
 }

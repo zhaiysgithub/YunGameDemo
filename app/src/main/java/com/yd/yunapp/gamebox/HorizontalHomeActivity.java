@@ -166,7 +166,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 147;
+        info.gid = 4239;
         info.pkgName = "com.aa.bb";
         info.useSDK = 0;
 

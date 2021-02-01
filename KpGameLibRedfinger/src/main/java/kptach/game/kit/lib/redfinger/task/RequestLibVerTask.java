@@ -15,11 +15,12 @@ import java.util.HashMap;
 import kptach.game.kit.inter.game.APIConstants;
 import kptach.game.kit.lib.redfinger.utils.Logger;
 
-public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
+public class RequestLibVerTask extends AsyncTask<String,Void,HashMap> {
     private static final String TAG = "RequestDeviceTask";
 
     public interface ICallback{
-        void onResult(int code, String info);
+        void onSucces(String libUrl, String md5);
+        void onFaile(int code, String err);
     }
 
     private String mSdkUrl;
@@ -27,17 +28,17 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
 
     private ICallback mCallback;
 
-    public RequestDeviceTask setCallback(ICallback callback) {
+    public RequestLibVerTask setCallback(ICallback callback) {
         this.mCallback = callback;
         return this;
     }
 
-    public RequestDeviceTask setSdkUrl(String url){
+    public RequestLibVerTask setSdkUrl(String url){
         this.mSdkUrl = url;
         return this;
     }
 
-    public RequestDeviceTask setSdkVer(String ver) {
+    public RequestLibVerTask setSdkVer(String ver) {
         this.mSdkVer = ver;
         return this;
     }
@@ -46,16 +47,12 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     protected HashMap doInBackground(String... args) {
         HashMap<String,String> ret = new HashMap();
         int code = 0;
-        String msg = null;
+        String err = null;
         try {
             String corpKey = args[0];
-            String pkgName = args[1];
-            String uid = args[2];
-            String gameId = args[3];
-            String padInf = args[4];
-            String padModel = args[5];
+            String libVer = args[1];
 
-            String str = requestAppInfo(corpKey, pkgName, uid, gameId, padInf, padModel);
+            String str = requestAppInfo(corpKey, libVer);
 
             JSONObject jsonObject = new JSONObject(str);
             int c = jsonObject.getInt("c");
@@ -64,33 +61,29 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
                 JSONObject dObj = jsonObject.getJSONObject("d");
                 Logger.info(TAG,"device connect success: " + dObj.toString());
 
-                JSONObject err = dObj.optJSONObject("error");
-                JSONObject devInfo = dObj.optJSONObject("resultInfo");
-                if (devInfo==null || devInfo.length()<=0) {
-                    code = APIConstants.ERROR_NO_DEVICE;
-                    msg = err.toString();
-                }else {
-                    code = APIConstants.APPLY_DEVICE_SUCCESS;
-                    msg = dObj.toString();
-                }
+                String md5 = dObj.optString("md5");
+                String url = dObj.optString("libUrl");
 
+                code = 0;
+                ret.put("md5", md5);
+                ret.put("libUrl", url);
             }else {
                 String m = jsonObject.getString("m");
                 Logger.error(TAG,"device connect faile:" + m);
                 JSONObject json = new JSONObject();
-                json.put("code", c);
-                json.put("msg", m);
-                code = APIConstants.ERROR_API_CALL_ERROR;
-                msg = json.toString();
+                code = -1;
+                err = json.toString();
             }
         }catch (Exception e){
             Logger.error(TAG,"device connect error:" + e.getMessage());
-            code = APIConstants.ERROR_API_CALL_ERROR;
-            msg = e.getMessage();
+            code = -2;
+            err = e.getMessage();
         }
 
         ret.put("code", code+"");
-        ret.put("info", msg);
+        if (err!=null){
+            ret.put("err", err);
+        }
 
         return ret;
     }
@@ -99,18 +92,25 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     protected void onPostExecute(HashMap ret) {
         if(mCallback!=null){
             if (ret == null){
-                mCallback.onResult(APIConstants.ERROR_API_CALL_ERROR, "申请设备接口错误");
+                mCallback.onFaile(-3, "接口返回数据错误");
+                return;
+            }
+            int code = Integer.parseInt(ret.get("code").toString()) ;
+
+            String md5 = ret.containsKey("md5") ? ret.get("md5").toString() : null;
+            String libUrl = ret.containsKey("libUrl") ? ret.get("libUrl").toString() : null;
+            if (md5 != null || libUrl != null){
+                mCallback.onSucces(libUrl, md5);
                 return;
             }
 
-            int code = Integer.parseInt(ret.get("code").toString()) ;
-            String info = (String) ret.get("info");
-            mCallback.onResult(code, info);
+            String err = ret.containsKey("err") ? ret.get("err").toString() : "";
+            mCallback.onFaile(code, err);
         }
     }
 
     //获取扩展配置信息
-    private String requestAppInfo(String corpKey, String pkgName, String uid, String gameId, String padInf, String padModel) {
+    private String requestAppInfo(String corpKey, String libVersion) {
 
         String str = mSdkUrl;
         Logger.info(TAG,"device connect :" + str);
@@ -128,12 +128,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
             postConnection.setRequestProperty("Content-type", "application/json");//以表单形式传递参数
 
             HashMap map = new HashMap();
-            map.put("corpKey", corpKey);
-            map.put("pkgName", pkgName);
-            map.put("gameId", gameId);
-            map.put("uuid", uid);
-            map.put("padInfo", padInf);
-            map.put("padModel", padModel);
+            map.put("libVersion", libVersion);
             String dataStr = new JSONObject(map).toString();
             OutputStream outputStream = postConnection.getOutputStream();
             outputStream.write(dataStr.getBytes());//把参数发送过去.

@@ -3,6 +3,11 @@ package kptach.game.kit.inter.game;
 import android.app.Activity;
 
 public interface IDeviceControl {
+    enum SdkType {
+        REDF,
+        BD,
+    }
+
     /**
      * 启动游戏
      * @param activity
@@ -105,7 +110,22 @@ public interface IDeviceControl {
      */
     void setPlayListener(PlayListener listener);
 
+    /**
+     * 同步设备信息
+     */
     void mockDeviceInfo();
+
+    /**
+     * sdk类型 BD百度， REDF红手指
+     * @return
+     */
+    SdkType getSdkType();
+
+    /**
+     * 获取设备信息
+     * @return
+     */
+    String getDeviceInfo();
 
     /**
      * 试玩监听

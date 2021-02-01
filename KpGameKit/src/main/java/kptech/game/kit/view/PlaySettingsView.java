@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -24,6 +26,7 @@ import kptech.game.kit.APIConstants;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.utils.StringUtil;
 
 public class PlaySettingsView extends LinearLayout {
 
@@ -190,13 +193,29 @@ public class PlaySettingsView extends LinearLayout {
                 }
             }
         });
-        view.findViewById(R.id.exit_btn).setOnClickListener(new OnClickListener() {
+        Button exitBtn = view.findViewById(R.id.exit_btn);
+        exitBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
                 if (mOnExitListener != null){
                     mOnExitListener.onExit();
                 }
+            }
+        });
+        exitBtn.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                try {
+                    if (mDeviceControl != null){
+                        String info = mDeviceControl.getDeviceInfo();
+                        StringUtil.copy(getContext(), info);
+                        Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return false;
             }
         });
         view.findViewById(R.id.send_back_btn).setOnClickListener(new OnClickListener() {
@@ -209,6 +228,7 @@ public class PlaySettingsView extends LinearLayout {
 
             }
         });
+
     }
 
     private void setSelectQualityLevel(String level) {

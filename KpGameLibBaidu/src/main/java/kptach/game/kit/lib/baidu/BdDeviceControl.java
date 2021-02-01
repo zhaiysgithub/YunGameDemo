@@ -214,4 +214,14 @@ public class BdDeviceControl implements IDeviceControl {
         mDeviceControl.mockDeviceInfo();
     }
 
+    @Override
+    public SdkType getSdkType() {
+        return SdkType.BD;
+    }
+
+    @Override
+    public String getDeviceInfo() {
+        return mDeviceControl.getDeviceToken();
+    }
+
 }

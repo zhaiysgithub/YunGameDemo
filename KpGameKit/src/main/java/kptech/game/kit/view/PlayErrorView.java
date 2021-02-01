@@ -27,9 +27,22 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
     private GameInfo mGameInfo;
 
-    private OnClickListener mBackListener;
-    private OnClickListener mDownListener;
-    private OnClickListener mRetryListener;
+//    private OnClickListener mBackListener;
+//    private OnClickListener mDownListener;
+//    private OnClickListener mRetryListener;
+
+    private ClickListener mListener;
+
+    public interface ClickListener {
+        void onBack();
+        void onRetry();
+        void onDown(View view);
+        void onCopyInf();
+    }
+
+    public void setClickListener(ClickListener listener){
+        this.mListener = listener;
+    }
 
     public PlayErrorView(Context context) {
         super(context);
@@ -45,17 +58,17 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         inflate(getContext(), R.layout.kp_view_play_error, this);
     }
 
-    public void setOnBackListener(OnClickListener listener){
-        this.mBackListener = listener;
-    }
-
-    public void setOnDownListener(OnClickListener listener){
-        this.mDownListener= listener;
-    }
-
-    public void setOnRetryListener(OnClickListener listener){
-        this.mRetryListener = listener;
-    }
+//    public void setOnBackListener(OnClickListener listener){
+//        this.mBackListener = listener;
+//    }
+//
+//    public void setOnDownListener(OnClickListener listener){
+//        this.mDownListener= listener;
+//    }
+//
+//    public void setOnRetryListener(OnClickListener listener){
+//        this.mRetryListener = listener;
+//    }
 
     public void setGameInfo(GameInfo info){
         mGameInfo = info;
@@ -122,6 +135,19 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         mErrorDownBtn.setOnClickListener(this);
 
         findViewById(R.id.btn_back).setOnClickListener(this);
+
+        mGameIcon.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                try {
+                    if (mListener != null){
+                        mListener.onCopyInf();
+                    }
+                }catch (Exception e){
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -132,20 +158,29 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back){
-            if (this.mBackListener != null){
-                this.mBackListener.onClick(view);
+//            if (this.mBackListener != null){
+//                this.mBackListener.onClick(view);
+//            }
+            if (this.mListener != null){
+                this.mListener.onBack();
             }
         }else if (view.getId() == R.id.error_down_layout) {
             if (view.getTag()!=null && view.getTag() instanceof String){
                 Event event = null;
                 String tag = (String) view.getTag();
                 if ("reload".equals(tag)){
-                    if (this.mRetryListener != null){
-                        this.mRetryListener.onClick(view);
+//                    if (this.mRetryListener != null){
+//                        this.mRetryListener.onClick(view);
+//                    }
+                    if (this.mListener != null){
+                        this.mListener.onRetry();
                     }
                 }else if("down".equals(tag)){
-                    if (this.mDownListener != null){
-                        this.mDownListener.onClick(view);
+//                    if (this.mDownListener != null){
+//                        this.mDownListener.onClick(view);
+//                    }
+                    if (this.mListener != null){
+                        this.mListener.onDown(view);
                     }
                 }
             }
@@ -158,8 +193,9 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         super.onDetachedFromWindow();
 
         mGameInfo = null;
-        mBackListener = null;
-        mDownListener = null;
-        mRetryListener = null;
+        mListener = null;
+//        mBackListener = null;
+//        mDownListener = null;
+//        mRetryListener = null;
     }
 }
