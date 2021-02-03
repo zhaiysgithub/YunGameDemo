@@ -22,6 +22,7 @@ public class AdLoaderFactory {
                 obj = (IAdLoader) newInstance("kptech.game.kit.ad.loader.FeedAdLoader", new Class[]{String.class}, new Object[]{adcode});
             }
         }catch (Exception e){
+            e.printStackTrace();
             Logger.error("AdLoaderFactory", "createrAdLoader adtype:" + adtype + ", adcode" + adcode + ", error: " + e.getMessage());
         }
 
@@ -35,6 +36,7 @@ public class AdLoaderFactory {
                     new Object[]{application, appkey, appToken});
             return true;
         }catch (Exception e){
+            e.printStackTrace();
             Logger.error("AdLoaderFactory","ad init appkey:" + appkey + ", appToken" + appToken + ", error: " + e.getMessage());
         }
         return false;

@@ -68,6 +68,7 @@ public class DXBMobileInfo {
         return "";
     }
 
+    @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String e(Context context) {
         try {
             if (Build.VERSION.SDK_INT < 23 || context.checkSelfPermission("android.permission.READ_PHONE_STATE") == 0) {
@@ -80,6 +81,7 @@ public class DXBMobileInfo {
     }
 
 
+    @SuppressLint({"HardwareIds", "MissingPermission"})
     public static String f(Context context) {
         try {
             if (Build.VERSION.SDK_INT < 23 || context.checkSelfPermission("android.permission.READ_PHONE_STATE") == 0) {
@@ -126,9 +128,10 @@ public class DXBMobileInfo {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public static String getNetNameType(Context context) {
         try {
-            NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getApplicationContext().getSystemService("connectivity")).getActiveNetworkInfo();
+             NetworkInfo activeNetworkInfo = ((ConnectivityManager) context.getApplicationContext().getSystemService("connectivity")).getActiveNetworkInfo();
             if (activeNetworkInfo != null) {
                 String typeName = activeNetworkInfo.getTypeName();
                 return "mobile".equals(typeName.toLowerCase()) ? activeNetworkInfo.getSubtypeName() : typeName;

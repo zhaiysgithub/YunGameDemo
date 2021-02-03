@@ -145,11 +145,12 @@ public class DeviceUtils {
      * @param context
      * @return
      */
+    @SuppressLint("MissingPermission")
     public static boolean isNetworkConnected(Context context) {
         if (context != null) {
             ConnectivityManager mConnectivityManager = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if (mNetworkInfo != null) {
                 return mNetworkInfo.isAvailable();
             }
@@ -157,9 +158,10 @@ public class DeviceUtils {
         return false;
     }
 
+    @SuppressLint("MissingPermission")
     public static int getNetworkType(Context context) {
         try {
-            NetworkInfo info = ((ConnectivityManager) context
+             NetworkInfo info = ((ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
                 if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//当前使用2G/3G/4G网络

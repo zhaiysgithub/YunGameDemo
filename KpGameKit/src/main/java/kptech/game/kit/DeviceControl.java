@@ -227,15 +227,24 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
-
+        try {
+            MsgManager manager = MsgManager.getInstance();
+            if (manager != null){
+                manager.setMessageReceiver(receiver);
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     @Override
     public void sendMessage(String msg) {
-
+        try {
+            MsgManager.sendMessage(msg);
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
-
-
 
     /**
      * 加载广告

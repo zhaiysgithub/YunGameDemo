@@ -117,6 +117,10 @@ public class AdManager {
                     Logger.error("AdManager", e.getMessage());
                     err = e.getMessage();
                 }
+
+                if (AdManager.adEnable){
+                    ret = true;
+                }
             }
         }else {
             AdManager.adEnable = false;

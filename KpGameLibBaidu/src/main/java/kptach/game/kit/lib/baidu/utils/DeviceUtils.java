@@ -109,70 +109,6 @@ public class DeviceUtils {
         return "";
     }
 
-    /**
-     * 获取设备宽度（px）
-     *
-     * @param context
-     * @return
-     */
-    public static int deviceWidth(Context context) {
-        return context.getResources().getDisplayMetrics().widthPixels;
-    }
-
-    /**
-     * 获取设备高度（px）
-     *
-     * @param context
-     * @return
-     */
-    public static int deviceHeight(Context context) {
-        return context.getResources().getDisplayMetrics().heightPixels;
-    }
-
-    /**
-     * SD卡判断
-     *
-     * @return
-     */
-    public static boolean isSDCardAvailable() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-    }
-
-    /**
-     * 是否有网
-     *
-     * @param context
-     * @return
-     */
-    public static boolean isNetworkConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-            if (mNetworkInfo != null) {
-                return mNetworkInfo.isAvailable();
-            }
-        }
-        return false;
-    }
-
-    public static int getNetworkType(Context context) {
-        try {
-            NetworkInfo info = ((ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-            if (info != null && info.isConnected()) {
-                if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//当前使用2G/3G/4G网络
-                    return ConnectivityManager.TYPE_MOBILE;
-                } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {//当前使用无线网络
-                    return ConnectivityManager.TYPE_WIFI;
-                }
-            }
-        }catch (Exception e){
-
-        }
-        return -1;
-    }
-
 
     /**
      * 获取当前连接的wifi的mac地址
@@ -549,48 +485,6 @@ public class DeviceUtils {
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
-
-    /**
-     * 获取ip（内网ip）
-     * @param context
-     * @return
-     */
-    public static String getIPAddress(Context context) {
-        try {
-            NetworkInfo info = ((ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-            if (info != null && info.isConnected()) {
-                if (info.getType() == ConnectivityManager.TYPE_MOBILE) {//当前使用2G/3G/4G网络
-                    try {
-                        //Enumeration<NetworkInterface> en=NetworkInterface.getNetworkInterfaces();
-                        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                            NetworkInterface intf = en.nextElement();
-                            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                                InetAddress inetAddress = enumIpAddr.nextElement();
-                                if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
-                                    return inetAddress.getHostAddress();
-                                }
-                            }
-                        }
-                    } catch (SocketException e) {
-                    }
-
-
-                } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {//当前使用无线网络
-                    WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    String ipAddress = intIP2StringIP(wifiInfo.getIpAddress());//得到IPV4地址
-                    return ipAddress;
-                }
-            } else {
-                //当前无网络连接,请在设置中打开网络
-            }
-        }catch (Exception e){
-
-        }
-        return null;
-    }
-
 
     /**
      * 将得到的int类型的IP转换为String类型

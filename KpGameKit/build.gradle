@@ -41,19 +41,23 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     //    implementation 'org.xutils:xutils:3.3.36'
     //快盘定义接口
-    //    implementation 'kptech.game.kit:kpinter:1.0.0'
-    //    implementation 'kptech.game.kit:gamead-netease:1.0.0.7'
+    implementation 'kptech.game.kit:kpinter:1.0.1'
+    implementation 'kptech.game.kit:gamead-netease:1.0.0.7'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 
     implementation files('libs/KpCKit-v1.0.8-10.jar')
     implementation files('libs/netqueue-v1.0.1_2.jar')
+    implementation files('libs/KpGameLib-REDF-v1.0.1.jar')
+    implementation files('libs/KpGameLib-BD-v1.0.1.jar')
+
 //    implementation(name: 'commonPlaySdk_v1.0.7.8', ext: 'aar')
 
-    implementation project(path: ':kpinter')
-    implementation project(path: ':KpGameLibRedfinger')
-    implementation project(path: ':KpGameLibBaidu')
-    implementation project(path: ':KpGameAd')
+//    implementation project(path: ':kpinter')
+//    implementation project(path: ':KpGameLibRedfinger')
+//    implementation project(path: ':KpGameLibBaidu')
+
+//    implementation project(path: ':KpGameAd')
 
 }
 
