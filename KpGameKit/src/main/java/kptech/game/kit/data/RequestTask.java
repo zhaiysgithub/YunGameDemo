@@ -278,6 +278,7 @@ public class RequestTask {
             inf.mockSleepTime = gameObj.has("mockSleepTime") ? gameObj.getInt("mockSleepTime") : -1;
             inf.exitRemind = gameObj.has("exitRemind") ? gameObj.getString("exitRemind") : null;
             inf.enterRemind = gameObj.has("enterRemind") ? gameObj.getString("enterRemind") : null;
+            inf.useSDK = gameObj.has("useSDK") ? gameObj.optInt("useSDK") : 0;
             if (gameObj.has("downloadExt")){
                 HashMap<String,String> ext = new HashMap<>();
                 try {

@@ -14,12 +14,11 @@ import com.zad.sdk.Oapi.bean.ZadFeedDataAdBean;
 import com.zad.sdk.Oapi.callback.ZadFeedDataAdObserver;
 import com.zad.sdk.Oapi.work.ZadFeedDataWorker;
 
-import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.ad.view.AdFeedPopup;
-import kptach.game.kit.inter.ad.IAdLoader;
-import kptach.game.kit.inter.ad.IAdLoaderCallback;
+import com.kptach.lib.inter.ad.IAdLoader;
+import com.kptach.lib.inter.ad.IAdLoaderCallback;
 
 
 public class FeedAdLoader implements IAdLoader {

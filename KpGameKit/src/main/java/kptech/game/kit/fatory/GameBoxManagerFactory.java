@@ -2,13 +2,13 @@ package kptech.game.kit.fatory;
 
 import android.app.Application;
 
+import com.kptach.lib.game.baidu.BdGameBoxManager;
+import com.kptach.lib.game.redfinger.RedGameBoxManager;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
 import kptach.game.kit.inter.game.IGameBoxManager;
-
-import kptach.game.kit.lib.redfinger.RedGameBoxManager;
-import kptach.game.kit.lib.baidu.BdGameBoxManager;
 
 public class GameBoxManagerFactory {
     private static IGameBoxManager bdManager = null;

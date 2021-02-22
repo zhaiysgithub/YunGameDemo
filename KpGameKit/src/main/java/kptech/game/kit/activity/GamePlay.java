@@ -511,6 +511,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                             mGameInfo.recoverCloudData = game.recoverCloudData;
                             mGameInfo.enterRemind = game.enterRemind;
                             mGameInfo.exitRemind = game.exitRemind;
+                            mGameInfo.useSDK = mGameInfo.useSDK!=0 ? mGameInfo.useSDK : game.useSDK;
                             //处理广告显示
                             if (mGameInfo.showAd == GameInfo.GAME_AD_SHOW_AUTO){
                                 mGameInfo.showAd = game.showAd;

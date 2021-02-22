@@ -38,4 +38,6 @@
 -keep class com.redfinger.playsdk.widget.**{*;}
 -keep class com.gc.redfinger.** { *; }
 
+-keep class com.mci.** { *; }
+
 -keep class com.bun.miitmdid.core.** {*;}

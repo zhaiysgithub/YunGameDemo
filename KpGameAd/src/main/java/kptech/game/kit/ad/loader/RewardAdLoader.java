@@ -6,10 +6,8 @@ import com.zad.sdk.Oapi.ZadSdkApi;
 import com.zad.sdk.Oapi.callback.ZadRewardAdObserver;
 import com.zad.sdk.Oapi.work.ZadRewardWorker;
 
-import java.util.HashMap;
-
-import kptach.game.kit.inter.ad.IAdLoader;
-import kptach.game.kit.inter.ad.IAdLoaderCallback;
+import com.kptach.lib.inter.ad.IAdLoader;
+import com.kptach.lib.inter.ad.IAdLoaderCallback;
 
 public class RewardAdLoader implements IAdLoader {
 
