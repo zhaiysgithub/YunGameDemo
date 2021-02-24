@@ -6,8 +6,6 @@ import android.app.Application;
 import com.kptach.lib.game.redfinger.BuildConfig;
 import com.kptach.lib.game.redfinger.RedGameBoxManager;
 import com.kptach.lib.inter.game.APIConstants;
-import com.mci.commonplaysdk.PlayMCISdkManager;
-import com.mci.commonplaysdk.PlaySdkCallbackInterface;
 import com.mci.play.MCISdkView;
 import com.mci.play.PlayInitListener;
 
@@ -17,15 +15,19 @@ import java.lang.ref.WeakReference;
 
 import com.kptach.lib.game.redfinger.model.DeviceInfo;
 import com.kptach.lib.game.redfinger.utils.Logger;
+import com.mci.play.PlaySdkManager;
+import com.mci.play.SWDataSourceListener;
+import com.mci.play.SWPlayer;
+import com.mci.play.c;
 
-public class PlaySDKManager {
+public class KpPlaySDKManager {
     private static String TAG = "PlaySDKManager";
 
-    private static PlaySDKManager instance = null;
+    private static KpPlaySDKManager instance = null;
     private Application mApplication;
     private IPlayInitListener mInitListener;
 
-    private PlayMCISdkManager mPlayMCISdkManager;
+    private PlaySdkManager mPlayMCISdkManager;
 
     private IVideoListener mVideoListener;
     private IPlayListener mPlayListener;
@@ -42,9 +44,9 @@ public class PlaySDKManager {
     private boolean isStarted = false;
 
     private boolean isInited;
-    public static PlaySDKManager getInstance() {
+    public static KpPlaySDKManager getInstance() {
         if (instance == null) {
-            instance = new PlaySDKManager();
+            instance = new KpPlaySDKManager();
         }
         return instance;
     }
@@ -72,7 +74,7 @@ public class PlaySDKManager {
         isStarted = true;
 
         //初始化SDK
-        mPlayMCISdkManager = new PlayMCISdkManager(activity, false);
+        mPlayMCISdkManager = new PlaySdkManager(activity, false);
 
         //5、set game parameters
         if (mPlayMCISdkManager.setParams(this.mDeviceInfo.deviceParams, this.mGamePkg, this.mDeviceInfo.apiLevel, this.mDeviceInfo.useSSL, mciSdkView, new InnerPlayListener(this)) != 0) {
@@ -186,10 +188,10 @@ public class PlaySDKManager {
         }
     }
 
-    private static class InnerPlayListener implements PlaySdkCallbackInterface {
-        WeakReference<PlaySDKManager> ref = null;
+    private static class InnerPlayListener extends SWDataSourceListener {
+        WeakReference<KpPlaySDKManager> ref = null;
 
-        private InnerPlayListener(PlaySDKManager sdkManager){
+        private InnerPlayListener(KpPlaySDKManager sdkManager){
             ref = new WeakReference<>(sdkManager);
         }
 
@@ -252,12 +254,20 @@ public class PlaySDKManager {
         }
 
         @Override
-        public void onRenderedFirstFrame(int i, int i1) {
+        public void onRenderedFirstFrame(SWPlayer swPlayer, int i, int i1) {
             Logger.info(TAG, "onRenderedFirstFrame seetResolution = " + i + ", i1 = " + i1);
             if (ref!=null && ref.get()!=null && ref.get().mPlayListener!=null){
                 ref.get().mPlayListener.onReceiverBuffer();
             }
         }
+
+//        @Override
+//        public void onRenderedFirstFrame(int i, int i1) {
+//            Logger.info(TAG, "onRenderedFirstFrame seetResolution = " + i + ", i1 = " + i1);
+//            if (ref!=null && ref.get()!=null && ref.get().mPlayListener!=null){
+//                ref.get().mPlayListener.onReceiverBuffer();
+//            }
+//        }
 
         @Override
         public void onVideoSizeChanged(int i, int i1) {
@@ -303,9 +313,9 @@ public class PlaySDKManager {
             return;
         }
 
-        int logType = RedGameBoxManager.debug ? PlayMCISdkManager.LOG_DEFAULT : PlayMCISdkManager.LOG_WARN;
+        int logType = RedGameBoxManager.debug ? PlaySdkManager.LOG_DEFAULT : PlaySdkManager.LOG_WARN;
 
-        PlayMCISdkManager.init(mApplication, null, logType, true, new PlayInitListener() {
+        PlaySdkManager.init(mApplication, null, logType, true, new PlayInitListener() {
             @Override
             public void initCallBack(int code, String msg) {
                 if (code == 0){
@@ -314,7 +324,7 @@ public class PlaySDKManager {
                     sdkInitFailed(code, msg);
                 }
             }
-        });
+        },"http://socheck.cloud-control.top", "123", "789", Boolean.TRUE, "/sdcard/mci/log/baidu/");
 
 //        PlayMCISdkManager.init(mApplication, null, logType, true);
 //        sdkInitSuccess();

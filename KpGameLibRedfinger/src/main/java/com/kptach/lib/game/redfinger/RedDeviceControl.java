@@ -10,16 +10,16 @@ import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.inter.game.SensorConstants;
-import com.mci.commonplaysdk.PlayMCISdkManager;
 
 import java.lang.ref.WeakReference;
 
 import com.kptach.lib.game.redfinger.fragment.PlayFragment;
 import com.kptach.lib.game.redfinger.model.DeviceInfo;
 import com.kptach.lib.game.redfinger.play.IPlayInitListener;
-import com.kptach.lib.game.redfinger.play.PlaySDKManager;
+import com.kptach.lib.game.redfinger.play.KpPlaySDKManager;
 import com.kptach.lib.game.redfinger.utils.Logger;
 import com.kptach.lib.game.redfinger.utils.MillisecondsDuration;
+import com.mci.play.PlaySdkManager;
 
 public class RedDeviceControl implements IDeviceControl {
     private static final String TAG = RedDeviceControl.class.getSimpleName();
@@ -54,12 +54,12 @@ public class RedDeviceControl implements IDeviceControl {
         IPlayInitListener initListener = new PlayInitListener(this);
 
         //初始化SDK
-        PlaySDKManager.getInstance().loadSdk(activity.getApplication(), initListener);
+        KpPlaySDKManager.getInstance().loadSdk(activity.getApplication(), initListener);
     }
 
     @Override
     public void stopGame() {
-        PlaySDKManager.getInstance().stop();
+        KpPlaySDKManager.getInstance().stop();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class RedDeviceControl implements IDeviceControl {
 
     @Override
     public void setAudioSwitch(boolean enable) {
-        PlaySDKManager.getInstance().setAudioSwitch(enable);
+        KpPlaySDKManager.getInstance().setAudioSwitch(enable);
         if (mDeviceInfo != null){
             mDeviceInfo.isAudio = enable;
         }
@@ -109,14 +109,14 @@ public class RedDeviceControl implements IDeviceControl {
 
     @Override
     public boolean isReleased() {
-        return PlaySDKManager.getInstance().isReleased();
+        return KpPlaySDKManager.getInstance().isReleased();
     }
 
     @Override
     public void setNoOpsTimeout(long font, long back) {
         if (font > 0 && back > 0) {
-            PlaySDKManager.backTime = back * 1000;
-            PlaySDKManager.fontTime = font * 1000;
+            KpPlaySDKManager.backTime = back * 1000;
+            KpPlaySDKManager.fontTime = font * 1000;
         }
     }
 
@@ -133,44 +133,44 @@ public class RedDeviceControl implements IDeviceControl {
             level = DeviceInfo.ResolutionLevel.LEVEL_368_652;
         }
 
-        int i = PlaySDKManager.getInstance().getVideoLevel();
-        PlaySDKManager.getInstance().setVideoLevel(level.ordinal());
+        int i = KpPlaySDKManager.getInstance().getVideoLevel();
+        KpPlaySDKManager.getInstance().setVideoLevel(level.ordinal());
 //        PlaySDKManager.getInstance().setResolutionLevel(level);
     }
 
     @Override
     public void sendPadKey(int padKey) {
         if (padKey == APIConstants.PAD_KEY_BACK){
-            PlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
+            KpPlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK);
         }else if (padKey == APIConstants.PAD_KEY_HOME){
-            PlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HOME);
+            KpPlaySDKManager.getInstance().sendPadKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HOME);
         }
     }
 
     @Override
     public void sendSensorInputData(int sendor, int type, byte[] data) {
         if (sendor == SensorConstants.HARDWARE_ID_MIC){
-            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_AUDIO, type, data);
+            KpPlaySDKManager.getInstance().sendAVData(PlaySdkManager.SENSOR_TYPE_AUDIO, type, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_VIDEO_BACK || sendor == SensorConstants.HARDWARE_ID_VIDEO_FRONT){
-            PlaySDKManager.getInstance().sendAVData(PlayMCISdkManager.SENSOR_TYPE_BACK_VIDEO, type, data);
+            KpPlaySDKManager.getInstance().sendAVData(PlaySdkManager.SENSOR_TYPE_BACK_VIDEO, type, data);
         }
     }
 
     @Override
     public void sendSensorInputData(int sendor, int sensorType, float... data) {
         if (sendor == SensorConstants.HARDWARE_ID_LOCATION) {
-            PlaySDKManager.getInstance().sendLocationData(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+            KpPlaySDKManager.getInstance().sendLocationData(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
         }else if (sendor == SensorConstants.HARDWARE_ID_ACCELEROMETER){
-            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_ACCELEROMETER, data);
+            KpPlaySDKManager.getInstance().sendSensorData(PlaySdkManager.SENSOR_TYPE_ACCELEROMETER, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_PRESSURE){
             //压力传感器
 //            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_GYROSCOPE){
-            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_GYRO, data);
+            KpPlaySDKManager.getInstance().sendSensorData(PlaySdkManager.SENSOR_TYPE_GYRO, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_MAGNETOMETER){
-            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_MAGNETOMETER, data);
+            KpPlaySDKManager.getInstance().sendSensorData(PlaySdkManager.SENSOR_TYPE_MAGNETOMETER, data);
         }else if (sendor == SensorConstants.HARDWARE_ID_GRAVITY){
-            PlaySDKManager.getInstance().sendSensorData(PlayMCISdkManager.SENSOR_TYPE_GRAVITY, data);
+            KpPlaySDKManager.getInstance().sendSensorData(PlaySdkManager.SENSOR_TYPE_GRAVITY, data);
         }
     }
 
@@ -208,18 +208,18 @@ public class RedDeviceControl implements IDeviceControl {
     }
 
     private void doPlay(){
-        if (!PlaySDKManager.getInstance().isReleased()){
+        if (!KpPlaySDKManager.getInstance().isReleased()){
             return;
         }
 
         Logger.info(TAG, "doPlay");
         try {
             SDKListener listener = new SDKListener(this);
-            PlaySDKManager.getInstance().setPlayListener(listener);
-            PlaySDKManager.getInstance().setVideoListener(listener);
+            KpPlaySDKManager.getInstance().setPlayListener(listener);
+            KpPlaySDKManager.getInstance().setVideoListener(listener);
 
-            PlaySDKManager.getInstance().setDeviceParams(mDeviceInfo);
-            PlaySDKManager.getInstance().setGamePkg(mPkgName);
+            KpPlaySDKManager.getInstance().setDeviceParams(mDeviceInfo);
+            KpPlaySDKManager.getInstance().setGamePkg(mPkgName);
 
             if (mActivity != null && !mActivity.isFinishing()) {
                 mActivity.getFragmentManager().beginTransaction().add(this.mContainer, new PlayFragment()).commitAllowingStateLoss();

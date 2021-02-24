@@ -2,10 +2,11 @@ package kptech.game.kit.ad;
 
 import android.app.Application;
 
+import com.kptach.lib.inter.ad.IAdLoader;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import kptach.game.kit.inter.ad.IAdLoader;
 import kptech.game.kit.utils.Logger;
 
 public class AdLoaderFactory {

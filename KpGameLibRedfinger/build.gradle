@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 2
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -35,47 +35,39 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':kpinter')
+//    implementation project(path: ':kpinter')
 //    implementation (name:'commonPlaySdk_v1.0.7.9',ext:'aar')
+//    implementation files('libs/commonPlaySdk_v1.0.8.0.jar')
 
-//    implementation 'kptech.game.kit:kpinter:1.0.1'
-    implementation files('libs/commonPlaySdk_v1.0.8.0.jar')
-//    implementation files('libs/aa.jar')
-//    implementation files('libs/Game-V1.6.0.0_72.jar')
+    implementation 'kptech.game.kit:kpinter:1.0.2'
+    provided files('../KpLib/libs/Game-V1.6.0.0_72.jar')
 }
 
-//task makeJar(type: Copy) {
-//    //删除存在的
-//    delete "build/libs/KpGameLib-REDF-v${android.defaultConfig.versionName}.jar"
-//    //设置拷贝的文件
-//    from('build/intermediates/aar_main_jar/release/')
+task makeJar(type: Copy) {
+    //删除存在的
+//    delete "../KpLib/libs/KpGameLib-REDF-v${android.defaultConfig.versionName}.jar"
+    //设置拷贝的文件
+    from('build/intermediates/aar_main_jar/release/')
+
+    //打进jar包后的文件目录
+//    into('build/libs/')
+    into('../kplib/libs/')
+    //将classes.jar放入build/libs/目录下
+    //include ,exclude参数来设置过滤
+    //（我们只关心classes.jar这个文件）
+    include('classes.jar')
+    //重命名
+    rename ('classes.jar',"KpGameLib-REDF-v${android.defaultConfig.versionName}.jar")
+}
+
+//task makeJar(type:Jar){
+////    delete 'build/libs/'//删除之前的包
 //
-//    //设置拷贝的文件
-//    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'))
-//    from(project.zipTree('build/intermediates/aar_libs_directory/release/libs/commonPlaySdk_v1.0.8.0.jar'))
-//
-//    //打进jar包后的文件目录
-////    into('build/libs/')
-//    into('../KpGameKit/libs/')
-//    //将classes.jar放入build/libs/目录下
-//    //include ,exclude参数来设置过滤
-//    //（我们只关心classes.jar这个文件）
-////    include('classes.jar')
-//    //重命名
-//    rename ('classes.jar',"KpGameLib-REDF-v${android.defaultConfig.versionName}.jar")
+//    archivesBaseName = "KpGameLib-REDF-v${android.defaultConfig.versionName}"//打包后的jar名
+//    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'))//添加classes
+//    from(project.zipTree('build/intermediates/aar_libs_directory/release/libs/commonPlaySdk_v1.0.8.0.jar'))//添加三包
+//    destinationDir = file('build/libs')
+////    rename ('classes.jar',"KpGameLib-REDF-v${android.defaultConfig.versionName}.jar")
 //}
-
-task makeJar(type:Jar){
-//    delete 'build/libs/'//删除之前的包
-
-    archivesBaseName = "KpGameLib-REDF-v${android.defaultConfig.versionName}"//打包后的jar名
-    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'))//添加classes
-    from(project.zipTree('build/intermediates/aar_libs_directory/release/libs/commonPlaySdk_v1.0.8.0.jar'))//添加三包
-    destinationDir = file('build/libs')
-
-
-
-//    rename ('classes.jar',"KpGameLib-REDF-v${android.defaultConfig.versionName}.jar")
-}
 
 makeJar.dependsOn(build)

@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 
 import com.mci.play.MCISdkView;
 
-import com.kptach.lib.game.redfinger.play.PlaySDKManager;
+import com.kptach.lib.game.redfinger.play.KpPlaySDKManager;
 import com.kptach.lib.game.redfinger.utils.Logger;
 
 public class PlayFragment extends Fragment {
@@ -24,7 +24,7 @@ public class PlayFragment extends Fragment {
 //    private PlayMCISdkManager mPlayMCISdkManager;
 //    private IDeviceControl.PlayListener mPlayListener;
 
-    private PlaySDKManager mPlaySDKManager;
+    private KpPlaySDKManager mPlaySDKManager;
 
 //    private int mApiLevel = 2;
 //    private int mUseSSL = 0;
@@ -70,10 +70,10 @@ public class PlayFragment extends Fragment {
             }
         });
 
-        this.mPlaySDKManager = PlaySDKManager.getInstance();
+        this.mPlaySDKManager = KpPlaySDKManager.getInstance();
 
-        this.downstageTimer = new DownstageTimer(PlaySDKManager.fontTime, 1000);
-        this.backstageTimer = new BackstageTimer(PlaySDKManager.backTime, 1000);
+        this.downstageTimer = new DownstageTimer(KpPlaySDKManager.fontTime, 1000);
+        this.backstageTimer = new BackstageTimer(KpPlaySDKManager.backTime, 1000);
 
         connect();
 
@@ -162,7 +162,7 @@ public class PlayFragment extends Fragment {
 
         public void onFinish() {
             if (PlayFragment.this.mPlaySDKManager != null) {
-                PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(1, PlaySDKManager.backTime);
+                PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(1, KpPlaySDKManager.backTime);
             }
             Logger.info(TAG, "BackstageTimer onFinish");
         }
@@ -187,7 +187,7 @@ public class PlayFragment extends Fragment {
                 @Override
                 public void run() {
                     if (PlayFragment.this.mPlaySDKManager != null) {
-                        PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(2, PlaySDKManager.fontTime);
+                        PlayFragment.this.mPlaySDKManager.onNoOpsTimeout(2, KpPlaySDKManager.fontTime);
                     }
                 }
             });

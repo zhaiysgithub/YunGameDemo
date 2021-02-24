@@ -10,6 +10,9 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.kptach.lib.inter.ad.IAdLoader;
+import com.kptach.lib.inter.ad.IAdLoaderCallback;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,8 +20,6 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
-import kptach.game.kit.inter.ad.IAdLoader;
-import kptach.game.kit.inter.ad.IAdLoaderCallback;
 import kptech.game.kit.analytic.Event;
 import kptech.game.kit.analytic.EventCode;
 import kptech.game.kit.analytic.MobclickAgent;

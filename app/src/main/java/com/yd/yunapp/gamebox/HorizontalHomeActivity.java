@@ -35,6 +35,7 @@ import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.analytic.DeviceInfo;
 
@@ -67,8 +68,10 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     final String jidou = "2OePKtLpqnk2IgN-0155ac49e1d54957";//"2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
-    final String corpId = wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
-
+    final String corpId = "2OQCrVnJuES1AVO-ac995a9fef8adcdb"; // wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    //快盘正式环境 "2OLuBOnPAGt12hN-64219e8c44e0efda"
+    //快盘测试环境 "2OQCrVnJuES1AVO-ac995a9fef8adcdb"
+    //网易云音乐 "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b"
 
 
     @Override
@@ -201,19 +204,19 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         mGameAdapter.setOnItemClickListener(new HorizontalGameAdapter.OnItemClickListener() {
             @Override public void onItemClick(View view, int pos) {
                 GameInfo game = (GameInfo) mGameAdapter.getItem(pos);
-                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
-game.ext = new HashMap<>();
-game.ext.put("version","aa");
-game.ext.put("md5","bb");
+//                game.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
+//game.ext = new HashMap<>();
+//game.ext.put("version","aa");
+//game.ext.put("md5","bb");
 
 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
                 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
 
-
+                game.showAd = GameInfo.GAME_AD_SHOW_ON;
                 Params params = new Params();
-//                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
+                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game, params);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));
