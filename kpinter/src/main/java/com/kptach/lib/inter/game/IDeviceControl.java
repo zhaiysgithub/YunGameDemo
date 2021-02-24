@@ -156,6 +156,20 @@ public interface IDeviceControl {
          * @param bytes
          */
         void onScreenCapture(byte[] bytes);
+
+        /**
+         * 屏幕旋转
+         * @param var1
+         * @param var2
+         */
+        void onVideoSizeChanged(int var1, int var2);
+
+        /**
+         *
+         * @param var1
+         * @param var2
+         */
+        void onControlVideo(int var1, int var2);
     }
 
     /**
