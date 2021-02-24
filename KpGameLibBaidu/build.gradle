@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 2
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -26,10 +26,10 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation project(path: ':kpinter')
+    implementation project(path: ':kpinter')
 
-    implementation 'kptech.game.kit:kpinter:1.0.1'
-    implementation files('libs/Game-v1.5.4.jar')
+//    implementation 'kptech.game.kit:kpinter:1.0.1'
+    implementation files('libs/Game-V1.6.0.0_72.jar')
 }
 
 
@@ -54,7 +54,7 @@ task makeJar(type:Jar){
 
     archivesBaseName = "KpGameLib-BD-v${android.defaultConfig.versionName}"//打包后的jar名
     from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'))//添加classes
-    from(project.zipTree('build/intermediates/aar_libs_directory/release/libs/Game-v1.5.4.jar'))//添加三包
+    from(project.zipTree('build/intermediates/aar_libs_directory/release/libs/Game-V1.6.0.0_72.jar'))//添加三包
     destinationDir = file('build/libs')
 
 

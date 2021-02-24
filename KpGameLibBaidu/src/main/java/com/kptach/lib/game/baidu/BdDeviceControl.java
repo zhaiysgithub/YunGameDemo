@@ -2,14 +2,15 @@ package com.kptach.lib.game.baidu;
 
 import android.app.Activity;
 
+import com.mci.play.PlaySdkManager;
 import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
 
 import org.json.JSONObject;
 
-import kptach.game.kit.inter.game.APIConstants;
-import kptach.game.kit.inter.game.IDeviceControl;
-import kptach.game.kit.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.APIConstants;
+import com.kptach.lib.inter.game.IDeviceControl;
+import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.game.baidu.utils.Logger;
 
 public class BdDeviceControl implements IDeviceControl {
@@ -51,10 +52,12 @@ public class BdDeviceControl implements IDeviceControl {
                 }
 
                 //解析当前画面质量
-                if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
-                    String str = mDeviceToken.getString("picQuality");
-                    mPicQuality = str;
-                }
+                mPicQuality = getVideoQuality();
+//                if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
+//                    String str = mDeviceToken.getString("picQuality");
+//                    mPicQuality = str;
+//                }
+
             }
 
         }catch (Exception e){
@@ -91,7 +94,25 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public String getVideoQuality() {
-        return mPicQuality;
+        String pic = "";
+        if (mDeviceControl != null){
+            int level = mDeviceControl.getDefaultGameLevel();
+            switch (level){
+                case com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO:
+                    pic =  APIConstants.DEVICE_VIDEO_QUALITY_AUTO;
+                    break;
+                case com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD:
+                    pic = APIConstants.DEVICE_VIDEO_QUALITY_HD;
+                    break;
+                case com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY:
+                    pic = APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY;
+                    break;
+                case com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS:
+                    pic = APIConstants.DEVICE_VIDEO_QUALITY_LS;
+                    break;
+            }
+        }
+        return pic;
     }
 
     @Override
@@ -125,8 +146,19 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public void switchQuality(String level) {
+        if (mPicQuality!=null && mPicQuality.equals(level)){
+            return;
+        }
         mPicQuality = level;
-        mDeviceControl.switchQuality(level);
+        if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
+            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
+            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
+            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
+            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+        }
     }
 
     @Override
@@ -191,18 +223,28 @@ public class BdDeviceControl implements IDeviceControl {
             }
 
             @Override
-            public void onScreenChange(int i) {
-                if (listener != null){
-                    listener.onScreenChange(i);
-                }
+            public void onVideoSizeChanged(int i, int i1) {
+
             }
 
             @Override
-            public void onScreenCapture(byte[] bytes) {
-                if (listener != null){
-                    listener.onScreenCapture(bytes);
-                }
+            public void onControlVideo(int i, int i1) {
+
             }
+
+//            @Override
+//            public void onScreenChange(int i) {
+//                if (listener != null){
+//                    listener.onScreenChange(i);
+//                }
+//            }
+//
+//            @Override
+//            public void onScreenCapture(byte[] bytes) {
+//                if (listener != null){
+//                    listener.onScreenCapture(bytes);
+//                }
+//            }
         });
     }
 

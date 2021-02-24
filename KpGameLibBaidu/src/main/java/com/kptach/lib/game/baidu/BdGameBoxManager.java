@@ -5,7 +5,9 @@ import android.app.Application;
 
 import com.yd.yunapp.gameboxlib.APICallback;
 import com.yd.yunapp.gameboxlib.APIConstants;
+import com.yd.yunapp.gameboxlib.CloudPhoneManager;
 import com.yd.yunapp.gameboxlib.DeviceControl;
+import com.yd.yunapp.gameboxlib.DeviceMockInfo;
 import com.yd.yunapp.gameboxlib.GameBoxManager;
 import com.yd.yunapp.gameboxlib.GameInfo;
 
@@ -14,9 +16,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import kptach.game.kit.inter.game.IDeviceControl;
-import kptach.game.kit.inter.game.IGameBoxManager;
-import kptach.game.kit.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.IDeviceControl;
+import com.kptach.lib.inter.game.IGameBoxManager;
+import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.game.baidu.utils.DeviceUtils;
 import com.kptach.lib.game.baidu.utils.Logger;
 
@@ -59,11 +61,12 @@ public class BdGameBoxManager implements IGameBoxManager {
             Logger.error(TAG, e.getMessage());
         }
 
-
-        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).setDebug(debug);
         //初始化游戏
-        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).init(ak, sk, ch);
+        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).setDebug(debug);
+        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).init(ak, sk, ch, false);
 
+        CloudPhoneManager.getInstance(application).setDebug(debug);
+        CloudPhoneManager.getInstance(application).init(ak, sk, ch,false);
         isInited = true;
     }
 
@@ -76,7 +79,7 @@ public class BdGameBoxManager implements IGameBoxManager {
         GameInfo game = getLibGameInfo(inf);
         if (game == null){
             if (callback != null){
-                callback.onGameCallback(null, kptach.game.kit.inter.game.APIConstants.ERROR_GAME_INF_EMPTY);
+                callback.onGameCallback(null, com.kptach.lib.inter.game.APIConstants.ERROR_GAME_INF_EMPTY);
             }
             return;
         }
@@ -130,20 +133,20 @@ public class BdGameBoxManager implements IGameBoxManager {
             String ANDROID_ID = DeviceUtils.getAndroidId(mApplication);;//Settings.System.getString(mApplication.getContentResolver(), Settings.System.ANDROID_ID);
             String Imei = DeviceUtils.getIMEI(mApplication);
 
-            manager.addDeviceMockInfo(APIConstants.MOCK_IMEI, Imei);
-            manager.addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, ANDROID_ID);
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_IMEI, Imei);
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_ANDROID_ID, ANDROID_ID);
 
             manager.addDeviceMockInfo("brand", DeviceUtils.getDeviceBrand());
             manager.addDeviceMockInfo("model", DeviceUtils.getDeviceModel());
             manager.addDeviceMockInfo("manufacturer", DeviceUtils.getDeviceManufacturer());
-            manager.addDeviceMockInfo(APIConstants.MOCK_BOOTLOADER, DeviceUtils.getDeviceBootloader());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BOOTLOADER, DeviceUtils.getDeviceBootloader());
 
-            manager.addDeviceMockInfo(APIConstants.MOCK_SERIALNO, DeviceUtils.getSERIAL());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_SERIALNO, DeviceUtils.getSERIAL());
 
-            manager.addDeviceMockInfo(APIConstants.MOCK_BOARD, DeviceUtils.getDeviceBoard());
-            manager.addDeviceMockInfo(APIConstants.MOCK_DEVICE, DeviceUtils.getDeviceDevice());
-            manager.addDeviceMockInfo(APIConstants.MOCK_FINGERPRINT, DeviceUtils.getDeviceFingerprint());
-            manager.addDeviceMockInfo(APIConstants.MOCK_PRODUCTNAME, DeviceUtils.getDeviceProduct());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BOARD, DeviceUtils.getDeviceBoard());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_DEVICE, DeviceUtils.getDeviceDevice());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_FINGERPRINT, DeviceUtils.getDeviceFingerprint());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_PRODUCTNAME, DeviceUtils.getDeviceProduct());
 
             String imsi = DeviceUtils.getIMSI(mApplication);
             if (imsi != null){
@@ -151,24 +154,22 @@ public class BdGameBoxManager implements IGameBoxManager {
             }
             String wifimac = DeviceUtils.getWifiMacAddress(mApplication);
             if (wifimac != null){
-                manager.addDeviceMockInfo(APIConstants.MOCK_WIFIMAC, wifimac);
+                manager.addDeviceMockInfo(DeviceMockInfo.MOCK_WIFIMAC, wifimac);
             }
             String wifiname = DeviceUtils.getWifiName(mApplication);
             if (wifiname != null){
-                manager.addDeviceMockInfo(APIConstants.MOCK_WIFINAME, wifiname);
+                manager.addDeviceMockInfo(DeviceMockInfo.MOCK_WIFINAME, wifiname);
             }
             String bssid = DeviceUtils.getBSSID(mApplication);
             if (bssid != null){
-                manager.addDeviceMockInfo(APIConstants.MOCK_BSSID, bssid);
+                manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BSSID, bssid);
             }
 
-            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDID, DeviceUtils.getBuildId());
-            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDHOST, DeviceUtils.getBuildHost());
-            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDTAGS, DeviceUtils.getBuildTags());
-            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDTYPE, DeviceUtils.getBuildType());
-
-            manager.addDeviceMockInfo(APIConstants.MOCK_BUILDVERSIONINC, DeviceUtils.getVersionInc());
-//            manager.addDeviceMockInfo("buildVersionInc", DeviceUtils.getVersionInc());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BUILDID, DeviceUtils.getBuildId());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BUILDHOST, DeviceUtils.getBuildHost());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BUILDTAGS, DeviceUtils.getBuildTags());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BUILDTYPE, DeviceUtils.getBuildType());
+            manager.addDeviceMockInfo(DeviceMockInfo.MOCK_BUILDVERSIONINC, DeviceUtils.getVersionInc());
 
             Map<String, String> map = manager.getDeviceMockInfo();
             Logger.info(TAG, map.toString());
