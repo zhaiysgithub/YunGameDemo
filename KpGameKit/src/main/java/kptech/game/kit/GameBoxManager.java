@@ -15,8 +15,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
-import kptach.game.kit.inter.game.IGameBoxManager;
-import kptach.game.kit.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.IGameBoxManager;
+import com.kptach.lib.inter.game.IGameCallback;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.analytic.DeviceInfo;
 import kptech.game.kit.analytic.Event;
@@ -352,11 +352,11 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
 
-        gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<kptach.game.kit.inter.game.IDeviceControl>() {
+        gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
             @Override
-            public void onGameCallback(kptach.game.kit.inter.game.IDeviceControl innerControl, int code) {
+            public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
                 devLoading = false;
 
                 DeviceControl control = null;

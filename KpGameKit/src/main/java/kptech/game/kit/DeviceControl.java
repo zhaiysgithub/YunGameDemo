@@ -8,12 +8,13 @@ import android.os.Message;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.kptach.lib.inter.game.IGameCallback;
+
 import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.HashMap;
 
-import kptach.game.kit.inter.game.IGameCallback;
 import kptech.game.kit.ad.AdManager;
 import kptech.game.kit.ad.IAdCallback;
 import kptech.game.kit.analytic.DeviceInfo;
@@ -32,7 +33,7 @@ import kptech.game.kit.utils.ProferencesUtils;
 public class DeviceControl implements IDeviceControl{
     private static final String TAG = DeviceControl.class.getSimpleName();
 
-    private kptach.game.kit.inter.game.IDeviceControl mInnerControl;
+    private com.kptach.lib.inter.game.IDeviceControl mInnerControl;
 
     private Handler mGameHandler;
     private Activity mActivity;
@@ -52,11 +53,11 @@ public class DeviceControl implements IDeviceControl{
     private boolean sendTmEvent = false;
     private MillisecondsDuration mTimeDuration;
 
-    protected DeviceControl(kptach.game.kit.inter.game.IDeviceControl control){
+    protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control){
         this(control,null);
     }
 
-    protected DeviceControl(kptach.game.kit.inter.game.IDeviceControl control, GameInfo game){
+    protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control, GameInfo game){
         this.mInnerControl = control;
         this.mGameInfo = game;
         this.mGameHandler = new GameHandler();
@@ -183,7 +184,7 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void registerSensorSamplerListener(final SensorSamplerListener listener) {
-        mInnerControl.registerSensorSamplerListener(new kptach.game.kit.inter.game.IDeviceControl.SensorSamplerListener() {
+        mInnerControl.registerSensorSamplerListener(new com.kptach.lib.inter.game.IDeviceControl.SensorSamplerListener() {
             @Override
             public void onSensorSamper(int sensor, int state) {
                 if (listener != null){
@@ -195,7 +196,7 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void setPlayListener(final PlayListener listener) {
-        mInnerControl.setPlayListener(new kptach.game.kit.inter.game.IDeviceControl.PlayListener() {
+        mInnerControl.setPlayListener(new com.kptach.lib.inter.game.IDeviceControl.PlayListener() {
             @Override
             public void onPingUpdate(int ping) {
                 if (listener != null){
@@ -220,6 +221,16 @@ public class DeviceControl implements IDeviceControl{
 
             @Override
             public void onScreenCapture(byte[] bytes) {
+
+            }
+
+            @Override
+            public void onVideoSizeChanged(int var1, int var2) {
+
+            }
+
+            @Override
+            public void onControlVideo(int var1, int var2) {
 
             }
         });
@@ -356,7 +367,7 @@ public class DeviceControl implements IDeviceControl{
      */
     private void sendMockDeviceInfo(){
         //百度SDK调用一键新机功能
-        if (mInnerControl!=null && mInnerControl.getSdkType() == kptach.game.kit.inter.game.IDeviceControl.SdkType.BD ){
+        if (mInnerControl!=null && mInnerControl.getSdkType() == com.kptach.lib.inter.game.IDeviceControl.SdkType.BD ){
             long sleepTime = 3000;
             try {
                 if (mGameInfo!=null && mGameInfo.mockSleepTime == -1){

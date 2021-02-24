@@ -4,11 +4,10 @@ import android.app.Application;
 
 import com.kptach.lib.game.baidu.BdGameBoxManager;
 import com.kptach.lib.game.redfinger.RedGameBoxManager;
+import com.kptach.lib.inter.game.IGameBoxManager;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-
-import kptach.game.kit.inter.game.IGameBoxManager;
 
 public class GameBoxManagerFactory {
     private static IGameBoxManager bdManager = null;
