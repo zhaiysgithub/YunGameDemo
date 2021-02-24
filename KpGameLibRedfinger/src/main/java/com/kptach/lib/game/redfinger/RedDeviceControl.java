@@ -6,14 +6,14 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
 
+import com.kptach.lib.inter.game.APIConstants;
+import com.kptach.lib.inter.game.IDeviceControl;
+import com.kptach.lib.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.SensorConstants;
 import com.mci.commonplaysdk.PlayMCISdkManager;
 
 import java.lang.ref.WeakReference;
 
-import kptach.game.kit.inter.game.APIConstants;
-import kptach.game.kit.inter.game.IDeviceControl;
-import kptach.game.kit.inter.game.IGameCallback;
-import kptach.game.kit.inter.game.SensorConstants;
 import com.kptach.lib.game.redfinger.fragment.PlayFragment;
 import com.kptach.lib.game.redfinger.model.DeviceInfo;
 import com.kptach.lib.game.redfinger.play.IPlayInitListener;

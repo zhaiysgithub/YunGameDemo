@@ -2,10 +2,10 @@ package com.kptach.lib.game.redfinger;
 
 import java.lang.ref.WeakReference;
 
-import kptach.game.kit.inter.game.APIConstants;
 import com.kptach.lib.game.redfinger.play.IPlayListener;
 import com.kptach.lib.game.redfinger.play.IVideoListener;
 import com.kptach.lib.game.redfinger.utils.ThreadUtils;
+import com.kptach.lib.inter.game.APIConstants;
 
 public class SDKListener implements IPlayListener, IVideoListener {
     WeakReference<RedDeviceControl> ref = null;

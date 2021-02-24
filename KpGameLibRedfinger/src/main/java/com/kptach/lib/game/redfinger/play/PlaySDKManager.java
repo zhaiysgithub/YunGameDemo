@@ -5,6 +5,7 @@ import android.app.Application;
 
 import com.kptach.lib.game.redfinger.BuildConfig;
 import com.kptach.lib.game.redfinger.RedGameBoxManager;
+import com.kptach.lib.inter.game.APIConstants;
 import com.mci.commonplaysdk.PlayMCISdkManager;
 import com.mci.commonplaysdk.PlaySdkCallbackInterface;
 import com.mci.play.MCISdkView;
@@ -13,8 +14,6 @@ import com.mci.play.PlayInitListener;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-
-import kptach.game.kit.inter.game.APIConstants;
 
 import com.kptach.lib.game.redfinger.model.DeviceInfo;
 import com.kptach.lib.game.redfinger.utils.Logger;
@@ -203,7 +202,7 @@ public class PlaySDKManager {
         public void onConnected() {
             Logger.info(TAG, "onConnected");
             if (ref!=null && ref.get()!=null && ref.get().mPlayListener!=null){
-                ref.get().mPlayListener.onConnectSuccess("",APIConstants.CONNECT_DEVICE_SUCCESS);
+                ref.get().mPlayListener.onConnectSuccess("", APIConstants.CONNECT_DEVICE_SUCCESS);
             }
         }
 

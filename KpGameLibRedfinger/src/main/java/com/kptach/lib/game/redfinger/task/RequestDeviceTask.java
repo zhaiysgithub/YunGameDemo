@@ -12,8 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-import kptach.game.kit.inter.game.APIConstants;
 import com.kptach.lib.game.redfinger.utils.Logger;
+import com.kptach.lib.inter.game.APIConstants;
 
 public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     private static final String TAG = "RequestDeviceTask";

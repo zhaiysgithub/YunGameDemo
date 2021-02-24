@@ -9,13 +9,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import kptach.game.kit.inter.game.APIConstants;
-import kptach.game.kit.inter.game.IDeviceControl;
-import kptach.game.kit.inter.game.IGameBoxManager;
-import kptach.game.kit.inter.game.IGameCallback;
 import com.kptach.lib.game.redfinger.model.PadModel;
 import com.kptach.lib.game.redfinger.task.RequestDeviceTask;
 import com.kptach.lib.game.redfinger.utils.Logger;
+import com.kptach.lib.inter.game.APIConstants;
+import com.kptach.lib.inter.game.IDeviceControl;
+import com.kptach.lib.inter.game.IGameBoxManager;
+import com.kptach.lib.inter.game.IGameCallback;
 
 public class RedGameBoxManager implements IGameBoxManager {
 

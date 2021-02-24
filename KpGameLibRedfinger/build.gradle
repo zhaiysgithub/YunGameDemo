@@ -35,11 +35,13 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation project(path: ':kpinter')
+    implementation project(path: ':kpinter')
 //    implementation (name:'commonPlaySdk_v1.0.7.9',ext:'aar')
 
-    implementation 'kptech.game.kit:kpinter:1.0.1'
+//    implementation 'kptech.game.kit:kpinter:1.0.1'
     implementation files('libs/commonPlaySdk_v1.0.8.0.jar')
+//    implementation files('libs/aa.jar')
+//    implementation files('libs/Game-V1.6.0.0_72.jar')
 }
 
 //task makeJar(type: Copy) {
