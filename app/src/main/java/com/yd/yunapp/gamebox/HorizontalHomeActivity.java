@@ -171,7 +171,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
         info.gid = 4283;
         info.pkgName = "com.aa.bb";
-        info.useSDK = 1;
+        info.useSDK = GameInfo.SdkType.REDF;
 
 //        info.gid = 3437;
 //        info.pkgName = "com.kptach.test";
@@ -214,7 +214,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
 
-                game.showAd = GameInfo.GAME_AD_SHOW_ON;
+//                game.showAd = GameInfo.GAME_AD_SHOW_ON;
+                game.useSDK = GameInfo.SdkType.DEFAULT;
                 Params params = new Params();
                 params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game, params);

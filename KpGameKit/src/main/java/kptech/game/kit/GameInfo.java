@@ -55,7 +55,13 @@ public class GameInfo implements Parcelable {
     public String enterRemind;  //游戏启动后，显示的公告提醒
     public String exitRemind;   //退出游戏时，显示的公告提醒
 
-    public int useSDK = 0; //0使用红手指，1使用百度
+    public SdkType useSDK = SdkType.DEFAULT; //SDK类型，0使用红手指，1使用百度
+
+    public enum SdkType{
+        DEFAULT,
+        BD,
+        REDF,
+    }
 
     public GameInfo() {
     }
@@ -77,6 +83,8 @@ public class GameInfo implements Parcelable {
         this.mockSleepTime = var1.readInt();
         this.recoverCloudData = var1.readInt();
         this.ext = var1.readHashMap(HashMap.class.getClassLoader());
+        String useSdk = var1.readString();
+        this.useSDK = SdkType.valueOf(useSdk);
     }
 
     public int getEffectTime() {
@@ -104,6 +112,7 @@ public class GameInfo implements Parcelable {
         var1.writeInt(this.mockSleepTime);
         var1.writeInt(this.recoverCloudData);
         var1.writeMap(this.ext);
+        var1.writeString(this.useSDK.name());
     }
 
 

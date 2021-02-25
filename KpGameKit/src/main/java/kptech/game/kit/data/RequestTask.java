@@ -278,7 +278,12 @@ public class RequestTask {
             inf.mockSleepTime = gameObj.has("mockSleepTime") ? gameObj.getInt("mockSleepTime") : -1;
             inf.exitRemind = gameObj.has("exitRemind") ? gameObj.getString("exitRemind") : null;
             inf.enterRemind = gameObj.has("enterRemind") ? gameObj.getString("enterRemind") : null;
-            inf.useSDK = gameObj.has("useSDK") ? gameObj.optInt("useSDK") : 0;
+            String useSdkName = gameObj.has("useSDK") ? gameObj.optString("useSDK") : GameInfo.SdkType.DEFAULT.name();
+            try {
+                inf.useSDK = GameInfo.SdkType.valueOf(useSdkName);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             if (gameObj.has("downloadExt")){
                 HashMap<String,String> ext = new HashMap<>();
                 try {

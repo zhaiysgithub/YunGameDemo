@@ -1,6 +1,7 @@
 package com.kptach.lib.game.baidu;
 
 import android.app.Activity;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.mci.play.PlaySdkManager;
 import com.yd.yunapp.gameboxlib.DeviceControl;
@@ -67,6 +68,11 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public void startGame(Activity activity, int res, final IGameCallback<String> callback) {
+        if (mDeviceControl == null){
+            if (callback != null){
+                callback.onGameCallback("device control error", -200001 );
+            }
+        }
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>(){
             @Override
             public void onAPICallback(String s, int i) {
@@ -79,7 +85,9 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public void stopGame() {
-        mDeviceControl.stopGame();
+        if (mDeviceControl != null) {
+            mDeviceControl.stopGame();
+        }
     }
 
     @Override
@@ -136,12 +144,17 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public boolean isReleased() {
+        if (mDeviceControl == null){
+            return true;
+        }
         return mDeviceControl.isReleased();
     }
 
     @Override
     public void setNoOpsTimeout(long font, long back) {
-        mDeviceControl.setNoOpsTimeout(font, back);
+        if (mDeviceControl != null){
+            mDeviceControl.setNoOpsTimeout(font, back);
+        }
     }
 
     @Override
@@ -150,21 +163,25 @@ public class BdDeviceControl implements IDeviceControl {
             return;
         }
         mPicQuality = level;
-        if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
-            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
-        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
-            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD);
-        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
-            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS);
-        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
-            mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+        if (mDeviceControl != null){
+            if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
+                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
+            }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
+                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD);
+            }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
+                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS);
+            }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
+                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+            }
         }
     }
 
     @Override
     public void setAudioSwitch(boolean audioSwitch) {
         mIsSoundEnable = audioSwitch;
-        mDeviceControl.setAudioSwitch(audioSwitch);
+        if (mDeviceControl != null) {
+            mDeviceControl.setAudioSwitch(audioSwitch);
+        }
     }
 
     @Override
@@ -184,40 +201,70 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public void sendSensorInputData(int sendor, int type, byte[] data) {
-        mDeviceControl.sendSensorInputData(sendor, type, data);
+        try {
+            if (mDeviceControl != null) {
+                mDeviceControl.sendSensorInputData(sendor, type, data);
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     @Override
     public void sendSensorInputData(int sendor, int sensorType, float... data) {
-        mDeviceControl.sendSensorInputData(sendor,sensorType,data);
+        try {
+            if (mDeviceControl != null){
+                mDeviceControl.sendSensorInputData(sendor,sensorType,data);
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     @Override
     public void registerSensorSamplerListener(final SensorSamplerListener listener) {
-        mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
-            @Override
-            public void onSensorSamper(int i, int i1) {
-                if (listener != null){
-                    listener.onSensorSamper(i, i1);
-                }
+        try {
+            if (mDeviceControl != null){
+                mDeviceControl.registerSensorSamplerListener(new DeviceControl.SensorSamplerListener() {
+                    @Override
+                    public void onSensorSamper(int i, int i1) {
+                        if (listener != null){
+                            listener.onSensorSamper(i, i1);
+                        }
+                    }
+                });
             }
-        });
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     @Override
     public void setPlayListener(final PlayListener listener) {
+        if (mDeviceControl == null){
+            return;
+        }
         mDeviceControl.setPlayListener(new DeviceControl.PlayListener() {
             @Override
             public void onPingUpdate(int i) {
-                if (listener != null){
-                    listener.onPingUpdate(i);
+                try {
+                    if (listener != null){
+                        listener.onPingUpdate(i);
+                    }
+                }catch (Exception e){
+                    Logger.error(TAG, e.getMessage());
                 }
+
             }
 
             @Override
             public boolean onNoOpsTimeout(int i, long l) {
-                if (listener != null){
-                    listener.onNoOpsTimeout(i, l);
+                try {
+                    if (listener != null){
+                        listener.onNoOpsTimeout(i, l);
+                    }
+                }catch (Exception e){
+                    Logger.error(TAG, e.getMessage());
                 }
                 return false;
             }
@@ -250,7 +297,13 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public void mockDeviceInfo() {
-        mDeviceControl.mockDeviceInfo();
+        try {
+            if (mDeviceControl != null){
+                mDeviceControl.mockDeviceInfo();
+            }
+        }catch (Exception e){
+            Logger.error(TAG, e.getMessage());
+        }
     }
 
     @Override
@@ -260,7 +313,10 @@ public class BdDeviceControl implements IDeviceControl {
 
     @Override
     public String getDeviceInfo() {
-        return mDeviceControl.getDeviceToken();
+        if (mDeviceControl != null){
+            return mDeviceControl.getDeviceToken();
+        }
+        return "";
     }
 
 }

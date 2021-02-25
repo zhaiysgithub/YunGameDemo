@@ -88,10 +88,28 @@ public class RedDeviceControl implements IDeviceControl {
 
     @Override
     public String getVideoQuality() {
-        if (mDeviceInfo != null){
-            return mDeviceInfo.videoQuality;
+        int level = KpPlaySDKManager.getInstance().getVideoLevel();
+        String str = null;
+        switch (level){
+            case PlaySdkManager.VIDEO_LEVEL_AUTO:
+                str = APIConstants.DEVICE_VIDEO_QUALITY_AUTO;
+                break;
+            case PlaySdkManager.VIDEO_LEVEL_HD:
+                str = APIConstants.DEVICE_VIDEO_QUALITY_HD;
+                break;
+            case PlaySdkManager.VIDEO_LEVEL_STANDARD:
+                str = APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY;
+                break;
+            case PlaySdkManager.VIDEO_LEVEL_FLUENCY:
+                str = APIConstants.DEVICE_VIDEO_QUALITY_LS;
+                break;
+
         }
-        return "";
+        if (str == null){
+            return  APIConstants.DEVICE_VIDEO_QUALITY_AUTO;
+        }
+
+        return str;
     }
 
     @Override
@@ -121,21 +139,20 @@ public class RedDeviceControl implements IDeviceControl {
     }
 
     @Override
-    public void switchQuality(String levelStr) {
-
-        int ordinal = DeviceInfo.VideoQuality.valueOf(levelStr).ordinal();
-//        PlaySDKManager.getInstance().setVideoBitrateMode(ordinal, false);
-
-        DeviceInfo.ResolutionLevel level = DeviceInfo.ResolutionLevel.LEVEL_720_1280;
-        if (ordinal == DeviceInfo.VideoQuality.GRADE_LEVEL_ORDINARY.ordinal()) {
-            level = DeviceInfo.ResolutionLevel.LEVEL_480_856;
-        } else if (ordinal == DeviceInfo.VideoQuality.GRADE_LEVEL_LS.ordinal()) {
-            level = DeviceInfo.ResolutionLevel.LEVEL_368_652;
+    public void switchQuality(String level) {
+        if (level == null){
+            return;
         }
 
-        int i = KpPlaySDKManager.getInstance().getVideoLevel();
-        KpPlaySDKManager.getInstance().setVideoLevel(level.ordinal());
-//        PlaySDKManager.getInstance().setResolutionLevel(level);
+        if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
+            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_AUTO);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
+            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_HD);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
+            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_FLUENCY);
+        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
+            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_STANDARD);
+        }
     }
 
     @Override

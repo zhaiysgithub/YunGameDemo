@@ -321,8 +321,12 @@ public class GameBoxManager {
             //重置打点数据
             Event.resetTrackIdFromBase();
 
+            HashMap ext = new HashMap<>();
+            ext.put("gid", inf.gid);
+            ext.put("useSDK", inf.useSDK.name());
+
             //发送打点事件
-            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName));
+            MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName, ext));
         }catch (Exception e){}
 
         if (mTimeDuration == null) {
@@ -352,8 +356,7 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(1, mApplication, sdkParams);
-
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
             @Override
             public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
@@ -373,6 +376,9 @@ public class GameBoxManager {
                     event.setErrMsg(""+code);
                     HashMap ext = new HashMap<>();
                     ext.put("code", code);
+                    if(innerControl!=null && innerControl.getSdkType()!=null){
+                        ext.put("useSDK", innerControl.getSdkType().toString());
+                    }
                     event.setExt(ext);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
