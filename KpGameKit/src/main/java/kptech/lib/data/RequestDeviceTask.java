@@ -1,4 +1,4 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.os.AsyncTask;
 
@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
-import kptech.game.kit.constants.Urls;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 
 public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {

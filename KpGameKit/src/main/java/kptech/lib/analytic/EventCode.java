@@ -1,4 +1,4 @@
-package kptech.game.kit.analytic;
+package kptech.lib.analytic;
 
 import kptech.game.kit.APIConstants;
 

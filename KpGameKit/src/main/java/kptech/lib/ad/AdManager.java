@@ -1,4 +1,4 @@
-package kptech.game.kit.ad;
+package kptech.lib.ad;
 
 import android.app.Activity;
 import android.app.Application;
@@ -16,14 +16,13 @@ import com.kptach.lib.inter.ad.IAdLoaderCallback;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
-import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
-import kptech.game.kit.constants.SharedKeys;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
+import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 

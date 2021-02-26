@@ -27,17 +27,15 @@ import org.xutils.x;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.analytic.DeviceInfo;
+import kptech.lib.analytic.DeviceInfo;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -209,7 +207,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //game.ext.put("version","aa");
 //game.ext.put("md5","bb");
 
-//                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
+                game.showAd = GameInfo.GAME_AD_SHOW_ON;
                 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);

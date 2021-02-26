@@ -1,4 +1,4 @@
-package kptech.game.kit.analytic;
+package kptech.lib.analytic;
 
 import android.app.Application;
 import android.content.Context;
@@ -7,16 +7,11 @@ import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import kptech.game.kit.BuildConfig;
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.utils.DeviceUtils;
-import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 
 public class Event implements Cloneable {

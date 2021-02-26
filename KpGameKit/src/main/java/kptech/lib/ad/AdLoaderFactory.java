@@ -1,4 +1,4 @@
-package kptech.game.kit.ad;
+package kptech.lib.ad;
 
 import android.app.Application;
 

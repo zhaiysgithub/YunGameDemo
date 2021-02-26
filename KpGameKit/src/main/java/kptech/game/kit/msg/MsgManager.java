@@ -2,12 +2,7 @@ package kptech.game.kit.msg;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
-import kptech.game.kit.constants.SharedKeys;
+import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 

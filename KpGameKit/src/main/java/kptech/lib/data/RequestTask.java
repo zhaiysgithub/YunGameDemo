@@ -1,4 +1,4 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -6,18 +6,16 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.constants.Urls;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 
 public class RequestTask {

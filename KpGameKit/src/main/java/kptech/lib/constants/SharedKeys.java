@@ -1,4 +1,4 @@
-package kptech.game.kit.constants;
+package kptech.lib.constants;
 
 public class SharedKeys {
     public static final String KEY_GAME_APP_KEY = "kp_kit_gamekey";

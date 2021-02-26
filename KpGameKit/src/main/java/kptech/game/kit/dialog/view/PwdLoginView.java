@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.R;
-import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
-import kptech.game.kit.constants.Urls;
-import kptech.game.kit.data.AccountTask;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
+import kptech.lib.constants.Urls;
+import kptech.lib.data.AccountTask;
 import kptech.game.kit.dialog.WebViewActivity;
 
 public class PwdLoginView extends LinearLayout implements View.OnClickListener {

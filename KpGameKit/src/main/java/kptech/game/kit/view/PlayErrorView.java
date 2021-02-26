@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.GamePlay;
-import kptech.game.kit.analytic.Event;
+import kptech.lib.analytic.Event;
 import kptech.game.kit.utils.StringUtil;
 
 public class PlayErrorView extends LinearLayout implements View.OnClickListener {

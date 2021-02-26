@@ -1,4 +1,4 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,8 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import kptech.game.kit.BuildConfig;
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.constants.Urls;
+import kptech.lib.constants.SharedKeys;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 

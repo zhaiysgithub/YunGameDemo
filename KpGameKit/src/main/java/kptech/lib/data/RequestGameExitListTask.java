@@ -1,20 +1,12 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.constants.Urls;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.ProferencesUtils;
 
 public class RequestGameExitListTask extends AsyncTask<String,Void,List<GameInfo>> {
 

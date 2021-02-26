@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import kptech.game.kit.GameBoxManager;
-import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
-import kptech.game.kit.constants.SharedKeys;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
+import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.dialog.AccountActivity;
 import kptech.game.kit.dialog.PayActivity;
 import kptech.game.kit.utils.Logger;

@@ -1,4 +1,4 @@
-package kptech.game.kit.analytic;
+package kptech.lib.analytic;
 
 import com.kptech.netqueue.base.Request;
 import com.kptech.netqueue.core.RequestQueue;
@@ -7,7 +7,7 @@ import com.kptech.netqueue.requests.StringRequest;
 
 import java.util.Map;
 
-import kptech.game.kit.constants.Urls;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 

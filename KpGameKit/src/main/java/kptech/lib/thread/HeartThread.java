@@ -1,7 +1,6 @@
-package kptech.game.kit.thread;
+package kptech.lib.thread;
 
 import android.os.HandlerThread;
-import android.os.Looper;
 
 import kptech.game.kit.utils.Logger;
 

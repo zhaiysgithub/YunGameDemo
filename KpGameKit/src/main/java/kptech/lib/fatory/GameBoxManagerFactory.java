@@ -1,4 +1,4 @@
-package kptech.game.kit.fatory;
+package kptech.lib.fatory;
 
 import android.app.Application;
 

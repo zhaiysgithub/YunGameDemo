@@ -1,10 +1,10 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.constants.SharedKeys;
+import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 

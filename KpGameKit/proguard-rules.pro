@@ -24,20 +24,18 @@
 -classobfuscationdictionary fname.txt
 -packageobfuscationdictionary fname.txt
 
--keep class kptech.cloud.kit.msg.** { *; }
-
--keep class kptech.game.kit.** { *; }
-
 -keepattributes SourceFile,LineNumberTable,Signature
-
 -keepclasseswithmembernames class * {
     native <methods>;
 }
 -keep class com.alibaba.fastjson.** { *; }
--keep class com.redfinger.playsdk.fragment.**{*;}
--keep class com.redfinger.playsdk.widget.**{*;}
--keep class com.gc.redfinger.** { *; }
+#-keep class com.redfinger.playsdk.fragment.**{*;}
+#-keep class com.redfinger.playsdk.widget.**{*;}
+#-keep class com.gc.redfinger.** { *; }
 
--keep class com.mci.** { *; }
+-keep class kptech.cloud.kit.msg.** { *; }
+-keep class kptech.game.kit.** { *; }
 
--keep class com.bun.miitmdid.core.** {*;}
+-keep class com.mci.play.** { *; }
+#-keep class com.yd.yunapp.** { *; }
+#-keep class com.bun.miitmdid.core.** {*;}

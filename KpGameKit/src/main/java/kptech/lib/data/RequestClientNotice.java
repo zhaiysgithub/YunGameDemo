@@ -1,7 +1,6 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -16,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
+
+import static kptech.lib.constants.Urls.NOTICE_URL;
 
 public class RequestClientNotice extends AsyncTask<String,Void,Void> {
     public interface ICallback{
@@ -57,9 +58,8 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
 
     //post请求
     private String request(Map pMap) {
-        String str = "http://kpsdkapi.kuaipantech.com/KpWebSDKApi/KpCloudCtrlsys/index.php";
         try {
-            URL url = new URL(str);
+            URL url = new URL(NOTICE_URL);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
             postConnection.setConnectTimeout(1000*10);

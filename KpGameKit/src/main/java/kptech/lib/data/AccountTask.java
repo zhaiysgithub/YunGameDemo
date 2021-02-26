@@ -1,4 +1,4 @@
-package kptech.game.kit.data;
+package kptech.lib.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -17,8 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import kptech.game.kit.analytic.DeviceInfo;
-import kptech.game.kit.constants.Urls;
+import kptech.lib.analytic.DeviceInfo;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MD5Util;
 

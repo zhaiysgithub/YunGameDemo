@@ -16,12 +16,12 @@ uploadArchives {
     repositories.mavenDeployer {
         //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
         //注意”file://“ + 路径，有三个斜杠，别漏了
-        repository(url: "file:///Users/zhangqinglou/work/maven")
+//        repository(url: "file:///Users/zhangqinglou/work/maven")
         //远程仓库的地址
-//        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
-//            //nexus登录的用户名和密码
-//            authentication(userName: "admin", password: "kpmvn!#%246")
-//        }
+        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
+            //nexus登录的用户名和密码
+            authentication(userName: "admin", password: "kpmvn!#%246")
+        }
         pom.project {
             groupId project.PUBLISH_GROUP_ID
             artifactId project.PUBLISH_ARTIFACT_ID
@@ -34,12 +34,12 @@ uploadArchives {
 //将第三方aar，导出到maven库
 publishing {
     publications {
-//        ZADSdk(MavenPublication) {
-//            groupId 'kptech.game.kit'
-//            version '3.3.3230.3'
-//            artifactId 'ZADSdk'
-//            artifact("../app/libs/ZADSdk-3.3.3230.3.aar")
-//        }
+        ZADSdk(MavenPublication) {
+            groupId 'kptech.game.kit'
+            version '3.3.3283.7.2'
+            artifactId 'ZADSdk'
+            artifact("../app/libs/ZADSdk-3.3.3283.7.2.aar")
+        }
 //        MsaMdid(MavenPublication) {
 //            groupId 'kptech.game.kit'
 //            version '1.0.13'
@@ -69,18 +69,6 @@ publishing {
 //            version '0.0.0.1'
 //            artifactId 'open_ad_sdk'
 //            artifact("../app/libs/open_ad_sdk.aar")
-//        }
-//        ZADSdk(MavenPublication) {
-//            groupId 'kptech.game.kit'
-//            version '3.3.3260.29'
-//            artifactId 'ZADSdk'
-//            artifact("../app/libs/ZADSdk-3.3.3260.29.aar")
-//        }
-//        ZADSdk(MavenPublication) {
-//            groupId 'kptech.game.kit'
-//            version '3.3.3272.7'
-//            artifactId 'ZADSdk'
-//            artifact("../app/libs/ZADSdk-3.3.3272.7.aar")
 //        }
 //        MsaMdid(MavenPublication) {
 //            groupId 'kptech.game.kit'

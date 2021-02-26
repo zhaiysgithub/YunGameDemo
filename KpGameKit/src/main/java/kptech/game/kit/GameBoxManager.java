@@ -10,23 +10,21 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
 
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
-import kptech.game.kit.ad.AdManager;
-import kptech.game.kit.analytic.DeviceInfo;
-import kptech.game.kit.analytic.Event;
-import kptech.game.kit.analytic.EventCode;
-import kptech.game.kit.analytic.MobclickAgent;
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.constants.Urls;
-import kptech.game.kit.data.RequestAppInfoTask;
-import kptech.game.kit.data.RequestTask;
-import kptech.game.kit.fatory.GameBoxManagerFactory;
+import kptech.lib.ad.AdManager;
+import kptech.lib.analytic.DeviceInfo;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
+import kptech.lib.constants.SharedKeys;
+import kptech.lib.constants.Urls;
+import kptech.lib.data.RequestAppInfoTask;
+import kptech.lib.data.RequestTask;
+import kptech.lib.fatory.GameBoxManagerFactory;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;

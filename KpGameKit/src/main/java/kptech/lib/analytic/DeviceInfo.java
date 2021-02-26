@@ -1,4 +1,4 @@
-package kptech.game.kit.analytic;
+package kptech.lib.analytic;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import kptech.game.kit.constants.SharedKeys;
-import kptech.game.kit.constants.Urls;
+import kptech.lib.constants.SharedKeys;
+import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.DeviceIdUtil;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.ProferencesUtils;

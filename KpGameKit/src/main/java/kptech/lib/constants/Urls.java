@@ -1,4 +1,4 @@
-package kptech.game.kit.constants;
+package kptech.lib.constants;
 
 import kptech.game.kit.BuildConfig;
 
@@ -20,6 +20,8 @@ public class Urls {
     public static final String LOGIN_ARGMENT_URL = "https://rs.cdn.kuaipantech.com/kuaipandoc.php";
     public static final String DEFAULT_REFERER = "https://wxapp.kuaipantech.com";
     public static final String PAY_URL = "https://wxapp.kuaipantech.com/h5demo/Toc/androidpay/androidpay.php";
+
+    public static final String NOTICE_URL = "http://kpsdkapi.kuaipantech.com/KpWebSDKApi/KpCloudCtrlsys/index.php";
 
 
 }
