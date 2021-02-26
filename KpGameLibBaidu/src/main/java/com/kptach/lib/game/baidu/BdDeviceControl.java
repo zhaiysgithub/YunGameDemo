@@ -261,12 +261,12 @@ public class BdDeviceControl implements IDeviceControl {
             public boolean onNoOpsTimeout(int i, long l) {
                 try {
                     if (listener != null){
-                        listener.onNoOpsTimeout(i, l);
+                        return listener.onNoOpsTimeout(i, l);
                     }
                 }catch (Exception e){
                     Logger.error(TAG, e.getMessage());
                 }
-                return false;
+                return true;
             }
 
             @Override
