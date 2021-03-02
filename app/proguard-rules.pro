@@ -31,10 +31,12 @@
 -keepclasseswithmembernames class * {
     native <methods>;
 }
--keep class com.alibaba.fastjson.** { *; }
--keep class com.redfinger.playsdk.fragment.**{*;}
--keep class com.redfinger.playsdk.widget.**{*;}
--keep class com.gc.redfinger.** { *; }
+-keep class com.mci.play.** { *; }
+
+#-keep class com.alibaba.fastjson.** { *; }
+#-keep class com.redfinger.playsdk.fragment.**{*;}
+#-keep class com.redfinger.playsdk.widget.**{*;}
+#-keep class com.gc.redfinger.** { *; }
 
 # 0
 -keep class com.zad.sdk.operation.floatview.DragFloatManager {}
