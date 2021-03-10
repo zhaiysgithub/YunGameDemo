@@ -432,6 +432,16 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
                         }else {
                             Toast.makeText(mActivity, "注册成功", Toast.LENGTH_SHORT).show();
 
+                            try {
+                                //设置打点guid
+                                if (map.containsKey("guid")){
+                                    Object guid = map.get("guid");
+                                    if (guid != null){
+                                        Event.setGuid(guid+"");
+                                    }
+                                }
+                            }catch (Exception e){}
+
                             //发送登录成功的消息
                             if (mOnLoginListener!=null){
                                 mOnLoginListener.onLoginSuccess(map);
@@ -441,7 +451,7 @@ public class PwdLoginView extends LinearLayout implements View.OnClickListener {
                                 //发送打点事件
                                 Event event = Event.getEvent(EventCode.DATA_USER_REGIST_SUCCESS, mPkgName, mPadCode);
                                 HashMap<String,String> ext = new HashMap<>();
-                                ext.put("phone", phone);
+                                ext.put("acct", phone);
                                 event.setExt(ext);
                                 MobclickAgent.sendEvent(event);
                             }catch (Exception e){}
