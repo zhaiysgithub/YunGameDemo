@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/finishLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#56000000"
+        android:layout_gravity="bottom"
+        android:paddingBottom="25dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/finish_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_white"
+            android:textSize="15sp"
+            android:text="视频时长：00:04"
+            android:layout_centerHorizontal="true"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/finish_time"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/finish_remove"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#ff3a3a"
+                android:background="@drawable/kp_game_cancel_btn"
+                android:text="放弃视频"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/finish_publish"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:textColor="#ffffff"
+                android:background="@drawable/kp_game_submit_btn"
+                android:textSize="16sp"
+                android:text="发布视频"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <kptech.game.kit.view.RecordView
+        android:id="@+id/recordView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        />
+
+    <kptech.game.kit.view.RecordPublishView
+        android:id="@+id/publishView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+</FrameLayout>

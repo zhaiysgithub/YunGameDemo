@@ -9,14 +9,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class StringUtil {
     public static boolean isEmpty(String str) {
-        if (str == null || str.trim() == "") {
+        if (str == null || "".equals(str.trim())) {
             return true;
         }
         return false;
     }
 
     public static String getMD5(String str) {
-        if (str == null || str.trim() == "") {
+        if (str == null || "".equals(str.trim())) {
             return "";
         }
         MessageDigest md5 = null;

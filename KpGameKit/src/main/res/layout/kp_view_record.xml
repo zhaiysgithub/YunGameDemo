@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="30dp"
+    android:background="@drawable/kp_floating_bar_bg"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:gravity="center_vertical"
+    >
+
+    <TextView
+        android:id="@+id/state_text"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="录制中"
+        android:textColor="@color/common_white"
+        android:textSize="13sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="16dp"
+        android:background="@color/common_white"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        />
+    <TextView
+        android:id="@+id/time_text"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/common_white"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_marginRight="2dp"
+        android:textAlignment="center"
+        android:gravity="center"
+        />
+
+    <ImageView
+        android:id="@+id/playpause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/kp_ic_record_play"
+        android:visibility="gone"
+        />
+    <ImageView
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/kp_ic_record_stop"
+        android:layout_marginLeft="5dp"
+        />
+
+</LinearLayout>

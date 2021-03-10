@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import kptech.game.kit.BuildConfig;
+import kptech.lib.conf.Config;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
@@ -45,6 +46,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
             int c = jsonObject.getInt("c");
             if (c == 0){
                 JSONObject dObj = jsonObject.getJSONObject("d");
+
                 String ak = dObj.has("ak") ? dObj.getString("ak") : null;
                 String sk = dObj.has("sk") ? dObj.getString("sk") : null;
                 String ch = dObj.has("ch") ? dObj.getString("ch") : null;
@@ -60,40 +62,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                     ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_PAAS, paas);
                 }
 
-                //获取支付配置信息
-                String payJson = dObj.has("payConf") ? dObj.getString("payConf") : null;
-                if (payJson != null){
-                    ProferencesUtils.setString(mContext, SharedKeys.KEY_PAY_CONF, payJson);
-                }
-
-                //挽留弹窗次数
-                String exitAlertNum = dObj.has("detentionNum") ? dObj.getString("detentionNum") : null;
-                if (exitAlertNum != null){
-                    try {
-                        ProferencesUtils.setInt(mContext, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, Integer.parseInt(exitAlertNum));
-                    }catch (Exception e){}
-                }
-
-                try {
-                    //websocket URL
-                    String wsurl = dObj.has("wsurl") ? dObj.getString("wsurl") : null;
-                    if (wsurl != null){
-                        ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_WSURL, wsurl);
-
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                try {
-                    //mockSleepTime
-                    String mockSleepTime = dObj.has("mockSleepTime") ? dObj.getString("mockSleepTime") : null;
-                    if (mockSleepTime != null){
-                        ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_MOCK_SLEEPTIME, mockSleepTime);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                Config.saveConfig(mContext, dObj);
 
                 ret = true;
             }else {

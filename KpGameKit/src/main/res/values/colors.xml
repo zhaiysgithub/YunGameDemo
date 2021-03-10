@@ -18,4 +18,7 @@
     <color name="float_menu_color_green">#40C87F</color>
     <color name="float_menu_color_yellow">#FFB53D</color>
     <color name="float_menu_color_red">#F5535B</color>
+
+    <color name="common_font_gray">#A6A6A6</color>
+    <color name="common_line_gray">#EDEDED</color>
 </resources>

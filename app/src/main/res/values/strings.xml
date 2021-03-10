@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">快盘游戏SDKDemo</string>
+    <string name="app_name">游戏SDKDemo</string>
     <string name="action_settings">Settings</string>
     <string name="game_play_time_remind">试玩还剩%1$d秒，请下载体验</string>
     <string name="game_end_play_dialog_tips">您已经试玩了%d分钟啦，如果觉得好玩的话就下载到手机上吧</string>

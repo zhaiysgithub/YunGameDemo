@@ -33,6 +33,14 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <kptech.game.kit.view.FloatRecordView
+        android:id="@+id/float_record_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        />
+
     <kptech.game.kit.view.PlayErrorView
         android:id="@+id/error_view"
         android:layout_width="match_parent"

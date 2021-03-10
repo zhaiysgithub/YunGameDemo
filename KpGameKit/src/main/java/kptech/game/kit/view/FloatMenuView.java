@@ -52,6 +52,11 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         mSetListener = listener;
     }
 
+    private OnClickListener mRecordListener;
+    public void setOnRecordClickListener(View.OnClickListener listener) {
+        mRecordListener = listener;
+    }
+
     public FloatMenuView(Context context) {
         super(context);
         initView();
@@ -109,6 +114,14 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 //                onBackPressed();
                 if (mExitListener!=null){
                     mExitListener.onClick(null);
+                }
+            }
+        });
+        mSettingsView.setOnRecordListener(new PlaySettingsView.OnRecordListener() {
+            @Override
+            public void onRecord() {
+                if (mRecordListener!=null){
+                    mRecordListener.onClick(null);
                 }
             }
         });

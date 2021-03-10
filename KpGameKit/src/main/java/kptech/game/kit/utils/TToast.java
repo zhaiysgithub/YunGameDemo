@@ -3,7 +3,13 @@ package kptech.game.kit.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import kptech.game.kit.R;
 
 /**
  * Create by hanweiwei on 11/07/2018
@@ -45,4 +51,15 @@ public final class TToast {
         sToast = null;
     }
 
+
+    public static void showCenterToast(Context context, String msg, int duration){
+        View toastRoot = LayoutInflater.from(context).inflate(R.layout.kp_toast_center, null);
+        Toast toast = new Toast(context);
+        toast.setView(toastRoot);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        TextView tv = (TextView) toastRoot.findViewById(R.id.toast_notice);
+        tv.setText(msg);
+        toast.setDuration(duration);
+        toast.show();
+    }
 }

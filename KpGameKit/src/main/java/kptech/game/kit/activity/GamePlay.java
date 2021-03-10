@@ -45,6 +45,8 @@ import kptech.game.kit.Params;
 import kptech.game.kit.R;
 //import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.activity.hardware.HardwareManager;
+import kptech.game.kit.view.FloatRecordView;
+import kptech.game.kit.view.RecordView;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -97,6 +99,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
+
+    private FloatRecordView mRecordView;
 
     private LoadingView mLoadingView;
     private PlayErrorView mErrorView;
@@ -236,6 +240,19 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 onBackPressed();
             }
         });
+        mMenuView.setOnRecordClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDeviceControl != null){
+                    String padcode = mDeviceControl.getPadcode();
+                    mRecordView.startRecord(padcode, mGameInfo.pkgName, mGameInfo.name);
+                }
+
+            }
+        });
+
+        mRecordView = findViewById(R.id.float_record_view);
+        mRecordView.setCorpKey(mCorpID);
 
         mVideoContainer = findViewById(R.id.play_container);
 
@@ -729,6 +746,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
 
+            mRecordView.reset();
+            mRecordView.setVisibility(View.GONE);
+
             mErrorView.setGameInfo(mGameInfo);
             mErrorView.setVisibility(View.VISIBLE);
             mErrorView.setErrorText(err);
@@ -748,6 +768,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mMenuView.setVisibility(View.GONE);
             mErrorView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
+
+            mRecordView.reset();
+            mRecordView.setVisibility(View.GONE);
 
             checkAndRequestPermission();
 

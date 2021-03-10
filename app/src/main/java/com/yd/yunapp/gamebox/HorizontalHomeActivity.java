@@ -164,12 +164,14 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         GameInfo info = new GameInfo();
 
         info.iconUrl = "http://kp.you121.top/api/image/20200119133131vpiulx.png";
-        info.showAd = GameInfo.GAME_AD_SHOW_OFF;
+        info.showAd = GameInfo.GAME_AD_SHOW_ON;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 4283;
-        info.pkgName = "com.aa.bb";
-        info.useSDK = GameInfo.SdkType.REDF;
+        info.gid = 4306;
+        info.pkgName = "cn.missevan";
+//        info.useSDK = GameInfo.SdkType.REDF;
+
+
 
 //        info.gid = 3437;
 //        info.pkgName = "com.kptach.test";
@@ -207,7 +209,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //game.ext.put("version","aa");
 //game.ext.put("md5","bb");
 
-                game.showAd = GameInfo.GAME_AD_SHOW_ON;
+//                game.showAd = GameInfo.GAME_AD_SHOW_ON;
                 //                game.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //                GameBox box = GameBox.getInstance(getApplication(),corpId);
 //                gameBox.setGameDownloader(mGameDownloader);
@@ -215,7 +217,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 //                game.showAd = GameInfo.GAME_AD_SHOW_ON;
                 game.useSDK = GameInfo.SdkType.DEFAULT;
                 Params params = new Params();
-                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
+//                params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0001");
                 GameBox.getInstance().playGame(HorizontalHomeActivity.this, game, params);
 //                Intent intent = new Intent(HorizontalHomeActivity.this, GamePlay.class);
 //                intent.putExtra(GamePlay.EXTRA_GAME, (GameInfo) mGameAdapter.getItem(pos));

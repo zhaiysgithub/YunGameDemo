@@ -186,4 +186,5 @@ public class PopupDialog extends Dialog{
         configContentView();
         configWindow();
     }
+
 }

@@ -14,6 +14,7 @@ public class SharedKeys {
     public static final String KEY_GAME_EXITALERTCOUNT_CONF = "kp_kit_game_exitalert";
 
     public static final String KEY_GAME_MOCK_SLEEPTIME = "kp_kit_mock_sleep";
+    public static final String KEY_GAME_RECORD_SCREEN_CONF = "kp_kit_record_screen";
 
     public static final String KEY_AD_KEY = "kp_kit_adkey";
     public static final String KEY_AD_TOKEN = "kp_kit_adtoken";

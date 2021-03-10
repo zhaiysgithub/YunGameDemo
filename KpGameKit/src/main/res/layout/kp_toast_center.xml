@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/kp_toast_bg"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    >
+    <TextView
+        android:id="@+id/toast_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="录屏开始"
+        android:textColor="@color/common_white"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        />
+</LinearLayout>

@@ -38,6 +38,14 @@ public class PopupLayout {
         return popupLayout;
     }
 
+    public static PopupLayout init(Context context,@LayoutRes int contentLayoutId,  int style){
+        PopupLayout popupLayout=new PopupLayout();
+        popupLayout.mPopupDialog=new PopupDialog(context, style);
+        popupLayout.mPopupDialog.setContentLayout(contentLayoutId);
+        popupLayout.initListener();
+        return popupLayout;
+    }
+
     /**
      * 初始化PopLayout
      * @param context

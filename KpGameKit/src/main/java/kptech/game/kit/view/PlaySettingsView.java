@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -16,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,7 +29,10 @@ import kptech.game.kit.APIConstants;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
+import kptech.lib.conf.RecordScreenConfig;
+import kptech.lib.constants.SharedKeys;
 
 public class PlaySettingsView extends LinearLayout {
 
@@ -37,6 +43,9 @@ public class PlaySettingsView extends LinearLayout {
     private RadioGroup mVideoSizeGroup;
     private RadioGroup mVideoQualityGroup;
     private CheckBox mAudioCheckbox;
+
+    private ViewGroup mRecordItem;
+    private TextView mPadcodeTv;
 
     private String mVideoQuality;
     private boolean mAudioSwitch;
@@ -56,6 +65,10 @@ public class PlaySettingsView extends LinearLayout {
 
     public interface OnExitListener {
         void onExit();
+    }
+
+    public interface OnRecordListener{
+        void onRecord();
     }
 
     private OnDismissListener mOnDismissListener;
@@ -78,6 +91,11 @@ public class PlaySettingsView extends LinearLayout {
         mOnExitListener = listener;
     }
 
+    private OnRecordListener mOnRecordListener;
+    public void setOnRecordListener(OnRecordListener listener){
+        mOnRecordListener = listener;
+    }
+
     public PlaySettingsView(Context context) {
         super(context);
         initView();
@@ -93,6 +111,19 @@ public class PlaySettingsView extends LinearLayout {
         if (mDeviceControl != null){
             initAudioEnable();
             initVideoQuality();
+
+            try {
+                mPadcodeTv.setText(deviceControl.getPadcode());
+            }catch (Exception e){}
+
+            //获取录屏配置
+            RecordScreenConfig config = RecordScreenConfig.getConfig(getContext());
+            if (config != null && config.disable){
+                mRecordItem.setVisibility(GONE);
+            }else {
+                mRecordItem.setVisibility(VISIBLE);
+            }
+
         }
     }
 
@@ -133,6 +164,16 @@ public class PlaySettingsView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 lastOptTime = System.currentTimeMillis();
+            }
+        });
+
+        view.findViewById(R.id.record_btn).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                if (mOnRecordListener!=null){
+                    mOnRecordListener.onRecord();
+                }
             }
         });
 
@@ -228,7 +269,21 @@ public class PlaySettingsView extends LinearLayout {
 
             }
         });
-
+        mRecordItem = findViewById(R.id.record_item);
+        mPadcodeTv = findViewById(R.id.tv_padcode);
+        mPadcodeTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (mDeviceControl != null){
+                        String info = mDeviceControl.getPadcode();
+                        StringUtil.copy(getContext(), info);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void setSelectQualityLevel(String level) {
