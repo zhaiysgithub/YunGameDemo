@@ -52,7 +52,7 @@ dependencies {
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
 
     //游戏库
-    implementation files('../kplib/libs/Game-V1.6.0.0_72_1.jar')
+    implementation files('../kplib/libs/Game-V1.6.0.0_0310.jar')
 
     //广告sdk
     implementation 'kptech.game.kit:gamead-netease:1.0.1.2'
@@ -63,12 +63,12 @@ dependencies {
     //implementation project(path: ':kpinter')
 
     //红手指游戏库适配
-    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.2.jar')
-//    implementation project(path: ':KpGameLibRedfinger')
+//    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.2.jar')
+    implementation project(path: ':KpGameLibRedfinger')
 
     //百度游戏库适配
-    implementation files('../kplib/libs/KpGameLib-BD-v1.0.2.jar')
-//    implementation project(path: ':KpGameLibBaidu')
+//    implementation files('../kplib/libs/KpGameLib-BD-v1.0.2.jar')
+    implementation project(path: ':KpGameLibBaidu')
 
 }
 

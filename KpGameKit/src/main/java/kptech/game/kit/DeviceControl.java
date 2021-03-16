@@ -348,7 +348,7 @@ public class DeviceControl implements IDeviceControl{
                                 }
                             }
                         })
-                        .execute(mPadcode,mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
+                        .execute(mInnerControl.getPadcode(),mGameInfo.pkgName, DeviceInfo.getUserId(mActivity), mCorpKey);
                 return;
             }catch (Exception e){
                 e.printStackTrace();
@@ -431,6 +431,10 @@ public class DeviceControl implements IDeviceControl{
     private static final int FLAG_AD = 2;
     private static final int FLAG_MOCK = 4;
     private static final int FLAG_SUCCESS = FLAG_NOTICE | FLAG_AD | FLAG_MOCK;
+
+    public void setCorpKey(String mCorpID) {
+        this.mCorpKey = mCorpID;
+    }
 
     private class GameHandler extends Handler{
         private int flag = 0;

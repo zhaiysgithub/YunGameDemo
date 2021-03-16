@@ -66,7 +66,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     final String jidou = "2OePKtLpqnk2IgN-0155ac49e1d54957";//"2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
-    final String corpId = "2OQCrVnJuES1AVO-ac995a9fef8adcdb"; // wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    final String corpId = "2VCn9as7V4W2iLf-7c3cc41383c4e7ad"; // wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
     //快盘正式环境 "2OLuBOnPAGt12hN-64219e8c44e0efda"
     //快盘测试环境 "2OQCrVnJuES1AVO-ac995a9fef8adcdb"
     //网易云音乐 "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b"

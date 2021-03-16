@@ -363,6 +363,7 @@ public class GameBoxManager {
                 DeviceControl control = null;
                 if (innerControl != null){
                     control = new DeviceControl(innerControl, inf);
+                    control.setCorpKey(mCorpID);
                 }
 
                 try {

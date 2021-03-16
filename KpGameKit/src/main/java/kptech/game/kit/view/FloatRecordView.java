@@ -388,7 +388,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
         mRecordView.setVisibility(GONE);
 
         if (second < minTimeLen) {
-            TToast.showCenterToast(getContext(), "录屏时间太短", Toast.LENGTH_LONG);
+            TToast.showCenterToast(getContext(), "录制时长少于5秒\n无法发布视频", Toast.LENGTH_LONG);
             return;
         }
 
