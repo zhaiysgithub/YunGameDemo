@@ -177,6 +177,26 @@ public class EventCode {
     public static final String DATA_DIALOG_EXITLIST_CANCELBTN = "DATA_DIALOG_EXITLIST_CANCELBTN";
     public static final String DATA_DIALOG_EXITLIST_CHANGEGAME = "DATA_DIALOG_EXITLIST_CHANGEGAME";
 
+    //录屏
+    public static final String DATA_RECORD_CLICK_STARTBTN = "DATA_RECORD_CLICK_STARTBTN";
+    public static final String DATA_RECORD_CLICK_STOPBTN = "DATA_RECORD_CLICK_STOPBTN";
+    public static final String DATA_RECORD_API_START = "DATA_RECORD_API_START";
+    public static final String DATA_RECORD_API_PAUSE = "DATA_RECORD_API_PAUSE";
+    public static final String DATA_RECORD_API_RESUME = "DATA_RECORD_API_RESUME";
+    public static final String DATA_RECORD_API_STOP = "DATA_RECORD_API_STOP";
+    public static final String DATA_RECORD_API_UPLOAD = "DATA_RECORD_API_UPLOAD";
+    public static final String DATA_RECORD_API_PUBLISH = "DATA_RECORD_API_PUBLISH";
+    public static final String DATA_RECORD_API_SUCCESS = "DATA_RECORD_API_SUCCESS";
+    public static final String DATA_RECORD_API_ERR = "DATA_RECORD_API_ERR";
+    public static final String DATA_RECORD_MINTIME_DISPLAY = "DATA_RECORD_MINTIME_DISPLAY";
+    public static final String DATA_RECORD_FINISHED_DISPLAY = "DATA_RECORD_FINISHED_DISPLAY";
+    public static final String DATA_RECORD_FINISHED_SUBBTN = "DATA_RECORD_FINISHED_SUBBTN";
+    public static final String DATA_RECORD_FINISHED_CALBTN = "DATA_RECORD_FINISHED_CALBTN";
+    public static final String DATA_RECORD_PUBLISH_DISPLAY = "DATA_RECORD_PUBLISH_DISPLAY";
+    public static final String DATA_RECORD_PUBLISH_PUBBTN = "DATA_RECORD_PUBLISH_PUBBTN";
+    public static final String DATA_RECORD_PUBLISH_BACKBTN = "DATA_RECORD_PUBLISH_BACKBTN";
+    public static final String DATA_RECORD_PUBLISH_DESTORY = "DATA_RECORD_PUBLISH_DESTORY";
+    public static final String DATA_RECORD_PUBLISH_SUCCTOAST = "DATA_RECORD_PUBLISH_SUCCTOAST";
 
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){

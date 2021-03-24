@@ -245,6 +245,18 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             public void onClick(View v) {
                 if (mDeviceControl != null){
                     String padcode = mDeviceControl.getPadcode();
+
+                    try {
+                        //发送打点事件
+                        Event event = Event.getEvent(EventCode.DATA_RECORD_CLICK_STARTBTN, mGameInfo!=null ? mGameInfo.pkgName : "" );
+                        if (mDeviceControl!=null){
+                            event.setPadcode(padcode);
+                        }
+                        MobclickAgent.sendEvent(event);
+                    }catch (Exception e){
+                    }
+
+
                     mRecordView.startRecord(padcode, mGameInfo.pkgName, mGameInfo.name);
                 }
 

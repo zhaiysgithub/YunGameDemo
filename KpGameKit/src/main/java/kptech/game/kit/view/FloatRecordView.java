@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.baidu.mobads.component.IFeedPortraitListener;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
@@ -27,6 +29,9 @@ import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.utils.TToast;
 import kptech.lib.analytic.DeviceInfo;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
 import kptech.lib.conf.RecordScreenConfig;
 import kptech.lib.data.RequestRecordScreen;
 
@@ -62,6 +67,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
         mPublishView.setOnPublishListener(new RecordPublishView.OnPublishListener() {
             @Override
             public void onPublish(String title) {
+
                 publish(title);
             }
         });
@@ -83,14 +89,39 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
         if (id == R.id.playpause) {
             pauseresume();
         } else if (id == R.id.stop) {
+            try {
+                //发送打点事件
+                Event event = Event.getEvent(EventCode.DATA_RECORD_CLICK_STOPBTN, mPkgName );
+                event.setPadcode(mPadcode);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){
+            }
+
             stopRecord();
         } else if (id == R.id.finish_remove) {
+            try {
+                //发送打点事件
+                Event event = Event.getEvent(EventCode.DATA_RECORD_FINISHED_CALBTN, mPkgName );
+                event.setPadcode(mPadcode);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){
+            }
+
             hideFinishLayout();
             TToast.showCenterToast(getContext(), "视频已删除", Toast.LENGTH_SHORT);
         } else if (id == R.id.finish_publish) {
+
+            try {
+                //发送打点事件
+                Event event = Event.getEvent(EventCode.DATA_RECORD_FINISHED_SUBBTN, mPkgName );
+                event.setPadcode(mPadcode);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){
+            }
+
             hideFinishLayout();
 
-            mPublishView.show();
+            mPublishView.show(mPkgName,mPadcode);
 
             upload();
 
@@ -307,6 +338,37 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                 data.put("corpkey", mCorpKey);
             }
 
+            try {
+                String eventCode = "";
+                switch (action){
+                    case RequestRecordScreen.ACTION_RECORD_START:
+                        eventCode = EventCode.DATA_RECORD_API_START;
+                        break;
+                    case RequestRecordScreen.ACTION_RECORD_PAUSE:
+                        eventCode = EventCode.DATA_RECORD_API_PAUSE;
+                        break;
+                    case RequestRecordScreen.ACTION_RECORD_RESUME:
+                        eventCode = EventCode.DATA_RECORD_API_RESUME;
+                        break;
+                    case RequestRecordScreen.ACTION_RECORD_STOP:
+                        eventCode = EventCode.DATA_RECORD_API_STOP;
+                        break;
+                    case RequestRecordScreen.ACTION_RECORD_UPLOAD:
+                        eventCode = EventCode.DATA_RECORD_API_UPLOAD;
+                        break;
+                    case RequestRecordScreen.ACTION_RECORD_PUBLISH:
+                        eventCode = EventCode.DATA_RECORD_API_PUBLISH;
+                        break;
+                }
+                //发送打点事件
+                if (eventCode != null){
+                    Event event = Event.getEvent(eventCode, mPkgName );
+                    event.setPadcode(mPadcode);
+                    MobclickAgent.sendEvent(event);
+                }
+            }catch (Exception e){
+            }
+
             new RequestRecordScreen(getContext(), action)
                     .setCorpKey(mCorpKey)
                     .setCallback(new RequestRecordScreen.ICallback() {
@@ -321,6 +383,14 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                                 mLoading = null;
                             }
 
+                            try {
+                                //发送打点事件
+                                Event event = Event.getEvent(EventCode.DATA_RECORD_API_SUCCESS, mPkgName );
+                                event.setPadcode(mPadcode);
+                                MobclickAgent.sendEvent(event);
+                            }catch (Exception e){
+                            }
+
                             int state = -1;
                             if (action == RequestRecordScreen.ACTION_RECORD_START){
                                 state = STATE_PLAYING;
@@ -332,6 +402,14 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                             }else if (action == RequestRecordScreen.ACTION_RECORD_STOP){
 
                             }else if (action == RequestRecordScreen.ACTION_RECORD_PUBLISH){
+                                try {
+                                    //发送打点事件
+                                    Event event = Event.getEvent(EventCode.DATA_RECORD_PUBLISH_SUCCTOAST, mPkgName );
+                                    event.setPadcode(mPadcode);
+                                    MobclickAgent.sendEvent(event);
+                                }catch (Exception e){
+                                }
+
                                 TToast.showCenterToast(getContext(), "视频发布完成", Toast.LENGTH_SHORT);
                             }
                             if (state != -1){
@@ -361,6 +439,15 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
 
                         @Override
                         public void onError(String err) {
+                            try {
+                                //发送打点事件
+                                Event event = Event.getEvent(EventCode.DATA_RECORD_API_ERR, mPkgName );
+                                event.setErrMsg(err);
+                                event.setPadcode(mPadcode);
+                                MobclickAgent.sendEvent(event);
+                            }catch (Exception e){
+                            }
+
                             sending = false;
                             if(activity.isFinishing()){
                                 return;
@@ -388,7 +475,15 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
         mRecordView.setVisibility(GONE);
 
         if (second < minTimeLen) {
-            TToast.showCenterToast(getContext(), "录制时长少于5秒\n无法发布视频", Toast.LENGTH_LONG);
+            try {
+                //发送打点事件
+                Event event = Event.getEvent(EventCode.DATA_RECORD_MINTIME_DISPLAY, mPkgName );
+                event.setPadcode(mPadcode);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){
+            }
+
+            TToast.showCenterToast(getContext(), "录制时长少于"+minTimeLen+"秒\n无法发布视频", Toast.LENGTH_LONG);
             return;
         }
 
@@ -397,6 +492,14 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
         mFinishLayout.setVisibility(VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.kp_view_enter_bottom);
         mFinishLayout.startAnimation(animation);
+
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.DATA_RECORD_FINISHED_DISPLAY, mPkgName );
+            event.setPadcode(mPadcode);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){
+        }
     }
 
     private void hideFinishLayout(){
@@ -418,6 +521,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
             public void onAnimationRepeat(Animation animation) {}
         });
         mFinishLayout.startAnimation(animation);
+
     }
 
 

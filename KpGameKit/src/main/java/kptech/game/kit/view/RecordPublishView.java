@@ -21,6 +21,9 @@ import kptech.game.kit.R;
 import kptech.game.kit.dialog.RecordPublishPopup;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.utils.TToast;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
 
 public class RecordPublishView extends LinearLayout {
 
@@ -70,7 +73,16 @@ public class RecordPublishView extends LinearLayout {
         findViewById(R.id.btn_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_RECORD_PUBLISH_BACKBTN, mPkgName );
+                    event.setPadcode(mPadcode);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){
+                }
+
                 dismiss();
+
             }
         });
         findViewById(R.id.finish_publish).setOnClickListener(new View.OnClickListener() {
@@ -82,6 +94,14 @@ public class RecordPublishView extends LinearLayout {
                     return;
                 }
 
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.DATA_RECORD_PUBLISH_PUBBTN, mPkgName );
+                    event.setPadcode(mPadcode);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){
+                }
+
                 if (mListener != null){
                     mListener.onPublish(title);
                 }
@@ -90,14 +110,25 @@ public class RecordPublishView extends LinearLayout {
             }
         });
     }
-
-    public void show() {
+    private String mPadcode;
+    private String mPkgName;
+    public void show(String pkgName, String padCode) {
         if (this.getVisibility() == View.VISIBLE){
             return;
         }
+        this.mPkgName = pkgName;
+        this.mPadcode = padCode;
         this.setVisibility(VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.kp_view_enter_bottom);
         this.startAnimation(animation);
+
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.DATA_RECORD_PUBLISH_DISPLAY, mPkgName );
+            event.setPadcode(mPadcode);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){
+        }
     }
 
     public void dismiss(){
@@ -128,6 +159,14 @@ public class RecordPublishView extends LinearLayout {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.DATA_RECORD_PUBLISH_DESTORY, mPkgName );
+            event.setPadcode(mPadcode);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){
         }
     }
 
