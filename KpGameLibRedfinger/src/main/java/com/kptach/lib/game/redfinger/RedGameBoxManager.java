@@ -57,6 +57,8 @@ public class RedGameBoxManager implements IGameBoxManager {
             }
         }catch (Exception e){}
 
+        Logger.setDebug(debug);
+
         isInited = true;
     }
 

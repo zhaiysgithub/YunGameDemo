@@ -35,7 +35,6 @@ import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.lib.analytic.DeviceInfo;
 
 public class HorizontalHomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,7 +65,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
     final String jidou = "2OePKtLpqnk2IgN-0155ac49e1d54957";//"2OV3w2Cabzl2Dw8-eb8758a7b094d246";//"2OV3sQEr3Dm1zY1-e5cffa0d176cc004";
 
 
-    final String corpId = "2OLuBOnPAGt12hN-64219e8c44e0efda"; // wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
+    final String corpId = "2VCn9as7V4W2iLf-7c3cc41383c4e7ad"; // wy ? "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b" : BuildConfig.DEBUG ?  "2OQCrVnJuES1AVO-ac995a9fef8adcdb" : "2OPhcwdOhFq2uXl-1bcef9c0bf0a668a";
     //快盘正式环境 "2OLuBOnPAGt12hN-64219e8c44e0efda"
     //快盘测试环境 "2OQCrVnJuES1AVO-ac995a9fef8adcdb"
     //网易云音乐 "2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b"
@@ -82,9 +81,9 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
 
 
-        String str = DeviceInfo.getDeviceId(this);
-
-        Log.e("MainActivity",str);
+//        String str = DeviceInfo.getDeviceId(this);
+//
+//        Log.e("MainActivity",str);
 
 //        GameBoxManager.getInstance(getApplication()).init(getApplication(), corpId, null);
 
@@ -167,8 +166,8 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
         info.showAd = GameInfo.GAME_AD_SHOW_OFF;
 //        info.downloadUrl = "https://down.qq.com/qqweb/QQ_1/android_apk/AndroidQQ_8.4.5.4745_537065283.apk";
 
-        info.gid = 4152;
-        info.pkgName = "cn.missevan";
+        info.gid = 4741;
+        info.pkgName = "com.kptach.cpgame.demo";
 //        info.useSDK = GameInfo.SdkType.REDF;
 
 
@@ -180,7 +179,7 @@ public class HorizontalHomeActivity extends AppCompatActivity implements View.On
 
 
         Params params = new Params();
-        params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0003");
+        params.put(ParamKey.GAME_AUTH_UNION_UUID, "test0004");
 //        params.put(ParamKey.ACTIVITY_LOADING_ICON, 111);
 //        params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
 //        params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);

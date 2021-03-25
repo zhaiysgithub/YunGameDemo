@@ -61,6 +61,8 @@ public class BdGameBoxManager implements IGameBoxManager {
             Logger.error(TAG, e.getMessage());
         }
 
+        Logger.setDebug(debug);
+
         //初始化游戏
         com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).setDebug(debug);
         com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).init(ak, sk, ch, false);

@@ -9,7 +9,7 @@ public class Logger {
         isDebug = debug;
     }
 
-    private static String TAG = "kpgamekit.";
+    private static String TAG = "kpgamekit.bd.";
 //    private boolean mEnableLog;
 
 //    public Logger(String tag){

@@ -336,6 +336,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                 data.put("uid", DeviceInfo.getUserId(getContext()));
                 data.put("deviceid", DeviceInfo.getDeviceId(getContext()));
                 data.put("corpkey", mCorpKey);
+                data.put("traceid", Event.getTraceId());
             }
 
             try {

@@ -346,7 +346,7 @@ public class GameBoxManager {
 
         devLoading = true;
         HashMap sdkParams = new HashMap();
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG || mDebug);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
         sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);

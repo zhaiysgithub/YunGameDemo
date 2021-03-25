@@ -198,6 +198,13 @@ public class EventCode {
     public static final String DATA_RECORD_PUBLISH_DESTORY = "DATA_RECORD_PUBLISH_DESTORY";
     public static final String DATA_RECORD_PUBLISH_SUCCTOAST = "DATA_RECORD_PUBLISH_SUCCTOAST";
 
+    //录屏云服务
+    public static final String DATA_CLOUDSER_REC_REQUEST = "DATA_CLOUDSER_REC_REQUEST";
+    public static final String DATA_CLOUDSER_REC_START = "DATA_CLOUDSER_REC_START";
+    public static final String DATA_CLOUDSER_REC_STOP = "DATA_CLOUDSER_REC_STOP";
+    public static final String DATA_CLOUDSER_UPLOAD_VIDEO = "DATA_CLOUDSER_UPLOAD_VIDEO";
+    public static final String DATA_CLOUDSER_UPLOAD_INFO = "DATA_CLOUDSER_UPLOAD_INFO";
+
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;

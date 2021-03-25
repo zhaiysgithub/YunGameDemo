@@ -35,7 +35,8 @@
 
 -keep class kptech.cloud.kit.msg.** { *; }
 -keep class kptech.game.kit.** { *; }
-
 -keep class com.mci.play.** { *; }
+
+#-keep class com.mci.play.** { *; }
 #-keep class com.yd.yunapp.** { *; }
 #-keep class com.bun.miitmdid.core.** {*;}

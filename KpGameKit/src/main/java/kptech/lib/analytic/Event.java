@@ -122,6 +122,13 @@ public class Event implements Cloneable {
         mGuid = guid;
     }
 
+    public static String getTraceId(){
+        if (base!=null){
+            return base.traceId;
+        }
+        return null;
+    }
+
     /**
      * 请求json
      * @return

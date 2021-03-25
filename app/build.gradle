@@ -75,12 +75,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 
     implementation project(path: ':KpGameKit')
+//    implementation (name:'KpGameKit-release-v2.1.0.8_15',ext:'aar')
 
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'kptech.game.kit:kpinter:1.0.1'
+    implementation 'kptech.game.kit:kpinter:1.0.2'
 
-//    implementation (name:'KpGameKit-debug-v2.1.0.3_14',ext:'aar')
 
     implementation 'org.xutils:xutils:3.3.36'
 
