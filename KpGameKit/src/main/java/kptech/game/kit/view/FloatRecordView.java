@@ -2,6 +2,7 @@ package kptech.game.kit.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -21,6 +22,7 @@ import com.baidu.mobads.component.IFeedPortraitListener;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Map;
 
 import kptech.game.kit.R;
 //import kptech.game.kit.dialog.RecordPublishPopup;
@@ -48,6 +50,8 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
 
     private int maxTimeLen = 300;
     private int minTimeLen = 5;
+
+    private String mCoverImg;
 
     public FloatRecordView(Context context) {
         super(context);
@@ -121,7 +125,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
 
             hideFinishLayout();
 
-            mPublishView.show(mPkgName,mPadcode);
+            mPublishView.show(mPkgName,mPadcode,mCoverImg);
 
             upload();
 
@@ -325,19 +329,34 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                 mLoading.show();
             }
 
+            Configuration conf = getResources().getConfiguration();
+            int orientation = 0;
+            if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                //横屏
+                orientation = 2;
+            } else if (conf.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                //竖屏
+                orientation = 1;
+            }
+
 //            String[]  params  = (title != null) ? new String[]{mPadcode, mPkgName, title} : new String[]{mPadcode, mPkgName};
 
             HashMap data = new HashMap();
             if (action == RequestRecordScreen.ACTION_RECORD_PUBLISH){
-                data.put("appname", mGameName);
-                data.put("pkgname", mPkgName);
                 data.put("title",title);
                 data.put("content", title);
-                data.put("uid", DeviceInfo.getUserId(getContext()));
-                data.put("deviceid", DeviceInfo.getDeviceId(getContext()));
-                data.put("corpkey", mCorpKey);
-                data.put("traceid", Event.getTraceId());
             }
+
+            HashMap clientInfo = new HashMap();
+            clientInfo.put("appname", mGameName);
+            clientInfo.put("pkgname", mPkgName);
+            clientInfo.put("uid", DeviceInfo.getUserId(getContext()));
+            clientInfo.put("deviceid", DeviceInfo.getDeviceId(getContext()));
+            clientInfo.put("corpkey", mCorpKey);
+            clientInfo.put("traceid", Event.getTraceId());
+            clientInfo.put("padcode", mPadcode);
+            clientInfo.put("orientation", orientation);
+
 
             try {
                 String eventCode = "";
@@ -374,7 +393,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                     .setCorpKey(mCorpKey)
                     .setCallback(new RequestRecordScreen.ICallback() {
                         @Override
-                        public void onSuccess() {
+                        public void onSuccess(Map ret) {
                             sending = false;
                             if(activity.isFinishing()){
                                 return;
@@ -390,6 +409,14 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                                 event.setPadcode(mPadcode);
                                 MobclickAgent.sendEvent(event);
                             }catch (Exception e){
+                            }
+
+                            try {
+                                if (ret!=null && ret.containsKey("coverimg")){
+                                    mCoverImg = ret.get("coverimg").toString();
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
 
                             int state = -1;
@@ -460,7 +487,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                             TToast.showCenterToast(getContext(), err, Toast.LENGTH_LONG);
                         }
                     })
-                    .execute(mPadcode, mPkgName, data);
+                    .execute(mPadcode, mPkgName, data, clientInfo);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -525,6 +552,8 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
 
     }
 
-
-
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
 }

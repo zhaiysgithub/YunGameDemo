@@ -23,7 +23,7 @@ import kptech.lib.constants.Urls;
 
 public class RequestRecordScreen extends AsyncTask<Object,Void,Map> {
     public interface ICallback{
-        void onSuccess();
+        void onSuccess(Map ret);
         void onError(String err);
     }
     private static final String TAG = RequestRecordScreen.class.getSimpleName();
@@ -82,16 +82,10 @@ public class RequestRecordScreen extends AsyncTask<Object,Void,Map> {
                 break;
         }
 
-        p.put("padcode", params[0]);
-        p.put("pkgname", params[1]);
-        p.put("uid", DeviceInfo.getDeviceId(mContext));
         p.put("type", 1); //int 终端类型，1 -- Android SDK， 2 -- iOS SDK，3 -- H5 SDK
         p.put("tm", new Date().getTime()); //long int 本地时间戳
-        HashMap m = new HashMap<String,Object>();
-        m.put("corpkey",mCorpKey);
-        p.put("clientinfo", new HashMap<>());//Object 客户端的相关信息，key-value值，例如：agent："xxxx",corpkey:"xxxx"
-
         p.put("data", params[2]);
+        p.put("clientinfo", params[3]);//Object 客户端的相关信息，key-value值，例如：agent："xxxx",corpkey:"xxxx"
 
         Map<String,Object> ret = new HashMap<>();
         ret.put("f", "APP_RECORDER");
@@ -119,7 +113,7 @@ public class RequestRecordScreen extends AsyncTask<Object,Void,Map> {
     protected void onPostExecute(Map ret) {
         if (ret != null && !ret.containsKey("error")){
             if (mCallback != null){
-                mCallback.onSuccess();
+                mCallback.onSuccess(ret);
             }
         }else {
             String err = (String) ret.get("error");
@@ -167,6 +161,14 @@ public class RequestRecordScreen extends AsyncTask<Object,Void,Map> {
                 JSONObject jsonObject = new JSONObject(retStr);
                 int c = jsonObject.getInt("c");
                 if (c == 0){
+                    JSONObject dObj = jsonObject.getJSONObject("d");
+                    if (dObj!=null){
+                        Iterator<String> keys = dObj.keys();
+                        while (keys.hasNext()){
+                            String k = keys.next();
+                            ret.put(k, dObj.get(k));
+                        }
+                    }
                     return ret;
                 } else {
                     String m = jsonObject.getString("m");

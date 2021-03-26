@@ -2,6 +2,7 @@ package kptech.game.kit.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -11,14 +12,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
+
 import kptech.game.kit.R;
 import kptech.game.kit.dialog.RecordPublishPopup;
+import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.utils.TToast;
 import kptech.lib.analytic.Event;
@@ -29,6 +34,7 @@ public class RecordPublishView extends LinearLayout {
 
     private EditText mTitleEdit;
     private TextView mCountText;
+    private ImageView mCoverImg;
 
     private OnPublishListener mListener;
     public void setOnPublishListener(OnPublishListener listener) {
@@ -51,6 +57,7 @@ public class RecordPublishView extends LinearLayout {
     private void initView(){
         inflate(getContext(), R.layout.kp_dialog_record_publish, this);
 
+        mCoverImg = findViewById(R.id.cover);
         mTitleEdit = findViewById(R.id.et_title);
         mCountText = findViewById(R.id.text_count);
         mTitleEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(25)});
@@ -112,7 +119,7 @@ public class RecordPublishView extends LinearLayout {
     }
     private String mPadcode;
     private String mPkgName;
-    public void show(String pkgName, String padCode) {
+    public void show(String pkgName, String padCode, String cover) {
         if (this.getVisibility() == View.VISIBLE){
             return;
         }
@@ -129,6 +136,43 @@ public class RecordPublishView extends LinearLayout {
             MobclickAgent.sendEvent(event);
         }catch (Exception e){
         }
+
+        if (!StringUtil.isEmpty(cover)){
+
+            Configuration conf = getResources().getConfiguration();
+            int ori = 0;
+            if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                //横屏
+                ori = 2;
+            } else if (conf.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                //竖屏
+                ori = 1;
+            }
+
+            LinearLayout.LayoutParams lp = (LayoutParams) mCoverImg.getLayoutParams();
+            if (ori == 1){
+                //竖屏
+                lp.width = DensityUtil.dip2px(getContext(), 200);
+                lp.height = DensityUtil.dip2px(getContext(), 350);
+            }else if (ori == 2){
+                //横屏
+                lp.width = DensityUtil.dip2px(getContext(), 266);
+                lp.height = DensityUtil.dip2px(getContext(), 150);
+            }else {
+                lp.width = DensityUtil.dip2px(getContext(), 150);
+                lp.height = DensityUtil.dip2px(getContext(), 150);
+            }
+
+            mCoverImg.setLayoutParams(lp);
+
+            mCoverImg.setVisibility(VISIBLE);
+            try {
+                Picasso.with(getContext()).load(cover).into(mCoverImg);
+            }catch (Exception e){}
+        }else {
+            mCoverImg.setVisibility(GONE);
+        }
+
     }
 
     public void dismiss(){
