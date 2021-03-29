@@ -6,6 +6,8 @@ import android.content.Context;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtil {
     public static boolean isEmpty(String str) {
@@ -100,4 +102,23 @@ public class StringUtil {
         }
     }
 
+    public static boolean isNumeric(String str) {
+        //Pattern pattern = Pattern.compile("^-?[0-9]+"); //这个也行
+        Pattern pattern = Pattern.compile("^-?\\d+(\\.\\d+)?$");//这个也行
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isAlphabat(String str) {
+        //Pattern pattern = Pattern.compile("^-?[0-9]+"); //这个也行
+        Pattern pattern = Pattern.compile("^[A-Za-z]+$");//这个也行
+        Matcher isNum = pattern.matcher(str);
+        if (!isNum.matches()) {
+            return false;
+        }
+        return true;
+    }
 }

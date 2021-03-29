@@ -160,6 +160,12 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
             return;
         }
 
+        //判断是否已录制完成
+        if (mFinishLayout.getVisibility() == VISIBLE || mPublishView.getVisibility() == VISIBLE){
+            TToast.showCenterToast(getContext(), "有未发布的视频，请发布后再录制", Toast.LENGTH_SHORT);
+            return;
+        }
+
         //获取录屏配置
         RecordScreenConfig mConfig = RecordScreenConfig.getConfig(getContext());
         if (mConfig != null){
@@ -422,7 +428,7 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
                             int state = -1;
                             if (action == RequestRecordScreen.ACTION_RECORD_START){
                                 state = STATE_PLAYING;
-                                TToast.showCenterToast(getContext(), "录屏开始\n最长可录制5分钟内容", Toast.LENGTH_LONG);
+                                TToast.showCenterToast(getContext(), "录屏开始\n最长可录制5分钟内容", Toast.LENGTH_SHORT);
                             }else if (action == RequestRecordScreen.ACTION_RECORD_RESUME){
                                 state = STATE_PLAYING;
                             }else if (action  == RequestRecordScreen.ACTION_RECORD_PAUSE){

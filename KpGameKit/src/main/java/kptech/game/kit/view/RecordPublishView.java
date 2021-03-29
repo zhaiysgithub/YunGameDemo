@@ -95,11 +95,18 @@ public class RecordPublishView extends LinearLayout {
         findViewById(R.id.finish_publish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = mTitleEdit.getText().toString();
-                if (StringUtil.isEmpty(title)){
+                String title = mTitleEdit.getText().toString().trim();
+                String checkTitle = title.replace(" ", "");
+                if (StringUtil.isEmpty(checkTitle)){
                     TToast.showCenterToast(getContext(), "请输入一个标题", Toast.LENGTH_SHORT);
                     return;
                 }
+                //验证标题
+                if (StringUtil.isNumeric(checkTitle) || StringUtil.isAlphabat(checkTitle)){
+                    TToast.showCenterToast(getContext(), "纯数字及字母标题无法发布", Toast.LENGTH_SHORT);
+                    return;
+                }
+
 
                 try {
                     //发送打点事件
