@@ -1,0 +1,46 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="企业设置">
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="debug"-->
+<!--            app:title="测试环境" />-->
+
+        <ListPreference
+            app:defaultValue="2VCn9as7V4W2iLf-7c3cc41383c4e7ad"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="corpKey"
+            app:title="CorpKey"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="游戏设置">
+        <SwitchPreferenceCompat
+            app:key="enableAd"
+            app:title="全部开启广告"
+            app:useSimpleSummaryProvider="true"/>
+        <SwitchPreferenceCompat
+            app:key="enableAuth"
+            app:title="开启授权登录"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dependency="enableAuth"
+            app:key="unionId"
+            app:title="授权登录用户ID"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="fontTimeout"
+            app:title="前台无操作超时时长(秒)"
+            app:defaultValue="300"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="backTimeout"
+            app:title="后台无操作超时时长(秒)"
+            app:defaultValue="180"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+
+
+</PreferenceScreen>

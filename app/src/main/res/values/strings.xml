@@ -14,4 +14,5 @@
     <string name="time_unit_hour_and_min">%1$s小时%2$s分钟</string>
     <string name="time_unit_day">%s天</string>
     <string name="time_unit_day_and_hour">%1$s天%2$s小时</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

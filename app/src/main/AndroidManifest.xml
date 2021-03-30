@@ -61,6 +61,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        <activity-->
+<!--            android:name="com.yd.yunapp.gamebox.SettingsActivity"-->
+<!--            android:label="@string/title_activity_settings"></activity>-->
+
+<!--        <activity android:name="com.yd.yunapp.gamebox.MainActivity">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+
         <activity
             android:name="com.yd.yunapp.gamebox.GameRunningActivity"
             android:configChanges="screenSize|keyboardHidden|orientation"
