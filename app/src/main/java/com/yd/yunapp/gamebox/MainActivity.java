@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_main);
 
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);

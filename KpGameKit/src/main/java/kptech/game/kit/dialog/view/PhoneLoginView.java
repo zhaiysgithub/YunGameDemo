@@ -174,6 +174,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
 
         new AccountTask(mActivity, AccountTask.ACTION_LOGIN_PHONE)
                 .setCorpKey(mCorpKey)
+                .setPkgName(mPkgName)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
                     public void onResult(Map<String, Object> map) {
@@ -269,6 +270,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
         //发送请求
         new AccountTask(mActivity, AccountTask.ACTION_SENDSMS)
                 .setCorpKey(mCorpKey)
+                .setPkgName(mPkgName)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
                     public void onResult(Map<String, Object> map) {

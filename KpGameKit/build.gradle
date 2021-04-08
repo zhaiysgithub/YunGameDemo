@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 15
-        versionName "2.1.0.10"
+        versionName "2.1.0.12"
 
 //        versionName "1.1.3.5" //1.1.3为通用版本
     }
@@ -52,7 +52,7 @@ dependencies {
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
 
     //游戏库
-    implementation files('../kplib/libs/Game-V1.6.0.0_0310.jar')
+    implementation files('../kplib/libs/Game-V1.6.0.0_0330.jar')
 
     //广告sdk
     implementation 'kptech.game.kit:gamead-netease:1.0.1.2'

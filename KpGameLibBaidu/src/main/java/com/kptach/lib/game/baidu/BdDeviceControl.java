@@ -53,7 +53,7 @@ public class BdDeviceControl implements IDeviceControl {
                 }
 
                 //解析当前画面质量
-                mPicQuality = getVideoQuality();
+//                switchQuality(getVideoQuality());
 //                if (mDeviceToken != null && mDeviceToken.has("picQuality")) {
 //                    String str = mDeviceToken.getString("picQuality");
 //                    mPicQuality = str;
@@ -78,6 +78,9 @@ public class BdDeviceControl implements IDeviceControl {
             public void onAPICallback(String s, int i) {
                 if (callback != null){
                     callback.onGameCallback(s, i);
+                }
+                if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
+                    switchQuality(getVideoQuality());
                 }
             }
         });

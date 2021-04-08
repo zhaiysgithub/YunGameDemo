@@ -31,7 +31,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/AppTheme">
+        android:theme="@style/MainAppTheme">
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -51,28 +51,30 @@
             <!--android:configChanges="screenSize|keyboardHidden|orientation"-->
             <!--android:theme="@style/CloudPhone" />-->
 
-        <activity
-            android:name="com.yd.yunapp.gamebox.HorizontalHomeActivity"
-            android:theme="@style/NoTitleFullscreen"
-            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
 <!--        <activity-->
-<!--            android:name="com.yd.yunapp.gamebox.SettingsActivity"-->
-<!--            android:label="@string/title_activity_settings"></activity>-->
-
-<!--        <activity android:name="com.yd.yunapp.gamebox.MainActivity">-->
+<!--            android:name="com.yd.yunapp.gamebox.HorizontalHomeActivity"-->
+<!--            android:theme="@style/NoTitleFullscreen"-->
+<!--            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"-->
+<!--            >-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
-
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
 <!--        </activity>-->
+
+        <activity
+            android:name="com.yd.yunapp.gamebox.SettingsActivity"
+            />
+
+        <activity android:name="com.yd.yunapp.gamebox.MainActivity"
+            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"
+            android:theme="@style/MainAppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.yd.yunapp.gamebox.GameRunningActivity"

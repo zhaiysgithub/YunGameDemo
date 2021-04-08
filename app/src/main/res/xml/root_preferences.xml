@@ -6,7 +6,7 @@
 <!--            app:title="测试环境" />-->
 
         <ListPreference
-            app:defaultValue="2VCn9as7V4W2iLf-7c3cc41383c4e7ad"
+            app:defaultValue="2VNBkoZRnuR47H6-bcdbaaff2876a6dd"
             app:entries="@array/reply_entries"
             app:entryValues="@array/reply_values"
             app:key="corpKey"

@@ -46,6 +46,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
 
     private String mAction;
     private String mCorpKey;
+    private String mPkgName;
     private ICallback mCallback;
     private String mDeviceId;
 
@@ -63,6 +64,11 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
 
     public AccountTask setCorpKey(String mCorpKey) {
         this.mCorpKey = mCorpKey;
+        return this;
+    }
+
+    public AccountTask setPkgName(String pkgName) {
+        this.mPkgName = pkgName;
         return this;
     }
 
@@ -102,6 +108,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("phone", params[0]);
         p.put("password", params[1]);
         p.put("deviceid", mDeviceId);
+        p.put("package", mPkgName);
         return request(p);
     }
 
@@ -112,6 +119,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("smsCode", params[1]);
         p.put("smsCodeId", params[2]);
         p.put("deviceid", mDeviceId);
+        p.put("package", mPkgName);
         return request(p);
     }
 
@@ -121,6 +129,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("usersign", params[0]);    //用户id
         p.put("deviceid", mDeviceId);
         p.put("corpkey", mCorpKey);    //用户id
+        p.put("package", mPkgName);
         return request(p);
     }
 
@@ -140,6 +149,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("smsCodeId", params[2]);
         p.put("password", params[3]);
         p.put("deviceid", mDeviceId);
+        p.put("package", mPkgName);
         return request(p);
     }
 

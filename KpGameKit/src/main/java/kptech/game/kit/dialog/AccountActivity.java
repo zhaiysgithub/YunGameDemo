@@ -209,6 +209,7 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
         //通过渠道设置的UID登录
         new AccountTask(mActivity, AccountTask.ACTION_LOGIN_CHANNEL_UUID)
                 .setCorpKey(mCorpKey)
+                .setPkgName(mPkgName)
                 .setCallback(new AccountTask.ICallback() {
                     @Override
                     public void onResult(Map<String, Object> map) {

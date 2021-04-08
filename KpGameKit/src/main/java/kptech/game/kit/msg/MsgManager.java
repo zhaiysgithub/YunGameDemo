@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
+import kptech.game.kit.BuildConfig;
 import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
@@ -100,7 +101,9 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
 
 
     private MsgHandler mHandler;
+    private String mCorpKey;
     private MsgManager(Activity activity, String corpId, String pkgName){
+        this.mCorpKey = corpId;
         this.mHandler = new MsgHandler(activity, corpId, pkgName);
         this.mHandler.setCallback(this);
     }
@@ -204,13 +207,27 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 if (mReceiverRef!=null && mReceiverRef.get()!=null){
                     mReceiverRef.get().onMessageReceived(event, null);
                 }
+            }else if ("reqinf".equals(event)){
+                //当前版本信息
+                sendInfo();
             }
         } catch (JSONException e) {
             Logger.error("MsgManager",e.getMessage());
         }
     }
 
-
+    private void sendInfo(){
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("event","respinf");
+            obj.put("verName", BuildConfig.VERSION_NAME);
+            obj.put("verCode", BuildConfig.VERSION_CODE);
+            obj.put("corpKey", this.mCorpKey);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Messager.getInstance().send(obj.toString());
+    }
 
     @Override
     public void onLogout() {
@@ -223,7 +240,6 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         }
         Messager.getInstance().send(obj.toString());
     }
-
 
     @Override
     public void onLogin(int code, String err, Map<String, Object> map) {

@@ -293,7 +293,9 @@ public class RequestTask {
                         ext.put(key,value);
                     }
                 }catch (Exception e){}
-                inf.ext = ext;
+                if (ext.size() > 0){
+                    inf.ext = ext;
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
