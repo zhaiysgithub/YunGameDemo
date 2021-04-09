@@ -28,4 +28,6 @@ public class SharedKeys {
     public static final String KEY_GAME_USER_LOGIN_DATA_PRE = "kp_kit_userlogin_";
 
     public static final String KEY_EVENT_DEVICE_ID = "kp_kit_event_deviceid";
+
+    public static final String KEY_ENV_KEY = "kp_kit_env";
 }

@@ -113,7 +113,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
     //获取扩展配置信息
     private String requestAppInfo(String corpKey) {
 
-        String str = Urls.GET_CONFIG;
+        String str = Urls.getEnvUrl(Urls.GET_CONFIG);
         Logger.info(TAG,"url:" + str);
         try {
             StringBuilder sb = new StringBuilder();
@@ -165,7 +165,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
     //获取广告配置信息
     private String requestAdInfo(String corpKey) {
 
-        String str = Urls.GET_AD_CONFIG;
+        String str = Urls.getEnvUrl(Urls.GET_AD_CONFIG);
         Logger.info(TAG,"url:" + str);
         try {
             StringBuilder sb = new StringBuilder();

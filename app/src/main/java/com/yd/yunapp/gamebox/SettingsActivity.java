@@ -8,20 +8,31 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.kuaipan.game.demo.R;
+
+import kptech.game.kit.env.Env;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private String corpKey = null;
     SharedPreferences mSp = null;
+    boolean envChanged = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
+
+        mSp = PreferenceManager.getDefaultSharedPreferences(this);
+        corpKey = mSp.getString("corpKey", "");
+
+        mSp.edit().putBoolean("env", Env.isTestEnv()).commit();
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -33,18 +44,20 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        corpKey = mSp.getString("corpKey", "");
     }
 
     @Override
     public void finish() {
+        if (envChanged){
+            setResult(102);
+        }
         if (mSp != null){
            String key = mSp.getString("corpKey", "");
            if (!key.equals(corpKey)){
                setResult(102);
            }
         }
+
         super.finish();
     }
 
@@ -66,6 +79,26 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            ListPreference listPreference = findPreference("corpKey");
+            if (Env.isTestEnv()){
+                listPreference.setEntries(R.array.debug_corpkey_entries);
+                listPreference.setEntryValues(R.array.debug_corpkey_values);
+            }else {
+                listPreference.setEntries(R.array.release_corpkey_entries);
+                listPreference.setEntryValues(R.array.release_corpkey_values);
+            }
+
+//            findPreference("env").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//                @Override
+//                public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                    if (newValue instanceof Boolean){
+//                        boolean val = (boolean)newValue;
+//                        Env.setEnv(getContext(), val ? Env.ENV_DEBUG : Env.ENV_RELEASE);
+//                    }
+//                    return true;
+//                }
+//            });
+
         }
 
         @Override
@@ -75,6 +108,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public boolean onPreferenceTreeClick(Preference preference) {
+            if(preference.getKey().equals("env") && preference instanceof SwitchPreferenceCompat){
+                SwitchPreferenceCompat compat = (SwitchPreferenceCompat)preference;
+                if (Env.isTestEnv()){
+                    Env.setEnv(getContext(), Env.ENV_RELEASE);
+                }else {
+                    Env.setEnv(getContext(), Env.ENV_DEBUG);
+                }
+                ((SettingsActivity)getActivity()).envChanged = true;
+            }
             return super.onPreferenceTreeClick(preference);
         }
 

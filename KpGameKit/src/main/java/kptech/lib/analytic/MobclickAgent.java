@@ -70,10 +70,6 @@ public class MobclickAgent {
         }
     }
 
-
-    private String URL_ACTION = Urls.EVENT_RUL + "/useraction.php";
-    private String URL_TIME = Urls.EVENT_RUL + "/useraction_playtimes.php";
-    private String URL_TM_ACTION = Urls.EVENT_RUL + "/useraction_special.php";
     private RequestQueue mQueue;
 
     private static volatile MobclickAgent agent = null;
@@ -110,7 +106,7 @@ public class MobclickAgent {
             if (mQueue!=null){
                 Logger.info("MobclickAgent","actSend:" + data);
 
-                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_ACTION,
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, Urls.URL_ACTION,
                     new Request.RequestListener<String>() {
                         @Override
                         public void onComplete(int stCode, String response, String errMsg) {
@@ -136,7 +132,7 @@ public class MobclickAgent {
         try {
             if (mQueue!=null){
                 Logger.info("MobclickAgent","timeSend:" + data.toString());
-                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_TIME,
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, Urls.URL_TIME,
                         new Request.RequestListener<String>() {
                             @Override
                             public void onComplete(int stCode, String response, String errMsg) {
@@ -162,7 +158,7 @@ public class MobclickAgent {
         try {
             if (mQueue!=null){
                 Logger.info("MobclickAgent","tmSend:" + map.toString());
-                StringRequest request = new StringRequest(Request.HttpMethod.POST, URL_TM_ACTION,
+                StringRequest request = new StringRequest(Request.HttpMethod.POST, Urls.URL_TM_ACTION,
                         new Request.RequestListener<String>() {
                             @Override
                             public void onComplete(int stCode, String response, String errMsg) {

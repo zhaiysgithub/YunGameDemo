@@ -127,7 +127,7 @@ public class RequestRecordScreen extends AsyncTask<Object,Void,Map> {
     private Map request(Map map) {
         Map<String,Object> ret = new HashMap<>();
         try {
-            URL url = new URL(Urls.URL_RECORD_SCREEN);
+            URL url = new URL(Urls.getEnvUrl(Urls.URL_RECORD_SCREEN));
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
             postConnection.setConnectTimeout(1000*10);

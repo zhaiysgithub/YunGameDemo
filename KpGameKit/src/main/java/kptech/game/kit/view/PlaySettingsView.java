@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -26,13 +24,14 @@ import androidx.annotation.NonNull;
 import java.lang.ref.WeakReference;
 
 import kptech.game.kit.APIConstants;
+import kptech.game.kit.BuildConfig;
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
-import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
+import kptech.game.kit.env.Env;
 import kptech.lib.conf.RecordScreenConfig;
-import kptech.lib.constants.SharedKeys;
 
 public class PlaySettingsView extends LinearLayout {
 
@@ -50,6 +49,9 @@ public class PlaySettingsView extends LinearLayout {
     private String mVideoQuality;
     private boolean mAudioSwitch;
     public boolean mVideoScale = true;
+
+    long verTime;
+    int verClickCount;
 
     public interface OnDismissListener {
         void onDismiss();
@@ -112,9 +114,14 @@ public class PlaySettingsView extends LinearLayout {
             initAudioEnable();
             initVideoQuality();
 
-            try {
-                mPadcodeTv.setText(deviceControl.getPadcode());
-            }catch (Exception e){}
+            if (Env.isTestEnv()){
+                try {
+                    mPadcodeTv.setText(deviceControl.getPadcode());
+                }catch (Exception e){}
+            }else {
+                mPadcodeTv.setVisibility(GONE);
+            }
+
 
             //获取录屏配置
             RecordScreenConfig config = RecordScreenConfig.getConfig(getContext());
@@ -176,6 +183,31 @@ public class PlaySettingsView extends LinearLayout {
                 }
             }
         });
+
+        TextView sdkVer = view.findViewById(R.id.sdk_ver);
+        sdkVer.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long timeNew = System.currentTimeMillis();
+                if ((timeNew - verTime) < 1000){
+                    verClickCount += 1;
+                }else {
+                    verClickCount = 1;
+                }
+
+                verTime = timeNew;
+                if (verClickCount == 8){
+                    //打开log
+                    GameBoxManager.setDebug(true);
+                    Toast.makeText(getContext(), "log", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        if (Env.isTestEnv()){
+            sdkVer.setText("Version: "+BuildConfig.VERSION_NAME+"_"+BuildConfig.VERSION_CODE);
+        }else {
+            sdkVer.setText("    ");
+        }
 
         int height = DensityUtil.getScreenHeight(getContext());
         int width = DensityUtil.getScreenWidth(getContext());
@@ -251,7 +283,9 @@ public class PlaySettingsView extends LinearLayout {
                     if (mDeviceControl != null){
                         String info = mDeviceControl.getDeviceInfo();
                         StringUtil.copy(getContext(), info);
-                        Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();
+                        if (Env.isTestEnv()){
+                            Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }catch (Exception e){
                     e.printStackTrace();

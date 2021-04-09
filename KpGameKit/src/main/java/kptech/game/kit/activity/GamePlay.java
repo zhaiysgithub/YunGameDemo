@@ -46,10 +46,10 @@ import kptech.game.kit.R;
 //import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.view.FloatRecordView;
-import kptech.game.kit.view.RecordView;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
+import kptech.game.kit.env.Env;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.data.AccountTask;
 import kptech.lib.data.IRequestCallback;
@@ -157,6 +157,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         super.onCreate(savedInstanceState);
 
 //        GameBox.sRefWatcher.watch(this);
+
+        if (Env.isTestEnv()){
+            Toast.makeText(this, "Env test !!!", Toast.LENGTH_LONG).show();
+        }
 
         setFullScreen();
         setContentView(R.layout.kp_activity_game_play);

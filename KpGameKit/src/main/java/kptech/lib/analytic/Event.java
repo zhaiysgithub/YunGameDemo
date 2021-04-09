@@ -13,6 +13,7 @@ import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.utils.StringUtil;
+import kptech.game.kit.env.Env;
 
 public class Event implements Cloneable {
     /**
@@ -58,7 +59,7 @@ public class Event implements Cloneable {
     /**
      * 调试模式，1：调试模式，数据写入测试表
      */
-    int debug = BuildConfig.DEBUG ? 1 : 0;
+    int debug = Env.isTestEnv() ? 1 : 0;
     /**
      * 扩展
      */

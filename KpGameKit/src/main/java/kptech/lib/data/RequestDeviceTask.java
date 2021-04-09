@@ -107,7 +107,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     //获取扩展配置信息
     private String requestAppInfo(String corpKey, String pkgName, String uid, String gameId) {
 
-        String str = Urls.GET_DEVICE_CONNECT;
+        String str = Urls.getEnvUrl(Urls.GET_DEVICE_CONNECT);
         Logger.info(TAG,"device connect :" + str);
         try {
             StringBuilder sb = new StringBuilder();

@@ -22,7 +22,7 @@ public class RequestTask {
     private static final String TAG = "RequestTask";
 
     public static List<GameInfo> queryGameList(String corpKey, int page, int limit){
-        String str = Urls.GET_GAME_LIST +  "/" + corpKey;
+        String str = Urls.getEnvUrl(Urls.GET_GAME_LIST) +  "/" + corpKey;
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
@@ -122,7 +122,7 @@ public class RequestTask {
 
 
     public static GameInfo queryGameInfo(String corpKey, String pkg, String pass ){
-        String str = Urls.GET_GAME_INFO;
+        String str = Urls.getEnvUrl(Urls.GET_GAME_INFO);
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
@@ -201,7 +201,7 @@ public class RequestTask {
 
 
     public static List<GameInfo> queryGameExitList(String corpKey, String gameId ){
-        String str = Urls.GET_GAME_EXIT_LIST;
+        String str = Urls.getEnvUrl(Urls.GET_GAME_EXIT_LIST);
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(str);

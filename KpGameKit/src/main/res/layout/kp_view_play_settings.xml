@@ -290,17 +290,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="bottom|center_horizontal"
-            android:paddingBottom="30dp">
+            android:orientation="vertical">
             <Button
                 android:id="@+id/exit_btn"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/kp_view_settings_white_btn"
-                android:layout_gravity="bottom"
+                android:layout_gravity="bottom|center_horizontal"
                 android:text="退出游戏"
                 android:textColor="@color/common_white" />
+            <TextView
+                android:id="@+id/sdk_ver"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:textColor="@color/common_white"
+                android:layout_gravity="bottom|left"
+                android:textSize="10dp"
+                android:text="Version"/>
         </LinearLayout>
-
     </LinearLayout>
 
 </RelativeLayout>

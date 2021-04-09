@@ -47,6 +47,7 @@ import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
+import kptech.game.kit.env.Env;
 
 public class MainActivity extends AppCompatActivity {
     //测试appID
@@ -136,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Env.init(this);
+
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);
 
@@ -145,9 +148,11 @@ public class MainActivity extends AppCompatActivity {
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         APP_ID = mSp.getString("corpKey", "2OLuBOnPAGt12hN-64219e8c44e0efda");
 
+        TextView coprKey = findViewById(R.id.corpkey);
+        coprKey.setText((Env.isTestEnv() ? "测试环境":"正式环境") + "\n CorpKey: " + APP_ID);
 
         //打印log信息，正式版本需要关闭
-        GameBoxManager.setDebug(true);
+        GameBoxManager.setDebug(false);
         GameBoxManager.setAppKey(APP_ID);
 
         mGameInfos = new ArrayList<>();

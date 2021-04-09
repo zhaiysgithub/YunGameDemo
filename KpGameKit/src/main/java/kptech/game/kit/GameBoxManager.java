@@ -20,6 +20,7 @@ import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
+import kptech.game.kit.env.Env;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.constants.Urls;
 import kptech.lib.data.RequestAppInfoTask;
@@ -56,7 +57,9 @@ public class GameBoxManager {
         mDebug = debug;
 
         //Logger
-        Logger.setDebug(debug);
+        if (debug){
+            Logger.setLevel(Logger.LEVEL_INFO);
+        }
 
         //Messager
         MsgManager.setDebug(debug);
@@ -93,6 +96,9 @@ public class GameBoxManager {
             }
             return;
         }
+
+        //环境
+        Env.init(application);
 
         mApplication = application;
         mCorpID = appKey;
@@ -346,7 +352,7 @@ public class GameBoxManager {
 
         devLoading = true;
         HashMap sdkParams = new HashMap();
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG || mDebug);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
         sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);
