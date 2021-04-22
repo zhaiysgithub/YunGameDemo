@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -51,7 +52,7 @@ import kptech.game.kit.env.Env;
 
 public class MainActivity extends AppCompatActivity {
     //测试appID
-    private static String APP_ID = "2OLuBOnPAGt12hN-64219e8c44e0efda";
+    private static String APP_ID = "";
     //快盘 "2OLuBOnPAGt12hN-64219e8c44e0efda";
     //网易："2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b";
 
@@ -146,11 +147,15 @@ public class MainActivity extends AppCompatActivity {
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-//        APP_ID = mSp.getString("corpKey", "2OLuBOnPAGt12hN-64219e8c44e0efda");
-        APP_ID = mSp.getString("corpKey", "2VCn9as7V4W2iLf-7c3cc41383c4e7ad");
+        APP_ID = mSp.getString("corpKey", null);
 
         TextView coprKey = findViewById(R.id.corpkey);
-        coprKey.setText((Env.isTestEnv() ? "测试环境":"正式环境") + "\n CorpKey: " + APP_ID);
+        if (APP_ID == null){
+            coprKey.setText("请配置CorpKey");
+            coprKey.setTextColor(Color.RED);
+        }else {
+            coprKey.setText((Env.isTestEnv() ? "测试环境":"正式环境") + "\n CorpKey: " + APP_ID);
+        }
 
         //打印log信息，正式版本需要关闭
         GameBoxManager.setDebug(false);
@@ -233,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == 101 && resultCode == 102){
             finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 

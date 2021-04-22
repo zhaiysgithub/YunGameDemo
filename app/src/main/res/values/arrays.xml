@@ -1,6 +1,7 @@
 <resources>
     <!-- Reply Preference -->
     <string-array name="debug_corpkey_entries">
+        <item>测试189分组 2VRGVbMHWvG3QG7-ce9daa229052103d</item>
         <item>测试141分组 2VNBkoZRnuR47H6-bcdbaaff2876a6dd</item>
         <item>测试135分组 2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>测试快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
@@ -8,6 +9,7 @@
     </string-array>
 
     <string-array name="debug_corpkey_values">
+        <item>2VRGVbMHWvG3QG7-ce9daa229052103d</item>
         <item>2VNBkoZRnuR47H6-bcdbaaff2876a6dd</item>
         <item>2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
