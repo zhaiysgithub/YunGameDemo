@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        APP_ID = mSp.getString("corpKey", "2OLuBOnPAGt12hN-64219e8c44e0efda");
+//        APP_ID = mSp.getString("corpKey", "2OLuBOnPAGt12hN-64219e8c44e0efda");
+        APP_ID = mSp.getString("corpKey", "2VCn9as7V4W2iLf-7c3cc41383c4e7ad");
 
         TextView coprKey = findViewById(R.id.corpkey);
         coprKey.setText((Env.isTestEnv() ? "测试环境":"正式环境") + "\n CorpKey: " + APP_ID);

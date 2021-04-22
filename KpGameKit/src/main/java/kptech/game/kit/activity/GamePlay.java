@@ -1239,6 +1239,16 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return false;
         }
 
+        //获取总数
+        int mExitAlertCount = ProferencesUtils.getIng(this, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, 0);
+
+        int num = getExitShowNum();
+
+        //超过显示数量,不显示
+        if (num >= mExitAlertCount){
+            return false;
+        }
+
         try {
             final ExitGameListDialog dialog = new ExitGameListDialog(activity, mExitGameList, mGameInfo.exitRemind);
             dialog.setCallback(new ExitGameListDialog.ICallback() {
