@@ -94,6 +94,8 @@ public class PayActivity extends Dialog implements View.OnClickListener {
     //当前 pageFinished 的 url
     private String webClientPageFinishedUrl;
 
+    private static final String errorMsgForToast = "系统繁忙，请稍后再试";
+
     @Override
     public void setOnDismissListener(OnDismissListener listener) {
         this.mOnDismissListener = listener;
@@ -336,7 +338,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                             if ("".equals(msg)){
                                 msg = "生成订单失败";
                             }
-                            Toast.makeText(mActivity, msg, Toast.LENGTH_LONG).show();
+                            Toast.makeText(mActivity, errorMsgForToast, Toast.LENGTH_LONG).show();
 
                             mConfirmPaymentBtn.setEnabled(true);
                             mConfirmPaymentBtn.setText("生成订单失败，点击重试");
@@ -458,7 +460,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                         String msg= uri.getQueryParameter("msg");
                         errMsg = URLDecoder.decode(msg,"utf-8");
 
-                        Toast.makeText(mActivity, errMsg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mActivity, errorMsgForToast, Toast.LENGTH_SHORT).show();
                     }catch (Exception e){
                     }
 
