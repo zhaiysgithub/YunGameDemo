@@ -89,6 +89,11 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
     private OnDismissListener mOnDismissListener;
 
+    //重定向的 url
+    private String webClientRedirectUrl;
+    //当前 pageFinished 的 url
+    private String webClientPageFinishedUrl;
+
     @Override
     public void setOnDismissListener(OnDismissListener listener) {
         this.mOnDismissListener = listener;
@@ -405,6 +410,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                webClientRedirectUrl = url;
                 try {
                     if (url.startsWith("weixin://") || url.startsWith("alipays://")) {
                         Intent intent = new Intent();
@@ -544,6 +550,7 @@ public class PayActivity extends Dialog implements View.OnClickListener {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                webClientPageFinishedUrl = url;
             }
 
         });
@@ -552,9 +559,16 @@ public class PayActivity extends Dialog implements View.OnClickListener {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 // TODO 自动生成的方法存根
-
                 if (newProgress == 100) {
                     mProBar.setVisibility(View.INVISIBLE);//加载完网页进度条消失
+                    //支付出现异常错误
+                    if (webClientPageFinishedUrl.startsWith(Urls.PAY_URL)
+                            && !webClientPageFinishedUrl.equals(webClientRedirectUrl)
+                            && mPayState == PAY_STATE_LOAD_WEB){
+                        mConfirmPaymentBtn.setEnabled(true);
+                        mConfirmPaymentBtn.setText("生成订单失败，点击重试");
+                        mPayState = PAY_STATE_NONE;
+                    }
                 } else {
                     mProBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
                     mProBar.setProgress(newProgress);//设置进度值
