@@ -18,6 +18,9 @@ public class RecordScreenConfig {
     public int maxTimeLen;
     public int minTimeLen;
 
+    //默认显示
+    public boolean menuItemControlHide;
+
     public static RecordScreenConfig getConfig(Context context){
         RecordScreenConfig config = getDefaultConfig();
         try {
@@ -40,23 +43,30 @@ public class RecordScreenConfig {
                         if (min > 0){
                             config.minTimeLen = min;
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Logger.error(TAG, e.getMessage());
                     }
                 }
+                //默认菜单 “云手机控制-后退” 显示
+                String menuItemControl = ProferencesUtils.getString(context, SharedKeys.KEY_GAME_MENUITEM_CONTROL, "true");
+                if (menuItemControl != null) {
+                    //配置 false 代表不显示此 item
+                    config.menuItemControlHide = menuItemControl.equals("false");
+                }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
 
         return config;
     }
 
-    private static RecordScreenConfig getDefaultConfig(){
+    private static RecordScreenConfig getDefaultConfig() {
         RecordScreenConfig config = new RecordScreenConfig();
         config.disable = false;
         config.maxTimeLen = CONF_RECORD_SCREEN_MAX_TIME_LEN;
         config.minTimeLen = CONF_RECORD_SCREEN_MIN_TIME_LEN;
+        config.menuItemControlHide = false;
         return config;
     }
 

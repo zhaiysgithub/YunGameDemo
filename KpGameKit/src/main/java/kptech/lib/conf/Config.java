@@ -62,12 +62,18 @@ public class Config {
 
         try {
             //录屏功能时长
-            String recordScreen = dObj.has("recordScreen") ? dObj.getString("recordScreen") : null;
-            if (recordScreen != null){
-                ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_RECORD_SCREEN_CONF, recordScreen);
-            }
+            String recordScreen = dObj.has("recordScreen") ? dObj.getString("recordScreen") : "";
+            ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_RECORD_SCREEN_CONF, recordScreen);
         }catch (Exception e){
             Logger.error(TAG, "录屏配置信息 Error: " + e.getMessage());
+        }
+
+        try {
+            //默认菜单 “云手机控制-后退” 显示
+            String menuItemCon = dObj.has("menuItemControlShow") ? dObj.getString("menuItemControlShow") : "true";
+            ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_MENUITEM_CONTROL, menuItemCon);
+        } catch (Exception e) {
+            Logger.error(TAG, "云手机控制后退 Error: " + e.getMessage());
         }
     }
 

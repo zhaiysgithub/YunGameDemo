@@ -44,6 +44,8 @@ public class PlaySettingsView extends LinearLayout {
     private CheckBox mAudioCheckbox;
 
     private ViewGroup mRecordItem;
+    private ViewGroup mBackItem;
+    private View  mBackItemLine;
     private TextView mPadcodeTv;
 
     private String mVideoQuality;
@@ -129,6 +131,14 @@ public class PlaySettingsView extends LinearLayout {
                 mRecordItem.setVisibility(GONE);
             }else {
                 mRecordItem.setVisibility(VISIBLE);
+            }
+
+            if (config.menuItemControlHide){
+                mBackItem.setVisibility(GONE);
+                mBackItemLine.setVisibility(GONE);
+            }else{
+                mBackItem.setVisibility(VISIBLE);
+                mBackItemLine.setVisibility(VISIBLE);
             }
 
         }
@@ -304,6 +314,8 @@ public class PlaySettingsView extends LinearLayout {
             }
         });
         mRecordItem = findViewById(R.id.record_item);
+        mBackItem = findViewById(R.id.backItem);
+        mBackItemLine = findViewById(R.id.backItemLine);
         mPadcodeTv = findViewById(R.id.tv_padcode);
         mPadcodeTv.setOnClickListener(new OnClickListener() {
             @Override
