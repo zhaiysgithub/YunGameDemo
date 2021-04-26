@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
@@ -89,12 +90,12 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
     private OnDismissListener mOnDismissListener;
 
-    //重定向的 url
-    private String webClientRedirectUrl;
     //当前 pageFinished 的 url
     private String webClientPageFinishedUrl;
 
     private static final String errorMsgForToast = "系统繁忙，请稍后再试";
+
+    private final Handler mHandler = new Handler();
 
     @Override
     public void setOnDismissListener(OnDismissListener listener) {
@@ -412,7 +413,6 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                webClientRedirectUrl = url;
                 try {
                     if (url.startsWith("weixin://") || url.startsWith("alipays://")) {
                         Intent intent = new Intent();
@@ -564,13 +564,8 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                 if (newProgress == 100) {
                     mProBar.setVisibility(View.INVISIBLE);//加载完网页进度条消失
                     //支付出现异常错误
-                    if (webClientPageFinishedUrl.startsWith(Urls.PAY_URL)
-                            && !webClientPageFinishedUrl.equals(webClientRedirectUrl)
-                            && mPayState == PAY_STATE_LOAD_WEB){
-                        mConfirmPaymentBtn.setEnabled(true);
-                        mConfirmPaymentBtn.setText("生成订单失败，点击重试");
-                        mPayState = PAY_STATE_NONE;
-                    }
+                    mHandler.removeCallbacks(doPayError);
+                    mHandler.postDelayed(doPayError,800);
                 } else {
                     mProBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
                     mProBar.setProgress(newProgress);//设置进度值
@@ -599,6 +594,19 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
         });
     }
+
+    private final Runnable doPayError = new Runnable() {
+        @Override
+        public void run() {
+            if (PayActivity.this.isShowing()){
+                if (webClientPageFinishedUrl.startsWith(Urls.PAY_URL) && mPayState == PAY_STATE_LOAD_WEB){
+                    mConfirmPaymentBtn.setEnabled(true);
+                    mConfirmPaymentBtn.setText("生成订单失败，点击重试");
+                    mPayState = PAY_STATE_NONE;
+                }
+            }
+        }
+    };
 
     class JavascriptCallback {
         @JavascriptInterface
