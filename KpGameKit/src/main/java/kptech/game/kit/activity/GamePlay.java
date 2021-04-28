@@ -126,6 +126,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private List<GameInfo> mExitGameList = null;
 
     private String mUnionUUID = null;
+    //暂存游戏声音开关的变量
+    private boolean gameVoiceSwitchValue = false;
+    //游戏是否正在运行
+    private boolean gameRunSuccess = false;
 
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -719,6 +723,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private void playSuccess() {
         try {
+            gameRunSuccess = true;
             mLoadingView.setVisibility(View.GONE);
 
             mVideoContainer.setVisibility(View.VISIBLE);
@@ -738,6 +743,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }catch (Exception e){}
 
         }catch (Exception e){
+            gameRunSuccess = false;
             Logger.error(TAG, e.getMessage());
         }
     }
@@ -796,6 +802,27 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // 从 home 键返回到游戏中是处理声音问题
+        if (gameRunSuccess && mDeviceControl != null && gameVoiceSwitchValue){
+            mDeviceControl.setAudioSwitch(true);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // 按下 home 按键暂时关闭游戏声音
+        if (gameRunSuccess && mDeviceControl != null){
+            gameVoiceSwitchValue = mDeviceControl.isSoundEnable();
+            if (gameVoiceSwitchValue){
+                mDeviceControl.setAudioSwitch(false);
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -804,6 +831,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mDeviceControl.stopGame();
             }
 //            GameBoxManager.getInstance().exitQueue();
+            gameVoiceSwitchValue = false;
             mRecordView = null;
             mMenuView.dismissMenuDialog();
 
@@ -939,6 +967,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     public boolean onNoOpsTimeout(int type, long timeout) {
         Logger.info("GamePlay","onNoOpsTimeout() type = " + type + ", timeout = " + timeout);
 
+        gameRunSuccess = false;
+        gameVoiceSwitchValue = false;
         //前台未操作超时
         if (type == 2){
             showTimeoutDialog("您长时间未操作，游戏已释放。");
