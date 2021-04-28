@@ -6,12 +6,6 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <kptech.game.kit.view.LoadingView
-        android:id="@+id/loading_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"/>
-
     <FrameLayout
         android:id="@+id/play_container"
         android:layout_width="match_parent"
@@ -41,7 +35,7 @@
         android:visibility="gone"
         />
 
-    <kptech.game.kit.view.PlayErrorView
+    <!--<kptech.game.kit.view.PlayErrorView
         android:id="@+id/error_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,7 +45,7 @@
         android:id="@+id/auth_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone"/>-->
 
     <!--<kptech.game.kit.view.PlaySettingsView-->
         <!--android:id="@+id/setting_view"-->

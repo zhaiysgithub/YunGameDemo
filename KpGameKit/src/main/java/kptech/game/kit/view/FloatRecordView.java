@@ -18,14 +18,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.baidu.mobads.component.IFeedPortraitListener;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.R;
-//import kptech.game.kit.dialog.RecordPublishPopup;
 import kptech.game.kit.dialog.view.Loading;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;

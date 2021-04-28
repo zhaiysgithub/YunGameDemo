@@ -5,12 +5,13 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 import kptech.game.kit.R;
 
 
-public class RoundImageView extends ImageView {
+public class RoundImageView extends AppCompatImageView {
 
     float width, height;
     private int defaultRadius = 0;

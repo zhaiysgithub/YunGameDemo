@@ -58,7 +58,7 @@
             android:id="@+id/error_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="申请获取云音乐账号信息"
+            android:text="申请获取账号信息"
             android:textColor="#FF333333"
             android:textSize="16sp"
             android:textStyle="bold"

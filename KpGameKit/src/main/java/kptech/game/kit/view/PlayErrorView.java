@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.GamePlay;
+import kptech.game.kit.download.DownloadTask;
 import kptech.lib.analytic.Event;
 import kptech.game.kit.utils.StringUtil;
 
@@ -70,6 +71,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 //        this.mRetryListener = listener;
 //    }
 
+
     public void setGameInfo(GameInfo info){
         mGameInfo = info;
     }
@@ -106,13 +108,13 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
     public void setDownloadStatus(int status){
         switch (status){
-            case GamePlay.STATUS_STARTED:
+            case DownloadTask.STATUS_STARTED:
                 mErrorDownText.setText("下载中...");
                 break;
-            case GamePlay.STATUS_ERROR:
+            case DownloadTask.STATUS_ERROR:
                 mErrorDownText.setText("下载出错");
                 break;
-            case GamePlay.STATUS_FINISHED:
+            case DownloadTask.STATUS_FINISHED:
                 mErrorDownText.setText("下载完成");
                 break;
             default:

@@ -51,6 +51,19 @@
 
         <activity android:name="kptech.game.kit.dialog.WebViewActivity"  />
 
+        <service
+            android:name="kptech.game.kit.download.DownloadTask"
+            android:enabled="true" android:exported="true"
+            />
+        <provider
+            android:name=".provider.FileProviderAdapter"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/update_file_provider" />
+        </provider>
     </application>
 
 

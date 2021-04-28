@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#222222"
+    android:clickable="true"
+    android:gravity="center">
+    
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/kp_loading_top_bg"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+
+        <kptech.game.kit.view.RoundImageView
+            android:id="@+id/game_icon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/kp_icon_bg"
+            app:radius="10dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="11dp"
+            />
+
+        <TextView
+            android:id="@+id/game_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="11dp"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:text="游戏名称"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/center_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:gravity="center">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/kp_default_loading_wifi_bg"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/kp_default_loading_wifi_img"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:text="网络测试中，请等待···"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="38dp"
+        android:layout_marginRight="38dp"
+        android:layout_marginBottom="94dp"
+        android:orientation="vertical">
+        <kptech.game.kit.view.LoadingSeekBar
+            android:id="@+id/loading_pb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:thumb="@mipmap/kp_default_loading_pb_img"
+            android:progressDrawable="@drawable/kp_loading_pb_bg"
+            android:splitTrack="false"
+            android:max="100"
+            android:progress="0"/>
+
+        <!--<ProgressBar-->
+            <!--android:id="@+id/loading_pb"-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:max="10000"-->
+            <!--android:progressDrawable="@drawable/kp_loading_pb_bg"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:progress="0" />-->
+
+        <TextView
+            android:id="@+id/loading_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ffffff"
+            android:textSize="13sp"
+            android:text="提示：请关闭手机旋转设置，体验会更好"/>
+    </LinearLayout>
+
+</RelativeLayout>

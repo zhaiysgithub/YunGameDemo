@@ -43,7 +43,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    //    implementation 'org.xutils:xutils:3.3.36'
+        implementation 'org.xutils:xutils:3.3.36'
 
     //云通讯SDK
     implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')
@@ -55,7 +55,7 @@ dependencies {
     implementation files('../kplib/libs/Game-V1.6.0.0_0330.jar')
 
     //广告sdk
-    implementation 'kptech.game.kit:gamead-netease:1.0.1.2'
+    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
 //    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义
