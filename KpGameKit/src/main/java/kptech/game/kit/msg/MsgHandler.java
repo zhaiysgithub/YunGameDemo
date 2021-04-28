@@ -128,13 +128,16 @@ public class MsgHandler extends Handler {
     private void handleLogin(){
 
         try {
+
             //获取缓存，判断是否已经登录过
             Map<String, Object> loginData = getLoginData();
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
             String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
-
+            String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : "";
+            String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
+            boolean UninqueIdIsChanged = (gameUninqueId != null && !gameUninqueId.equals(cacheUninqueId));
             //发送缓存数据
-            if (guid!=null && token!=null){
+            if (guid!=null && token!=null && !UninqueIdIsChanged){
 
                 if (mCallback!=null){
                     mCallback.onLogin(1, "", loginData);
@@ -176,7 +179,7 @@ public class MsgHandler extends Handler {
         showLoginDialog();
     }
 
-    private void cacheLoginData(Map map){
+    private void cacheLoginData(Map map,String uninqueId){
         try {
             if (map!=null){
                 if (map.containsKey("access_token")){
@@ -184,6 +187,7 @@ public class MsgHandler extends Handler {
                     map.put("token", at);
                     map.remove("access_token");
                 }
+                map.put("uninqueId",uninqueId);
                 JSONObject obj = new JSONObject(map);
                 ProferencesUtils.setString(mActivity, getCacheKey(), obj.toString());
             }
@@ -217,7 +221,7 @@ public class MsgHandler extends Handler {
 
     private void showLoginDialog(){
         //处理登录，判断是联运登录，还是本地登录
-        String uninqueId = GameBoxManager.getInstance().getUniqueId();
+        final String uninqueId = GameBoxManager.getInstance().getUniqueId();
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
             AccountActivity login = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);
@@ -226,7 +230,7 @@ public class MsgHandler extends Handler {
                 public void onLoginSuccess(Map<String, Object> map) {
 
                     //缓存数据
-                    cacheLoginData(map);
+                    cacheLoginData(map,uninqueId);
 
                     //回调
                     if (mCallback!=null){
@@ -276,7 +280,7 @@ public class MsgHandler extends Handler {
                 public void onLoginSuccess(Map<String, Object> map) {
 
                     //缓存数据
-                    cacheLoginData(map);
+                    cacheLoginData(map,uninqueId);
 
                     //回调
                     if (mCallback!=null){
