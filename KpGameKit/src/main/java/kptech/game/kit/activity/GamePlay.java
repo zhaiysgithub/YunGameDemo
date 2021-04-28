@@ -804,7 +804,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mDeviceControl.stopGame();
             }
 //            GameBoxManager.getInstance().exitQueue();
-
+            mRecordView = null;
             mMenuView.dismissMenuDialog();
 
             try{
