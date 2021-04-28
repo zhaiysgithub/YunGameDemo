@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.baidu.mobads.component.IFeedPortraitListener;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
