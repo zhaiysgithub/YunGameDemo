@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static String APP_ID = "";
     //快盘 "2OLuBOnPAGt12hN-64219e8c44e0efda";
     //网易："2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b";
+    private static final String GUOTONG_CROPKEY = "2VRdEJDJfLf1SPa-af503d118b0d1cd8";
 
     ArrayList<GameInfo> mGameInfos;
     GameAdapter mGameAdapter;
@@ -147,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        APP_ID = mSp.getString("corpKey", null);
+//        APP_ID = mSp.getString("corpKey", null);
+        APP_ID = GUOTONG_CROPKEY;
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null){

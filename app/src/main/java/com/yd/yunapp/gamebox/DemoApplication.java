@@ -38,29 +38,10 @@ public class DemoApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not init your app in this process.
-//            return;
-//        }
-//        GameBox.init(this, "2OQCrVnJuES1AVO-ac995a9fef8adcdb");
-
         //debug,发布版本时要关闭
         GameBoxManager.setDebug(true);
-        // 配置ak sk 渠道
-//        GameBoxManager.setAppInfo(YOUR_AK, YOUR_SK, YOUR_CHANNEL);
-//        GameBoxManager.getInstance(this).init(this,null,null);
 
-//        GameBoxManager.setAppKey(APPKEY);
-
-        // 配置 子渠道 （可选）
-//        GameBoxManager.getInstance(this).setSubChannel("demo_test");
-//         GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_ANDROID_ID, "1212121212121212");
-        // GameBoxManager.getInstance(this).addDeviceMockInfo(APIConstants.MOCK_IMEI, "3434343434343434");
         mPermissionHandler = new PermissionHandlerImpl();
-
-        x.Ext.init(this);
-        x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
     }
 
     public PermissionHandler getPermissionHandler() {

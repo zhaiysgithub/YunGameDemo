@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 
 
+import org.xutils.x;
+
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.utils.Logger;
 
@@ -38,6 +40,8 @@ public class GameBox {
     }
 
     private GameBox(Application application, String appKey){
+        x.Ext.init(application);
+//        x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
         this.mApplication = application;
         this.appKey = appKey;
         GameBoxManager.setAppKey(appKey);
