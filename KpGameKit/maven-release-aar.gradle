@@ -5,11 +5,14 @@ apply plugin: 'maven-publish'
 // 2.maven-信息
 ext {// ext is a gradle closure allowing the declaration of global properties
     PUBLISH_GROUP_ID = 'kptech.game.kit'
-    PUBLISH_ARTIFACT_ID = 'gamebox'
+    if (rootProject.ext.BAIDU_154){
+        PUBLISH_ARTIFACT_ID = 'gamebox-154'
+    }else {
+        PUBLISH_ARTIFACT_ID = 'gamebox'
+    }
     PUBLISH_PACKAGING = 'aar'
     PUBLISH_VERSION = android.defaultConfig.versionName
 }
-
 
 // 3.maven-路径
 uploadArchives {
@@ -17,12 +20,12 @@ uploadArchives {
         //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
         //注意”file://“ + 路径，有三个斜杠，别漏了
 //        repository(url: "file:///Users/zhangqinglou/work/maven")
-        repository(url: "file:///C:/Users/zys/work/maven")
+//        repository(url: "file:///C:/Users/zys/work/maven")
         //远程仓库的地址
-//        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
-//            //nexus登录的用户名和密码
-//            authentication(userName: "admin", password: "kpmvn!#%246")
-//        }
+        repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
+            //nexus登录的用户名和密码
+            authentication(userName: "admin", password: "kpmvn!#%246")
+        }
         pom.project {
             groupId project.PUBLISH_GROUP_ID
             artifactId project.PUBLISH_ARTIFACT_ID

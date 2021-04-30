@@ -18,25 +18,4 @@
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-
-#修改混淆时的包名，解决a.a.a与其它包冲突的问题
--obfuscationdictionary fname.txt
--classobfuscationdictionary fname.txt
--packageobfuscationdictionary fname.txt
-
--keepattributes SourceFile,LineNumberTable,Signature
--keepclasseswithmembernames class * {
-    native <methods>;
-}
--keep class com.alibaba.fastjson.** { *; }
--keep class com.redfinger.playsdk.fragment.**{*;}
--keep class com.redfinger.playsdk.widget.**{*;}
--keep class com.gc.redfinger.** { *; }
-
--keep class kptech.cloud.kit.msg.** { *; }
--keep class kptech.game.kit.** { *; }
--keep class com.mci.play.** { *; }
-
-#-keep class com.mci.play.** { *; }
-#-keep class com.yd.yunapp.** { *; }
-#-keep class com.bun.miitmdid.core.** {*;}
+#-renamesourcefileattribute SourceFile

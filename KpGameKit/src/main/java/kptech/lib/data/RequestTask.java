@@ -27,7 +27,8 @@ public class RequestTask {
             StringBuilder sb = new StringBuilder();
             sb.append(str);
             sb.append("?version=" + BuildConfig.VERSION_NAME);
-//            sb.append("&pageSize="+limit);
+            sb.append("&page="+page);
+            sb.append("&pageSize="+limit);
             URL url = new URL(sb.toString());
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("GET");//post 请求

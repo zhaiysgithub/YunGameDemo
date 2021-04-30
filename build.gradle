@@ -25,8 +25,8 @@ allprojects {
         maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
 
         //本地maven库
-//        maven { url uri("file:///Users/zhangqinglou/work/maven") }
-        maven { url uri("file:///C:/Users/zys/work/maven") }
+        maven { url uri("file:///Users/zhangqinglou/work/maven") }
+//        maven { url uri("file:///C:/Users/zys/work/maven") }
 
         //快盘maven库
 //        maven {
@@ -37,6 +37,11 @@ allprojects {
             url "https://maven.kuaipantech.com/repository/maven-releases/"
         }
 
+    }
+
+    ext {
+        //百度旧版本
+        BAIDU_154 = false
     }
 }
 
