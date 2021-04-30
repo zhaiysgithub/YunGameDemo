@@ -6,6 +6,7 @@
         <item>测试135分组 2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>测试快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>测试网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
+        <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
     </string-array>
 
     <string-array name="debug_corpkey_values">
@@ -14,6 +15,7 @@
         <item>2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
+        <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
     </string-array>
 
     <!-- Reply Preference -->
@@ -23,6 +25,7 @@
         <item>135分组 2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
+        <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
     </string-array>
 
     <string-array name="release_corpkey_values">
@@ -31,5 +34,6 @@
         <item>2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
+        <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
     </string-array>
 </resources>
