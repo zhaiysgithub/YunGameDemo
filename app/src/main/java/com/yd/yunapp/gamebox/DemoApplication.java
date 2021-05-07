@@ -46,7 +46,7 @@ public class DemoApplication extends Application {
 //        GameBox.init(this, "2OQCrVnJuES1AVO-ac995a9fef8adcdb");
 
         //debug,发布版本时要关闭
-        GameBoxManager.setDebug(true);
+        GameBoxManager.setDebug(BuildConfig.DEBUG);
         // 配置ak sk 渠道
 //        GameBoxManager.setAppInfo(YOUR_AK, YOUR_SK, YOUR_CHANNEL);
 //        GameBoxManager.getInstance(this).init(this,null,null);

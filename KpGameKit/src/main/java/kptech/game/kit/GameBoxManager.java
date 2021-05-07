@@ -57,7 +57,7 @@ public class GameBoxManager {
         mDebug = debug;
 
         //Logger
-        if (debug){
+        if (!debug){
             Logger.setLevel(Logger.LEVEL_INFO);
         }
 
