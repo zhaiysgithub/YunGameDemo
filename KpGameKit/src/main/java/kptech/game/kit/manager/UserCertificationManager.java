@@ -67,15 +67,15 @@ public class UserCertificationManager {
         return shouldLoginAuth(context,pkgName,null);
     }
 
-    public boolean shouldLoginAuth(Application context, String pkgName,String uninqueId) {
+    public boolean shouldLoginAuth(Application context, String pkgName, String uninqueId) {
         Map<String, Object> cacheDataMap = getCacheData(context, pkgName);
-        if (uninqueId != null && uninqueId.length() > 0){
+        if (uninqueId != null && uninqueId.length() > 0) {
             //联运账号判断
             String cacheUninqueId = cacheDataMap.containsKey("uninqueId") ? cacheDataMap.get("uninqueId").toString() : "";
             return !cacheUninqueId.equals(uninqueId);
-        }else{
+        } else {
             String guid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
-            if (guid == null || guid.isEmpty()){
+            if (guid == null || guid.isEmpty()) {
                 return true;
             }
             String token = cacheDataMap.containsKey("token") ? cacheDataMap.get("token").toString() : "";
@@ -84,11 +84,21 @@ public class UserCertificationManager {
     }
 
     /**
+     * 联运游戏
      * 开始执行游戏认证
      */
     public void startAuthLoginGame(final Context context, final String pkgName,
                                    String userName, String userIdCardNum, String userPhone,
                                    @NonNull final UserCertificationCallback callback) {
+        startAuthLoginGame(context, pkgName, userName, userIdCardNum, userPhone, "",callback);
+    }
+
+    /**
+     * 开始执行游戏认证
+     */
+    public void startAuthLoginGame(final Context context, final String pkgName,
+                                   String userName, String userIdCardNum, String userPhone,
+                                   final String uninqueId, @NonNull final UserCertificationCallback callback) {
         if (FastRepeatClickManager.getInstance().isFastDoubleClick() || context == null) {
             return;
         }
@@ -126,6 +136,9 @@ public class UserCertificationManager {
                                         Object at = map.get("access_token");
                                         map.put("token", at);
                                         map.remove("access_token");
+                                    }
+                                    if (uninqueId != null && uninqueId.length() > 0){
+                                        map.put("uninqueId",uninqueId);
                                     }
                                     Gson gson = createGson();
                                     String jsonStr = gson.toJson(map);

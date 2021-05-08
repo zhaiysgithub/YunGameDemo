@@ -187,7 +187,9 @@ public class MsgHandler extends Handler {
                     map.put("token", at);
                     map.remove("access_token");
                 }
-                map.put("uninqueId",uninqueId);
+                if (uninqueId != null && uninqueId.length() > 0){
+                    map.put("uninqueId",uninqueId);
+                }
                 JSONObject obj = new JSONObject(map);
                 ProferencesUtils.setString(mActivity, getCacheKey(), obj.toString());
             }
