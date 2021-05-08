@@ -2,10 +2,8 @@ package com.yd.yunapp.gamebox;
 
 import android.app.Application;
 
-import com.kuaipan.game.demo.BuildConfig;
 import com.yd.yunapp.gamebox.permission.PermissionHandler;
 
-import org.xutils.x;
 
 import kptech.game.kit.GameBoxManager;
 

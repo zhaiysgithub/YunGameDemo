@@ -5,8 +5,8 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
 //        applicationId "com.lixg.hcalendar"
-//        applicationId "com.zmeng.newspaper"
-        applicationId "com.netease.cloudmusic"
+        applicationId "com.zmeng.newspaper"
+//        applicationId "com.netease.cloudmusic"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 3
@@ -75,9 +75,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'androidx.preference:preference:1.1.1'
 
-//    implementation project(path: ':KpGameKit')
+    implementation project(path: ':KpGameKit')
 //    implementation (name:'KpGameKit-release-v2.1.0.12',ext:'aar')
-    implementation ('kptech.game.kit:gamebox-154:1.2.1.1')
+//    implementation ('kptech.game.kit:gamebox-154:1.2.1.1')
 
 //    implementation 'com.google.code.gson:gson:2.8.6'
 //    implementation 'com.squareup.picasso:picasso:2.5.2'

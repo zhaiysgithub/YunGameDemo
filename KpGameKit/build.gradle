@@ -42,10 +42,10 @@ android {
 dependencies {
     //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'org.xutils:xutils:3.3.36'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    api 'androidx.recyclerview:recyclerview:1.1.0'
+    api 'com.squareup.picasso:picasso:2.5.2'
+    api 'org.xutils:xutils:3.3.36'
+    api 'com.google.code.gson:gson:2.8.6'
 
     //云通讯SDK
     implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')

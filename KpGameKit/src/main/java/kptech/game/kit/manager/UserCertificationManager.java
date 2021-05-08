@@ -127,6 +127,7 @@ public class UserCertificationManager {
                                         map.put("token", at);
                                         map.remove("access_token");
                                     }
+
                                     Gson gson = createGson();
                                     String jsonStr = gson.toJson(map);
                                     ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
