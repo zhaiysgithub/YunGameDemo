@@ -39,6 +39,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     public static final String ACTION_PAY_ORDER = "7";
     public static final String ACTION_LOGIN_CHANNEL_UUID = "8";
     public static final String ACTION_AUTH_CHANNEL_UUID = "9";
+    //三方认证登录
+    public static final String ACTION_AUTH_THIRD_USER = "10";
 
     public static final String SENDSMS_TYPE_PHONELOGIN = "4";
     public static final String SENDSMS_TYPE_REGIST = "1";
@@ -91,6 +93,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             ret = doLoginChannel(params);
         }else if (mAction == ACTION_AUTH_CHANNEL_UUID){
             ret = doAuthChannelUser(params);
+        }else if (mAction.equals(ACTION_AUTH_THIRD_USER)){
+            ret = doLoginAuthByThird(params);
         }
         return ret;
     }
@@ -190,12 +194,33 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         return request(p);
     }
 
+    /**
+     * 三方登录认证的接口
+     */
+    private Map<String,Object> doLoginAuthByThird(Object... params){
+        Map<String,Object> map = new HashMap<>();
+        if (params.length < 3){
+            return map;
+        }
+        map.put("func", "thirduser");
+        map.put("corpkey", mCorpKey);
+        map.put("deviceid", mDeviceId);
+        map.put("idnum", params[0]);
+        map.put("username", params[1]);
+        map.put("phone", params[2]);
+        return request(map,Urls.HTTP_URL_CLIENTUSER);
+    }
+
+    private Map<String,Object> request(Map<String, Object> params){
+        return request(params,Urls.HTTP_URL);
+    }
+
     //获取扩展配置信息
-    private Map request(Map<String, Object> params) {
+    private Map<String,Object> request(Map<String, Object> params,String sepcUrl) {
         Map<String,Object> ret = new HashMap<>();
 
         try {
-            URL url = new URL(Urls.HTTP_URL);
+            URL url = new URL(sepcUrl);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
             postConnection.setConnectTimeout(1000*10);

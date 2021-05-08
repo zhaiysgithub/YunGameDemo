@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,7 +49,9 @@ import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
+import kptech.game.kit.callback.UserCertificationCallback;
 import kptech.game.kit.env.Env;
+import kptech.game.kit.manager.UserCertificationManager;
 
 public class MainActivity extends AppCompatActivity {
     //测试appID
@@ -129,8 +132,57 @@ public class MainActivity extends AppCompatActivity {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
 
+        boolean shouldLoginAuth = UserCertificationManager.getInstance().shouldLoginAuth(getApplication(), game.pkgName);
+        if (shouldLoginAuth){
+            UserCertificationDialog mCertificationDialog = new UserCertificationDialog(MainActivity.this);
+            mCertificationDialog.setOnCallback(new UserCertificationDialog.OnUserCerificationCallbck() {
+                @Override
+                public void onUserCancel() {
+                    toggleSoftInput();
+                }
+
+                @Override
+                public void onUserConfirm(String userName, String userIdCard, String userPhone) {
+                    startUserAuth(userName,userIdCard,userPhone,game,params);
+                    toggleSoftInput();
+                }
+            });
+            mCertificationDialog.show();
+            mHandler.postDelayed(this::toggleSoftInput,200);
+        }else{
+            GameBox.getInstance().playGame(MainActivity.this, game, params);
+        }
+
         //启动游戏
-        GameBox.getInstance().playGame(MainActivity.this, game, params);
+//        GameBox.getInstance().playGame(MainActivity.this, game, params);
+    }
+
+    private void startUserAuth(String userName, String userIdCard,String userPhone, GameInfo gameInfo,Params params){
+        try {
+//            String userName = "丁文杰";
+//            String userIdCard = "340203198007129355";
+//            String userPhone = "15711485499";
+            UserCertificationManager.getInstance().startAuthLoginGame(getApplication(), gameInfo.pkgName
+                    , userName, userIdCard, userPhone, new UserCertificationCallback() {
+                        @Override
+                        public void onCerSuccess() {
+                            if (!MainActivity.this.isFinishing()){
+                                Toast.makeText(getApplication(),"认证成功",Toast.LENGTH_SHORT).show();
+                                GameBox.getInstance().playGame(MainActivity.this, gameInfo, params);
+                            }
+                        }
+
+                        @Override
+                        public void onCerError(String errorStr) {
+                            if (!MainActivity.this.isFinishing()){
+                                Toast.makeText(MainActivity.this,errorStr,Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -425,5 +477,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void toggleSoftInput(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 
 }

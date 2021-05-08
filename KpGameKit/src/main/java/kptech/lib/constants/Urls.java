@@ -17,6 +17,7 @@ public class Urls {
     public static final String URL_RECORD_SCREEN = "/kp/api/wss/type/screen";
 
     public static final String HTTP_URL = "https://wxapp.kuaipantech.com/h5demo/Toc/kpuser.php";
+    public static final String HTTP_URL_CLIENTUSER = "https://wxapp.kuaipantech.com/h5demo/Toc/clientuser.php";
     public static final String LOGIN_ARGMENT_URL = "https://rs.cdn.kuaipantech.com/kuaipandoc.php";
     public static final String DEFAULT_REFERER = "https://wxapp.kuaipantech.com";
     public static final String PAY_URL = "https://wxapp.kuaipantech.com/h5demo/Toc/androidpay/androidpay.php";
