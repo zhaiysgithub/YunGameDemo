@@ -1,6 +1,5 @@
 package kptech.game.kit.manager;
 
-import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -63,23 +62,38 @@ public class UserCertificationManager {
      * @return true 需要认证
      * false 不需要认证
      */
-    public boolean shouldLoginAuth(Application context, String pkgName){
-        return shouldLoginAuth(context,pkgName,null);
+    public boolean shouldLoginAuthByPhone(Context context, String pkgName, String phoneNum) {
+        return shouldLoginAuth(context, pkgName, phoneNum, "");
     }
 
-    public boolean shouldLoginAuth(Application context, String pkgName, String uninqueId) {
+    /**
+     * 通过 uninqueId 认证
+     *
+     */
+    public boolean shouldLoginAuthById(Context context, String pkgName, String uninqueId) {
+        return shouldLoginAuth(context, pkgName, "", uninqueId);
+    }
+
+    public boolean shouldLoginAuth(Context context, String pkgName, String phoneNum, String uninqueId) {
         Map<String, Object> cacheDataMap = getCacheData(context, pkgName);
-        if (uninqueId != null && uninqueId.length() > 0) {
-            //联运账号判断
-            String cacheUninqueId = cacheDataMap.containsKey("uninqueId") ? cacheDataMap.get("uninqueId").toString() : "";
-            return !cacheUninqueId.equals(uninqueId);
-        } else {
+
+        if (uninqueId.isEmpty()) {
+            String spPhone = cacheDataMap.containsKey("phone") ? cacheDataMap.get("phone").toString() : "";
+            if (spPhone == null || spPhone.isEmpty() || !spPhone.equals(phoneNum)) {
+                return true;
+            }
             String guid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
             if (guid == null || guid.isEmpty()) {
                 return true;
             }
             String token = cacheDataMap.containsKey("token") ? cacheDataMap.get("token").toString() : "";
             return token == null || token.isEmpty();
+
+        } else {
+
+            String cacheUninqueId = cacheDataMap.containsKey("uninqueId") ? cacheDataMap.get("uninqueId").toString() : "";
+            return !cacheUninqueId.equals(uninqueId);
+
         }
     }
 
@@ -90,14 +104,14 @@ public class UserCertificationManager {
     public void startAuthLoginGame(final Context context, final String pkgName,
                                    String userName, String userIdCardNum, String userPhone,
                                    @NonNull final UserCertificationCallback callback) {
-        startAuthLoginGame(context, pkgName, userName, userIdCardNum, userPhone, "",callback);
+        startAuthLoginGame(context, pkgName, userName, userIdCardNum, userPhone, "", callback);
     }
 
     /**
      * 开始执行游戏认证
      */
     public void startAuthLoginGame(final Context context, final String pkgName,
-                                   String userName, String userIdCardNum, String userPhone,
+                                   String userName, String userIdCardNum, final String userPhone,
                                    final String uninqueId, @NonNull final UserCertificationCallback callback) {
         if (FastRepeatClickManager.getInstance().isFastDoubleClick() || context == null) {
             return;
@@ -137,9 +151,11 @@ public class UserCertificationManager {
                                         map.put("token", at);
                                         map.remove("access_token");
                                     }
-
-                                    if (uninqueId != null && uninqueId.length() > 0){
-                                        map.put("uninqueId",uninqueId);
+                                    if (uninqueId != null && uninqueId.length() > 0) {
+                                        map.put("uninqueId", uninqueId);
+                                    }
+                                    if (userPhone != null && userPhone.length() > 0) {
+                                        map.put("phone", userPhone);
                                     }
                                     Gson gson = createGson();
                                     String jsonStr = gson.toJson(map);
@@ -157,7 +173,7 @@ public class UserCertificationManager {
     }
 
 
-    private Map<String, Object> getCacheData(Application context, String pkgName) {
+    private Map<String, Object> getCacheData(Context context, String pkgName) {
 
         Map<String, Object> map = new HashMap<>();
         String cacheKey = getSPCacheKey(pkgName);
