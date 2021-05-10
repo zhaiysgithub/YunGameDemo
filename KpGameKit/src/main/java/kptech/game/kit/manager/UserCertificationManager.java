@@ -164,7 +164,7 @@ public class UserCertificationManager {
                                 }
 
                             }
-                        }).execute(userIdCardNum, userName, userPhone);
+                        }).execute(userIdCardNum, userName, userPhone, pkgName);
             } catch (Exception e) {
                 e.printStackTrace();
                 callback.onCerError(e.getMessage());
