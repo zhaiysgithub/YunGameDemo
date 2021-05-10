@@ -74,6 +74,7 @@ public class UserCertificationDialog extends Dialog {
         mEtUserPhone = findViewById(R.id.etUserPhone);
         mTvCancel = findViewById(R.id.tvCancel);
         mTvConfirm = findViewById(R.id.tvConfirm);
+        mEtUserName.requestFocus();
     }
 
 

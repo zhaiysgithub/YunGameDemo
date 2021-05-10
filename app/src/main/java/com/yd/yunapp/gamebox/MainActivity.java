@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
 
-        boolean shouldLoginAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(getApplication(), "15711485499",game.pkgName);
+        boolean shouldLoginAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(getApplication(),game.pkgName, "15711485499");
         if (shouldLoginAuth){
             UserCertificationDialog mCertificationDialog = new UserCertificationDialog(MainActivity.this);
             mCertificationDialog.setOnCallback(new UserCertificationDialog.OnUserCerificationCallbck() {

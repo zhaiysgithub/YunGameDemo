@@ -199,7 +199,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
      */
     private Map<String,Object> doLoginAuthByThird(Object... params){
         Map<String,Object> map = new HashMap<>();
-        if (params.length < 3){
+        if (params.length < 4){
             return map;
         }
         map.put("func", "thirduser");
@@ -208,6 +208,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         map.put("idnum", params[0]);
         map.put("username", params[1]);
         map.put("phone", params[2]);
+        map.put("package",params[3]);
         return request(map,Urls.HTTP_URL_CLIENTUSER);
     }
 
