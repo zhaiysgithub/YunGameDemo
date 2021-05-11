@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             public void onUserConfirm(String userPhone) {
                 GameBox.getInstance().startLogin(MainActivity.this, game, userPhone, new OnAuthCallback() {
                     @Override
-                    public void onCerSuccess() {
+                    public void onCerSuccess(String gid) {
                         mCertificationDialog.dismiss();
                         Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
                     }
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
         GameBox.getInstance().startCertification(MainActivity.this, userName, userIdCard, userPhone, gameInfo, new OnAuthCallback() {
             @Override
-            public void onCerSuccess() {
+            public void onCerSuccess(String gid) {
                 Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
             }
 

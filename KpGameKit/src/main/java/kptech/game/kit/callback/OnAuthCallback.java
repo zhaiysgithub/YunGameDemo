@@ -7,8 +7,9 @@ public interface OnAuthCallback {
 
     /**
      * 用户认证成功
+     * @param gid 用户id
      */
-    void onCerSuccess();
+    void onCerSuccess(String gid);
 
     /**
      * 用户认证失败

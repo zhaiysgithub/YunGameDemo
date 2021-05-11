@@ -141,6 +141,12 @@ public class EventCode {
     public static final String DATA_USER_LOGINUSIGN_SUCCESSREG = "DATA_USER_LOGINUSIGN_SUCCESSREG";
     public static final String DATA_USER_LOGINUSIGN_FAILED = "DATA_USER_LOGINUSIGN_FAILED";
 
+    //三方实名认证账户登录
+    public static final String DATA_REALNAME_AUTH_START = "DATA_REALNAME_AUTH_START";
+    public static final String DATA_REALNAME_AUTH_SUCCESS = "DATA_REALNAME_AUTH_SUCCESS";
+    public static final String DATA_REALNAME_AUTH_FAILED = "DATA_REALNAME_AUTH_FAILED";
+    public static final String DATA_REALNAME_AUTH_ENTER = "DATA_REALNAME_AUTH_ENTER";
+
     //支付生成订单
     public static final String DATA_PAY_MAKETRADE_START = "DATA_PAY_MAKETRADE_START";
     public static final String DATA_PAY_MAKETRADE_SUCCESS = "DATA_PAY_MAKETRADE_SUCCESS";
