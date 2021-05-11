@@ -12,8 +12,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBoxManager;
-import kptech.game.kit.callback.UserCertificationCallback;
+import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.lib.constants.SharedKeys;
@@ -30,6 +31,7 @@ public class UserCertificationManager {
     private static final String ERRORN_USERID_MSG = "请输入正确的身份证信息";
     private static final String ERRORN_PHONENUM_MSG = "请输入正确的手机号";
     private static final String ERRORN_DEFAULT = "登录失败";
+    private static final String ERRORN_NOT_AUTH = "该用户未认证";
 
     private Gson mGson;
 
@@ -103,7 +105,7 @@ public class UserCertificationManager {
      */
     public void startAuthLoginGame(final Context context, final String pkgName,
                                    String userName, String userIdCardNum, String userPhone,
-                                   @NonNull final UserCertificationCallback callback) {
+                                   @NonNull final OnAuthCallback callback) {
         startAuthLoginGame(context, pkgName, userName, userIdCardNum, userPhone, "", callback);
     }
 
@@ -112,21 +114,17 @@ public class UserCertificationManager {
      */
     public void startAuthLoginGame(final Context context, final String pkgName,
                                    String userName, String userIdCardNum, final String userPhone,
-                                   final String uninqueId, @NonNull final UserCertificationCallback callback) {
+                                   final String uninqueId, @NonNull final OnAuthCallback callback) {
         if (FastRepeatClickManager.getInstance().isFastDoubleClick() || context == null) {
             return;
         }
         String cropKey = GameBoxManager.mCorpID;
         if (cropKey.isEmpty()) {
-            callback.onCerError(ERROR_SET_CROPKEY);
+            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERROR_SET_CROPKEY);
         } else if (pkgName == null || pkgName.isEmpty()) {
-            callback.onCerError(ERROR_SET_PKGNAME);
-        } else if (userName == null || userName.isEmpty()) {
-            callback.onCerError(ERRORN_USERNAME_MSG);
+            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERROR_SET_PKGNAME);
         } else if (!AppUtils.phoneNumSimpleCheck(userPhone)) {
-            callback.onCerError(ERRORN_PHONENUM_MSG);
-        } else if (!AppUtils.userIdCardSimpleCheck(userIdCardNum)) {
-            callback.onCerError(ERRORN_USERID_MSG);
+            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERRORN_PHONENUM_MSG);
         } else {
             try {
                 // AccountTask 执行请求回调
@@ -137,13 +135,13 @@ public class UserCertificationManager {
                             @Override
                             public void onResult(Map<String, Object> map) {
                                 if (map == null || map.size() == 0) {
-                                    callback.onCerError(ERRORN_DEFAULT);
+                                    callback.onCerError(APIConstants.ERROR_AUTH_FAIL, ERRORN_DEFAULT);
                                 } else if (map.containsKey("error")) {
                                     String errorMsg = map.get("error").toString();
                                     if (errorMsg != null && !errorMsg.isEmpty() && !errorMsg.equals("null")) {
-                                        callback.onCerError(errorMsg);
+                                        callback.onCerError(APIConstants.ERROR_AUTH_FAIL, errorMsg);
                                     } else {
-                                        callback.onCerError(ERRORN_DEFAULT);
+                                        callback.onCerError(APIConstants.ERROR_AUTH_FAIL, ERRORN_DEFAULT);
                                     }
                                 } else {
                                     if (map.containsKey("access_token")) {
@@ -151,10 +149,21 @@ public class UserCertificationManager {
                                         map.put("token", at);
                                         map.remove("access_token");
                                     }
+                                    if (map.containsKey("guid") && map.containsKey("token")){
+                                        String guidValue = (String) map.get("guid");
+                                        String tokenValue = (String) map.get("token");
+                                        if (guidValue == null || guidValue.isEmpty() || tokenValue == null || tokenValue.isEmpty()){
+                                            callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
+                                            return;
+                                        }
+                                    }else{
+                                        callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
+                                        return;
+                                    }
                                     if (uninqueId != null && uninqueId.length() > 0) {
                                         map.put("uninqueId", uninqueId);
                                     }
-                                    if (userPhone != null && userPhone.length() > 0) {
+                                    if (userPhone.length() > 0) {
                                         map.put("phone", userPhone);
                                     }
                                     Gson gson = createGson();
@@ -167,7 +176,7 @@ public class UserCertificationManager {
                         }).execute(userIdCardNum, userName, userPhone, pkgName);
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onCerError(e.getMessage());
+                callback.onCerError(APIConstants.ERROR_AUTH_FAIL, e.getMessage());
             }
         }
     }

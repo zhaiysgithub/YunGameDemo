@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -21,10 +22,12 @@ public class UserCertificationDialog extends Dialog {
     private TextInputEditText mEtUserPhone;
     private TextView mTvCancel;
     private TextView mTvConfirm;
+    private boolean isInputPhone;
     private OnUserCerificationCallbck mCallback;
 
-    public UserCertificationDialog(@NonNull Context context) {
+    public UserCertificationDialog(@NonNull Context context,boolean inputPhoneNum) {
         super(context,R.style.UserDialog);
+        this.isInputPhone = inputPhoneNum;
     }
 
     public void setOnCallback(OnUserCerificationCallbck callback){
@@ -45,6 +48,15 @@ public class UserCertificationDialog extends Dialog {
         initEvent();
     }
 
+    public void setInputPhone(boolean isInputPhone){
+        this.isInputPhone = isInputPhone;
+        if (!isInputPhone){
+            mEtUserName.setVisibility(View.VISIBLE);
+            mEtUserIdCard.setVisibility(View.VISIBLE);
+            mEtUserName.requestFocus();
+        }
+    }
+
     private void initEvent() {
         mTvCancel.setOnClickListener(v -> {
             dismiss();
@@ -54,16 +66,28 @@ public class UserCertificationDialog extends Dialog {
         });
 
         mTvConfirm.setOnClickListener(v -> {
-            String userName = Objects.requireNonNull(mEtUserName.getText()).toString().trim();
-            String userIdCard = Objects.requireNonNull(mEtUserIdCard.getText()).toString().trim();
-            String userPhone = Objects.requireNonNull(mEtUserPhone.getText()).toString().trim();
-            if (userName.isEmpty() || userIdCard.isEmpty() || userPhone.isEmpty()){
-                return;
+            if (isInputPhone) {
+                String userPhone = Objects.requireNonNull(mEtUserPhone.getText()).toString().trim();
+                if (userPhone.isEmpty()) {
+                    return;
+                }
+                if (mCallback != null) {
+                    mEtUserPhone.setText("");
+                    mCallback.onUserConfirm(userPhone);
+                }
+            } else {
+                String userName = Objects.requireNonNull(mEtUserName.getText()).toString().trim();
+                String userIdCard = Objects.requireNonNull(mEtUserIdCard.getText()).toString().trim();
+                String userPhone = Objects.requireNonNull(mEtUserPhone.getText()).toString().trim();
+                if (userName.isEmpty() || userIdCard.isEmpty() || userPhone.isEmpty()) {
+                    return;
+                }
+                dismiss();
+                if (mCallback != null) {
+                    mCallback.onUserConfirm(userName, userIdCard, userPhone);
+                }
             }
-            dismiss();
-            if (mCallback != null){
-                mCallback.onUserConfirm(userName,userIdCard,userPhone);
-            }
+
         });
 
     }
@@ -74,7 +98,15 @@ public class UserCertificationDialog extends Dialog {
         mEtUserPhone = findViewById(R.id.etUserPhone);
         mTvCancel = findViewById(R.id.tvCancel);
         mTvConfirm = findViewById(R.id.tvConfirm);
-        mEtUserName.requestFocus();
+        if (isInputPhone) {
+            mEtUserName.setVisibility(View.GONE);
+            mEtUserIdCard.setVisibility(View.GONE);
+            mEtUserPhone.requestFocus();
+        } else {
+            mEtUserName.setVisibility(View.VISIBLE);
+            mEtUserIdCard.setVisibility(View.VISIBLE);
+            mEtUserName.requestFocus();
+        }
     }
 
 
@@ -84,5 +116,7 @@ public class UserCertificationDialog extends Dialog {
         void onUserCancel();
 
         void onUserConfirm(String userName,String userIdCard,String userPhone);
+
+        void onUserConfirm(String userPhone);
     }
 }

@@ -3,12 +3,13 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 
 
 import kptech.game.kit.activity.GamePlay;
+import kptech.game.kit.callback.OnAuthCallback;
+import kptech.game.kit.manager.UserCertificationManager;
 import kptech.game.kit.utils.Logger;
 
 public class GameBox {
@@ -75,4 +76,63 @@ public class GameBox {
         activity.startActivity(intent);
     }
 
+    /**
+     * 开始用户游戏登录
+     * @param context Activity 对象
+     * @param gameInfo GameInfo 对象
+     * @param phoneNum 手机号
+     * @param callback 回调
+     */
+    public void startLogin(final Activity context, final GameInfo gameInfo, String phoneNum, final OnAuthCallback callback){
+
+        if (callback == null){
+            return;
+        }
+        boolean shouldAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(context, gameInfo.pkgName, phoneNum);
+        if (shouldAuth){
+            startCertification(context, "", "", phoneNum, gameInfo, new OnAuthCallback() {
+                @Override
+                public void onCerSuccess() {
+                    callback.onCerSuccess();
+                    playGame(context, gameInfo);
+                }
+
+                @Override
+                public void onCerError(int code, String errorStr) {
+                    callback.onCerError(code, errorStr);
+                }
+            });
+        } else {
+            playGame(context, gameInfo);
+        }
+    }
+
+    /**
+     * 开始执行认证
+     * @param context Activity 对象
+     * @param userName 用户姓名
+     * @param userIdCard 用户身份信息
+     * @param userPhone 用户手机号
+     * @param gameInfo 游戏信息
+     */
+    public void startCertification(final Activity context, String userName, String userIdCard, String userPhone,
+                                   final GameInfo gameInfo, final OnAuthCallback callback){
+        if(callback == null){
+            return;
+        }
+        UserCertificationManager.getInstance().startAuthLoginGame(context, gameInfo.pkgName
+                , userName, userIdCard, userPhone, new OnAuthCallback() {
+                    @Override
+                    public void onCerSuccess() {
+
+                        callback.onCerSuccess();
+                        GameBox.getInstance().playGame(context, gameInfo);
+                    }
+
+                    @Override
+                    public void onCerError(int erroCode , String errorStr) {
+                        callback.onCerError(erroCode, errorStr);
+                    }
+                });
+    }
 }
