@@ -34,6 +34,13 @@ public class APIConstants {
     //云手机数据恢复中
     public static final int RECOVER_DATA_LOADING = 11003;
 
+    //用户认证参数错误 code
+    public static final int ERROR_AUTH_PARAMS = 12000;
+    //用户未认证的 code
+    public static final int PHONE_NOT_AUTH = 12001;
+    //用户认证失败的 code
+    public static final int ERROR_AUTH_FAIL = 12002;
+
     public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = "GRADE_LEVEL_ORDINARY";
     public static final String DEVICE_VIDEO_QUALITY_HS = "GRADE_LEVEL_HS";

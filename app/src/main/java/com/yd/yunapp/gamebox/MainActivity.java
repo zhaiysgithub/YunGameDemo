@@ -44,14 +44,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.callback.UserCertificationCallback;
+import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.env.Env;
-import kptech.game.kit.manager.UserCertificationManager;
 
 public class MainActivity extends AppCompatActivity {
     //测试appID
@@ -63,20 +63,21 @@ public class MainActivity extends AppCompatActivity {
     GameAdapter mGameAdapter;
     private EditText mGidText;
     private EditText mPkgText;
-//    boolean enableAd = false;
+    //    boolean enableAd = false;
+    private UserCertificationDialog mCertificationDialog;
 
 
     SharedPreferences mSp = null;
 
-    public void startGame(View v){
+    public void startGame(View v) {
         GameInfo info = new GameInfo();
         int gid = 0;
         try {
             String gidTest = mGidText.getText().toString();
             gid = Integer.parseInt(gidTest);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
-        if (gid == 0){
+        if (gid == 0) {
             Toast.makeText(this, "gid错误", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -89,100 +90,110 @@ public class MainActivity extends AppCompatActivity {
         runGame(info);
     }
 
-    public void runGame(GameInfo game){
+    public void runGame(GameInfo game) {
         Params params = new Params();
 
         boolean enableAuth = mSp.getBoolean("enableAuth", false);
         String unionId = mSp.getString("unionId", null);
 
-        if (enableAuth && unionId != null){
+        if (enableAuth && unionId != null) {
             params.put(ParamKey.GAME_AUTH_UNION_UUID, "test_" + unionId);
         }
 
         String fontStr = mSp.getString("fontTimeout", null);
-        if (fontStr!=null){
+        if (fontStr != null) {
             try {
                 int fontTimeout = Integer.parseInt(fontStr);
 
-                if (fontTimeout > 0){
+                if (fontTimeout > 0) {
                     params.put(ParamKey.GAME_OPT_TIMEOUT_FONT, fontTimeout);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         String backStr = mSp.getString("backTimeout", null);
-        if (backStr!=null){
+        if (backStr != null) {
             try {
                 int backTimeout = Integer.parseInt(backStr);
                 if (backTimeout > 0) {
                     params.put(ParamKey.GAME_OPT_TIMEOUT_BACK, backTimeout);
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         boolean enableAd = mSp.getBoolean("enableAd", false);
-        if (enableAd){
+        if (enableAd) {
             game.showAd = GameInfo.GAME_AD_SHOW_ON;
-        }else {
+        } else {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
 
-        boolean shouldLoginAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(getApplication(),game.pkgName, "15711485499");
-        if (shouldLoginAuth){
-            UserCertificationDialog mCertificationDialog = new UserCertificationDialog(MainActivity.this);
-            mCertificationDialog.setOnCallback(new UserCertificationDialog.OnUserCerificationCallbck() {
-                @Override
-                public void onUserCancel() {
-                    toggleSoftInput();
-                }
 
-                @Override
-                public void onUserConfirm(String userName, String userIdCard, String userPhone) {
-                    startUserAuth(userName,userIdCard,userPhone,game,params);
-                    toggleSoftInput();
-                }
-            });
-            mCertificationDialog.show();
-            mHandler.postDelayed(this::toggleSoftInput,200);
-        }else{
-            GameBox.getInstance().playGame(MainActivity.this, game, params);
-        }
+        //弹出输入手机号框
+        mCertificationDialog = new UserCertificationDialog(MainActivity.this, true);
+
+        mCertificationDialog.setOnCallback(new UserCertificationDialog.OnUserCerificationCallbck() {
+            @Override
+            public void onUserCancel() {
+                toggleSoftInput();
+            }
+
+            @Override
+            public void onUserConfirm(String userName, String userIdCard, String userPhone) {
+                startUserAuth(userName, userIdCard, userPhone, game, params);
+                toggleSoftInput();
+            }
+
+            @Override
+            public void onUserConfirm(String userPhone) {
+                GameBox.getInstance().startLogin(MainActivity.this, game, userPhone, new OnAuthCallback() {
+                    @Override
+                    public void onCerSuccess() {
+                        mCertificationDialog.dismiss();
+                        Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onCerError(int code, String errorStr) {
+                        if (code == APIConstants.PHONE_NOT_AUTH){
+                            mCertificationDialog.setInputPhone(false);
+                        }else{
+                            Toast.makeText(MainActivity.this, errorStr, Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+            }
+        });
+
+        mCertificationDialog.show();
+        mHandler.postDelayed(this::toggleSoftInput, 200);
 
         //启动游戏
 //        GameBox.getInstance().playGame(MainActivity.this, game, params);
     }
 
-    private void startUserAuth(String userName, String userIdCard,String userPhone, GameInfo gameInfo,Params params){
-        try {
-//            String userName = "丁文杰";
-//            String userIdCard = "340203198007129355";
-//            String userPhone = "15711485499";
-            UserCertificationManager.getInstance().startAuthLoginGame(getApplication(), gameInfo.pkgName
-                    , userName, userIdCard, userPhone, new UserCertificationCallback() {
-                        @Override
-                        public void onCerSuccess() {
-                            if (!MainActivity.this.isFinishing()){
-                                Toast.makeText(getApplication(),"认证成功",Toast.LENGTH_SHORT).show();
-                                GameBox.getInstance().playGame(MainActivity.this, gameInfo, params);
-                            }
-                        }
+    private void startUserAuth(String userName, String userIdCard, String userPhone, GameInfo gameInfo, Params params) {
+//        String userName = "丁文杰";
+//        String userIdCard = "340203198007129355";
+//        String userPhone = "15711485499";
 
-                        @Override
-                        public void onCerError(String errorStr) {
-                            if (!MainActivity.this.isFinishing()){
-                                Toast.makeText(MainActivity.this,errorStr,Toast.LENGTH_SHORT).show();
-                            }
+        GameBox.getInstance().startCertification(MainActivity.this, userName, userIdCard, userPhone, gameInfo, new OnAuthCallback() {
+            @Override
+            public void onCerSuccess() {
+                Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
+            }
 
-                        }
-                    });
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+            @Override
+            public void onCerError(int code, String errorStr) {
+                Toast.makeText(MainActivity.this, errorStr, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -202,11 +213,11 @@ public class MainActivity extends AppCompatActivity {
         APP_ID = mSp.getString("corpKey", null);
 
         TextView coprKey = findViewById(R.id.corpkey);
-        if (APP_ID == null){
+        if (APP_ID == null) {
             coprKey.setText("请配置CorpKey");
             coprKey.setTextColor(Color.RED);
-        }else {
-            coprKey.setText((Env.isTestEnv() ? "测试环境":"正式环境") + "\n CorpKey: " + APP_ID);
+        } else {
+            coprKey.setText((Env.isTestEnv() ? "测试环境" : "正式环境") + "\n CorpKey: " + APP_ID);
         }
 
         //打印log信息，正式版本需要关闭
@@ -245,21 +256,21 @@ public class MainActivity extends AppCompatActivity {
 //
 //        };
 
-        IntentFilter filter =new  IntentFilter();
+        IntentFilter filter = new IntentFilter();
         filter.addAction("KpTech_Game_Kit_DownLoad_Start_Action");
         filter.addAction("KpTech_Game_Kit_DownLoad_Stop_Action");
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Start_Action")){
+                if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Start_Action")) {
                     final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
-                    new Thread(){
+                    new Thread() {
                         @Override
                         public void run() {
                             download(gameInfo.downloadUrl, gameInfo);
                         }
                     }.start();
-                }else  if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Stop_Action")){
+                } else if (intent.getAction().equals("KpTech_Game_Kit_DownLoad_Stop_Action")) {
 //                    final GameInfo gameInfo = intent.getParcelableExtra("extra.game");
                     downloadStop();
                 }
@@ -280,15 +291,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 //        if (item.getItemId() == R.id.settings){
-            startActivityForResult(new Intent(this, SettingsActivity.class), 101);
+        startActivityForResult(new Intent(this, SettingsActivity.class), 101);
 //        }
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == 101 && resultCode == 102){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == 102) {
             finish();
             android.os.Process.killProcess(android.os.Process.myPid());
         }
@@ -298,16 +309,17 @@ public class MainActivity extends AppCompatActivity {
     private String mFilePath;
     //    private String mFileName;
     private boolean cancel = false;
+
     private void download(String url, final GameInfo game) {
         if (cancel) {
             return;
         }
         File dir = getExternalFilesDir("download");
-        if (!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdir();
         }
         String apkName = url.substring(url.lastIndexOf("/") + 1, url.length());
-        File file = new File(dir,apkName);
+        File file = new File(dir, apkName);
         mFilePath = file.getPath();
 
 
@@ -374,8 +386,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void downloadStop(){
-        if (cancelable!=null && !cancelable.isCancelled()){
+    private void downloadStop() {
+        if (cancelable != null && !cancelable.isCancelled()) {
             cancelable.cancel();
         }
     }
@@ -477,9 +489,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void toggleSoftInput(){
+    private void toggleSoftInput() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
 }
