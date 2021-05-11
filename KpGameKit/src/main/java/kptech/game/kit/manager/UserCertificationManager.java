@@ -34,6 +34,7 @@ public class UserCertificationManager {
     private static final String ERRORN_NOT_AUTH = "该用户未认证";
 
     private Gson mGson;
+    private String guid;
 
     private UserCertificationManager() {
 
@@ -84,7 +85,7 @@ public class UserCertificationManager {
             if (spPhone == null || spPhone.isEmpty() || !spPhone.equals(phoneNum)) {
                 return true;
             }
-            String guid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
+            guid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
             if (guid == null || guid.isEmpty()) {
                 return true;
             }
@@ -149,8 +150,9 @@ public class UserCertificationManager {
                                         map.put("token", at);
                                         map.remove("access_token");
                                     }
+                                    String guidValue = "";
                                     if (map.containsKey("guid") && map.containsKey("token")){
-                                        String guidValue = (String) map.get("guid");
+                                        guidValue = (String) map.get("guid");
                                         String tokenValue = (String) map.get("token");
                                         if (guidValue == null || guidValue.isEmpty() || tokenValue == null || tokenValue.isEmpty()){
                                             callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
@@ -169,7 +171,7 @@ public class UserCertificationManager {
                                     Gson gson = createGson();
                                     String jsonStr = gson.toJson(map);
                                     ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
-                                    callback.onCerSuccess();
+                                    callback.onCerSuccess(guidValue);
                                 }
 
                             }
@@ -203,4 +205,7 @@ public class UserCertificationManager {
         return map;
     }
 
+    public String getGuid() {
+        return guid;
+    }
 }

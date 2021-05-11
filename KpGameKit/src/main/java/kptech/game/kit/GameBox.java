@@ -7,12 +7,18 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.xutils.x;
 
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.manager.UserCertificationManager;
 import kptech.game.kit.utils.Logger;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
 
 public class GameBox {
 //    private static final Logger logger = new Logger("GameBox") ;
@@ -92,12 +98,22 @@ public class GameBox {
         if (callback == null){
             return;
         }
+
+        try {
+            //统计事件初始化
+            Event.init(context.getApplication(), appKey);
+
+        }catch (Exception e){
+            Logger.error("GameBoxManager",e.getMessage());
+        }
+
         boolean shouldAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(context, gameInfo.pkgName, phoneNum);
         if (shouldAuth){
+
             startCertification(context, "", "", phoneNum, gameInfo, new OnAuthCallback() {
                 @Override
-                public void onCerSuccess() {
-                    callback.onCerSuccess();
+                public void onCerSuccess(String gid) {
+                    callback.onCerSuccess(gid);
                     playGame(context, gameInfo);
                 }
 
@@ -107,6 +123,13 @@ public class GameBox {
                 }
             });
         } else {
+            callback.onCerSuccess(UserCertificationManager.getInstance().getGuid());
+
+            Map<String,Object> map = new HashMap<>();
+            map.put("phone",phoneNum);
+            map.put("platform","realname_auth");
+            mobSendEvent(EventCode.DATA_REALNAME_AUTH_ENTER, gameInfo.pkgName, map);
+
             playGame(context, gameInfo);
         }
     }
@@ -119,24 +142,53 @@ public class GameBox {
      * @param userPhone 用户手机号
      * @param gameInfo 游戏信息
      */
-    public void startCertification(final Activity context, String userName, String userIdCard, String userPhone,
+    public void startCertification(final Activity context, String userName, String userIdCard, final String userPhone,
                                    final GameInfo gameInfo, final OnAuthCallback callback){
         if(callback == null){
             return;
         }
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("phone",userPhone);
+        mobSendEvent(EventCode.DATA_REALNAME_AUTH_START, gameInfo.pkgName, map);
+
         UserCertificationManager.getInstance().startAuthLoginGame(context, gameInfo.pkgName
                 , userName, userIdCard, userPhone, new OnAuthCallback() {
                     @Override
-                    public void onCerSuccess() {
+                    public void onCerSuccess(String gid) {
 
-                        callback.onCerSuccess();
-                        GameBox.getInstance().playGame(context, gameInfo);
+                        callback.onCerSuccess(gid);
+
+                        Map<String,Object> eventMap = new HashMap<>();
+                        eventMap.put("phone",userPhone);
+                        eventMap.put("guid",gid);
+                        eventMap.put("platform","realname_auth");
+                        mobSendEvent(EventCode.DATA_REALNAME_AUTH_SUCCESS, gameInfo.pkgName, eventMap);
+
+                        playGame(context, gameInfo);
                     }
 
                     @Override
                     public void onCerError(int erroCode , String errorStr) {
                         callback.onCerError(erroCode, errorStr);
+
+                        Map<String,Object> eventMap = new HashMap<>();
+                        eventMap.put("phone",userPhone);
+                        eventMap.put("errorcode",erroCode);
+                        mobSendEvent(EventCode.DATA_REALNAME_AUTH_FAILED, gameInfo.pkgName, eventMap);
                     }
                 });
+    }
+
+    /**
+     * 统计打点
+     */
+    private void mobSendEvent(String event, String gamePkgName, Map<String,Object> map){
+
+        try {
+            MobclickAgent.sendEvent(Event.getEvent(event, gamePkgName, map));
+        } catch (Exception e){
+            Logger.error("GameBox", e.getMessage());
+        }
     }
 }

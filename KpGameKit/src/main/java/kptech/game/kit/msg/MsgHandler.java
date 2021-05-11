@@ -133,6 +133,7 @@ public class MsgHandler extends Handler {
             Map<String, Object> loginData = getLoginData();
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
             String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
+            String platform = loginData.containsKey("platform") ? loginData.get("loginData").toString() : null;
             String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : "";
             String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
             boolean UninqueIdIsChanged = (gameUninqueId != null && !gameUninqueId.equals(cacheUninqueId));
@@ -147,7 +148,11 @@ public class MsgHandler extends Handler {
                     Event.setGuid(guid);
 
                     //发送打点事件
-                    Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_CACHE, mPkgName, mPadCode);
+                    Map<String,Object> eventMap = new HashMap<>();
+                    if (platform != null && !platform.isEmpty()){
+                        eventMap.put("platform",platform);
+                    }
+                    Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_CACHE, mPkgName, mPadCode,"",eventMap);
                     MobclickAgent.sendEvent(event);
                 }catch (Exception e){}
 
