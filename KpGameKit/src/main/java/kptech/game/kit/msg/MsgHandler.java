@@ -133,7 +133,7 @@ public class MsgHandler extends Handler {
             Map<String, Object> loginData = getLoginData();
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
             String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
-            String platform = loginData.containsKey("platform") ? loginData.get("loginData").toString() : null;
+            String platform = loginData.containsKey("platform") ? loginData.get("platform").toString() : null;
             String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : "";
             String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
             boolean UninqueIdIsChanged = (gameUninqueId != null && !gameUninqueId.equals(cacheUninqueId));
