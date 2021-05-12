@@ -29,13 +29,14 @@ public class XutilDownload {
         cancel = true;
     }
 
-    public void setFilePath(String filePath){
+    public void setFilePath(String filePath, String fileName){
         this.mFilePath = filePath;
+        this.mFileName = fileName;
     }
 
     public void setUrl(String url){
         this.mUrl = url;
-        this.mFileName = url.substring(url.lastIndexOf("/") + 1, url.length());
+//        this.mFileName = url.substring(url.lastIndexOf("/") + 1, url.length());
     }
 
     public void setHandler(Handler handler){

@@ -219,7 +219,8 @@ public class DownloadTask extends Service {
                 dir.mkdir();
             }
             String url = mGameInfo.downloadUrl;
-            String apkName = url.substring(url.lastIndexOf("/") + 1, url.length());
+//            String apkName = url.substring(url.lastIndexOf("/") + 1, url.length());
+            String apkName = System.currentTimeMillis() + ".apk";
             File file = new File(dir,apkName);
 
 
@@ -352,7 +353,7 @@ public class DownloadTask extends Service {
         }
 
         mXutilDownload = new XutilDownload();
-        mXutilDownload.setFilePath(mFilePath);
+        mXutilDownload.setFilePath(mFilePath,mFileName);
         mXutilDownload.setUrl(mDownUrl);
         mXutilDownload.setHandler(mDownloadHandler);
         mXutilDownload.start();
