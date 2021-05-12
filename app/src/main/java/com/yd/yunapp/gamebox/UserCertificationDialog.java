@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.kuaipan.game.demo.R;
 
 import java.util.Objects;
@@ -20,6 +21,7 @@ public class UserCertificationDialog extends Dialog {
     private TextInputEditText mEtUserName;
     private TextInputEditText mEtUserIdCard;
     private TextInputEditText mEtUserPhone;
+    private TextInputLayout mUserNameLayout,mUserIdCardLayout;
     private TextView mTvCancel;
     private TextView mTvConfirm;
     private boolean isInputPhone;
@@ -96,15 +98,17 @@ public class UserCertificationDialog extends Dialog {
         mEtUserName = findViewById(R.id.etUserName);
         mEtUserIdCard = findViewById(R.id.etUserIdCard);
         mEtUserPhone = findViewById(R.id.etUserPhone);
+        mUserNameLayout = findViewById(R.id.inputLayout_userName);
+        mUserIdCardLayout = findViewById(R.id.inputLayout_userIdCard);
         mTvCancel = findViewById(R.id.tvCancel);
         mTvConfirm = findViewById(R.id.tvConfirm);
         if (isInputPhone) {
-            mEtUserName.setVisibility(View.GONE);
-            mEtUserIdCard.setVisibility(View.GONE);
+            mUserNameLayout.setVisibility(View.GONE);
+            mUserIdCardLayout.setVisibility(View.GONE);
             mEtUserPhone.requestFocus();
         } else {
-            mEtUserName.setVisibility(View.VISIBLE);
-            mEtUserIdCard.setVisibility(View.VISIBLE);
+            mUserNameLayout.setVisibility(View.VISIBLE);
+            mUserIdCardLayout.setVisibility(View.VISIBLE);
             mEtUserName.requestFocus();
         }
     }

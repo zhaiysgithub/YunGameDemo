@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 3
-        versionName "1.0.13"
+        versionName "1.0.14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -84,7 +84,7 @@ dependencies {
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
 //
 //
-//    implementation 'org.xutils:xutils:3.3.36'
+    implementation 'org.xutils:xutils:3.3.36'
 
 //    implementation 'kptech.game.kit:gamead-netease:1.0.0.1'
 //    implementation 'kptech.game.kit:gamead-normal:1.0.0.1'

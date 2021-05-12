@@ -21,7 +21,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_userName"
         android:layout_below="@id/tvTitle"
-        android:layout_margin="10dp"
+        android:padding="6dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -38,7 +38,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_userIdCard"
         android:layout_below="@id/inputLayout_userName"
-        android:layout_margin="10dp"
+        android:padding="6dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -56,7 +56,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_userPhone"
         android:layout_below="@id/inputLayout_userIdCard"
-        android:layout_margin="10dp"
+        android:padding="6dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

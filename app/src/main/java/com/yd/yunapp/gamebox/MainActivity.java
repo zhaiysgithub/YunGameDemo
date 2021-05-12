@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.kuaipan.game.demo.BuildConfig;
 import com.kuaipan.game.demo.R;
+import com.yd.yunapp.gamebox.model.MainModel;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPkgText;
     //    boolean enableAd = false;
     private UserCertificationDialog mCertificationDialog;
+    private MainModel mainModel;
 
 
     SharedPreferences mSp = null;
@@ -133,67 +135,13 @@ public class MainActivity extends AppCompatActivity {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
 
-
-        //弹出输入手机号框
-        mCertificationDialog = new UserCertificationDialog(MainActivity.this, true);
-
-        mCertificationDialog.setOnCallback(new UserCertificationDialog.OnUserCerificationCallbck() {
-            @Override
-            public void onUserCancel() {
-                toggleSoftInput();
-            }
-
-            @Override
-            public void onUserConfirm(String userName, String userIdCard, String userPhone) {
-                startUserAuth(userName, userIdCard, userPhone, game, params);
-                toggleSoftInput();
-            }
-
-            @Override
-            public void onUserConfirm(String userPhone) {
-                GameBox.getInstance().startLogin(MainActivity.this, game, userPhone, new OnAuthCallback() {
-                    @Override
-                    public void onCerSuccess(String gid) {
-                        mCertificationDialog.dismiss();
-                        Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onCerError(int code, String errorStr) {
-                        if (code == APIConstants.PHONE_NOT_AUTH){
-                            mCertificationDialog.setInputPhone(false);
-                        }else{
-                            Toast.makeText(MainActivity.this, errorStr, Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });
-            }
-        });
-
-        mCertificationDialog.show();
-        mHandler.postDelayed(this::toggleSoftInput, 200);
-
-        //启动游戏
-//        GameBox.getInstance().playGame(MainActivity.this, game, params);
-    }
-
-    private void startUserAuth(String userName, String userIdCard, String userPhone, GameInfo gameInfo, Params params) {
-//        String userName = "丁文杰";
-//        String userIdCard = "340203198007129355";
-//        String userPhone = "15711485499";
-
-        GameBox.getInstance().startCertification(MainActivity.this, userName, userIdCard, userPhone, gameInfo, new OnAuthCallback() {
-            @Override
-            public void onCerSuccess(String gid) {
-                Toast.makeText(MainActivity.this, "认证成功", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onCerError(int code, String errorStr) {
-                Toast.makeText(MainActivity.this, errorStr, Toast.LENGTH_LONG).show();
-            }
-        });
+        boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
+        if (enableRealNameAuth){
+            mainModel.showRealNameAuthDialog(game,params);
+        }else{
+            //启动游戏
+            GameBox.getInstance().playGame(MainActivity.this, game, params);
+        }
     }
 
     @Override
@@ -208,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
 
         x.Ext.init(getApplication());
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
+
+        mainModel = new MainModel(this);
+        setTitle(mainModel.getTitleStr());
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         APP_ID = mSp.getString("corpKey", null);
@@ -489,9 +440,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void toggleSoftInput() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-    }
+
 
 }
