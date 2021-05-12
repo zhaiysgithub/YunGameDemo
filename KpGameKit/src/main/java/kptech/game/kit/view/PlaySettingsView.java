@@ -208,7 +208,7 @@ public class PlaySettingsView extends LinearLayout {
                 verTime = timeNew;
                 if (verClickCount == 8){
                     //打开log
-                    GameBoxManager.setDebug(true);
+                    GameBoxManager.setDebug(BuildConfig.DEBUG);
                     Toast.makeText(getContext(), "log", Toast.LENGTH_SHORT).show();
                 }
             }

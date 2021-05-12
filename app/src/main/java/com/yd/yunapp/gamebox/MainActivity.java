@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //打印log信息，正式版本需要关闭
-        GameBoxManager.setDebug(false);
+        GameBoxManager.setDebug(BuildConfig.DEBUG);
         GameBoxManager.setAppKey(APP_ID);
 
         mGameInfos = new ArrayList<>();

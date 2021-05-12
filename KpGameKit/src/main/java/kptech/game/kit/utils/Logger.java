@@ -27,14 +27,12 @@ public class Logger {
     }
 
     public static void error(String tag, String err){
-        if (( level & LEVEL_ERROR ) > 0 ){
-            Log.e(TAG + tag, err);
-        }
+        Log.e(TAG + tag, err);
 
     }
 
     public static void error(String tag, Throwable ex){
-        if (( level & LEVEL_ERROR ) > 0 && ex != null){
+        if (ex != null){
             ex.printStackTrace();
         }
     }
@@ -43,7 +41,7 @@ public class Logger {
         if (err != null){
             Log.e(TAG + tag, err);
         }
-        if (( level & LEVEL_ERROR ) > 0 && ex != null){
+        if (ex != null){
             ex.printStackTrace();
         }
     }

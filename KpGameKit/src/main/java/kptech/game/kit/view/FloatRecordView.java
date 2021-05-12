@@ -221,6 +221,13 @@ public class FloatRecordView extends FrameLayout implements View.OnClickListener
 
     public void reset() {
 
+        state = STATE_IDLE;
+        if (mFinishLayout.getVisibility() != GONE){
+            mFinishLayout.setVisibility(GONE);
+        }
+        if (mPublishView.getVisibility() != GONE){
+            mPublishView.setVisibility(GONE);
+        }
     }
 
     private static class MyHandler extends Handler {
