@@ -22,6 +22,7 @@ import kptech.game.kit.dialog.AccountActivity;
 import kptech.game.kit.dialog.PayActivity;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
+import kptech.lib.data.AccountTask;
 
 public class MsgHandler extends Handler {
 //    private static final Logger logger = new Logger("MsgHandler") ;
@@ -140,8 +141,15 @@ public class MsgHandler extends Handler {
             //发送缓存数据
             if (guid!=null && token!=null && !UninqueIdIsChanged){
 
-                if (mCallback!=null){
-                    mCallback.onLogin(1, "", loginData);
+                boolean isPlatform = platform != null && !platform.isEmpty();
+                if (isPlatform){
+                    String phone = loginData.containsKey("phone") ? loginData.get("phone").toString() : "";
+                    //校验 guid ，token， phone 的有效性
+                    checkPlatUserInfoEffect(guid, token, phone, loginData);
+                }else{
+                    if (mCallback!=null){
+                        mCallback.onLogin(1, "", loginData);
+                    }
                 }
 
                 try {
@@ -149,7 +157,7 @@ public class MsgHandler extends Handler {
 
                     //发送打点事件
                     Map<String,Object> eventMap = new HashMap<>();
-                    if (platform != null && !platform.isEmpty()){
+                    if (isPlatform){
                         eventMap.put("platform",platform);
                     }
                     Event event = Event.getEvent(EventCode.DATA_USER_LOGIN_CACHE, mPkgName, mPadCode,"",eventMap);
@@ -379,6 +387,39 @@ public class MsgHandler extends Handler {
         });
         systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
         mPayDialog.show();
+    }
+
+    /**
+     * 检测三方登录账户的有效性
+     */
+    private void checkPlatUserInfoEffect(String guid, String token, String phone, final Map<String, Object> loginData) {
+        try {
+            if (mCallback == null){
+                return;
+            }
+            new AccountTask(mActivity, AccountTask.ACTION_AUTH_PLAT_EFFECT)
+                    .setCorpKey(mCorpId).setPkgName(mPkgName)
+                    .setCallback(new AccountTask.ICallback() {
+                        @Override
+                        public void onResult(Map<String, Object> map) {
+
+                            boolean mapNotEmpty = (map != null && map.size() > 0);
+                            if (mapNotEmpty){
+                                if (map.containsKey("user")){
+                                   int userValue = (int)map.get("user");
+                                   if (userValue == 1){
+                                       mCallback.onLogin(1, "", loginData);
+                                       return;
+                                   }
+                                }
+                            }
+                            showLoginDialog();
+                        }
+                    }).execute(guid, token, phone);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 }

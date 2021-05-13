@@ -27,11 +27,16 @@
             app:key="unionId"
             app:title="授权登录用户ID"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreferenceCompat
+        <!--<SwitchPreferenceCompat
             app:key="enableRealNameAuth"
             app:title="开启实名认证登录"
             app:useSimpleSummaryProvider="true"/>
-            />
+            />-->
+        <SwitchPreferenceCompat
+            app:key="enableGidLogin"
+            app:title="Gid 登录"
+            app:useSimpleSummaryProvider="true"/>
+
         <EditTextPreference
             app:key="fontTimeout"
             app:title="前台无操作超时时长(秒)"

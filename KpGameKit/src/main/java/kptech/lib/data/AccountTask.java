@@ -41,6 +41,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     public static final String ACTION_AUTH_CHANNEL_UUID = "9";
     //三方认证登录
     public static final String ACTION_AUTH_THIRD_USER = "10";
+    //检测 guid , token 有效性
+    public static final String ACTION_AUTH_PLAT_EFFECT = "11";
 
     public static final String SENDSMS_TYPE_PHONELOGIN = "4";
     public static final String SENDSMS_TYPE_REGIST = "1";
@@ -95,6 +97,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             ret = doAuthChannelUser(params);
         }else if (mAction.equals(ACTION_AUTH_THIRD_USER)){
             ret = doLoginAuthByThird(params);
+        }else if(mAction.equals(ACTION_AUTH_PLAT_EFFECT)){
+            ret = doCheckPlatUserValid(params);
         }
         return ret;
     }
@@ -211,6 +215,21 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         map.put("package",params[3]);
         return request(map,Urls.HTTP_URL_CLIENTUSER);
     }
+
+    private Map<String,Object> doCheckPlatUserValid(Object... params){
+        Map<String,Object> map = new HashMap<>();
+        if (params.length < 3){
+            return map;
+        }
+        map.put("func", "checkuser");
+        map.put("corpkey", mCorpKey);
+        map.put("deviceid", mDeviceId);
+        map.put("guid", params[0]);
+        map.put("token", params[1]);
+        map.put("phone", params[2]);
+        return request(map, Urls.HTTP_PLAT_KPUSER);
+    }
+
 
     private Map<String,Object> request(Map<String, Object> params){
         return request(params,Urls.HTTP_URL);

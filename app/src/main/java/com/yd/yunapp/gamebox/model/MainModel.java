@@ -10,9 +10,9 @@ import com.yd.yunapp.gamebox.MainActivity;
 import com.yd.yunapp.gamebox.UserCertificationDialog;
 import com.yd.yunapp.gamebox.utils.AppUtils;
 
-import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.callback.OnAuthCallback;
 
@@ -48,15 +48,15 @@ public class MainModel {
 
             @Override
             public void onUserConfirm(String userName, String userIdCard, String userPhone) {
-                startUserAuth(userName, userIdCard, userPhone, gameInfo, params);
-                toggleSoftInput();
+//                startUserAuth(userName, userIdCard, userPhone, gameInfo, params);
+//                toggleSoftInput();
             }
 
             @Override
             public void onUserConfirm(String userPhone) {
-                GameBox.getInstance().startLogin(activity, gameInfo, userPhone, new OnAuthCallback() {
+                /*GameBox.getInstance().startLogin(activity, gameInfo, userPhone, new OnAuthCallback() {
                     @Override
-                    public void onCerSuccess(String gid) {
+                    public void onCerSuccess(String gid, String token) {
                         certificationDialog.dismiss();
                         Toast.makeText(activity, "认证成功", Toast.LENGTH_LONG).show();
                     }
@@ -70,7 +70,7 @@ public class MainModel {
                         }
 
                     }
-                });
+                });*/
             }
         });
 
@@ -80,13 +80,10 @@ public class MainModel {
 
 
     private void startUserAuth(String userName, String userIdCard, String userPhone, GameInfo gameInfo, Params params) {
-//        String userName = "丁文杰";
-//        String userIdCard = "340203198007129355";
-//        String userPhone = "15711485499";
 
         GameBox.getInstance().startCertification(activity, userName, userIdCard, userPhone, gameInfo, new OnAuthCallback() {
             @Override
-            public void onCerSuccess(String gid) {
+            public void onCerSuccess(String gid, String token) {
                 Toast.makeText(activity, "认证成功", Toast.LENGTH_LONG).show();
             }
 
@@ -100,5 +97,28 @@ public class MainModel {
     private void toggleSoftInput() {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    private static final String testUserName = "丁文杰";
+    private static final String testUserIdCard = "340203198007129355";
+    private static final String testUserPhone = "15711485499";
+
+    /**
+     * 通过 GID 登录
+     */
+    public void loginByGid(GameInfo game) {
+        //模拟三方直接调用后台认证接口
+        GameBox.getInstance().startCertification(activity, testUserName, testUserIdCard, testUserPhone, game, new OnAuthCallback() {
+            @Override
+            public void onCerSuccess(String gid, String token) {
+                GameBox.getInstance().playGame(activity,game,gid,token,testUserPhone);
+            }
+
+            @Override
+            public void onCerError(int code, String errorStr) {
+                //三方调用后台认证接口失败
+                Toast.makeText(activity,errorStr,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

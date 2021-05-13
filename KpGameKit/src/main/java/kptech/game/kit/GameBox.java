@@ -14,7 +14,7 @@ import org.xutils.x;
 
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.callback.OnAuthCallback;
-import kptech.game.kit.manager.UserCertificationManager;
+import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.Logger;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
@@ -56,6 +56,13 @@ public class GameBox {
     public void playGame(Activity activity, GameInfo gameInfo){
         this.playGame(activity,gameInfo,null);
     }
+
+    public void playGame(Activity activity,GameInfo gameInfo,String gid, String token, String phone){
+        if (gameInfo != null){
+            UserAuthManager.getInstance().cachePlatUserInfo(activity, gameInfo.pkgName, gid, token, phone);
+            this.playGame(activity, gameInfo,null);
+        }
+    }
     public void playGame(Activity activity, GameInfo gameInfo, Params params){
         if (activity==null || gameInfo==null){
             Logger.error("GameBox", "playGame error, activity:" + activity + ", gameInfo:" + gameInfo );
@@ -93,7 +100,7 @@ public class GameBox {
      * @param phoneNum 手机号
      * @param callback 回调
      */
-    public void startLogin(final Activity context, final GameInfo gameInfo, String phoneNum, final OnAuthCallback callback){
+    private void startLogin(final Activity context, final GameInfo gameInfo, String phoneNum, final OnAuthCallback callback){
 
         if (callback == null){
             return;
@@ -107,13 +114,13 @@ public class GameBox {
             Logger.error("GameBoxManager",e.getMessage());
         }
 
-        boolean shouldAuth = UserCertificationManager.getInstance().shouldLoginAuthByPhone(context, gameInfo.pkgName, phoneNum);
+        boolean shouldAuth = UserAuthManager.getInstance().shouldLoginAuthByPhone(context, gameInfo.pkgName, phoneNum);
         if (shouldAuth){
 
             startCertification(context, "", "", phoneNum, gameInfo, new OnAuthCallback() {
                 @Override
-                public void onCerSuccess(String gid) {
-                    callback.onCerSuccess(gid);
+                public void onCerSuccess(String gid, String token) {
+                    callback.onCerSuccess(gid, token);
                     playGame(context, gameInfo);
                 }
 
@@ -123,7 +130,9 @@ public class GameBox {
                 }
             });
         } else {
-            callback.onCerSuccess(UserCertificationManager.getInstance().getGuid());
+            String gidValue = UserAuthManager.getInstance().getGidValue();
+            String tokenValue = UserAuthManager.getInstance().getTokenValue();
+            callback.onCerSuccess(gidValue, tokenValue);
 
             Map<String,Object> map = new HashMap<>();
             map.put("phone",phoneNum);
@@ -152,12 +161,12 @@ public class GameBox {
         map.put("phone",userPhone);
         mobSendEvent(EventCode.DATA_REALNAME_AUTH_START, gameInfo.pkgName, map);
 
-        UserCertificationManager.getInstance().startAuthLoginGame(context, gameInfo.pkgName
+        UserAuthManager.getInstance().startAuthLoginGame(context, gameInfo.pkgName
                 , userName, userIdCard, userPhone, new OnAuthCallback() {
                     @Override
-                    public void onCerSuccess(String gid) {
+                    public void onCerSuccess(String gid, String token) {
 
-                        callback.onCerSuccess(gid);
+                        callback.onCerSuccess(gid, token);
 
                         Map<String,Object> eventMap = new HashMap<>();
                         eventMap.put("phone",userPhone);

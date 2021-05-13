@@ -135,9 +135,18 @@ public class MainActivity extends AppCompatActivity {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
 
-        boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
+        /*boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
         if (enableRealNameAuth){
             mainModel.showRealNameAuthDialog(game,params);
+        }else{
+            //启动游戏
+            GameBox.getInstance().playGame(MainActivity.this, game, params);
+        }*/
+
+        boolean enableGidLogin = mSp.getBoolean("enableGidLogin",false);
+        if (enableGidLogin){
+            //使用 GID 登录游戏
+            mainModel.loginByGid(game);
         }else{
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);

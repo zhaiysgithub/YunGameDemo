@@ -23,7 +23,7 @@ import kptech.lib.data.AccountTask;
 /**
  * 用户认证相关管理类
  */
-public class UserCertificationManager {
+public class UserAuthManager {
 
     private static final String ERROR_SET_PKGNAME = "请输入正确的游戏包名";
     private static final String ERROR_SET_CROPKEY = "请先申请并设置appId";
@@ -34,17 +34,18 @@ public class UserCertificationManager {
     private static final String ERRORN_NOT_AUTH = "该用户未认证";
 
     private Gson mGson;
-    private String guid;
+    private String gidValue;
+    private String tokenValue;
 
-    private UserCertificationManager() {
+    private UserAuthManager() {
 
     }
 
     private static class UserCertificationHolder {
-        private static final UserCertificationManager INSTANCE = new UserCertificationManager();
+        private static final UserAuthManager INSTANCE = new UserAuthManager();
     }
 
-    public static UserCertificationManager getInstance() {
+    public static UserAuthManager getInstance() {
         return UserCertificationHolder.INSTANCE;
     }
 
@@ -85,8 +86,8 @@ public class UserCertificationManager {
             if (spPhone == null || spPhone.isEmpty() || !spPhone.equals(phoneNum)) {
                 return true;
             }
-            guid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
-            if (guid == null || guid.isEmpty()) {
+            String gid = cacheDataMap.containsKey("guid") ? cacheDataMap.get("guid").toString() : "";
+            if (gid == null || gid.isEmpty()) {
                 return true;
             }
             String token = cacheDataMap.containsKey("token") ? cacheDataMap.get("token").toString() : "";
@@ -150,11 +151,10 @@ public class UserCertificationManager {
                                         map.put("token", at);
                                         map.remove("access_token");
                                     }
-                                    String guidValue = "";
                                     if (map.containsKey("guid") && map.containsKey("token")){
-                                        guidValue = (String) map.get("guid");
-                                        String tokenValue = (String) map.get("token");
-                                        if (guidValue == null || guidValue.isEmpty() || tokenValue == null || tokenValue.isEmpty()){
+                                        gidValue = (String) map.get("guid");
+                                        tokenValue = (String) map.get("token");
+                                        if (gidValue == null || gidValue.isEmpty() || tokenValue == null || tokenValue.isEmpty()){
                                             callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
                                             return;
                                         }
@@ -171,7 +171,7 @@ public class UserCertificationManager {
                                     Gson gson = createGson();
                                     String jsonStr = gson.toJson(map);
                                     ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
-                                    callback.onCerSuccess(guidValue);
+                                    callback.onCerSuccess(gidValue, tokenValue);
                                 }
 
                             }
@@ -205,7 +205,28 @@ public class UserCertificationManager {
         return map;
     }
 
-    public String getGuid() {
-        return guid;
+    public String getGidValue() {
+        return gidValue;
+    }
+
+    public String getTokenValue() {
+        return tokenValue;
+    }
+
+    public void cachePlatUserInfo(Context context, String pkgName, String gid, String token, String phone){
+        Map<String,String> cacheMap = new HashMap<>();
+        cacheMap.put("platform","guotong");
+        if (gid != null && !gid.isEmpty()){
+            cacheMap.put("guid", gid);
+        }
+        if (token != null && !token.isEmpty()){
+            cacheMap.put("token", token);
+        }
+        if (phone != null && !phone.isEmpty()){
+            cacheMap.put("phone", phone);
+        }
+        Gson gson = createGson();
+        String jsonStr = gson.toJson(cacheMap);
+        ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
     }
 }

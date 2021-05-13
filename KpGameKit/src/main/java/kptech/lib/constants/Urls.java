@@ -29,6 +29,9 @@ public class Urls {
     public static String URL_TIME = Urls.EVENT_RUL + "/useraction_playtimes.php";
     public static String URL_TM_ACTION = Urls.EVENT_RUL + "/useraction_special.php";
 
+    //检测 guid,token有效性
+    public static final String HTTP_PLAT_KPUSER = "http://wxapp.kuaipantech.com/h5demo/Toc/kpuser.php";
+
     public static String getEnvUrl(String url){
         String BaseUrl = Env.isTestEnv() ? "https://test-operation.kuaipantech.com" : "https://wxapp.kuaipantech.com";
         return BaseUrl + url;
