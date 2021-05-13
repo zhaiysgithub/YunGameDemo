@@ -21,6 +21,8 @@ public class Config {
             String payJson = dObj.has("payConf") ? dObj.getString("payConf") : null;
             if (payJson != null){
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_PAY_CONF, payJson);
+            } else{
+                ProferencesUtils.remove(mContext, SharedKeys.KEY_PAY_CONF);
             }
         }catch (Exception e) {
             Logger.error(TAG, "支付配置信息: " + e.getMessage());
@@ -33,6 +35,8 @@ public class Config {
                 try {
                     ProferencesUtils.setInt(mContext, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF, Integer.parseInt(exitAlertNum));
                 }catch (Exception e){}
+            }else {
+                ProferencesUtils.remove(mContext, SharedKeys.KEY_GAME_EXITALERTCOUNT_CONF);
             }
         }catch (Exception e) {
             Logger.error(TAG, "挽留弹窗配置信息 Error: " + e.getMessage());
@@ -55,6 +59,8 @@ public class Config {
             String mockSleepTime = dObj.has("mockSleepTime") ? dObj.getString("mockSleepTime") : null;
             if (mockSleepTime != null){
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_MOCK_SLEEPTIME, mockSleepTime);
+            }else {
+                ProferencesUtils.remove(mContext, SharedKeys.KEY_GAME_MOCK_SLEEPTIME);
             }
         }catch (Exception e){
             Logger.error(TAG, "一键新机配置信息 Error: " + e.getMessage());

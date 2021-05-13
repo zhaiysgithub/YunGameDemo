@@ -49,7 +49,7 @@ public class UserAuthManager {
         return UserCertificationHolder.INSTANCE;
     }
 
-    private Gson createGson() {
+    public Gson createGson() {
         if (mGson == null) {
             mGson = new GsonBuilder().enableComplexMapKeySerialization().create();
         }
@@ -213,20 +213,11 @@ public class UserAuthManager {
         return tokenValue;
     }
 
-    public void cachePlatUserInfo(Context context, String pkgName, String gid, String token, String phone){
-        Map<String,String> cacheMap = new HashMap<>();
-        cacheMap.put("platform","guotong");
-        if (gid != null && !gid.isEmpty()){
-            cacheMap.put("guid", gid);
-        }
-        if (token != null && !token.isEmpty()){
-            cacheMap.put("token", token);
-        }
-        if (phone != null && !phone.isEmpty()){
-            cacheMap.put("phone", phone);
-        }
-        Gson gson = createGson();
-        String jsonStr = gson.toJson(cacheMap);
-        ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
+    public void cachePlatUserInfo(Context context, String pkgName, String guidJson){
+        ProferencesUtils.setString(context, getSPCacheKey(pkgName), guidJson);
+    }
+
+    public void clearPlatUserInfo(Context context, String pkgName){
+        ProferencesUtils.remove(context,pkgName);
     }
 }

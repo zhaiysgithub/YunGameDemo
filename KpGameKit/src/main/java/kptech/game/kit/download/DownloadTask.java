@@ -220,7 +220,7 @@ public class DownloadTask extends Service {
             }
             String url = mGameInfo.downloadUrl;
 //            String apkName = url.substring(url.lastIndexOf("/") + 1, url.length());
-            String apkName = System.currentTimeMillis() + ".apk";
+            String apkName = mGameInfo.pkgName + ".apk";
             File file = new File(dir,apkName);
 
 

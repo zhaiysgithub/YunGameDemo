@@ -10,4 +10,6 @@ public class ParamKey {
     public static final String GAME_OPT_EXIT_GAMELIST = "gameExitGameList"; //游戏退出时显示挽留窗
 
     public static final String GAME_AUTH_UNION_UUID = "gameAuthUnionUuid";  //联运用户帐号
+
+    public static final String GAME_AUTH_UNION_GID = "gameAuthUnionGid"; // gid 登录
 }

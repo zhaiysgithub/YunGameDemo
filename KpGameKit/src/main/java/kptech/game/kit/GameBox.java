@@ -57,10 +57,18 @@ public class GameBox {
         this.playGame(activity,gameInfo,null);
     }
 
-    public void playGame(Activity activity,GameInfo gameInfo,String gid, String token, String phone){
+    public void playGame(Activity activity,GameInfo gameInfo,String guid, String token, String phone){
         if (gameInfo != null){
-            UserAuthManager.getInstance().cachePlatUserInfo(activity, gameInfo.pkgName, gid, token, phone);
-            this.playGame(activity, gameInfo,null);
+            Map<String,String> paramMap = new HashMap<>();
+            paramMap.put("guid",guid);
+            paramMap.put("token",token);
+            paramMap.put("phone",phone);
+            paramMap.put("platform",appKey);
+            String paramJson = UserAuthManager.getInstance().createGson().toJson(paramMap);
+
+            Params params = new Params();
+            params.put(ParamKey.GAME_AUTH_UNION_GID, paramJson);
+            this.playGame(activity, gameInfo,params);
         }
     }
     public void playGame(Activity activity, GameInfo gameInfo, Params params){

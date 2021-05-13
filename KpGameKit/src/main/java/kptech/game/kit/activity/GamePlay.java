@@ -47,6 +47,7 @@ import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.download.DownloadTask;
+import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
@@ -182,6 +183,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
+
+        String guidJson = mCustParams.get(ParamKey.GAME_AUTH_UNION_GID,null);
+        if (guidJson != null){
+            UserAuthManager.getInstance().cachePlatUserInfo(this, mGameInfo.pkgName, guidJson);
+        }else {
+            UserAuthManager.getInstance().clearPlatUserInfo(this,mGameInfo.pkgName);
+        }
 
         initView(rootView);
         mHardwareManager = new HardwareManager(this);
