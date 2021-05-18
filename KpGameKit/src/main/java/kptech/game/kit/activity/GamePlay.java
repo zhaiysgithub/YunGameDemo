@@ -130,6 +130,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private boolean gameVoiceSwitchValue = false;
     //游戏是否正在运行
     private boolean gameRunSuccess = false;
+    //退出弹窗
+    private ExitDialog exitDialog;
+    //游戏推荐退出弹窗
+    private ExitGameListDialog exitGameListDialog;
 
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -902,23 +906,23 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private boolean showExitDialog() {
         try {
-            ExitDialog dialog = new ExitDialog(this);
+            exitDialog = new ExitDialog(this);
             if (mGameInfo != null){
-                dialog.setText(mGameInfo.exitRemind);
+                exitDialog.setText(mGameInfo.exitRemind);
             }
-            dialog.setOnExitListener(new View.OnClickListener() {
+            exitDialog.setOnExitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     exitPlay();
                 }
             });
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            exitDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
                     GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
                 }
             });
-            dialog.show();
+            exitDialog.show();
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
             return false;
@@ -928,6 +932,12 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private boolean showTimeoutDialog(String msg) {
         try {
+            if (exitDialog != null && exitDialog.isShowing()){
+                exitDialog.dismiss();
+            }
+            if (exitGameListDialog != null && exitGameListDialog.isShowing()){
+                exitGameListDialog.dismiss();
+            }
             TimeoutDialog dialog = new TimeoutDialog(this);
             dialog.setTitle(msg);
             dialog.setOnExitListener(new View.OnClickListener() {
@@ -1280,17 +1290,17 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
 
         try {
-            final ExitGameListDialog dialog = new ExitGameListDialog(activity, mExitGameList, mGameInfo.exitRemind);
-            dialog.setCallback(new ExitGameListDialog.ICallback() {
+            exitGameListDialog = new ExitGameListDialog(activity, mExitGameList, mGameInfo.exitRemind);
+            exitGameListDialog.setCallback(new ExitGameListDialog.ICallback() {
                 @Override
                 public void onGameItem(GameInfo gameInfo) {
-                    dialog.dismiss();
+                    exitGameListDialog.dismiss();
                     changeGame(gameInfo);
                 }
 
                 @Override
                 public void onExit() {
-                    dialog.dismiss();
+                    exitGameListDialog.dismiss();
                     exitPlay();
 
                     try{
@@ -1303,7 +1313,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
                 @Override
                 public void onClose(){
-                    dialog.dismiss();
+                    exitGameListDialog.dismiss();
 
                     try{
                         //发送打点事件
@@ -1313,7 +1323,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     }
                 }
             });
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            exitGameListDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
                     //增加显示数量
@@ -1327,14 +1337,14 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     }
                 }
             });
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            exitGameListDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {
                         GamePlay.this.getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
                 }
             });
 
-            dialog.show();
+            exitGameListDialog.show();
 
             return true;
         }catch (Exception e){
