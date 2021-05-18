@@ -199,8 +199,12 @@ public class DownloadTask extends Service {
 
             //判断是否下载完成
             if (status == Status.SUCCESS){
-                //调用安装
-                installAPk();
+                if (mDownUrl.equals(game.downloadUrl)){
+                    //调用安装
+                    installAPk();
+                }else{
+                    status = Status.NONE;
+                }
                 return super.onStartCommand(intent, flags, startId);
             }
 

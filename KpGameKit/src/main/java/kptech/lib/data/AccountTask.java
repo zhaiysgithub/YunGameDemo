@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import kptech.game.kit.BuildConfig;
 import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
@@ -183,7 +184,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("gamepackage", params[4]);
         p.put("gamename","");
         p.put("clientid", mCorpKey);
-
+        p.put("datatype", BuildConfig.DEBUG ? "debug" : "");
         return request(p);
     }
 
