@@ -135,6 +135,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     //游戏推荐退出弹窗
     private ExitGameListDialog exitGameListDialog;
 
+    private MsgReceiver mMsgReceiver;
+
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
 
@@ -193,6 +195,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
 
         initView();
+        mMsgReceiver = new MsgReceiver(this);
         mHardwareManager = new HardwareManager(this);
 
         try {
@@ -679,9 +682,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mLoadingView.setText("初始游戏数据...");
             }else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
-                this.mMsgReceiver = new MsgReceiver(this);
+
                 mDeviceControl.setPlayListener(this);
-                mDeviceControl.setMessageReceiver(this.mMsgReceiver);
+                mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
             } else if(code == APIConstants.RELEASE_SUCCESS){
 //                if (mDeviceControl!=null){
@@ -1434,7 +1437,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             Logger.error("GamePlay",e.getMessage());
         }
     }
-    private MsgReceiver mMsgReceiver;
+
     private static class MsgReceiver extends BaseMsgReceiver{
         WeakReference<GamePlay> mRef = null;
         public MsgReceiver(GamePlay activity){
