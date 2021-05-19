@@ -207,9 +207,8 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
                 if (mReceiverRef!=null && mReceiverRef.get()!=null){
                     mReceiverRef.get().onMessageReceived(event, null);
                 }
-            }else if ("reqinf".equals(event)){
-                //当前版本信息
-                sendInfo();
+            }else if ("echo".equals(event)){
+                echo(obj);
             }
         } catch (JSONException e) {
             Logger.error("MsgManager",e.getMessage());
@@ -291,6 +290,31 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
         if (obj != null){
             Messager.getInstance().send(obj.toString());
         }
+    }
+
+    private void echo(JSONObject obj){
+        if (obj == null){
+            return;
+        }
+
+        try {
+            //读取cp sdk信息
+            if (obj.has("cp")){
+                JSONObject cpObj = obj.getJSONObject("cp");
+                String appKey = cpObj.has("appkey") ? cpObj.getString("appkey") : null;
+                String ver = cpObj.has("ver") ? cpObj.getString("ver") : null;
+            }
+
+            //渠道信息
+            JSONObject chObj = new JSONObject();
+            chObj.put("ver", BuildConfig.VERSION_NAME);
+            chObj.put("corpkey", this.mCorpKey);
+
+            obj.put("ch", chObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Messager.getInstance().send(obj.toString());
     }
 
 }
