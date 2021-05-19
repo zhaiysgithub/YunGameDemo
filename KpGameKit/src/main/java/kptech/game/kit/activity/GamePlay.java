@@ -122,6 +122,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     //游戏推荐退出弹窗
     private ExitGameListDialog exitGameListDialog;
 
+    private MsgReceiver mMsgReceiver;
+
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
 
@@ -192,6 +194,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
 
         initView(rootView);
+        mMsgReceiver = new MsgReceiver(this);
         mHardwareManager = new HardwareManager(this);
 
         try {
@@ -214,8 +217,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "获取游戏信息失败"));
             return;
         }
-
-//        mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING, "正在加载云游戏");
 
         checkAndRequestPermission();
 
@@ -499,7 +500,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
             } else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
-                MsgReceiver mMsgReceiver = new MsgReceiver(this);
+
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
