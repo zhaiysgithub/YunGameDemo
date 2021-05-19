@@ -202,7 +202,7 @@ public class GameBoxManager {
                                     GameBoxManager.InitHandler.this.sendEmptyMessage(2);
                                 }else {
                                     //重试2次
-                                    if (requestCount > 2){
+                                    if (requestCount < 3){
                                         Logger.error("GameBoxManager","retry request appinfo");
                                         //获取数据失败，重试一次
                                         GameBoxManager.InitHandler.this.sendEmptyMessage(1);
