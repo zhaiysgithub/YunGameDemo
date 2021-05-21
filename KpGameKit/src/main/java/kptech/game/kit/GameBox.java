@@ -21,7 +21,6 @@ import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
 
 public class GameBox {
-//    private static final Logger logger = new Logger("GameBox") ;
 
     private static volatile GameBox box = null;
 
@@ -77,18 +76,41 @@ public class GameBox {
             return;
         }
 
-//        try {
-//            //判断本地是否已经安装
-//            PackageManager packageManager = activity.getPackageManager();
-//            Intent intent = packageManager.getLaunchIntentForPackage(gameInfo.pkgName);
-//            if(intent!=null){
-//                Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
-//                activity.startActivity(intent);
-//                return;
-//            }
-//        }catch (Exception e){
-//            Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
-//        }
+        try {
+            //判断本地是否已经安装
+            // 优先级 ： 本地游戏最高，其次是微包，
+            String packageName = activity.getApplicationInfo().packageName;
+            String gamePkgName = gameInfo.pkgName; //游戏包名
+            String weiBaoPkgName = gamePkgName + ".kpmini"; //微包包名
+            PackageManager packageManager = activity.getPackageManager();
+            Intent intent = packageManager.getLaunchIntentForPackage(gamePkgName);
+            if (!packageName.equals(weiBaoPkgName)){ //非微包
+                if(intent != null){
+                    //启动原游戏包
+                    Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
+                    activity.startActivity(intent);
+                    return;
+                }else {
+                    //启动微包
+                    Intent weiBaoIntent = packageManager.getLaunchIntentForPackage(weiBaoPkgName);
+                    if (weiBaoIntent != null){
+                        Logger.info("GameBox", "本地微包游戏："+ weiBaoPkgName);
+                        activity.startActivity(weiBaoIntent);
+                        return;
+                    }
+                }
+            }else {
+                //启动原游戏包
+                if(intent != null){
+                    //启动原游戏包
+                    Logger.info("GameBox", "本地已安装游戏："+gameInfo.pkgName);
+                    activity.startActivity(intent);
+                    return;
+                }
+            }
+        }catch (Exception e){
+            Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
+        }
 
         Logger.info("GameBox", "启动云游戏，gameInfo:" + gameInfo.toString());
 

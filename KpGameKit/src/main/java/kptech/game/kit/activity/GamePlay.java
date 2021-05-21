@@ -49,6 +49,7 @@ import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
+import kptech.game.kit.receiver.KPGameReceiver;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
 import kptech.lib.analytic.Event;
@@ -123,6 +124,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private ExitGameListDialog exitGameListDialog;
 
     private MsgReceiver mMsgReceiver;
+    //游戏相关的 broadcastReceiver
+    private KPGameReceiver mKpGameReceiver;
 
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -501,6 +504,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             } else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
 
+                doGameReceiver();
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
@@ -651,6 +655,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     @Override
     protected void onDestroy() {
+        if (mKpGameReceiver != null){
+            unregisterReceiver(mKpGameReceiver);
+            mKpGameReceiver = null;
+        }
         super.onDestroy();
 
         try {
@@ -1614,5 +1622,42 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
 
         }
+    }
+
+    /**
+     * 注册广播并发送广播
+     */
+    private void doGameReceiver(){
+        if (mKpGameReceiver != null){
+            return;
+        }
+        registerGameReceiver();
+        // 发送广播
+        Intent intent = new Intent();
+        intent.setAction(KPGameReceiver.ACTION);
+        String randomValue = System.currentTimeMillis() + "";
+        mKpGameReceiver.setRandomValue(randomValue);
+        intent.putExtra(KPGameReceiver.RANDOM_KEY,randomValue);
+        sendBroadcast(intent);
+    }
+
+    private void registerGameReceiver() {
+        mKpGameReceiver = new KPGameReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(KPGameReceiver.ACTION);
+        registerReceiver(mKpGameReceiver,intentFilter);
+
+        mKpGameReceiver.setCallback(new KPGameReceiver.OnKpGameReceiverCallback() {
+            @Override
+            public void onExitGame() {
+                Logger.info(TAG,"onExitGame");
+                try{
+                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_BROADCAST_EXIT_GAME, mGameInfo!=null ? mGameInfo.pkgName : ""));
+                }catch (Exception e){
+                    Logger.error(TAG, "DATA_BROADCAST_EXIT_GAME:" + e.getMessage());
+                }
+                exitPlay();
+            }
+        });
     }
 }
