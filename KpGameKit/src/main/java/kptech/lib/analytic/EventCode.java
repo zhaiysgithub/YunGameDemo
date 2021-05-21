@@ -205,6 +205,9 @@ public class EventCode {
     public static final String DATA_CLOUDSER_UPLOAD_VIDEO = "DATA_CLOUDSER_UPLOAD_VIDEO";
     public static final String DATA_CLOUDSER_UPLOAD_INFO = "DATA_CLOUDSER_UPLOAD_INFO";
 
+    //接收到广播强制关闭云游戏
+    public static final String DATA_BROADCAST_EXIT_GAME = "DATA_BROADCAST_EXIT_GAME";
+
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;
