@@ -3,6 +3,7 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.xutils.x;
 
 import kptech.game.kit.activity.GamePlay;
@@ -63,7 +65,7 @@ public class GameBox {
             paramMap.put("token",token);
             paramMap.put("phone",phone);
             paramMap.put("platform",appKey);
-            String paramJson = UserAuthManager.getInstance().createGson().toJson(paramMap);
+            String paramJson = new JSONObject(paramMap).toString();
 
             Params params = new Params();
             params.put(ParamKey.GAME_AUTH_UNION_GID, paramJson);

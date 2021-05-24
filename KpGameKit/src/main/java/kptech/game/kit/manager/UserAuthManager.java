@@ -4,12 +4,10 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import kptech.game.kit.APIConstants;
@@ -33,7 +31,6 @@ public class UserAuthManager {
     private static final String ERRORN_DEFAULT = "登录失败";
     private static final String ERRORN_NOT_AUTH = "该用户未认证";
 
-    private Gson mGson;
     private String gidValue;
     private String tokenValue;
 
@@ -47,13 +44,6 @@ public class UserAuthManager {
 
     public static UserAuthManager getInstance() {
         return UserCertificationHolder.INSTANCE;
-    }
-
-    public Gson createGson() {
-        if (mGson == null) {
-            mGson = new GsonBuilder().enableComplexMapKeySerialization().create();
-        }
-        return mGson;
     }
 
     private String getSPCacheKey(String pkgName) {
@@ -168,8 +158,8 @@ public class UserAuthManager {
                                     if (userPhone.length() > 0) {
                                         map.put("phone", userPhone);
                                     }
-                                    Gson gson = createGson();
-                                    String jsonStr = gson.toJson(map);
+                                    JSONObject jsonObject = new JSONObject(map);
+                                    String jsonStr = jsonObject.toString();
                                     ProferencesUtils.setString(context, getSPCacheKey(pkgName), jsonStr);
                                     callback.onCerSuccess(gidValue, tokenValue);
                                 }
@@ -191,12 +181,14 @@ public class UserAuthManager {
         try {
             String jsonStr = ProferencesUtils.getString(context, cacheKey, null);
             if (jsonStr != null && !jsonStr.isEmpty()) {
-                Gson gson = createGson();
 
-                Type mapType = new TypeToken<Map<String, Object>>() {
-                }.getType();
-
-                map = gson.fromJson(jsonStr, mapType);
+                JSONObject obj = new JSONObject(jsonStr);
+                Iterator<String> keys = obj.keys();
+                while (keys.hasNext()){
+                    String key = keys.next();
+                    Object val = obj.get(key);
+                    map.put(key,val);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
