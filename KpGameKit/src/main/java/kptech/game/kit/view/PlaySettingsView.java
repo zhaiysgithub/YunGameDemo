@@ -1,5 +1,6 @@
 package kptech.game.kit.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Handler;
@@ -47,10 +48,12 @@ public class PlaySettingsView extends LinearLayout {
     private ViewGroup mBackItem;
     private View  mBackItemLine;
     private TextView mPadcodeTv;
+    private TextView mTvVersion;
 
     private String mVideoQuality;
     private boolean mAudioSwitch;
     public boolean mVideoScale = true;
+    private String showApkVersion = "V:" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE;
 
     long verTime;
     int verClickCount;
@@ -108,6 +111,12 @@ public class PlaySettingsView extends LinearLayout {
     public PlaySettingsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
+    }
+
+    public void setPkgVersion(String verionName){
+        if (verionName != null && verionName.length() > 0){
+            showApkVersion = "V:" + verionName + ";V:" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE;
+        }
     }
 
     public void setDeviceControl(IDeviceControl deviceControl) {
@@ -168,6 +177,7 @@ public class PlaySettingsView extends LinearLayout {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         View view = inflate(getContext(), R.layout.kp_view_play_settings, this);
         view.setOnClickListener(new OnClickListener() {
@@ -194,8 +204,8 @@ public class PlaySettingsView extends LinearLayout {
             }
         });
 
-        TextView sdkVer = view.findViewById(R.id.sdk_ver);
-        sdkVer.setOnClickListener(new OnClickListener() {
+        mTvVersion = view.findViewById(R.id.sdk_ver);
+        mTvVersion.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 long timeNew = System.currentTimeMillis();
@@ -207,16 +217,33 @@ public class PlaySettingsView extends LinearLayout {
 
                 verTime = timeNew;
                 if (verClickCount == 8){
+                    if (!BuildConfig.DEBUG && mHandler != null){
+                        mTvVersion.setText(showApkVersion);
+                        mHandler.removeCallbacks(vRunnable);
+                        mHandler.postDelayed(vRunnable,10*1000);
+                    }
                     //打开log
                     GameBoxManager.setDebug(BuildConfig.DEBUG);
                     Toast.makeText(getContext(), "log", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        mTvVersion.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //复制内容
+                if (mTvVersion.getVisibility() == View.VISIBLE){
+                    StringUtil.copy(getContext(),showApkVersion);
+                }
+                return true;
+            }
+        });
+
+
         if (Env.isTestEnv()){
-            sdkVer.setText("Version: "+BuildConfig.VERSION_NAME+"_"+BuildConfig.VERSION_CODE);
+            mTvVersion.setText("Version: "+BuildConfig.VERSION_NAME+"_"+BuildConfig.VERSION_CODE);
         }else {
-            sdkVer.setText("    ");
+            mTvVersion.setText("    ");
         }
 
         int height = DensityUtil.getScreenHeight(getContext());
@@ -332,6 +359,15 @@ public class PlaySettingsView extends LinearLayout {
         });
     }
 
+    private final Runnable vRunnable = new Runnable() {
+        @Override
+        public void run() {
+           if (mTvVersion != null){
+               mTvVersion.setText("");
+           }
+        }
+    };
+
     private void setSelectQualityLevel(String level) {
         if (level == null){
             return;
@@ -356,6 +392,7 @@ public class PlaySettingsView extends LinearLayout {
 
         if (mHandler != null){
             mHandler.removeMessages(1);
+            mHandler.removeCallbacks(vRunnable);
             mHandler = null;
         }
     }
@@ -373,6 +410,9 @@ public class PlaySettingsView extends LinearLayout {
         }
 
         this.setVisibility(VISIBLE);
+        if (mTvVersion != null){
+            mTvVersion.setText("");
+        }
         if (mOnShowListener != null){
             mOnShowListener.onShow();
         }

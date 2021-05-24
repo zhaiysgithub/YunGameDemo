@@ -78,6 +78,7 @@ public class GameBox {
             return;
         }
 
+        String miniPkgVersion = "";
         try {
             //判断本地是否已经安装
             // 优先级 ： 本地游戏最高，其次是微包，
@@ -102,6 +103,7 @@ public class GameBox {
                     }
                 }
             }else {
+                miniPkgVersion = packageManager.getPackageInfo(weiBaoPkgName,0).versionName;
                 //启动原游戏包
                 if(intent != null){
                     //启动原游戏包
@@ -121,6 +123,9 @@ public class GameBox {
         intent.putExtra(GamePlay.EXTRA_CORPID, this.appKey);
         intent.putExtra(GamePlay.EXTRA_GAME, gameInfo);
         intent.putExtra(GamePlay.EXTRA_PARAMS, params);
+        if (!miniPkgVersion.isEmpty()){
+            intent.putExtra(GamePlay.EXTRA_MINI_VERSION,miniPkgVersion);
+        }
 
         activity.startActivity(intent);
     }

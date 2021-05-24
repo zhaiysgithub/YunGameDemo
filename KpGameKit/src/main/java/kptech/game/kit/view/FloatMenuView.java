@@ -298,4 +298,10 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
             mMenuIcon.onPingChanged(ping);
         }
     }
+
+    public void setPkgVersion(String verionName){
+        if (mSettingsView != null){
+            mSettingsView.setPkgVersion(verionName);
+        }
+    }
 }

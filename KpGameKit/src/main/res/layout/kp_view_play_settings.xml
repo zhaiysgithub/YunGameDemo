@@ -306,6 +306,7 @@
                 android:id="@+id/sdk_ver"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
+                android:minWidth="60dp"
                 android:textColor="@color/common_white"
                 android:layout_gravity="bottom|left"
                 android:textSize="10dp"
