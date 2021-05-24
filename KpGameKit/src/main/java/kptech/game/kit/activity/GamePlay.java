@@ -89,6 +89,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     public static final String EXTRA_GAME = "extra.game";
 //    public static final String EXTRA_TIMEOUT = "extra.timeout";
     public static final String EXTRA_PARAMS = "extra.params";
+    public static final String EXTRA_MINI_VERSION = "extra.mini.version";
 
     private static final String TAG = "GamePlay";
 
@@ -120,6 +121,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private int mErrorCode = -1;
     private String mErrorMsg = null;
+    private String miniPkgVersion;
 
     private Params mCustParams;
 
@@ -180,6 +182,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
+        if (getIntent().hasExtra(EXTRA_MINI_VERSION)){
+            miniPkgVersion = getIntent().getStringExtra(EXTRA_MINI_VERSION);
+        }
         if (getIntent().hasExtra(EXTRA_PARAMS)){
             try {
                 mCustParams = (Params) getIntent().getSerializableExtra(EXTRA_PARAMS);
@@ -246,6 +251,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
 
         mMenuView = findViewById(R.id.float_menu);
+        mMenuView.setPkgVersion(miniPkgVersion);
         mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
             @Override
             public void onVideoResize(boolean scale) {
