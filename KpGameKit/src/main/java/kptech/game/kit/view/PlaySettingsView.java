@@ -232,8 +232,11 @@ public class PlaySettingsView extends LinearLayout {
             @Override
             public boolean onLongClick(View v) {
                 //复制内容
-                if (mTvVersion.getVisibility() == View.VISIBLE){
-                    StringUtil.copy(getContext(),showApkVersion);
+                if (mTvVersion != null){
+                    String text = mTvVersion.getText().toString();
+                    if (text != null && !text.isEmpty()){
+                        StringUtil.copy(getContext(),text);
+                    }
                 }
                 return true;
             }
@@ -243,7 +246,7 @@ public class PlaySettingsView extends LinearLayout {
         if (Env.isTestEnv()){
             mTvVersion.setText("Version: "+BuildConfig.VERSION_NAME+"_"+BuildConfig.VERSION_CODE);
         }else {
-            mTvVersion.setText("    ");
+            mTvVersion.setText("");
         }
 
         int height = DensityUtil.getScreenHeight(getContext());
@@ -411,7 +414,7 @@ public class PlaySettingsView extends LinearLayout {
 
         this.setVisibility(VISIBLE);
         if (mTvVersion != null){
-            mTvVersion.setText("");
+            mTvVersion.setText(BuildConfig.DEBUG ? "Version: "+BuildConfig.VERSION_NAME+"_"+BuildConfig.VERSION_CODE : "");
         }
         if (mOnShowListener != null){
             mOnShowListener.onShow();

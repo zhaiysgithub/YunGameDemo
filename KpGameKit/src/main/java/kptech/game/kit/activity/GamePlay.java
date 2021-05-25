@@ -511,7 +511,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             } else if (code == APIConstants.CONNECT_DEVICE_SUCCESS || code == APIConstants.RECONNECT_DEVICE_SUCCESS) {
                 this.mErrorMsg = null;
 
-                doGameReceiver();
+//                doGameReceiver();
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
