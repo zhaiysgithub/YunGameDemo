@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.Map;
-
 import kptech.game.kit.GameInfo;
 //import kptech.game.kit.analytic.Event;
 //import kptech.game.kit.analytic.EventCode;
@@ -18,7 +16,6 @@ import kptech.game.kit.utils.Logger;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
-import kptech.lib.data.AccountTask;
 
 public class PlayStatusLayout extends FrameLayout {
     private static final String TAG = PlayStatusLayout.class.getSimpleName();
@@ -48,7 +45,7 @@ public class PlayStatusLayout extends FrameLayout {
 //    public static final int STATUS_LOADING_LOAD_GAMEINFO = 0;
 //    public static final int STATUS_LOADING_FINISHED = 0;
 
-    private DefaultLoadingView mLoadingView;
+    private LoadingPageView mLoadingView;
     private PlayErrorView mErrorView;
     private UserAuthView mAuthView;
 //    private GameInfo mGameInfo;
@@ -107,7 +104,7 @@ public class PlayStatusLayout extends FrameLayout {
             pkgName = info.pkgName;
 
             if (mLoadingView != null){
-                mLoadingView.setInfo(gameName, iconUrl);
+                mLoadingView.setLoadingInfo(info);
             }
             if (mErrorView != null){
                 mErrorView.setGameInfo(info);
@@ -186,7 +183,7 @@ public class PlayStatusLayout extends FrameLayout {
      */
     public void showUserAuthView(String unionUUID, String corpId){
         try {
-            mLoadingView.setPauseProgress(true);
+            mLoadingView.setPausePro(true);
 
             if (mAuthView.getVisibility() == View.VISIBLE){
                 return;
@@ -219,7 +216,7 @@ public class PlayStatusLayout extends FrameLayout {
         mAuthView.setAnimation(AnimationUtil.moveToViewBottom());
         mAuthView.setVisibility(View.GONE);
 
-        mLoadingView.setPauseProgress(false);
+        mLoadingView.setPausePro(false);
     }
 
     public void setStatus(int status, String msg) {
@@ -241,9 +238,9 @@ public class PlayStatusLayout extends FrameLayout {
                 }
 
                 if (status == STATUS_LOADING_AD_PAUSE){
-                    mLoadingView.setPauseProgress(true);
+                    mLoadingView.setPausePro(true);
                 }else if (status == STATUS_LOADING_START_GAME){
-                    mLoadingView.setPauseProgress(false);
+                    mLoadingView.setPausePro(false);
                 }
 
                 mLoadingView.setText(msg);
@@ -295,7 +292,7 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                loadingView = new DefaultLoadingView(context);
+                loadingView = new XiaoYuLoadingPage(context);
             }
             if (errorView == null) {
                 errorView = new PlayErrorView(context);
