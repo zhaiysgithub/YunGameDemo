@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.kuaipan.game.demo.BuildConfig;
 import com.kuaipan.game.demo.R;
+import com.yd.yunapp.gamebox.activity.TransDialogActivity;
 import com.yd.yunapp.gamebox.model.MainModel;
 
 import org.xutils.common.Callback;
@@ -45,13 +45,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.env.Env;
 
 public class MainActivity extends AppCompatActivity {
@@ -150,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
         }else{
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
+            boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
+            if (enableGameDialog){
+                mHandler.postDelayed(() -> startShowDialog(),30 * 1000);
+            }
         }
     }
 
@@ -401,7 +403,11 @@ public class MainActivity extends AppCompatActivity {
             final GameInfo game = mData.get(position);
             holder.name.setText(game.name);
             holder.playBtn.setText("开始试玩");
-            Glide.with(holder.icon).load(game.iconUrl).into(holder.icon);
+            String iconUrl = game.iconUrl;
+            if (iconUrl != null && !iconUrl.isEmpty()){
+                Glide.with(holder.icon).load(iconUrl).into(holder.icon);
+            }
+
             holder.playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -448,6 +454,12 @@ public class MainActivity extends AppCompatActivity {
             mGameAdapter.refresh(new ArrayList<GameInfo>(mGameInfos));
         }
     };
+
+    private void startShowDialog(){
+
+        Intent intent = new Intent(MainActivity.this, TransDialogActivity.class);
+        startActivity(intent);
+    }
 
 
 

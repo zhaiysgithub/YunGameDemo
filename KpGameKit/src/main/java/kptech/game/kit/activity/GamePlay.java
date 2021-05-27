@@ -227,6 +227,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return;
         }
 
+        doGameReceiver();
+
         checkAndRequestPermission();
 
         Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
@@ -1640,18 +1642,19 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
         registerGameReceiver();
         // 发送广播
-        Intent intent = new Intent();
+        /*Intent intent = new Intent();
         intent.setAction(KPGameReceiver.ACTION);
         String randomValue = System.currentTimeMillis() + "";
         mKpGameReceiver.setRandomValue(randomValue);
         intent.putExtra(KPGameReceiver.RANDOM_KEY,randomValue);
-        sendBroadcast(intent);
+        sendBroadcast(intent);*/
     }
 
     private void registerGameReceiver() {
         mKpGameReceiver = new KPGameReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(KPGameReceiver.ACTION);
+//        intentFilter.addAction(KPGameReceiver.ACTION);
+        intentFilter.addAction(KPGameReceiver.ACTION_STARTACTIVITY);
         registerReceiver(mKpGameReceiver,intentFilter);
 
         mKpGameReceiver.setCallback(new KPGameReceiver.OnKpGameReceiverCallback() {
