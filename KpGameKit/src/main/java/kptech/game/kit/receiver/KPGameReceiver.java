@@ -18,38 +18,41 @@ public class KPGameReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent != null){
-            String action = intent.getAction();
-            Logger.error(TAG, "onReceive:action = " + action);
-            if (ACTION.equals(action)){
-                String ranValue = intent.getStringExtra(RANDOM_KEY);
-                if (randomValue.isEmpty() || randomValue.equals(ranValue)){
-                    return;
-                }
-                //关闭游戏
-                if (mCallback != null){
-                    mCallback.onExitGame();
-                }
-            }else if(ACTION_STARTACTIVITY.equals(action)){
-                String activityClassName = intent.getStringExtra("className");
-                Bundle bundleData = intent.getBundleExtra("bundleData");
-                String optValue = intent.getStringExtra("option");
-                Logger.error(TAG,"activityClassName=" + activityClassName + ";optValue=" + optValue);
-                if (activityClassName != null && !activityClassName.isEmpty() && optValue != null && optValue.equals("exit")){
-                    Intent actIntent = new Intent();
-                    actIntent.setClassName(context,activityClassName);
-                    actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if (bundleData != null){
-                        actIntent.putExtras(bundleData);
+        try{
+            if (intent != null){
+                String action = intent.getAction();
+                if (ACTION.equals(action)){
+                    String ranValue = intent.getStringExtra(RANDOM_KEY);
+                    if (randomValue.isEmpty() || randomValue.equals(ranValue)){
+                        return;
                     }
-                    context.startActivity(actIntent);
                     //关闭游戏
                     if (mCallback != null){
                         mCallback.onExitGame();
                     }
+                }else if(ACTION_STARTACTIVITY.equals(action)){
+                    String activityClassName = intent.getStringExtra("className");
+                    Bundle bundleData = intent.getBundleExtra("bundleData");
+                    String optValue = intent.getStringExtra("option");
+                    if (activityClassName != null && !activityClassName.isEmpty() && optValue != null && optValue.equals("exit")){
+                        Intent actIntent = new Intent();
+                        actIntent.setClassName(context,activityClassName);
+                        actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (bundleData != null){
+                            actIntent.putExtras(bundleData);
+                        }
+                        context.startActivity(actIntent);
+                        //关闭游戏
+                        if (mCallback != null){
+                            mCallback.onExitGame();
+                        }
+                    }
                 }
             }
+        }catch (Exception e){
+            Logger.error(TAG,e.getMessage());
         }
+
     }
 
     public void setRandomValue(String randomValue) {
