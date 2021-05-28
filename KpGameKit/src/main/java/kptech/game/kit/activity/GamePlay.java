@@ -47,7 +47,11 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
+import kptech.game.kit.callback.CloudLoadingStatListener;
+import kptech.game.kit.callback.IGameObservable;
+import kptech.game.kit.callback.ISimpleGameObservable;
 import kptech.game.kit.download.DownloadTask;
+import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
@@ -226,7 +230,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "获取游戏信息失败"));
             return;
         }
-
+        KpGameManager.instance().addObservable(gameObservable);
+        KpGameManager.instance().setWeakReferenceActivity(new WeakReference<>(GamePlay.this));
         doGameReceiver();
 
         checkAndRequestPermission();
@@ -669,6 +674,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mKpGameReceiver = null;
         }
         super.onDestroy();
+
+        KpGameManager.instance().removeObservable(gameObservable);
 
         try {
             if (mDeviceControl != null) {
@@ -1670,4 +1677,19 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
         });
     }
+
+    public void registerCloudLoadingStatListener(CloudLoadingStatListener listener){
+        if (mPlayStatueView != null){
+            mPlayStatueView.setLoadingStatListener(listener);
+        }
+    }
+
+    private final IGameObservable gameObservable = new ISimpleGameObservable() {
+        @Override
+        public void onGamePlayExit() {
+            if (!GamePlay.this.isFinishing()){
+                exitPlay();
+            }
+        }
+    };
 }

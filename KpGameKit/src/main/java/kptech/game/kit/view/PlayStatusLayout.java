@@ -11,6 +11,7 @@ import kptech.game.kit.GameInfo;
 //import kptech.game.kit.analytic.EventCode;
 //import kptech.game.kit.analytic.MobclickAgent;
 //import kptech.game.kit.data.AccountTask;
+import kptech.game.kit.callback.CloudLoadingStatListener;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.Logger;
 import kptech.lib.analytic.Event;
@@ -36,19 +37,9 @@ public class PlayStatusLayout extends FrameLayout {
     public static final int STATUS_LOADING_START_GAME = 107;
     public static final int STATUS_LOADING_FINISHED = 108;
 
-
-//    public static final int STATUS_LOADING_INIT = 0;
-//    public static final int STATUS_LOADING_GET_GAMEINFO = 0;
-//    public static final int STATUS_LOADING_CONNECT_DEVICE = 0;
-//    public static final int STATUS_LOADING_AD = 0;
-//    public static final int STATUS_LOADING_START_GAME = 0;
-//    public static final int STATUS_LOADING_LOAD_GAMEINFO = 0;
-//    public static final int STATUS_LOADING_FINISHED = 0;
-
     private LoadingPageView mLoadingView;
     private PlayErrorView mErrorView;
     private UserAuthView mAuthView;
-//    private GameInfo mGameInfo;
 
     private String iconUrl;
     private String downUrl;
@@ -175,9 +166,13 @@ public class PlayStatusLayout extends FrameLayout {
         mLoadingView.onFinishInflate();
     }
 
+    public void setLoadingStatListener(CloudLoadingStatListener listener){
+        //TODO 自定义 loading 界面的接口
+    }
 
-    private String mUnionUUID;
-    private String mCorpID;
+
+//    private String mUnionUUID;
+//    private String mCorpID;
     /**
      * 显示授权界面
      */
@@ -189,8 +184,8 @@ public class PlayStatusLayout extends FrameLayout {
                 return;
             }
 
-            mUnionUUID = unionUUID;
-            mCorpID = corpId;
+//            mUnionUUID = unionUUID;
+//            mCorpID = corpId;
 
             mAuthView.setInfo(gameName, iconUrl);
             mAuthView.setAnimation(AnimationUtil.moveToViewLocation());
@@ -292,7 +287,7 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                loadingView = new XiaoYuLoadingPage(context);
+                loadingView = new DefaultLoadingView(context);
             }
             if (errorView == null) {
                 errorView = new PlayErrorView(context);

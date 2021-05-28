@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    tools:context="com.yd.yunapp.gamebox.MainActivity">
+    tools:context="com.yd.yunapp.gamebox.activity.MainActivity">
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->

@@ -6,13 +6,12 @@ import android.os.Looper;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.yd.yunapp.gamebox.MainActivity;
+import com.yd.yunapp.gamebox.activity.MainActivity;
 import com.yd.yunapp.gamebox.UserCertificationDialog;
 import com.yd.yunapp.gamebox.utils.AppUtils;
 
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.callback.OnAuthCallback;
 

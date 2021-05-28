@@ -62,7 +62,9 @@ public abstract class LoadingPageView extends FrameLayout {
 
     protected abstract void onConfigChanged(Configuration newConfig);
 
-    protected abstract void setText(String msg);
+    protected void setText(String msg){
+
+    }
 
     private void updateText(){
         try {
