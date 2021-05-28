@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kuaipan.game.demo.R;
+import com.yd.yunapp.gamebox.TestXiaoYuBean;
 
 public class TransDialogActivity extends AppCompatActivity {
 
@@ -16,9 +17,18 @@ public class TransDialogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_dialog_half_trans);
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            Bundle bundleData = extras.getBundle("bundleData");
+            String abc = bundleData.getString("abc");
+            TestXiaoYuBean xiaoyuBean = (TestXiaoYuBean) bundleData.getSerializable("xiaoyuBundle");
+        }
         findViewById(R.id.tvDialogText).setOnClickListener(v -> {
             //发送广播关闭页面关闭此页面
-            sendBroadCast();
+//            sendBroadCast();
+//            TransDialogActivity.this.finish();
+            setResult(9001, getIntent());
             TransDialogActivity.this.finish();
         });
     }
@@ -27,8 +37,8 @@ public class TransDialogActivity extends AppCompatActivity {
         //"KP_Cloud_Game_Play_StartActivity"
         Intent intent = new Intent();
         intent.setAction("KP_Cloud_Game_Play_StartActivity");
-        intent.putExtra("className","com.yd.yunapp.gamebox.activity.XiaoYuOtherActivity");
-        intent.putExtra("option","exit");
+        intent.putExtra("className", "com.yd.yunapp.gamebox.activity.XiaoYuOtherActivity");
+        intent.putExtra("option", "exit");
         sendBroadcast(intent);
     }
 }

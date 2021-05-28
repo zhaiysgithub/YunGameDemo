@@ -287,7 +287,7 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                loadingView = new DefaultLoadingView(context);
+                loadingView = new XiaoYuLoadingPage(context);
             }
             if (errorView == null) {
                 errorView = new PlayErrorView(context);

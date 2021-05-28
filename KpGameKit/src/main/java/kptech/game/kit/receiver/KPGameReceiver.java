@@ -33,18 +33,17 @@ public class KPGameReceiver extends BroadcastReceiver {
                 }else if(ACTION_STARTACTIVITY.equals(action)){
                     String activityClassName = intent.getStringExtra("className");
                     Bundle bundleData = intent.getBundleExtra("bundleData");
-                    String optValue = intent.getStringExtra("option");
-                    if (activityClassName != null && !activityClassName.isEmpty() && optValue != null && optValue.equals("exit")){
+//                    String optValue = intent.getStringExtra("option");
+                    // && optValue != null && optValue.equals("exit")
+                    if (activityClassName != null && !activityClassName.isEmpty()){
                         Intent actIntent = new Intent();
                         actIntent.setClassName(context,activityClassName);
-                        actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        actIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (bundleData != null){
-                            actIntent.putExtras(bundleData);
+                            actIntent.putExtra("bundleData",bundleData);
                         }
-                        context.startActivity(actIntent);
-                        //关闭游戏
                         if (mCallback != null){
-                            mCallback.onExitGame();
+                            mCallback.onStartActivity(actIntent);
                         }
                     }
                 }
@@ -66,5 +65,7 @@ public class KPGameReceiver extends BroadcastReceiver {
     public interface OnKpGameReceiverCallback{
 
         void onExitGame();
+
+        void onStartActivity(Intent intent);
     }
 }

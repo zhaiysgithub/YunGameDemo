@@ -83,6 +83,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     //    public static final String EXTRA_TIMEOUT = "extra.timeout";
     public static final String EXTRA_PARAMS = "extra.params";
     public static final String EXTRA_MINI_VERSION = "extra.mini.version";
+    private static final int mRequestCode = 9002;
 
     private static final String TAG = "GamePlay";
 
@@ -1675,12 +1676,25 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
                 exitPlay();
             }
+
+            @Override
+            public void onStartActivity(Intent intent) {
+                GamePlay.this.startActivityForResult(intent,mRequestCode);
+            }
         });
     }
 
     public void registerCloudLoadingStatListener(CloudLoadingStatListener listener){
         if (mPlayStatueView != null){
             mPlayStatueView.setLoadingStatListener(listener);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == mRequestCode && resultCode == 9001){
+            exitPlay();
         }
     }
 

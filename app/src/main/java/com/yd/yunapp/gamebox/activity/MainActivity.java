@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.kuaipan.game.demo.BuildConfig;
 import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
+import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
 
 import org.xutils.x;
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             GameBox.getInstance().playGame(MainActivity.this, game, params);
             boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
             if (enableGameDialog) {
-                mHandler.postDelayed(this::startShowDialog, 30 * 1000);
+                mHandler.postDelayed(this::startShowDialog, 15 * 1000);
             }
         }
     }
@@ -202,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("@@@","MainActivity:resultCode = " + resultCode + ";requestCode = " + requestCode);
         if (requestCode == 101 && resultCode == 102) {
             finish();
             android.os.Process.killProcess(android.os.Process.myPid());
@@ -300,8 +303,26 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void startShowDialog() {
-        Intent intent = new Intent(MainActivity.this, TransDialogActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(MainActivity.this, TransDialogActivity.class);
+        startActivity(intent);*/
+        sendBroadCast();
     }
 
+
+    private void sendBroadCast() {
+        //"KP_Cloud_Game_Play_StartActivity"
+        Intent intent = new Intent();
+        intent.setAction("KP_Cloud_Game_Play_StartActivity");
+        intent.putExtra("className","com.yd.yunapp.gamebox.activity.TransDialogActivity");
+
+        Bundle bundle = new Bundle();
+        bundle.putString("abc","123");
+        TestXiaoYuBean xiaoYuBean = new TestXiaoYuBean();
+        xiaoYuBean.code = "000";
+        xiaoYuBean.msg = "xiaoyu";
+        bundle.putSerializable("xiaoyuBundle",xiaoYuBean);
+        intent.putExtra("bundleData",bundle);
+
+        sendBroadcast(intent);
+    }
 }
