@@ -33,8 +33,6 @@ public class KPGameReceiver extends BroadcastReceiver {
                 }else if(ACTION_STARTACTIVITY.equals(action)){
                     String activityClassName = intent.getStringExtra("className");
                     Bundle bundleData = intent.getBundleExtra("bundleData");
-//                    String optValue = intent.getStringExtra("option");
-                    // && optValue != null && optValue.equals("exit")
                     if (activityClassName != null && !activityClassName.isEmpty()){
                         Intent actIntent = new Intent();
                         actIntent.setClassName(context,activityClassName);

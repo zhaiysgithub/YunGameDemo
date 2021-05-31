@@ -7,8 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import kptech.game.kit.R;
+import kptech.game.kit.utils.VersionUtils;
 
 public class ExitDialog extends Dialog {
+
+    private static final String dialogMsgDefault = "确认退出云游戏吗？";
+    private static final String dialogMsgXiaoYu = "退出后，本次试玩记录将无法保留！";
 
     private View.OnClickListener mListener;
     private String mText;
@@ -41,13 +45,24 @@ public class ExitDialog extends Dialog {
                 dismiss();
             }
         });
+
+        TextView dialogTitle = findViewById(R.id.title);
+        boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
+        if (xiaoYuChannel){
+            dialogTitle.setText(dialogMsgXiaoYu);
+        }else {
+            dialogTitle.setText(dialogMsgDefault);
+        }
+
         TextView tv = findViewById(R.id.text);
-        if (mText != null){
+        if (mText != null && !mText.isEmpty() && !xiaoYuChannel){
             tv.setVisibility(View.VISIBLE);
             tv.setText(mText);
         }else {
             tv.setVisibility(View.GONE);
         }
+
+
     }
 
     @Override

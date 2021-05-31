@@ -14,6 +14,7 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.callback.CloudLoadingStatListener;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.Logger;
+import kptech.game.kit.utils.VersionUtils;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -287,7 +288,12 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                loadingView = new XiaoYuLoadingPage(context);
+                boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
+                if (xiaoYuChannel){
+                    loadingView = new XiaoYuLoadingPage(context);
+                }else{
+                    loadingView = new DefaultLoadingView(context);
+                }
             }
             if (errorView == null) {
                 errorView = new PlayErrorView(context);
