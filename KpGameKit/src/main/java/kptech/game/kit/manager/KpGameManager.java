@@ -1,13 +1,10 @@
 package kptech.game.kit.manager;
 
-import android.app.Activity;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import kptech.game.kit.activity.GamePlay;
-import kptech.game.kit.callback.CloudLoadingStatListener;
 import kptech.game.kit.callback.IGameObservable;
 
 public class KpGameManager {
@@ -57,16 +54,6 @@ public class KpGameManager {
             for(IGameObservable observable : mObservables){
                 observable.onGamePlayExit();
             }
-        }
-    }
-
-    /**
-     * 对外提供
-     * 注册 loading 页面的监听
-     */
-    public void registerCloudLoadingStatListener(CloudLoadingStatListener listener){
-        if (listener != null && observerActivity != null && observerActivity.get() != null){
-            observerActivity.get().registerCloudLoadingStatListener(listener);
         }
     }
 

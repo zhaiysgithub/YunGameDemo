@@ -15,6 +15,8 @@ import java.util.List;
 
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
+
+import kptech.game.kit.view.LoadingPageView;
 import kptech.lib.ad.AdManager;
 import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.analytic.Event;
@@ -51,6 +53,8 @@ public class GameBoxManager {
     private boolean isInited = false;
 
     private boolean devLoading = false;
+    private boolean mShowCustomerLoadingView;
+    private LoadingPageView mCustomerLoadingView;
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -78,6 +82,12 @@ public class GameBoxManager {
 
     private GameBoxManager(){
 //        this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
+    }
+
+
+    public void setLoadingView(boolean isShow,LoadingPageView loadingView){
+        mShowCustomerLoadingView = isShow;
+        mCustomerLoadingView = loadingView;
     }
 
     public static void setAppKey(String appKey) {
@@ -489,4 +499,11 @@ public class GameBoxManager {
         return this.mUniqueId;
     }
 
+    public boolean ismShowCustomerLoadingView() {
+        return mShowCustomerLoadingView;
+    }
+
+    public LoadingPageView getmCustomerLoadingView() {
+        return mCustomerLoadingView;
+    }
 }

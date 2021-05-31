@@ -56,13 +56,13 @@ public abstract class LoadingPageView extends FrameLayout {
 
     protected abstract void updateChildProgress(int progress);
 
-    protected abstract void updateChildText();
+    protected void updateChildText(){}
 
     protected abstract void setLoadingInfo(GameInfo gameInfo);
 
     protected abstract void onConfigChanged(Configuration newConfig);
 
-    protected void setText(String msg){
+    protected void updateLoadingText(String msg){
 
     }
 

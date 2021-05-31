@@ -42,6 +42,11 @@
             app:title="游戏中弹窗"
             app:useSimpleSummaryProvider="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="enableCustomerLoadign"
+            app:title="自定义Loading页面"
+            app:useSimpleSummaryProvider="true"/>
+
         <EditTextPreference
             app:key="fontTimeout"
             app:title="前台无操作超时时长(秒)"

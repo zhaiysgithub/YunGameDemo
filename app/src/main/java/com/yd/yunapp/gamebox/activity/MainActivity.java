@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +33,7 @@ import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
 import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
+import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
 import org.xutils.x;
 import java.util.ArrayList;
@@ -92,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
         GameBoxManager.setAppKey(APP_ID);
 
         mGameInfos = new ArrayList<>();
-
-
         ListView mGameList = findViewById(R.id.game_list);
         mGameAdapter = new GameAdapter(mGameInfos);
         mGameList.setAdapter(mGameAdapter);
@@ -174,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
         }*/
-
+        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
+        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
             //使用 GID 登录游戏
@@ -204,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("@@@","MainActivity:resultCode = " + resultCode + ";requestCode = " + requestCode);
         if (requestCode == 101 && resultCode == 102) {
             finish();
             android.os.Process.killProcess(android.os.Process.myPid());

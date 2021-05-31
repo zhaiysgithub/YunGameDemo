@@ -94,7 +94,7 @@ public class DefaultLoadingView extends LoadingPageView {
         mBottomLL.setLayoutParams(lp);
     }
 
-    public void setText(String text) {
+    public void updateLoadingText(String text) {
         mLoadingText.setText(text);
     }
 

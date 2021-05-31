@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -47,7 +46,6 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
-import kptech.game.kit.callback.CloudLoadingStatListener;
 import kptech.game.kit.callback.IGameObservable;
 import kptech.game.kit.callback.ISimpleGameObservable;
 import kptech.game.kit.download.DownloadTask;
@@ -856,7 +854,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
             });
         } catch (Exception e) {
-            Log.w("PlayActivity", e);
+            e.printStackTrace();
         }
     }
 
@@ -1682,12 +1680,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 GamePlay.this.startActivityForResult(intent,mRequestCode);
             }
         });
-    }
-
-    public void registerCloudLoadingStatListener(CloudLoadingStatListener listener){
-        if (mPlayStatueView != null){
-            mPlayStatueView.setLoadingStatListener(listener);
-        }
     }
 
     @Override

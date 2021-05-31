@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 //import kptech.game.kit.analytic.Event;
 //import kptech.game.kit.analytic.EventCode;
 //import kptech.game.kit.analytic.MobclickAgent;
 //import kptech.game.kit.data.AccountTask;
-import kptech.game.kit.callback.CloudLoadingStatListener;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.VersionUtils;
@@ -167,11 +167,6 @@ public class PlayStatusLayout extends FrameLayout {
         mLoadingView.onFinishInflate();
     }
 
-    public void setLoadingStatListener(CloudLoadingStatListener listener){
-        //TODO 自定义 loading 界面的接口
-    }
-
-
 //    private String mUnionUUID;
 //    private String mCorpID;
     /**
@@ -239,7 +234,7 @@ public class PlayStatusLayout extends FrameLayout {
                     mLoadingView.setPausePro(false);
                 }
 
-                mLoadingView.setText(msg);
+                mLoadingView.updateLoadingText(msg);
                 mLoadingView.setProgressStatus(status);
             }
             if (mErrorView != null && mErrorView.isShown()){
@@ -288,11 +283,17 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
-                if (xiaoYuChannel){
-                    loadingView = new XiaoYuLoadingPage(context);
+                boolean showCustomerLoading = GameBoxManager.getInstance().ismShowCustomerLoadingView();
+                final LoadingPageView customerLoadignView = GameBoxManager.getInstance().getmCustomerLoadingView();
+                if (showCustomerLoading && customerLoadignView != null){
+                    loadingView = customerLoadignView;
                 }else{
-                    loadingView = new DefaultLoadingView(context);
+                    boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
+                    if (xiaoYuChannel){
+                        loadingView = new XiaoYuLoadingPage(context);
+                    }else{
+                        loadingView = new DefaultLoadingView(context);
+                    }
                 }
             }
             if (errorView == null) {

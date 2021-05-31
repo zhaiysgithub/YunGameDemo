@@ -1,4 +1,4 @@
-package kptech.game.kit.view;
+package com.yd.yunapp.gamebox.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,67 +10,60 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatSeekBar;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.kuaipan.game.demo.R;
 
 import kptech.game.kit.GameInfo;
-import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
+import kptech.game.kit.view.LoadingPageView;
 
-public class XiaoYuLoadingPage extends LoadingPageView {
+/**
+ * 自定义 loadingView
+ */
+public class CustomerLoadingView extends LoadingPageView {
 
-    private RoundImageView mRoundIcon;
+    private AppCompatImageView mImageView;
     private TextView mTvGameName;
-    private TextView mTvProValue;
-    private LoadingSeekBar mLoadingSeekbar;
+    private TextView mProgressValue;
+    private AppCompatSeekBar mSeekBar;
     private TextView mLoadingText;
 
-    private int textPos = 0;
-    private final String[] textArr = new String[]{
-            "提示：请关闭手机旋转设置，体验会更好",
-            "提示：游戏加载不消耗流量哦",
-            "提示：网络延迟过高，请切换手机网络",
-    };
-
-    public XiaoYuLoadingPage(@NonNull Context context) {
+    public CustomerLoadingView(@NonNull Context context) {
         super(context);
     }
 
-    public XiaoYuLoadingPage(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CustomerLoadingView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public XiaoYuLoadingPage(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomerLoadingView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void inflateView() {
         View view = inflate(getContext(), R.layout.view_loading_xiaoyu, this);
         TextView mLoadingTitle = view.findViewById(R.id.tvLoadingTitle);
-        mRoundIcon = view.findViewById(R.id.iconGame);
+        mImageView = view.findViewById(R.id.iconGame);
         mTvGameName = view.findViewById(R.id.tvGameName);
-        mTvProValue = view.findViewById(R.id.tvProgressValue);
-        mLoadingSeekbar = view.findViewById(R.id.loadingSeekbar);
+        mProgressValue = view.findViewById(R.id.tvProgressValue);
+        mSeekBar = view.findViewById(R.id.loadingSeekbar);
         mLoadingText = view.findViewById(R.id.tvLoadingText);
-        mLoadingTitle.setText("游戏试玩");
-        mLoadingSeekbar.setMax(pbMax);
+
+        mLoadingTitle.setText("测试自定义loadingView");
+        mSeekBar.setMax(pbMax);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void updateChildProgress(int progress) {
-        mLoadingSeekbar.setProgress(progress);
+        mSeekBar.setProgress(progress);
         int value = progress * 100 / pbMax;
-        mTvProValue.setText(value + "%");
-    }
-
-    @Override
-    protected void updateChildText() {
-        int arrLength = textArr.length;
-        int pos = (textPos + 1) % arrLength;
-        mLoadingText.setText(textArr[pos]);
-        textPos = pos;
+        mProgressValue.setText(value + "%");
     }
 
     @Override
@@ -78,16 +71,15 @@ public class XiaoYuLoadingPage extends LoadingPageView {
         mTvGameName.setText(gameInfo.name);
         String iconUrl = gameInfo.iconUrl;
         if (iconUrl != null && !iconUrl.isEmpty()) {
-            Picasso.with(getContext()).load(iconUrl).into(mRoundIcon);
+            Glide.with(getContext()).load(iconUrl).placeholder(R.mipmap.ico_default).into(mImageView);
         }
     }
 
     @Override
     protected void onConfigChanged(Configuration newConfig) {
-
-        LinearLayout.LayoutParams roundIconLp = (LinearLayout.LayoutParams) mRoundIcon.getLayoutParams();
-        LinearLayout.LayoutParams tvProValueLp = (LinearLayout.LayoutParams) mTvProValue.getLayoutParams();
-        LinearLayout.LayoutParams seekbarLp = (LinearLayout.LayoutParams) mLoadingSeekbar.getLayoutParams();
+        LinearLayout.LayoutParams roundIconLp = (LinearLayout.LayoutParams) mImageView.getLayoutParams();
+        LinearLayout.LayoutParams tvProValueLp = (LinearLayout.LayoutParams) mProgressValue.getLayoutParams();
+        LinearLayout.LayoutParams seekbarLp = (LinearLayout.LayoutParams) mSeekBar.getLayoutParams();
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             roundIconLp.topMargin = DensityUtil.dip2px(getContext(), 30);
@@ -99,9 +91,9 @@ public class XiaoYuLoadingPage extends LoadingPageView {
             seekbarLp.topMargin = DensityUtil.dip2px(getContext(), 35);
         }
 
-        mRoundIcon.setLayoutParams(roundIconLp);
-        mTvProValue.setLayoutParams(tvProValueLp);
-        mLoadingSeekbar.setLayoutParams(seekbarLp);
+        mImageView.setLayoutParams(roundIconLp);
+        mProgressValue.setLayoutParams(tvProValueLp);
+        mSeekBar.setLayoutParams(seekbarLp);
     }
 
     @Override
