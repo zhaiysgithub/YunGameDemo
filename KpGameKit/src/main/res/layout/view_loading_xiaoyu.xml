@@ -77,5 +77,5 @@
         android:gravity="center"
         android:textColor="#989898"
         android:textSize="13sp"
-        tools:text="游戏后台下载中，即将进入抢先试玩" />
+        android:text="游戏后台下载中，即将进入抢先试玩" />
 </LinearLayout>

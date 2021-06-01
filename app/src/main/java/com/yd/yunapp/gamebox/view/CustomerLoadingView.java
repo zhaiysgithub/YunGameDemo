@@ -46,7 +46,7 @@ public class CustomerLoadingView extends LoadingPageView {
     @SuppressLint("SetTextI18n")
     @Override
     protected void inflateView() {
-        View view = inflate(getContext(), R.layout.view_loading_xiaoyu, this);
+        View view = inflate(getContext(), R.layout.view_customer_loading, this);
         TextView mLoadingTitle = view.findViewById(R.id.tvLoadingTitle);
         mImageView = view.findViewById(R.id.iconGame);
         mTvGameName = view.findViewById(R.id.tvGameName);

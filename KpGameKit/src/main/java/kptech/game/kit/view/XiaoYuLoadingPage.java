@@ -67,10 +67,10 @@ public class XiaoYuLoadingPage extends LoadingPageView {
 
     @Override
     protected void updateChildText() {
-        int arrLength = textArr.length;
+        /*int arrLength = textArr.length;
         int pos = (textPos + 1) % arrLength;
         mLoadingText.setText(textArr[pos]);
-        textPos = pos;
+        textPos = pos;*/
     }
 
     @Override
@@ -106,6 +106,6 @@ public class XiaoYuLoadingPage extends LoadingPageView {
 
     @Override
     protected void updateLoadingText(String msg) {
-        mLoadingText.setText(msg);
+//        mLoadingText.setText(msg);
     }
 }
