@@ -45,7 +45,7 @@ public class CustomerLoadingView extends LoadingPageView {
 
     @SuppressLint("SetTextI18n")
     @Override
-    protected void inflateView() {
+    public void inflateView() {
         View view = inflate(getContext(), R.layout.view_customer_loading, this);
         TextView mLoadingTitle = view.findViewById(R.id.tvLoadingTitle);
         mImageView = view.findViewById(R.id.iconGame);
@@ -60,14 +60,14 @@ public class CustomerLoadingView extends LoadingPageView {
 
     @SuppressLint("SetTextI18n")
     @Override
-    protected void updateChildProgress(int progress) {
+    public void updateChildProgress(int progress) {
         mSeekBar.setProgress(progress);
         int value = progress * 100 / pbMax;
         mProgressValue.setText(value + "%");
     }
 
     @Override
-    protected void setLoadingInfo(GameInfo gameInfo) {
+    public void setLoadingInfo(GameInfo gameInfo) {
         mTvGameName.setText(gameInfo.name);
         String iconUrl = gameInfo.iconUrl;
         if (iconUrl != null && !iconUrl.isEmpty()) {
@@ -76,7 +76,7 @@ public class CustomerLoadingView extends LoadingPageView {
     }
 
     @Override
-    protected void onConfigChanged(Configuration newConfig) {
+    public void onConfigChanged(Configuration newConfig) {
         LinearLayout.LayoutParams roundIconLp = (LinearLayout.LayoutParams) mImageView.getLayoutParams();
         LinearLayout.LayoutParams tvProValueLp = (LinearLayout.LayoutParams) mProgressValue.getLayoutParams();
         LinearLayout.LayoutParams seekbarLp = (LinearLayout.LayoutParams) mSeekBar.getLayoutParams();
@@ -97,7 +97,7 @@ public class CustomerLoadingView extends LoadingPageView {
     }
 
     @Override
-    protected void updateLoadingText(String msg) {
+    public void updateLoadingText(String msg) {
         mLoadingText.setText(msg);
     }
 }
