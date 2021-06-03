@@ -675,6 +675,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         super.onDestroy();
 
         KpGameManager.instance().removeObservable(gameObservable);
+        KpGameManager.instance().removeWeakReferenceActivity();
 
         try {
             if (mDeviceControl != null) {

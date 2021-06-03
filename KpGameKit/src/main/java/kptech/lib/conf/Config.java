@@ -81,6 +81,14 @@ public class Config {
         } catch (Exception e) {
             Logger.error(TAG, "云手机控制后退 Error: " + e.getMessage());
         }
+
+        try {
+            //云存档运营平台开关控制 默认打开，参数用来控制关闭 1 代表打开，其他代表关闭
+           String configRecoverCloudData = dObj.has("recoverCloudData") ? dObj.getString("recoverCloudData") : "1";
+           ProferencesUtils.setBoolean(mContext,"conRecoverCloudData", configRecoverCloudData.equals("1"));
+        } catch (Exception e){
+            Logger.error(TAG, "配置云存档参数 Error: " + e.getMessage());
+        }
     }
 
 }

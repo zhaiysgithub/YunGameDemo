@@ -312,7 +312,8 @@ public class DeviceControl implements IDeviceControl{
      * @return
      */
     private void sendClientNotice(){
-        if (mGameInfo.recoverCloudData == 1){
+        boolean conRecoverCloudDataOpen = ProferencesUtils.getBoolean(mActivity, "conRecoverCloudData", true);
+        if (mGameInfo.recoverCloudData == 1 && conRecoverCloudDataOpen){
             if (mGameStartCallback!=null){
                 mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);
             }

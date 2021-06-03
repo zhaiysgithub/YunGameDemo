@@ -26,6 +26,12 @@ public class ProferencesUtils {
     public static int getIng(Context context, String key, int num){
         return instance(context).getInt(key,num);
     }
+    public static void setBoolean(Context context, String key, boolean value){
+        instance(context).edit().putBoolean(key, value).apply();
+    }
+    public static boolean getBoolean(Context context, String key, boolean defaultValue){
+        return instance(context).getBoolean(key,defaultValue);
+    }
 
     public static void remove(Context context, String key){
         instance(context).edit().remove(key).commit();
