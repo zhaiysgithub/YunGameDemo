@@ -18,7 +18,6 @@ import com.kptach.lib.game.redfinger.utils.Logger;
 import com.mci.play.PlaySdkManager;
 import com.mci.play.SWDataSourceListener;
 import com.mci.play.SWPlayer;
-import com.mci.play.c;
 
 public class KpPlaySDKManager {
     private static String TAG = "PlaySDKManager";

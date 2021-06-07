@@ -40,7 +40,7 @@ dependencies {
 //    implementation files('libs/commonPlaySdk_v1.0.8.0.jar')
 
     implementation 'kptech.game.kit:kpinter:1.0.2'
-    provided files('../KpLib/libs/Game-V1.6.0.0_0330.jar')
+    provided files('../KpLib/libs/Game-V1.6.0.0_0604.jar')
 }
 
 task makeJar(type: Copy) {

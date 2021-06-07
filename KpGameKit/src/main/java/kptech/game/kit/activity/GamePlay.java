@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.IDeviceControl;
@@ -165,7 +166,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         super.onCreate(savedInstanceState);
 
 //        GameBox.sRefWatcher.watch(this);
-
+        Messager.mIconId = R.mipmap.kp_dialog_logo;
         if (Env.isTestEnv()) {
             Toast.makeText(this, "Env test !!!", Toast.LENGTH_LONG).show();
         }

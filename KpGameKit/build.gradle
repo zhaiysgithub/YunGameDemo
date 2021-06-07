@@ -45,7 +45,7 @@ dependencies {
     implementation 'org.xutils:xutils:3.3.36'
 
     //云通讯SDK
-    implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')
+    implementation files('../kplib/libs/KpCKit-v1.0.9-10.jar')
 
     //网络请求发送队列主要用来发送日志
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
@@ -54,7 +54,7 @@ dependencies {
     if (rootProject.ext.BAIDU_154){
         implementation files('../kplib/libs/Game-V1.5.4.jar')
     }else {
-        implementation files('../kplib/libs/Game-V1.6.0.0_0330.jar')
+        implementation files('../kplib/libs/Game-V1.6.0.0_0604.jar')
     }
 
 
