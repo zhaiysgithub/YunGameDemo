@@ -11,7 +11,7 @@ public class PassDeviceResponseBean {
     public PassData data;
 
     public static class PassData {
-        //IaaS供应商编码
+        //IaaS供应商编码  BD 百度设备， HW 华为设备
         public String iaas;
         //快盘的设备ID
         public String deviceid;
@@ -20,7 +20,8 @@ public class PassDeviceResponseBean {
         //iaas厂商对设备设定的唯一ID
         public String devicenum;
         //IaaS供应商接口返回的音视频接入访问授权资源描述
-        public DeviceResource resource;
+//        public DeviceResource resource;
+        public String resource;
 
         @Override
         public String toString() {

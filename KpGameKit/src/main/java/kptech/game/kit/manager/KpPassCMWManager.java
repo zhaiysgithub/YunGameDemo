@@ -42,7 +42,7 @@ public class KpPassCMWManager {
     public void startRequestPassCMW(final Application context, final String corpKey, final String pkgName, final PassCMWCallback callback) {
 
         requestPassCount++;
-        final String passParams = createPassParams(context, corpKey, pkgName);
+        final String passParams = createPassParams(corpKey, pkgName);
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -134,7 +134,7 @@ public class KpPassCMWManager {
     }
 
 
-    private String createPassParams(Application context, String corpKey, String pkgName) {
+    private String createPassParams(String corpKey, String pkgName) {
 
         try {
             JSONObject jsonObject = new JSONObject();
@@ -145,9 +145,6 @@ public class KpPassCMWManager {
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             jsonObject.put("uuid", uuid);
             jsonObject.put("ts", System.currentTimeMillis());
-            if (context != null) {
-                jsonObject.put("deviceNum", DeviceInfo.getDeviceId(context));
-            }
             return jsonObject.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,8 +169,14 @@ public class KpPassCMWManager {
                 passData.devicetype = JsonUtils.optString(passDataJson, "devicetype");
                 passData.devicenum = JsonUtils.optString(passDataJson, "devicenum");
                 JSONObject resourceJson = JsonUtils.optObject(passDataJson, "resource");
+                if (resourceJson != null){
+                    passData.resource = resourceJson.toString();
+                } else {
+                    passData.resource = "";
+                }
 
-                PassDeviceResponseBean.DeviceResource deviceResource = new PassDeviceResponseBean.DeviceResource();
+
+                /*PassDeviceResponseBean.DeviceResource deviceResource = new PassDeviceResponseBean.DeviceResource();
                 if (resourceJson != null) {
                     deviceResource.deviceNum = JsonUtils.optString(resourceJson, "deviceNum");
                     deviceResource.phoneIp = JsonUtils.optString(resourceJson, "phoneIp");
@@ -183,7 +186,7 @@ public class KpPassCMWManager {
                     deviceResource.publicIp = JsonUtils.optString(resourceJson, "publicIp");
                     deviceResource.sessionId = JsonUtils.optString(resourceJson, "sessionId");
                     deviceResource.listenPort = JsonUtils.optString(resourceJson, "listenPort");
-                }
+                }*/
             }
 
         } catch (Exception e) {
