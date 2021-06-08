@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import kptech.game.kit.PassConstants;
 import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.model.PassDeviceResponseBean;
 import kptech.game.kit.utils.JsonUtils;
@@ -27,6 +28,7 @@ public class KpPassCMWManager {
     private static final int requestMaxCount = 3;
     private int requestPassCount = 0;
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
+    public static final String defaultErrorMsg = "服务异常，请稍后再试";
 
     private KpPassCMWManager() {
     }
@@ -70,7 +72,7 @@ public class KpPassCMWManager {
     private void requestDevicePost(String jsonStr, PassCMWCallback callback) {
         if (jsonStr == null || jsonStr.isEmpty()) {
             Logger.error(TAG, "jsonStr is null or empty");
-            callback.onError(-2, "jsonStr is null or empty");
+            callback.onError(-2, defaultErrorMsg);
             return;
         }
         String url = Urls.getRequestDeviceUrl(Urls.URL_REQUEST_DEVICE);
@@ -106,14 +108,14 @@ public class KpPassCMWManager {
                     PassDeviceResponseBean responseBean = passJsonStrToBean(result);
                     callback.onSuccess(responseBean);
                 } else {
-                    callback.onError(responseCode, "response is empty");
+                    callback.onError(responseCode, defaultErrorMsg);
                 }
             } else {
-                callback.onError(responseCode, "");
+                callback.onError(responseCode, defaultErrorMsg);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            callback.onError(-1, e.getMessage());
+            callback.onError(-1, defaultErrorMsg);
         } finally {
             try {
                 if (writeStream != null) {
@@ -127,7 +129,7 @@ public class KpPassCMWManager {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onError(-1, e.getMessage());
+                callback.onError(-1, defaultErrorMsg);
             }
         }
 
@@ -197,5 +199,29 @@ public class KpPassCMWManager {
         return responseBean;
     }
 
+    public String getErrorText(int code){
+        String errorText = "";
+        switch (code){
+            case PassConstants.PASS_CODE_ERROR_CORPKEY:
+            case PassConstants.PASS_CODE_ERROR_AUTH:
+                errorText = "初始化游戏失败";
+                break;
+            case PassConstants.PASS_CODE_ERROR_PKGNAME:
+            case PassConstants.PASS_CODE_ERROR_APP:
+                errorText = "未获取到游戏信息";
+                break;
+            case PassConstants.PASS_CODE_ERROR_DEVICEBUSY:
+                errorText = "试玩人数过多，请稍后再试";
+                break;
+            case PassConstants.PASS_CODE_ERROR_DEFAULT:
+                errorText = "操作失败,请联系管理员";
+                break;
+            default:
+                errorText = defaultErrorMsg;
+                break;
+        }
+
+        return errorText;
+    }
 
 }

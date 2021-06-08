@@ -45,13 +45,12 @@ import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
+import kptech.game.kit.PassConstants;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
-import kptech.game.kit.callback.IGameObservable;
-import kptech.game.kit.callback.ISimpleGameObservable;
 import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.download.DownloadTask;
-import kptech.game.kit.manager.KpGameManager;
+import kptech.game.kit.manager.KpCloudDeviceManager;
 import kptech.game.kit.manager.KpPassCMWManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.model.PassDeviceResponseBean;
@@ -436,12 +435,36 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             KpPassCMWManager.instance().startRequestPassCMW(getApplication(), mCorpID, mGameInfo.pkgName, new PassCMWCallback() {
                 @Override
                 public void onSuccess(PassDeviceResponseBean result) {
+                    if (result == null){
+                        if (mDeviceControl != null) {
+                            mDeviceControl.stopGame();
+                        }
+                        mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, KpPassCMWManager.defaultErrorMsg));
+                        return;
+                    }
                     Logger.info("KpPassCMWManager","result = " + result.toString());
+                    int code = result.code;
+                    if(code == PassConstants.PASS_CODE_SUCCESS){
+                        //启动游戏创建deviceControl
+                        createDeviceControl(result.data);
+                        return;
+                    }
+                    if (mDeviceControl != null) {
+                        mDeviceControl.stopGame();
+                    }
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, KpPassCMWManager.instance().getErrorText(code)));
                 }
 
                 @Override
                 public void onError(int errorCode, String errorMsg) {
-                    Logger.info("KpPassCMWManager","errorCode = " + errorCode + "; errorMsg = " + errorMsg);
+                    Logger.error("GamePlay", "申请设备接口失败,code = " + errorCode + "; errorMsg = " + errorMsg);
+                    if (mDeviceControl != null) {
+                        mDeviceControl.stopGame();
+                    }
+
+                    GamePlay.this.mErrorCode = errorCode;
+                    GamePlay.this.mErrorMsg = errorMsg;
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, errorMsg));
                 }
             });
 
@@ -482,6 +505,15 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
+    private void createDeviceControl(PassDeviceResponseBean.PassData data) {
+        KpCloudDeviceManager.instance().initDeviceControl(GamePlay.this
+                , data, mGameInfo, new APICallback<IDeviceControl>() {
+                    @Override
+                    public void onAPICallback(IDeviceControl msg, int code) {
+                        //TODO 创建deviceControl 回调
+                    }
+                });
+    }
 
     private void startGame() {
         try {
