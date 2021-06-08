@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.model.PassDeviceResponseBean;
@@ -23,6 +26,7 @@ public class KpPassCMWManager {
     private static final String TAG = "KpPassCMWManager";
     private static final int requestMaxCount = 3;
     private int requestPassCount = 0;
+    private final ExecutorService executor = Executors.newFixedThreadPool(3);
 
     private KpPassCMWManager() {
     }
@@ -38,22 +42,27 @@ public class KpPassCMWManager {
     public void startRequestPassCMW(final Application context, final String corpKey, final String pkgName, final PassCMWCallback callback) {
 
         requestPassCount++;
-        String passParams = createPassParams(context, corpKey, pkgName);
-        requestDevicePost(passParams, new PassCMWCallback() {
+        final String passParams = createPassParams(context, corpKey, pkgName);
+        executor.execute(new Runnable() {
             @Override
-            public void onSuccess(PassDeviceResponseBean result) {
-                requestPassCount = 0;
-                callback.onSuccess(result);
-            }
+            public void run() {
+                requestDevicePost(passParams, new PassCMWCallback() {
+                    @Override
+                    public void onSuccess(PassDeviceResponseBean result) {
+                        requestPassCount = 0;
+                        callback.onSuccess(result);
+                    }
 
-            @Override
-            public void onError(int errorCode, String errorMsg) {
-                if (errorCode != -2 && requestPassCount <= requestMaxCount) {
-                    startRequestPassCMW(context, corpKey, pkgName, callback);
-                } else {
-                    requestPassCount = 0;
-                    callback.onError(errorCode, errorMsg);
-                }
+                    @Override
+                    public void onError(int errorCode, String errorMsg) {
+                        if (errorCode != -2 && requestPassCount <= requestMaxCount) {
+                            startRequestPassCMW(context, corpKey, pkgName, callback);
+                        } else {
+                            requestPassCount = 0;
+                            callback.onError(errorCode, errorMsg);
+                        }
+                    }
+                });
             }
         });
     }

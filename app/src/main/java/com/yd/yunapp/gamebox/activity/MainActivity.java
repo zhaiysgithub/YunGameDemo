@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPkgText;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
-
+    private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
+    private final String pkgbdPass3 = "cn.missevan";
+    private final String pkghwPass3 = "com.rydts.nb";
 
 
     @SuppressLint("SetTextI18n")
@@ -77,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
-        String APP_ID = mSp.getString("corpKey", null);
+//        String APP_ID = mSp.getString("corpKey", null);
+        String APP_ID = appIdByPass3;
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGame(View v) {
-        GameInfo info = new GameInfo();
+        /*GameInfo info = new GameInfo();
         int gid = 0;
         try {
             String gidTest = mGidText.getText().toString();
@@ -119,6 +122,19 @@ public class MainActivity extends AppCompatActivity {
         info.pkgName = mPkgText.getText().toString();
         info.name = "网易游戏联运Demo";
 
+        runGame(info);*/
+
+        GameInfo info = new GameInfo();
+        String pkgName = mPkgText.getText().toString();
+        if (pkgName.isEmpty()){
+            Toast.makeText(this, "包名不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!pkgName.equals(pkgbdPass3) && !pkgName.equals(pkghwPass3)){
+            Toast.makeText(this, "包名参数错误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        info.pkgName = pkgName;
         runGame(info);
     }
 
@@ -190,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+//        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
