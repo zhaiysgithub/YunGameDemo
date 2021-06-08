@@ -80,6 +80,9 @@ dependencies {
         implementation files('../kplib/libs/KpGameLib-BD-v1.0.3.jar')
     }
 
+    //华为SDK
+    implementation project(path: ':KpGameLibHuaWei')
+
 }
 
 
