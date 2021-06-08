@@ -49,9 +49,12 @@ import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.callback.IGameObservable;
 import kptech.game.kit.callback.ISimpleGameObservable;
+import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.KpGameManager;
+import kptech.game.kit.manager.KpPassCMWManager;
 import kptech.game.kit.manager.UserAuthManager;
+import kptech.game.kit.model.PassDeviceResponseBean;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
 import kptech.game.kit.view.FloatRecordView;
@@ -230,8 +233,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "获取游戏信息失败"));
             return;
         }
-        KpGameManager.instance().addObservable(gameObservable);
-        KpGameManager.instance().setWeakReferenceActivity(new WeakReference<>(GamePlay.this));
         doGameReceiver();
 
         checkAndRequestPermission();
@@ -432,7 +433,19 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING_CONNECT_DEVICE, "正在连接设备...");
             }
 
-            GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
+            KpPassCMWManager.instance().startRequestPassCMW(getApplication(), mCorpID, mGameInfo.pkgName, new PassCMWCallback() {
+                @Override
+                public void onSuccess(PassDeviceResponseBean result) {
+                    Logger.info("KpPassCMWManager","result = " + result.toString());
+                }
+
+                @Override
+                public void onError(int errorCode, String errorMsg) {
+                    Logger.info("KpPassCMWManager","errorCode = " + errorCode + "; errorMsg = " + errorMsg);
+                }
+            });
+
+            /*GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
                 @Override
                 public void onAPICallback(IDeviceControl deviceControl, final int code) {
                     mDeviceControl = deviceControl;
@@ -462,7 +475,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         }
                     });
                 }
-            });
+            });*/
 
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
@@ -675,10 +688,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
         super.onDestroy();
 
-        KpGameManager.instance().removeObservable(gameObservable);
-        KpGameManager.instance().removeWeakReferenceActivity();
-
         try {
+            GameBoxManager.getInstance().setDevLoading(false);
             if (mDeviceControl != null) {
                 mDeviceControl.stopGame();
             }
@@ -1649,13 +1660,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return;
         }
         registerGameReceiver();
-        // 发送广播
-        /*Intent intent = new Intent();
-        intent.setAction(KPGameReceiver.ACTION);
-        String randomValue = System.currentTimeMillis() + "";
-        mKpGameReceiver.setRandomValue(randomValue);
-        intent.putExtra(KPGameReceiver.RANDOM_KEY,randomValue);
-        sendBroadcast(intent);*/
+
     }
 
     private void registerGameReceiver() {
@@ -1691,13 +1696,4 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             exitPlay();
         }
     }
-
-    private final IGameObservable gameObservable = new ISimpleGameObservable() {
-        @Override
-        public void onGamePlayExit() {
-            if (!GamePlay.this.isFinishing()){
-                exitPlay();
-            }
-        }
-    };
 }

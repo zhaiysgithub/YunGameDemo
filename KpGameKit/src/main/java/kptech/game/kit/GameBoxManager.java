@@ -491,6 +491,10 @@ public class GameBoxManager {
         this.mUniqueId = uid;
     }
 
+    public void setDevLoading(boolean devLoading) {
+        this.devLoading = devLoading;
+    }
+
     /**
      * 获取当前联运帐号唯一标识
      * @return

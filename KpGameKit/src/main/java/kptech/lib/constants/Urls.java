@@ -37,4 +37,13 @@ public class Urls {
         return BaseUrl + url;
     }
 
+    public static final String URL_REQUEST_DEVICE = "/api/device/connect";
+
+    public static String getRequestDeviceUrl(String address){
+        //暂时还未部署到生产环境
+//        String envUrl = Env.isTestEnv() ? "http://dev.paascmw.kuaipantech.com" : "http://inter.paascmw.kuaipantech.com";
+        String envUrl = "http://dev.paascmw.kuaipantech.com";
+        return envUrl + address;
+    }
+
 }
