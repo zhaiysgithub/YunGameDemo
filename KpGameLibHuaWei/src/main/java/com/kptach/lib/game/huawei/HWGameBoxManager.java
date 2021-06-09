@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class HWGameBoxManager implements IGameBoxManager {
 
     private Application mApplication;
-    private String mResource;
+//    private String mResource;
     private boolean isDebug;
 
     @Override
@@ -23,10 +23,13 @@ public class HWGameBoxManager implements IGameBoxManager {
         try {
             if (params != null){
                 if (params.containsKey("resource")){
-                    mResource = (String) params.get("resource");
+//                    mResource = (String) params.get("resource");
                 }
                 if (params.containsKey(PARAMS_KEY_DEBUG)){
-                    isDebug = (boolean) params.get(PARAMS_KEY_DEBUG);
+                    Object debugObjcet = params.get(PARAMS_KEY_DEBUG);
+                    if (debugObjcet instanceof Boolean){
+                        isDebug = (boolean) debugObjcet;
+                    }
                 }
 
                 HWCloudGameUtils.setDebug(isDebug);

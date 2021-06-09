@@ -46,7 +46,7 @@ public class KpPassCMWManager {
 
     private void executeRunnable(final Application context, final String corpKey, final String pkgName,
                                  final String passParams, final PassCMWCallback callback){
-        requestPassCount = requestPassCount++;
+        requestPassCount++;
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -59,12 +59,13 @@ public class KpPassCMWManager {
 
                     @Override
                     public void onError(int errorCode, String errorMsg) {
-                        if (errorCode != -2 && requestPassCount <= requestMaxCount) {
+                        /*if (errorCode != -2 && requestPassCount <= requestMaxCount) {
                             executeRunnable(context, corpKey, pkgName, passParams,callback);
                         } else {
                             requestPassCount = 0;
                             callback.onError(errorCode, errorMsg);
-                        }
+                        }*/
+                        callback.onError(errorCode, errorMsg);
                     }
                 });
             }
@@ -104,7 +105,7 @@ public class KpPassCMWManager {
                 isr = new InputStreamReader(conn.getInputStream());
                 reader = new BufferedReader(isr);
                 String result = reader.readLine();
-                Logger.info("@@@", "result=" + result);
+                Logger.info(TAG, "result=" + result);
 
                 if (result != null && !result.isEmpty()) {
                     PassDeviceResponseBean responseBean = passJsonStrToBean(result);

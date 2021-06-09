@@ -432,7 +432,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mPlayStatueView != null) {
                 mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING_CONNECT_DEVICE, "正在连接设备...");
             }
-            Log.e("@@@","435");
             KpPassCMWManager.instance().startRequestPassCMW(getApplication(), mCorpID, mGameInfo.pkgName, new PassCMWCallback() {
                 @Override
                 public void onSuccess(PassDeviceResponseBean result) {
