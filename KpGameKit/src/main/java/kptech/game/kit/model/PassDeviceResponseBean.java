@@ -20,48 +20,8 @@ public class PassDeviceResponseBean {
         //iaas厂商对设备设定的唯一ID
         public String devicenum;
         //IaaS供应商接口返回的音视频接入访问授权资源描述
-//        public DeviceResource resource;
-        public String resource;
-
-        @Override
-        public String toString() {
-            return "PassData{" +
-                    "iaas='" + iaas + '\'' +
-                    ", deviceid='" + deviceid + '\'' +
-                    ", devicetype='" + devicetype + '\'' +
-                    ", devicenum='" + devicenum + '\'' +
-                    ", resource=" + resource +
-                    '}';
-        }
+        public Object resource;
     }
-
-    public static class DeviceResource {
-        //IaaS供应商接口返回的音视频接入访问授权资源描述
-        public String deviceNum;
-        public String phoneIp;
-        public String domain;
-        public String serverIp;
-        public String accessPort;
-        public String publicIp;
-        public String sessionId;
-        public String listenPort;
-
-        @Override
-        public String toString() {
-            return "DeviceResource{" +
-                    "deviceNum='" + deviceNum + '\'' +
-                    ", phoneIp='" + phoneIp + '\'' +
-                    ", domain='" + domain + '\'' +
-                    ", serverIp='" + serverIp + '\'' +
-                    ", accessPort='" + accessPort + '\'' +
-                    ", publicIp='" + publicIp + '\'' +
-                    ", sessionId='" + sessionId + '\'' +
-                    ", listenPort='" + listenPort + '\'' +
-                    '}';
-        }
-    }
-
-
     @Override
     public String toString() {
         return "PassDeviceResponseBean{" +

@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.model.PassDeviceResponseBean;
@@ -67,7 +68,8 @@ public class KpCloudDeviceManager {
         }
 
         HashMap<String,Object> sdkParams = new HashMap<>();
-        sdkParams.put("passData",data);
+        sdkParams.put("resource",data.resource);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
         String iaas = data.iaas;
         if (iaas.equals("BD")){
             inf.useSDK = GameInfo.SdkType.BD;

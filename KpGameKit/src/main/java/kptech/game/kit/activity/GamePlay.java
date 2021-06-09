@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -431,7 +432,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mPlayStatueView != null) {
                 mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING_CONNECT_DEVICE, "正在连接设备...");
             }
-
+            Log.e("@@@","435");
             KpPassCMWManager.instance().startRequestPassCMW(getApplication(), mCorpID, mGameInfo.pkgName, new PassCMWCallback() {
                 @Override
                 public void onSuccess(PassDeviceResponseBean result) {

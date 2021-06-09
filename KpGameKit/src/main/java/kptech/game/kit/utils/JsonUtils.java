@@ -36,12 +36,4 @@ public class JsonUtils {
         }
     }
 
-    public static JSONObject optObject(JSONObject json, String key){
-        if (json.isNull(key)){
-            return null;
-        }else{
-            return json.optJSONObject(key);
-        }
-    }
-
 }
