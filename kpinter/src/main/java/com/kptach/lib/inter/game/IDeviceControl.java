@@ -6,6 +6,7 @@ public interface IDeviceControl {
     enum SdkType {
         REDF,
         BD,
+        HW
     }
 
     /**

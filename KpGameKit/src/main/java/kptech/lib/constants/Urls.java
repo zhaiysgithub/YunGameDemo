@@ -37,7 +37,7 @@ public class Urls {
         return BaseUrl + url;
     }
 
-    public static final String URL_REQUEST_DEVICE = "/api/device/connect";
+    public static final String URL_REQUEST_DEVICE = "/api/device/connect/test";
 
     public static String getRequestDeviceUrl(String address){
         //暂时还未部署到生产环境

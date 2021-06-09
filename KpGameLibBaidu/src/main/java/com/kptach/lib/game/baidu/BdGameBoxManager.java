@@ -106,6 +106,11 @@ public class BdGameBoxManager implements IGameBoxManager {
         });
     }
 
+    @Override
+    public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
+
+    }
+
     private GameInfo getLibGameInfo(String inf){
         try {
             JSONObject obj = new JSONObject(inf);
