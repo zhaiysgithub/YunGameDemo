@@ -5,12 +5,14 @@ import android.app.Activity;
 import androidx.annotation.NonNull;
 
 import com.kptach.lib.inter.game.IGameBoxManager;
+import com.kptach.lib.inter.game.IGameCallback;
 
 import java.util.HashMap;
 
 import kptech.game.kit.APICallback;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.DeviceControl;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.model.PassDeviceResponseBean;
@@ -34,8 +36,8 @@ public class KpCloudDeviceManager {
         return KpCloudDeviceHolder.INSTANCE;
     }
 
-    public void initDeviceControl(@NonNull Activity activity, PassDeviceResponseBean.PassData data
-            ,@NonNull final GameInfo inf
+    public void initDeviceControl(@NonNull Activity activity, final String mCorpID, PassDeviceResponseBean.PassData data
+            , @NonNull final GameInfo inf
             , @NonNull final APICallback<IDeviceControl> callback){
 
         try {
@@ -78,5 +80,55 @@ public class KpCloudDeviceManager {
         }
 
         IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, activity.getApplication(),sdkParams);
+        gameBoxManager.createDeviceControl(activity, inf.toJsonString(),sdkParams ,new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
+            @Override
+            public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
+
+                DeviceControl control = null;
+                if (innerControl != null){
+                    control = new DeviceControl(innerControl, inf);
+                    control.setCorpKey(mCorpID);
+                }
+
+                try {
+                    //发送打点事件
+                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+                    }
+                    event.setErrMsg(""+code);
+                    HashMap ext = new HashMap<>();
+                    ext.put("code", code);
+                    if(innerControl!=null && innerControl.getSdkType()!=null){
+                        ext.put("useSDK", innerControl.getSdkType().toString());
+                    }
+                    event.setExt(ext);
+                    MobclickAgent.sendEvent(event);
+                }catch (Exception e){}
+
+                try {
+                    //发送事件耗时统计
+                    long useTm = mTimeDuration.duration();
+                    HashMap data = new HashMap();
+                    data.put("stime", mTimeDuration.getSavedTime());
+                    data.put("etime", mTimeDuration.getCurentTime());
+                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
+                    data.put("code", code);
+                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
+                    event.setGamePkg(inf.pkgName);
+                    if (control != null){
+                        event.setPadcode(control.getPadcode());
+                    }
+                    MobclickAgent.sendTMEvent(event);
+
+                    mTimeDuration = null;
+                }catch (Exception e){}
+
+                //回调方法
+                if (callback!=null){
+                    callback.onAPICallback(control, code);
+                }
+            }
+        });
     }
 }

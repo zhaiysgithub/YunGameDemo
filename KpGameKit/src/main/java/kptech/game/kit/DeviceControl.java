@@ -57,7 +57,7 @@ public class DeviceControl implements IDeviceControl{
         this(control,null);
     }
 
-    protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control, GameInfo game){
+    public DeviceControl(com.kptach.lib.inter.game.IDeviceControl control, GameInfo game){
         this.mInnerControl = control;
         this.mGameInfo = game;
         this.mGameHandler = new GameHandler();

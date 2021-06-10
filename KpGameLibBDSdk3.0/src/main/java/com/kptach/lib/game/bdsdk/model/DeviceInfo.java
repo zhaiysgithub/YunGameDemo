@@ -56,58 +56,24 @@ public class DeviceInfo {
             return null;
         }
         try {
-            JSONObject obj = new JSONObject(str);
 
+            JSONObject obj = new JSONObject(str);
             DeviceInfo deviceInfo = new DeviceInfo();
 
             try {
-                if (obj.has("extInfo")){
+                if (obj.has("extInfo")) {
                     JSONObject extObj = obj.getJSONObject("extInfo");
                     deviceInfo.apiLevel = extObj.has("apiLevel") ? extObj.optInt("apiLevel") : 2;
                     deviceInfo.useSSL = extObj.has("useSSL") ? extObj.optInt("useSSL") : 0;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            JSONObject devObj = obj.getJSONObject("resultInfo");
-            deviceInfo.deviceParams = devObj.toString();
+            deviceInfo.deviceParams = str;
 
-            deviceInfo.padCode = devObj.optString("padCode");
-
-            try {
-                String resolutionRatio = devObj.optString("resolutionRatio");
-                if (resolutionRatio!=null){
-                    String[] arr = resolutionRatio.split(" X ");
-                    if (arr.length == 2){
-                        int w = Integer.parseInt(arr[0]);
-                        int h = Integer.parseInt(arr[1]);
-                        deviceInfo.resolutionRatio = new ResolutionRatio(w, h);
-                    }
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-            deviceInfo.gop = devObj.optInt("GOP");
-            deviceInfo.bitrate = devObj.optInt("bitrate");
-            deviceInfo.maxFPS = devObj.optInt("maxFPS");
-            deviceInfo.minFPS = devObj.optInt("minFPS");
-            deviceInfo.perUpFPS = devObj.optInt("perUpFPS");
-            deviceInfo.perDownFPS = devObj.optInt("perDownFPS");
-            deviceInfo.encodeType = devObj.optInt("encodeType");
-            deviceInfo.isAudio = devObj.optInt("isAudio") == 1 ? true : false;
-
-            try {
-                int quality = devObj.optInt("gameVideoQuality");
-                if (quality >= 0 && quality < VideoQuality.values().length){
-                    VideoQuality[] arr = VideoQuality.values();
-                    deviceInfo.videoQuality = arr[quality].name();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
             return deviceInfo;
+
         }catch (Exception e){
             e.printStackTrace();
         }

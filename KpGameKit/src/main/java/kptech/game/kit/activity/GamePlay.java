@@ -507,9 +507,19 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private void createDeviceControl(PassDeviceResponseBean.PassData data) {
         KpCloudDeviceManager.instance().initDeviceControl(GamePlay.this
-                , data, mGameInfo, new APICallback<IDeviceControl>() {
+                ,mCorpID, data, mGameInfo, new APICallback<IDeviceControl>() {
                     @Override
                     public void onAPICallback(IDeviceControl msg, int code) {
+
+                        mDeviceControl  = msg;
+                        if (!isFinishing()) {
+                            startGame();
+                        } else {
+                            // 如果界面推出之后才收到回调，请调用这个方法
+                            if (mDeviceControl != null) {
+                                mDeviceControl.stopGame();
+                            }
+                        }
                         //TODO 创建deviceControl 回调
                     }
                 });

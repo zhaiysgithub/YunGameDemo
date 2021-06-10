@@ -9,18 +9,7 @@ public class Logger {
         isDebug = debug;
     }
 
-    private static String TAG = "kpgamekit.redf.";
-//    private boolean mEnableLog;
-
-//    public Logger(String tag){
-//        this.TAG += tag;
-//        setEnableLog(isDebug);
-//    }
-//
-//    public Logger(String tag, boolean enable){
-//        this.TAG += tag;
-//        this.mEnableLog = enable;
-//    }
+    private static String TAG = "kpgamekit.bdsdk.";
 
     public static void info(String tag, String msg){
         if (isDebug){
@@ -34,7 +23,4 @@ public class Logger {
         }
     }
 
-//    public void setEnableLog(boolean enable){
-//        this.mEnableLog = enable;
-//    }
 }

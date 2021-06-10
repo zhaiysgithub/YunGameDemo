@@ -8,6 +8,7 @@ import com.kptach.lib.game.bdsdk.task.RequestDeviceTask;
 import com.kptach.lib.game.bdsdk.utils.Logger;
 import com.kptach.lib.game.bdsdk.utils.dx.DXStatService;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -77,6 +78,28 @@ public class BDSdkGameBoxManager implements IGameBoxManager {
 
         if (callback != null) {
             callback.onGameCallback(control, code);
+        }
+    }
+
+
+    @Override
+    public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
+
+
+        String deviceData = params.get("resource").toString();
+        Logger.info("KpPassCMWManager", "result.data = " + deviceData);
+        String pkgName = "";
+        try {
+            JSONObject packInfo = new JSONObject(gameInf);
+            pkgName = packInfo.optString("pkgName");
+            Logger.info("KpPassCMWManager", "result.data  deviceData = " + deviceData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        IDeviceControl control = (IDeviceControl) new BDSdkDeviceControl(deviceData, pkgName);
+
+        if (callback != null) {
+            callback.onGameCallback(control, APIConstants.APPLY_DEVICE_SUCCESS);
         }
     }
 
