@@ -6,12 +6,8 @@ import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 
-import com.huawei.cloudgame.api.CloudGameDataListener;
 import com.huawei.cloudgame.api.CloudGameManager;
-import com.huawei.cloudgame.api.CloudGameOrientationChangeListener;
 import com.huawei.cloudgame.api.CloudGameParas;
-import com.huawei.cloudgame.api.CloudGameStatDataListener;
-import com.huawei.cloudgame.api.CloudGameStateListener;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
@@ -22,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 public class HWDeviceControl implements IDeviceControl {
 
@@ -103,7 +98,8 @@ public class HWDeviceControl implements IDeviceControl {
                         availablePlayTime = sdkParams.get("available_playtime");
                     }
                 }
-
+//                String detailStr = getDetailStr();
+//                HWCloudGameUtils.info(TAG,detailStr);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,7 +160,7 @@ public class HWDeviceControl implements IDeviceControl {
     @Override
     public String getVideoQuality() {
         //TODO 待修改
-        String videoQuality = "";
+        String videoQuality;
         if (videoResolution == CloudGameParas.Resolution.DISPLAY_1080P) {
             videoQuality = APIConstants.DEVICE_VIDEO_QUALITY_HD;
         } else if (videoResolution == CloudGameParas.Resolution.DISPLAY_720P) {
@@ -182,11 +178,11 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public int[] getVideoSize() {
-        try {
+        /*try {
             //TODO 获取视频尺寸
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return new int[]{1280, 720};
     }
 
@@ -366,11 +362,9 @@ public class HWDeviceControl implements IDeviceControl {
         });
 
         //注册云游戏数据监听
-        CloudGameManager.CreateCloudGameInstance().registerCloudAppDataListener(new CloudGameDataListener() {
-            @Override
-            public void onRecvCloudGameData(byte[] bytes, int length) {
-                HWCloudGameUtils.info("onRecvCloudGameData","bytes=" + new String(bytes, StandardCharsets.UTF_8) + ";length=" + length);
-            }
+        CloudGameManager.CreateCloudGameInstance().registerCloudAppDataListener((bytes, length) -> {
+            //TODO
+            HWCloudGameUtils.info("onRecvCloudGameData","bytes=" + new String(bytes, StandardCharsets.UTF_8) + ";length=" + length);
         });
         //游戏画面方向变化监听器
         CloudGameManager.CreateCloudGameInstance().registerOnOrientationChangeListener(orientation -> {
@@ -392,33 +386,30 @@ public class HWDeviceControl implements IDeviceControl {
             HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);
             if (statData != null && !statData.isEmpty() && mActivity != null && mViewgroup != null){
 
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (mActivity.isFinishing()){
-                                return;
-                            }
-
-                            //网络延迟
-                            if (mPlayListener != null){
-                                int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
-                                mPlayListener.onPingUpdate(rtt);
-                            }
-
-                            if (mCallback != null){
-                                JSONObject json = new JSONObject(statData);
-                                String refresh_fps = "";
-                                if (json.has("refresh_fps")){
-                                    refresh_fps = json.getString("refresh_fps");
-                                }
-//                                  mCallback.onGameCallback(refresh_fps, APIConstants.REFRESH_FPS);
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
+                mActivity.runOnUiThread(() -> {
+                    try {
+                        if (mActivity.isFinishing()){
+                            return;
                         }
 
+                        //网络延迟
+                        if (mPlayListener != null){
+                            int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
+                            mPlayListener.onPingUpdate(rtt);
+                        }
+
+                        /*if (mCallback != null){
+                            JSONObject json = new JSONObject(statData);
+                            String refresh_fps = "";
+                            if (json.has("refresh_fps")){
+                                refresh_fps = json.getString("refresh_fps");
+                            }
+//                                  mCallback.onGameCallback(refresh_fps, APIConstants.REFRESH_FPS);
+                        }*/
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
+
                 });
 
             }
