@@ -77,7 +77,7 @@ public class BdGameBoxManager implements IGameBoxManager {
         GameInfo game = getLibGameInfo(inf);
         if (game == null){
             if (callback != null){
-                callback.onGameCallback(null, com.kptach.lib.inter.game.APIConstants.ERROR_GAME_INF_EMPTY);
+                callback.onGameCallback(null, com.kptach.lib.inter.game.APIConstants.ERROR_GAME_INFO);
             }
             return;
         }

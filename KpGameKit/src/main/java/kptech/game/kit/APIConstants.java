@@ -4,7 +4,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class APIConstants {
-    public static final int APPLY_DEVICE_SUCCESS = 1000;
+
+    /*public static final int APPLY_DEVICE_SUCCESS = 1000;
     public static final int CONNECT_DEVICE_SUCCESS = 1001;
     public static final int RECONNECT_DEVICE_SUCCESS = 1002;
 
@@ -39,15 +40,15 @@ public class APIConstants {
     //用户未认证的 code
     public static final int PHONE_NOT_AUTH = 12001;
     //用户认证失败的 code
-    public static final int ERROR_AUTH_FAIL = 12002;
+    public static final int ERROR_AUTH_FAIL = 12002;*/
 
-    public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
+    /*public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = "GRADE_LEVEL_ORDINARY";
     public static final String DEVICE_VIDEO_QUALITY_HS = "GRADE_LEVEL_HS";
     public static final String DEVICE_VIDEO_QUALITY_LS = "GRADE_LEVEL_LS";
-    public static final String DEVICE_VIDEO_QUALITY_AUTO = "GRADE_LEVEL_AUTO";
+    public static final String DEVICE_VIDEO_QUALITY_AUTO = "GRADE_LEVEL_AUTO";*/
 
-    public static final String MOCK_IMEI = "imei";
+    /*public static final String MOCK_IMEI = "imei";
     public static final String MOCK_ANDROID_ID = "androidId";
     public static final String MOCK_WIFIMAC = "wifimac";
     public static final String MOCK_SERIALNO = "serialno";
@@ -87,6 +88,6 @@ public class APIConstants {
 
     @Retention(RetentionPolicy.CLASS)
     public @interface VideoQuality {
-    }
+    }*/
 
 }

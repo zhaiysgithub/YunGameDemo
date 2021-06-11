@@ -12,10 +12,15 @@ import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
 
+import kptech.game.kit.callback.PassCMWCallback;
+import kptech.game.kit.manager.KpPassCMWManager;
+import kptech.game.kit.model.PassDeviceResponseBean;
 import kptech.game.kit.view.LoadingPageView;
 import kptech.lib.ad.AdManager;
 import kptech.lib.analytic.DeviceInfo;
@@ -24,7 +29,6 @@ import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
 import kptech.game.kit.env.Env;
 import kptech.lib.constants.SharedKeys;
-import kptech.lib.constants.Urls;
 import kptech.lib.data.RequestAppInfoTask;
 import kptech.lib.data.RequestTask;
 import kptech.lib.fatory.GameBoxManagerFactory;
@@ -33,28 +37,22 @@ import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
 import kptech.game.kit.utils.ProferencesUtils;
+import com.kptach.lib.inter.game.APIConstants;
 
 
 public class GameBoxManager {
 
     private static final String TAG = "GameBoxManager";
-
     private static Application mApplication = null;
-
     public static String mCorpID = "";
-
-//    private Context context;
     private static volatile GameBoxManager box = null;
-//    private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private String mUniqueId;
-
-//    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
     private MillisecondsDuration mTimeDuration;
     private boolean isInited = false;
-
     private boolean devLoading = false;
     private boolean mShowCustomerLoadingView;
     private LoadingPageView mCustomerLoadingView;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -98,7 +96,7 @@ public class GameBoxManager {
         return this.isInited;
     }
 
-    public synchronized void init(@NonNull Application application, String appKey, APICallback<String> callback){
+    public synchronized void init(Application application, String appKey, APICallback<String> callback){
         //判断已经初始化完成
         if (isGameBoxManagerInited()){
             if (callback != null){
@@ -115,7 +113,7 @@ public class GameBoxManager {
         if (mApplication == null){
             Logger.error("GameBoxManager","Init application is null");
             if (callback != null){
-                callback.onAPICallback("Application is null", APIConstants.ERROR_SDK_INIT_ERROR);
+                callback.onAPICallback("Application is null", APIConstants.ERROR_GAME_INIT);
             }
             return;
         }
@@ -123,7 +121,7 @@ public class GameBoxManager {
             Logger.error("GameBoxManager","Init appKey is null");
             //回调初始化
             if (callback != null){
-                callback.onAPICallback("CorID is null", APIConstants.ERROR_SDK_INIT_ERROR);
+                callback.onAPICallback("CorID is null", APIConstants.ERROR_GAME_INIT);
             }
             return;
         }
@@ -160,7 +158,7 @@ public class GameBoxManager {
 
     }
 
-    private HashMap getDeviceInfo(Context context){
+    private HashMap<String,Object> getDeviceInfo(Context context){
         HashMap<String,Object> params = new HashMap<>();
         try {
             params.put("appVer", DeviceUtils.getVersionName(context));
@@ -178,6 +176,7 @@ public class GameBoxManager {
             params.put("nettype", netStr);
             params.put("deviceId", DeviceInfo.getDeviceId(context));
         }catch (Exception e){
+            e.printStackTrace();
         }
         return params;
     }
@@ -287,18 +286,20 @@ public class GameBoxManager {
         try {
             //发送打点事件
             Event event = Event.getEvent(ret ? EventCode.DATA_SDK_INIT_OK : EventCode.DATA_SDK_INIT_FAILED);
-            HashMap ext = new HashMap();
+            HashMap<String,Object> ext = new HashMap<>();
             ext.put("ak",AK);
             ext.put("sk",SK);
             event.setExt(ext);
             MobclickAgent.sendEvent(event);
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         try {
             //发送事件耗时统计
             long useTm = mTimeDuration.duration();
-            HashMap data = new HashMap();
+            HashMap<String,Object> data = new HashMap<>();
             data.put("state", ret ? "ok" : "failed");
             data.put("stime", mTimeDuration.getSavedTime());
             data.put("etime", mTimeDuration.getCurentTime());
@@ -307,7 +308,9 @@ public class GameBoxManager {
 
             mTimeDuration = new MillisecondsDuration();
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         isInited = true;
 
@@ -319,14 +322,17 @@ public class GameBoxManager {
      * @param inf 游戏信息
      * @param callback 申请设备成功则返回状态码：APIConstants.API_CALL_SUCCESS和DeviceControl用于控制设备，否则返回对应错误码。
      */
-    public synchronized void applyCloudDevice(@NonNull Activity activity, @NonNull final GameInfo inf, @NonNull final APICallback<IDeviceControl> callback){
+    public synchronized void applyCloudDevice(final Activity activity, final GameInfo inf,final APICallback<IDeviceControl> callback){
         if (devLoading){
+            return;
+        }
+        if (activity == null || activity.isFinishing()) {
             return;
         }
 
         if (inf == null){
-            if (callback!=null){
-                callback.onAPICallback(null, APIConstants.ERROR_GAME_INF_EMPTY);
+            if (callback != null){
+                callback.onAPICallback(null, APIConstants.ERROR_GAME_INFO);
             }
             return;
         }
@@ -335,22 +341,20 @@ public class GameBoxManager {
             //重置打点数据
             Event.resetTrackIdFromBase();
 
-            HashMap ext = new HashMap<>();
+            HashMap<String,Object> ext = new HashMap<>();
             ext.put("gid", inf.gid);
             ext.put("useSDK", inf.useSDK.name());
 
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName, ext));
-        }catch (Exception e){}
 
-        if (mTimeDuration == null) {
-            mTimeDuration = new MillisecondsDuration();
-        }
+            if (mTimeDuration == null) {
+                mTimeDuration = new MillisecondsDuration();
+            }
 
-        try {
             //发送事件耗时统计
             long useTm = mTimeDuration.duration();
-            HashMap data = new HashMap();
+            HashMap<String,Object> data = new HashMap<>();
             data.put("stime", mTimeDuration.getSavedTime());
             data.put("etime", mTimeDuration.getCurentTime());
             Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_START, useTm, data);
@@ -358,20 +362,57 @@ public class GameBoxManager {
             MobclickAgent.sendTMEvent(event);
 
             mTimeDuration = new MillisecondsDuration();
-        }catch (Exception e){}
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         devLoading = true;
-        HashMap sdkParams = new HashMap();
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
-        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
 
-        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
-        gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
+        KpPassCMWManager.instance().startRequestPassCMW(mCorpID, inf.pkgName, new PassCMWCallback() {
+            @Override
+            public void onSuccess(PassDeviceResponseBean result) {
+                if (result == null){
+                   callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
+                   return;
+                }
+                Logger.info("KpPassCMWManager","result = " + result.toString());
+                int code = result.code;
+                if(code == PassConstants.PASS_CODE_SUCCESS){
+                    //启动游戏创建deviceControl
+                    initDeviceControl(activity, result.data
+                            , inf, mCorpID, callback);
+                    return;
+                }
+                int erroCode = KpPassCMWManager.instance().getErrorCode(code);
+                callback.onAPICallback(null, erroCode);
+            }
+
+            @Override
+            public void onError(int errorCode, String errorMsg) {
+                Logger.error("GamePlay", "申请设备接口失败,code = " + errorCode + "; errorMsg = " + errorMsg);
+                callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
+            }
+        });
+    }
+
+    private void initDeviceControl(@NonNull Activity activity, PassDeviceResponseBean.PassData data
+            ,@NonNull final GameInfo inf, final String corpKey
+            , @NonNull final APICallback<IDeviceControl> callback) {
+
+        HashMap<String,Object> sdkParams = new HashMap<>();
+        sdkParams.put("resource",data.resource);
+        sdkParams.put("direction",data.direction);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
+        String iaas = data.iaas;
+        if (iaas.equals("BD")){
+            inf.useSDK = GameInfo.SdkType.BD;
+        }else if(iaas.equals("HW")){
+            inf.useSDK = GameInfo.SdkType.HW;
+            sdkParams.put("deviceid",data.deviceid);
+        }
+
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, activity.getApplication(),sdkParams);
+        gameBoxManager.createDeviceControl(activity, inf.toJsonString(), sdkParams, new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>(){
+
             @Override
             public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
                 devLoading = false;
@@ -379,7 +420,7 @@ public class GameBoxManager {
                 DeviceControl control = null;
                 if (innerControl != null){
                     control = new DeviceControl(innerControl, inf);
-                    control.setCorpKey(mCorpID);
+                    control.setCorpKey(corpKey);
                 }
 
                 try {
@@ -389,19 +430,21 @@ public class GameBoxManager {
                         event.setPadcode(control.getPadcode());
                     }
                     event.setErrMsg(""+code);
-                    HashMap ext = new HashMap<>();
+                    HashMap<String,Object> ext = new HashMap<>();
                     ext.put("code", code);
                     if(innerControl!=null && innerControl.getSdkType()!=null){
                         ext.put("useSDK", innerControl.getSdkType().toString());
                     }
                     event.setExt(ext);
                     MobclickAgent.sendEvent(event);
-                }catch (Exception e){}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 try {
                     //发送事件耗时统计
                     long useTm = mTimeDuration.duration();
-                    HashMap data = new HashMap();
+                    HashMap<String,Object> data = new HashMap<>();
                     data.put("stime", mTimeDuration.getSavedTime());
                     data.put("etime", mTimeDuration.getCurentTime());
                     data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
@@ -414,15 +457,14 @@ public class GameBoxManager {
                     MobclickAgent.sendTMEvent(event);
 
                     mTimeDuration = null;
-                }catch (Exception e){}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 //回调方法
-                if (callback!=null){
-                    callback.onAPICallback(control, code);
-                }
+                callback.onAPICallback(control, code);
             }
         });
-
     }
 
 
@@ -485,7 +527,6 @@ public class GameBoxManager {
 
     /**
      * 设置联运帐号用户唯一标识
-     * @param uid
      */
     public void setUniqueId(String uid){
         this.mUniqueId = uid;
@@ -497,7 +538,6 @@ public class GameBoxManager {
 
     /**
      * 获取当前联运帐号唯一标识
-     * @return
      */
     public String getUniqueId(){
         return this.mUniqueId;

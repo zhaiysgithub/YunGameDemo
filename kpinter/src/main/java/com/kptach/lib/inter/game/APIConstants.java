@@ -4,25 +4,70 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class APIConstants {
+
+    //游戏初始化错误
+    public static final int ERROR_GAME_INIT = 100;
+    //调用API错误
+    public static final int ERROR_CALL_API = 101;
+    //认证失败
+    public static final int ERROR_AUTH = 102;
+    //申请设备成功
     public static final int APPLY_DEVICE_SUCCESS = 1000;
-    public static final int CONNECT_DEVICE_SUCCESS = 1001;
-    public static final int RECONNECT_DEVICE_SUCCESS = 1002;
+    //申请设别失败
+    public static final int ERROR_APPLY_DEVICE = 1001;
+    //连接设备成功
+    public static final int CONNECT_DEVICE_SUCCESS = 1002;
+    //重连设备成功
+    public static final int RECONNECT_DEVICE_SUCCESS = 1003;
+    //连接设备失败
+    public static final int ERROR_CONNECT_DEVICE = 1004;
+    //释放设备
+    public static final int RELEASE_SUCCESS = 1005;
+    //设备繁忙 (无设备)
+    public static final int ERROR_DEVICE_BUSY = 1006;
+    //网络错误
+    public static final int ERROR_NETWORK = 1007;
+    //设备过期
+    public static final int ERROR_DEVICE_EXPIRED = 1008;
+    //初始化游戏失败 (启动游戏失败)
+    public static final int ERROR_SDK_INIT = 1009;
+    //无该游戏信息
+    public static final int ERROR_GAME_INFO = 1010;
+    //游戏被取消启动
+    public static final int ERROR_GAME_CANCLED = 1011;
+    //启动游戏成功
+    public static final int GAME_SDK_INIT_SUCCESS = 1012;
+    //广告加载中
+    public static final int AD_LOADING = 1013;
+    //游戏加载中
+    public static final int GAME_LOADING = 1014;
+    //云手机数据恢复中
+    public static final int RECOVER_DATA_LOADING = 1015;
+    //可用时间到达
+    public static final int TIMEOUT_AVAILABLE_TIME = 1016;
+    //长时间未操作
+    public static final int TIMEOUT_NO_OPS = 1017;
+    //游戏退出
+    public static final int GAME_EXIT_SUCCESS = 1018;
+    //游戏帧率数据
+    public static final int DATA_FPS_GAME = 1019;
+    //网络延迟数据
+    public static final int DATA_NETWORK_LATENCY = 1020;
+    //切换游戏分辨率成功
+    public static final int SWITCH_GAME_RESOLUTION_SUCCESS = 1021;
+    //切换游戏分辨率失败
+    public static final int SWITCH_GAME_RESOLUTION_ERROR = 1022;
+    //游戏数据内部错误
+    public static final int ERROR_GAME_INNER = 1023;
+    //游戏开始连接成功 (处理游戏开始连接到游戏启动成功这段时间黑屏问题)
+    public static final int GAME_START_CONNECT = 1024;
+    //其他错误联系管理员
+    public static final int ERROR_OTHER = 65535;
 
-    public static final int RELEASE_SUCCESS = 1011;
 
-    public static final int ERROR_API_CALL_ERROR = -1000;
-    public static final int ERROR_NO_DEVICE = -1001;
-    public static final int ERROR_NETWORK_ERROR = -1002;
-    public static final int ERROR_DEVICE_EXPIRED = -1003;
-    public static final int ERROR_DEVICE_OTHER_ERROR = -1004;
-    public static final int ERROR_OTHER_DEVICE_RUNNING = -1005;
-    public static final int ERROR_SDK_INIT_ERROR = -1006;
-    public static final int ERROR_APP_QUERY_ERROR = -1007;
-    public static final int ERROR_WAITING_QUEUE = -1008;
-    public static final int ERROR_OTHER_DEVICE_WAITING = -1009;
-    public static final int ERROR_DEVICE_TOKEN_VALID_FAILED = -1010;
 
-    public static final int ERROR_GAME_INF_EMPTY = -2001;
+
+
 
     public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = "GRADE_LEVEL_ORDINARY";

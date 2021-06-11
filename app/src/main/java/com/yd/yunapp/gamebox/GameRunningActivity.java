@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kptech.game.kit.APICallback;
-import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.GameInfo;
@@ -128,13 +127,13 @@ public class GameRunningActivity extends Activity implements APICallback<String>
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-                            if (!isFinishing()) {
-                                startGame();
-                            } else {
-                                // 如果界面推出之后才收到回调，请调用这个方法
-                                mDeviceControl.stopGame();
-                            }
+//                        if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
+//                            if (!isFinishing()) {
+//                                startGame();
+//                            } else {
+//                                // 如果界面推出之后才收到回调，请调用这个方法
+//                                mDeviceControl.stopGame();
+//                            }
 //                        } else if (code == APIConstants.WAITING_QUEUE) {
 //                            GameBoxManager.getInstance().joinQueue(mGameInfo, 10,
 //                                    new APICallback<QueueRankInfo>() {
@@ -152,11 +151,11 @@ public class GameRunningActivity extends Activity implements APICallback<String>
 //                                            }
 //                                        }
 //                                    });
-                        } else {
-                            Toast.makeText(GameRunningActivity.this,
-                                    "申请试玩设备失败,code = " + code, Toast.LENGTH_LONG).show();
-                            exitPlay();
-                        }
+//                        } else {
+//                            Toast.makeText(GameRunningActivity.this,
+//                                    "申请试玩设备失败,code = " + code, Toast.LENGTH_LONG).show();
+//                            exitPlay();
+//                        }
                     }
                 });
             }

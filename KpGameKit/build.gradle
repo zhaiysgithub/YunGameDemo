@@ -20,7 +20,7 @@ android {
         }
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -45,7 +45,7 @@ dependencies {
     implementation 'org.xutils:xutils:3.3.36'
 
     //云通讯SDK
-    implementation files('../kplib/libs/KpCKit-v1.0.9-10.jar')
+    implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')
 
     //网络请求发送队列主要用来发送日志
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
@@ -59,25 +59,25 @@ dependencies {
 
 
     //广告sdk
-    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
-//    implementation project(path: ':KpGameAd')
+//    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
+    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
     implementation project(path: ':kpinter')
 
     //红手指游戏库适配
-    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
-//    implementation project(path: ':KpGameLibRedfinger')
+//    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
+    implementation project(path: ':KpGameLibRedfinger')
 
     //百度游戏库适配
 //
     if (rootProject.ext.BAIDU_154){
-//        implementation project(path: ':KpGameLibBaidu_154')
-        implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
+        implementation project(path: ':KpGameLibBaidu_154')
+//        implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
     }else {
-//        implementation project(path: ':KpGameLibBaidu')
-        implementation files('../kplib/libs/KpGameLib-BD-v1.0.3.jar')
+        implementation project(path: ':KpGameLibBaidu')
+//        implementation files('../kplib/libs/KpGameLib-BD-v1.0.3.jar')
     }
 
     //华为SDK

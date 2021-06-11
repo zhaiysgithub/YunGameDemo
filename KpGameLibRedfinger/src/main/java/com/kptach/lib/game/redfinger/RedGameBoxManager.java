@@ -109,4 +109,9 @@ public class RedGameBoxManager implements IGameBoxManager {
                 .execute(mCorpID, pkgName, mUserID, kpGameId, padInfoStr, padModelStr);
     }
 
+    @Override
+    public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
+
+    }
+
 }

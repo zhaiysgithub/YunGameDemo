@@ -188,8 +188,8 @@ public class MainActivity extends AppCompatActivity {
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
         }*/
-        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
-        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
+//        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
+//        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
             //使用 GID 登录游戏

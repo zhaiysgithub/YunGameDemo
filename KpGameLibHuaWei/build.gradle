@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -40,5 +40,5 @@ dependencies {
 
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
     implementation project(path: ':kpinter')
-    provided files('../Kplib/libs/cloudgame.jar')
+    implementation files('../Kplib/libs/cloudgame.jar')
 }

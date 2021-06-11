@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.kuaipan.game.demo.R;
 
-import kptech.game.kit.APIConstants;
+//import kptech.game.kit.APIConstants;
 import kptech.game.kit.IDeviceControl;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
@@ -98,16 +98,16 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         if (mMenuIcon == view) {
             mMenuDialog.show();
         } else if (mAutoBtn == view) {
-            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
+//            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
             mMenuDialog.dismiss();
         } else if (mLsBtn == view) {
-            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_LS);
+//            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_LS);
             mMenuDialog.dismiss();
         } else if (mHDBtn == view) {
-            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_HD);
+//            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_HD);
             mMenuDialog.dismiss();
         } else if (mOrdianryBtn == view) {
-            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+//            setSelectGradeLevel(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
             mMenuDialog.dismiss();
         } else if (mPlayBtn == view) {
             mMenuDialog.dismiss();
@@ -126,7 +126,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
     }
 
     private void setSelectGradeLevel(String level) {
-        if (level == APIConstants.DEVICE_VIDEO_QUALITY_AUTO) {
+        /*if (level == APIConstants.DEVICE_VIDEO_QUALITY_AUTO) {
             applyBtnStyle(mAutoBtn, R.drawable.kp_blue_btn);
             applyBtnStyle(mHDBtn, R.drawable.kp_translucent_btn);
             applyBtnStyle(mOrdianryBtn, R.drawable.kp_translucent_btn);
@@ -150,7 +150,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
         }
         if (mDeviceControl != null) {
             mDeviceControl.switchQuality(level);
-        }
+        }*/
     }
 
     private void applyBtnStyle(Button button, int bg) {

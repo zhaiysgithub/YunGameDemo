@@ -9,7 +9,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.kptach.lib.inter.game.IGameCallback;
-
+import com.kptach.lib.inter.game.APIConstants;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -57,7 +57,7 @@ public class DeviceControl implements IDeviceControl{
         this(control,null);
     }
 
-    protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control, GameInfo game){
+    public DeviceControl(com.kptach.lib.inter.game.IDeviceControl control, GameInfo game){
         this.mInnerControl = control;
         this.mGameInfo = game;
         this.mGameHandler = new GameHandler();
@@ -73,7 +73,7 @@ public class DeviceControl implements IDeviceControl{
 
         if (this.mGameInfo == null){
             if (callback!=null){
-                callback.onAPICallback("gameInfo is null", APIConstants.ERROR_GAME_INF_EMPTY);
+                callback.onAPICallback("gameInfo is null", APIConstants.ERROR_GAME_INFO);
             }
             return;
         }
@@ -262,6 +262,7 @@ public class DeviceControl implements IDeviceControl{
      */
     private void loadGameAd(){
         try {
+            this.mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
             //加载广告
             if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON) {
                 this.mAdManager.loadGameAd(new IAdCallback<String>() {
@@ -271,7 +272,7 @@ public class DeviceControl implements IDeviceControl{
                             //点击取消
                             case AdManager.CB_AD_CANCELED:
                                 if (mGameStartCallback != null) {
-                                    mGameStartCallback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCEL);
+                                    mGameStartCallback.onAPICallback("game cancel", APIConstants.ERROR_GAME_CANCLED);
                                 }
                                 break;
                             //加载广告弹窗
@@ -312,7 +313,8 @@ public class DeviceControl implements IDeviceControl{
      * @return
      */
     private void sendClientNotice(){
-        boolean conRecoverCloudDataOpen = ProferencesUtils.getBoolean(mActivity, "conRecoverCloudData", true);
+//        boolean conRecoverCloudDataOpen = ProferencesUtils.getBoolean(mActivity, "conRecoverCloudData", true);
+        boolean conRecoverCloudDataOpen = false;
         if (mGameInfo.recoverCloudData == 1 && conRecoverCloudDataOpen){
             if (mGameStartCallback!=null){
                 mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);

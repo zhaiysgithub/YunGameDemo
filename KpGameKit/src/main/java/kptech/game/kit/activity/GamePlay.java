@@ -17,15 +17,17 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import com.kptach.lib.inter.game.APIConstants;
 
 import org.json.JSONObject;
 
@@ -38,25 +40,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.APICallback;
-import kptech.game.kit.APIConstants;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
-import kptech.game.kit.PassConstants;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
-import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.download.DownloadTask;
-import kptech.game.kit.manager.KpCloudDeviceManager;
-import kptech.game.kit.manager.KpPassCMWManager;
 import kptech.game.kit.manager.UserAuthManager;
-import kptech.game.kit.model.PassDeviceResponseBean;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
+import kptech.game.kit.utils.GameUtils;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
 import kptech.lib.analytic.Event;
@@ -82,7 +78,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     public static final String EXTRA_CORPID = "extra.corpid";
     public static final String EXTRA_GAME = "extra.game";
-    //    public static final String EXTRA_TIMEOUT = "extra.timeout";
     public static final String EXTRA_PARAMS = "extra.params";
     public static final String EXTRA_MINI_VERSION = "extra.mini.version";
     private static final int mRequestCode = 9002;
@@ -94,6 +89,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private static final int MSG_SHOW_AUTH = 3;
     private static final int MSG_GAME_EXIT = 4;
 
+    private ImageView mIvPaper;
     private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
@@ -137,7 +133,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     //游戏相关的 broadcastReceiver
     private KPGameReceiver mKpGameReceiver;
 
-
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
 
         @Override
@@ -168,8 +163,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        GameBox.sRefWatcher.watch(this);
-        Messager.mIconId = R.mipmap.kp_dialog_logo;
         if (Env.isTestEnv()) {
             Toast.makeText(this, "Env test !!!", Toast.LENGTH_LONG).show();
         }
@@ -188,6 +181,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             try {
                 mCustParams = (Params) getIntent().getSerializableExtra(EXTRA_PARAMS);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         if (mCustParams == null) {
@@ -226,6 +220,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             cloneEvent.traceId = Event.getBaseTraceId();
             MobclickAgent.sendEvent(cloneEvent);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         //未获取到游戏信息
@@ -242,9 +237,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         bindDownloadService(true);
 
     }
-
     private void initView(View rootView) {
-
+        mIvPaper = findViewById(R.id.ivWallPaper);
         mContentView = findViewById(R.id.content_view);
 
         mPlayStatueView = new PlayStatusLayout.Builder(this)
@@ -432,87 +426,36 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mPlayStatueView != null) {
                 mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING_CONNECT_DEVICE, "正在连接设备...");
             }
-            KpPassCMWManager.instance().startRequestPassCMW(getApplication(), mCorpID, mGameInfo.pkgName, new PassCMWCallback() {
+
+            GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
                 @Override
-                public void onSuccess(PassDeviceResponseBean result) {
-                    if (result == null){
+                public void onAPICallback(IDeviceControl deviceControl, int code) {
+                    mDeviceControl = deviceControl;
+                    if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
+                        if (!isFinishing()) {
+                            startGame();
+                        } else {
+                            // 如果界面推出之后才收到回调，请调用这个方法
+                            if (mDeviceControl != null) {
+                                mDeviceControl.stopGame();
+                            }
+                        }
+                    } else {
+                        Logger.error("GamePlay", "申请试玩设备失败,code = " + code);
                         if (mDeviceControl != null) {
                             mDeviceControl.stopGame();
                         }
-                        mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, KpPassCMWManager.defaultErrorMsg));
-                        return;
+                        GamePlay.this.mErrorCode = code;
+                        String msg = GameUtils.getMsgByCode(code);
+                        GamePlay.this.mErrorMsg = msg;
+                        mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, msg));
                     }
-                    Logger.info("KpPassCMWManager","result = " + result.toString());
-                    int code = result.code;
-                    if(code == PassConstants.PASS_CODE_SUCCESS){
-                        //启动游戏创建deviceControl
-                        createDeviceControl(result.data);
-                        return;
-                    }
-                    if (mDeviceControl != null) {
-                        mDeviceControl.stopGame();
-                    }
-                    mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, KpPassCMWManager.instance().getErrorText(code)));
-                }
-
-                @Override
-                public void onError(int errorCode, String errorMsg) {
-                    Logger.error("GamePlay", "申请设备接口失败,code = " + errorCode + "; errorMsg = " + errorMsg);
-                    if (mDeviceControl != null) {
-                        mDeviceControl.stopGame();
-                    }
-
-                    GamePlay.this.mErrorCode = errorCode;
-                    GamePlay.this.mErrorMsg = errorMsg;
-                    mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, errorMsg));
                 }
             });
-
-            /*GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
-                @Override
-                public void onAPICallback(IDeviceControl deviceControl, final int code) {
-                    mDeviceControl = deviceControl;
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-                                if (!isFinishing()) {
-                                    startGame();
-                                } else {
-                                    // 如果界面推出之后才收到回调，请调用这个方法
-                                    if (mDeviceControl != null) {
-                                        mDeviceControl.stopGame();
-                                    }
-                                }
-                            } else {
-                                Logger.error("GamePlay", "申请试玩设备失败,code = " + code);
-
-                                if (mDeviceControl != null) {
-                                    mDeviceControl.stopGame();
-                                }
-
-                                GamePlay.this.mErrorCode = code;
-                                GamePlay.this.mErrorMsg = getErrorText(code);
-                                mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
-                            }
-                        }
-                    });
-                }
-            });*/
 
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
-    }
-
-    private void createDeviceControl(PassDeviceResponseBean.PassData data) {
-        KpCloudDeviceManager.instance().initDeviceControl(GamePlay.this
-                , data, mGameInfo, new APICallback<IDeviceControl>() {
-                    @Override
-                    public void onAPICallback(IDeviceControl msg, int code) {
-                        //TODO 创建deviceControl 回调
-                    }
-                });
     }
 
     private void startGame() {
@@ -544,9 +487,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     @Override
     public void onAPICallback(String msg, int code) {
-//        if (msg != null) {
+
         Logger.info("GamePlay", "gameOnAPICallback, code = " + code + ", apiResult = " + msg);
-//        }
         try {
             if (code == APIConstants.AD_LOADING) {
                 if (!isFinishing() && mPlayStatueView != null) {
@@ -567,7 +509,22 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
-            } else if (code == APIConstants.RELEASE_SUCCESS) {
+            } else if(code == APIConstants.GAME_START_CONNECT) {
+                //游戏开始连接
+//                mIvPaper.setVisibility(View.VISIBLE);
+            } else if(code == APIConstants.GAME_SDK_INIT_SUCCESS) {
+                //游戏启动成功
+//                mIvPaper.setVisibility(View.GONE);
+            } else if(code == APIConstants.TIMEOUT_AVAILABLE_TIME){
+                //试玩时间到达
+                showTimeoutDialog("试玩时间到达");
+            } else if(code == APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS){
+                //切换分辨率成功
+
+            }else if(code == APIConstants.SWITCH_GAME_RESOLUTION_ERROR){
+                //切换分辨率失败
+
+            }else if (code == APIConstants.RELEASE_SUCCESS) {
 //                if (mDeviceControl!=null){
 //                    mDeviceControl.removerListener();
 //                }
@@ -577,7 +534,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
                 }
 
-            } else if (code == APIConstants.ERROR_NETWORK_ERROR) {
+            } else if (code == APIConstants.ERROR_NETWORK) {
                 //网络错误，弹出提示窗口
                 if (mDeviceControl != null) {
                     mDeviceControl.stopGame();
@@ -593,14 +550,15 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 Logger.error("GamePlay", msg);
 
                 //取消游戏
-                if (code == APIConstants.ERROR_GAME_CANCEL) {
+                if (code == APIConstants.ERROR_GAME_CANCLED) {
                     exitPlay();
                     return;
                 }
 
+                String defineMsg = GameUtils.getMsgByCode(code);
                 this.mErrorCode = code;
-                this.mErrorMsg = msg != null ? msg : getErrorText(code);
-                mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, getErrorText(code)));
+                this.mErrorMsg = msg != null ? msg : defineMsg;
+                mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, defineMsg));
 
             }
 
@@ -630,6 +588,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             try {
                 getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
             } catch (Exception e) {
+                e.printStackTrace();
             }
 
         } catch (Exception e) {
@@ -641,6 +600,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private void exitPlay() {
         setResult(RESULT_OK, getIntent());
         finish();
+        Logger.info(TAG,"exitPlay");
     }
 
     /**
@@ -719,7 +679,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mKpGameReceiver = null;
         }
         super.onDestroy();
-
+        Logger.info(TAG,"GamePlay-onDestroy");
         try {
             GameBoxManager.getInstance().setDevLoading(false);
             if (mDeviceControl != null) {
@@ -917,7 +877,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private static final int CODE_REQUEST_DOWNLOAD_PERMISSION = 1025;
 
     private void checkAndRequestPermission() {
-        if (Build.VERSION.SDK_INT < 23) {
+        /*if (Build.VERSION.SDK_INT < 23) {
             checkInitCloudPhoneSDK();
             return;
         }
@@ -941,7 +901,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             requestPermissions(requestPermissions, CODE_REQUEST_PERMISSION);
         } else {
             checkInitCloudPhoneSDK();
-        }
+        }*/
+
+        checkInitCloudPhoneSDK();
     }
 
     @Override
@@ -955,34 +917,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 startDownlad();
             }
         }
-    }
-
-    private String getErrorText(int code) {
-        String error;
-        switch (code) {
-            case APIConstants.ERROR_GAME_INF_EMPTY:
-                error = "未获取到游戏信息";
-                break;
-            case APIConstants.ERROR_SDK_INIT_ERROR:
-                error = "初始化游戏失败";
-                break;
-            case APIConstants.ERROR_API_CALL_ERROR:
-                error = "调用服务出错，请稍后再试";
-                break;
-            case APIConstants.ERROR_NO_DEVICE:
-            case APIConstants.ERROR_DEVICE_EXPIRED:
-            case APIConstants.ERROR_DEVICE_OTHER_ERROR:
-                error = "试玩人数过多，请稍后再试";
-                break;
-            case APIConstants.ERROR_NETWORK_ERROR:
-                error = "网络错误，请检查网络后再试";
-                break;
-            default:
-                error = "服务异常，请稍后再试";
-                break;
-        }
-
-        return error;
     }
 
     private String getPkgName() {
@@ -1007,10 +941,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
             //获取云手机分辨率，按比例显示画面
             int[] size = mDeviceControl.getVideoSize();
+            boolean isLandSpaceGame = false;
             if (size != null && size.length == 2) {
                 //视频尺寸
                 int vw = size[0];
                 int vh = size[1];
+
+                isLandSpaceGame = vw > vh;
 
                 //屏幕尺寸
                 int sw = mContentView.getWidth();
@@ -1028,8 +965,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 int videoHeight = vh < vw ? vw : vh;
 
                 //宽高比
-                float videoScale = (float) videoWidth / (float) videoHeight;
-                float screenScale = (float) screenWidth / (float) screenHeight;
+                float videoScale = (float) videoWidth / (float) videoHeight; //视频宽高比
+                float screenScale = (float) screenWidth / (float) screenHeight; //屏幕宽高比
 
                 float widthScale = (float) videoWidth / (float) screenWidth;
                 float heightScale = (float) videoHeight / (float) screenHeight;
@@ -1042,14 +979,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     resizeHeight = (int) (screenWidth / videoScale);
                 }
             }
-
+//            setScreenOrientation(isLandSpaceGame);
             resizeVideoContainer(mMenuView.mVideoScale);
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
 
     }
-
 
     /**
      * 修改显示画面比例
@@ -1600,12 +1536,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     if (mDeviceControl != null) {
                         event.setPadcode(mDeviceControl.getPadcode());
                     }
-                    HashMap ext = new HashMap();
+                    HashMap<String,Object> ext = new HashMap<>();
                     ext.put("code", mErrorCode);
                     ext.put("msg", mErrorMsg);
                     event.setExt(ext);
                     MobclickAgent.sendEvent(event);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } catch (Exception e) {
                 Logger.error(TAG, e);
@@ -1663,6 +1600,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     //发送打点事件
                     MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_CANCEL, mGameInfo != null ? mGameInfo.pkgName : ""));
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 if (ref != null && ref.get() != null) {

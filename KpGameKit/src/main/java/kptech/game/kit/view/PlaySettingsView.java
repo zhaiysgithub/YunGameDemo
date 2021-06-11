@@ -23,8 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
-
-import kptech.game.kit.APIConstants;
+import com.kptach.lib.inter.game.APIConstants;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.IDeviceControl;

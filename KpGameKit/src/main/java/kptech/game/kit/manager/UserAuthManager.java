@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import kptech.game.kit.APIConstants;
+import com.kptach.lib.inter.game.APIConstants;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.utils.AppUtils;
@@ -112,11 +112,11 @@ public class UserAuthManager {
         }
         String cropKey = GameBoxManager.mCorpID;
         if (cropKey.isEmpty()) {
-            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERROR_SET_CROPKEY);
+            callback.onCerError(APIConstants.ERROR_GAME_INFO, ERROR_SET_CROPKEY);
         } else if (pkgName == null || pkgName.isEmpty()) {
-            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERROR_SET_PKGNAME);
+            callback.onCerError(APIConstants.ERROR_GAME_INFO, ERROR_SET_PKGNAME);
         } else if (!AppUtils.phoneNumSimpleCheck(userPhone)) {
-            callback.onCerError(APIConstants.ERROR_AUTH_PARAMS, ERRORN_PHONENUM_MSG);
+            callback.onCerError(APIConstants.ERROR_GAME_INFO, ERRORN_PHONENUM_MSG);
         } else {
             try {
                 // AccountTask 执行请求回调
@@ -127,13 +127,13 @@ public class UserAuthManager {
                             @Override
                             public void onResult(Map<String, Object> map) {
                                 if (map == null || map.size() == 0) {
-                                    callback.onCerError(APIConstants.ERROR_AUTH_FAIL, ERRORN_DEFAULT);
+                                    callback.onCerError(APIConstants.ERROR_AUTH, ERRORN_DEFAULT);
                                 } else if (map.containsKey("error")) {
                                     String errorMsg = map.get("error").toString();
                                     if (errorMsg != null && !errorMsg.isEmpty() && !errorMsg.equals("null")) {
-                                        callback.onCerError(APIConstants.ERROR_AUTH_FAIL, errorMsg);
+                                        callback.onCerError(APIConstants.ERROR_AUTH, errorMsg);
                                     } else {
-                                        callback.onCerError(APIConstants.ERROR_AUTH_FAIL, ERRORN_DEFAULT);
+                                        callback.onCerError(APIConstants.ERROR_AUTH, ERRORN_DEFAULT);
                                     }
                                 } else {
                                     if (map.containsKey("access_token")) {
@@ -145,11 +145,11 @@ public class UserAuthManager {
                                         gidValue = (String) map.get("guid");
                                         tokenValue = (String) map.get("token");
                                         if (gidValue == null || gidValue.isEmpty() || tokenValue == null || tokenValue.isEmpty()){
-                                            callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
+                                            callback.onCerError(APIConstants.ERROR_AUTH,ERRORN_NOT_AUTH);
                                             return;
                                         }
                                     }else{
-                                        callback.onCerError(APIConstants.PHONE_NOT_AUTH,ERRORN_NOT_AUTH);
+                                        callback.onCerError(APIConstants.ERROR_AUTH,ERRORN_NOT_AUTH);
                                         return;
                                     }
                                     if (uninqueId != null && uninqueId.length() > 0) {
@@ -168,7 +168,7 @@ public class UserAuthManager {
                         }).execute(userIdCardNum, userName, userPhone, pkgName);
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onCerError(APIConstants.ERROR_AUTH_FAIL, e.getMessage());
+                callback.onCerError(APIConstants.ERROR_AUTH, e.getMessage());
             }
         }
     }

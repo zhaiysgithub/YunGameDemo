@@ -19,6 +19,8 @@ public class PassDeviceResponseBean {
         public String devicetype;
         //iaas厂商对设备设定的唯一ID
         public String devicenum;
+        //direction  应用展示方式：0 横屏 1 竖屏
+        public int direction;
         //IaaS供应商接口返回的音视频接入访问授权资源描述
         public Object resource;
     }

@@ -1,6 +1,6 @@
 package kptech.game.kit.manager;
 
-import android.app.Application;
+import com.kptach.lib.inter.game.APIConstants;
 
 import org.json.JSONObject;
 
@@ -23,8 +23,6 @@ import kptech.lib.constants.Urls;
 public class KpPassCMWManager {
 
     private static final String TAG = "KpPassCMWManager";
-    private static final int requestMaxCount = 3;
-    private int requestPassCount = 0;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     public static final String defaultErrorMsg = "服务异常，请稍后再试";
 
@@ -39,32 +37,23 @@ public class KpPassCMWManager {
         return PassCMWHolder.INSTANCE;
     }
 
-    public void startRequestPassCMW(final Application context, final String corpKey, final String pkgName, final PassCMWCallback callback) {
+    public void startRequestPassCMW(final String corpKey, final String pkgName, final PassCMWCallback callback) {
         final String passParams = createPassParams(corpKey, pkgName);
-        executeRunnable(context,corpKey,pkgName,passParams,callback);
+        executeRunnable(passParams,callback);
     }
 
-    private void executeRunnable(final Application context, final String corpKey, final String pkgName,
-                                 final String passParams, final PassCMWCallback callback){
-        requestPassCount++;
+    private void executeRunnable(final String passParams, final PassCMWCallback callback){
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 requestDevicePost(passParams, new PassCMWCallback() {
                     @Override
                     public void onSuccess(PassDeviceResponseBean result) {
-                        requestPassCount = 0;
                         callback.onSuccess(result);
                     }
 
                     @Override
                     public void onError(int errorCode, String errorMsg) {
-                        /*if (errorCode != -2 && requestPassCount <= requestMaxCount) {
-                            executeRunnable(context, corpKey, pkgName, passParams,callback);
-                        } else {
-                            requestPassCount = 0;
-                            callback.onError(errorCode, errorMsg);
-                        }*/
                         callback.onError(errorCode, errorMsg);
                     }
                 });
@@ -75,7 +64,7 @@ public class KpPassCMWManager {
     private void requestDevicePost(String jsonStr, PassCMWCallback callback) {
         if (jsonStr == null || jsonStr.isEmpty()) {
             Logger.error(TAG, "jsonStr is null or empty");
-            callback.onError(-2, defaultErrorMsg);
+            callback.onError(APIConstants.ERROR_CALL_API, defaultErrorMsg);
             return;
         }
         String url = Urls.getRequestDeviceUrl(Urls.URL_REQUEST_DEVICE);
@@ -108,7 +97,26 @@ public class KpPassCMWManager {
                 Logger.info(TAG, "result=" + result);
 
                 if (result != null && !result.isEmpty()) {
-                    PassDeviceResponseBean responseBean = passJsonStrToBean(result);
+
+                    PassDeviceResponseBean responseBean = new PassDeviceResponseBean();
+                    JSONObject jsonResult = new JSONObject(result);
+                    responseBean.code = JsonUtils.optInt(jsonResult, "code");
+                    responseBean.msg = JsonUtils.optString(jsonResult, "msg");
+                    responseBean.ts = JsonUtils.optLong(jsonResult, "ts");
+
+                    PassDeviceResponseBean.PassData passData = new PassDeviceResponseBean.PassData();
+                    if (jsonResult.has("data")){
+                        Object dataObject = jsonResult.get("data");
+                        JSONObject passDataJson = new JSONObject(dataObject.toString());
+                        passData.iaas = JsonUtils.optString(passDataJson, "iaas");
+                        passData.deviceid = JsonUtils.optString(passDataJson, "deviceid");
+                        passData.devicetype = JsonUtils.optString(passDataJson, "devicetype");
+                        passData.devicenum = JsonUtils.optString(passDataJson, "devicenum");
+                        passData.direction = JsonUtils.optInt(passDataJson, "direction");
+                        passData.resource = passDataJson.get("resource");
+                    }
+                    responseBean.data = passData;
+
                     callback.onSuccess(responseBean);
                 } else {
                     callback.onError(responseCode, defaultErrorMsg);
@@ -118,7 +126,7 @@ public class KpPassCMWManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            callback.onError(-1, defaultErrorMsg  + ";129;" + e.getMessage());
+            callback.onError(APIConstants.ERROR_APPLY_DEVICE, e.getMessage());
         } finally {
             try {
                 if (writeStream != null) {
@@ -132,7 +140,7 @@ public class KpPassCMWManager {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onError(-1, defaultErrorMsg + ";" + e.getMessage());
+                callback.onError(APIConstants.ERROR_OTHER, defaultErrorMsg + ";" + e.getMessage());
             }
         }
 
@@ -158,55 +166,27 @@ public class KpPassCMWManager {
         return "";
     }
 
-    private PassDeviceResponseBean passJsonStrToBean(String jsonStr) {
-        PassDeviceResponseBean responseBean = new PassDeviceResponseBean();
-        try {
-            JSONObject jsonResult = new JSONObject(jsonStr);
-            responseBean.code = JsonUtils.optInt(jsonResult, "code");
-            responseBean.msg = JsonUtils.optString(jsonResult, "msg");
-            responseBean.ts = JsonUtils.optLong(jsonResult, "ts");
 
-            PassDeviceResponseBean.PassData passData = new PassDeviceResponseBean.PassData();
-            if (jsonResult.has("data")){
-                Object dataObject = jsonResult.get("data");
-                JSONObject passDataJson = new JSONObject(dataObject.toString());
-                passData.iaas = JsonUtils.optString(passDataJson, "iaas");
-                passData.deviceid = JsonUtils.optString(passDataJson, "deviceid");
-                passData.devicetype = JsonUtils.optString(passDataJson, "devicetype");
-                passData.devicenum = JsonUtils.optString(passDataJson, "devicenum");
-                passData.resource = passDataJson.get("resource");
-            }
-            responseBean.data = passData;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return responseBean;
-    }
-
-    public String getErrorText(int code){
-        String errorText;
-        switch (code){
+    public int getErrorCode(int applyDeviceCode){
+        int apiErrorCode;
+        switch (applyDeviceCode){
             case PassConstants.PASS_CODE_ERROR_CORPKEY:
-            case PassConstants.PASS_CODE_ERROR_AUTH:
-                errorText = "初始化游戏失败";
-                break;
             case PassConstants.PASS_CODE_ERROR_PKGNAME:
+            case PassConstants.PASS_CODE_ERROR_AUTH:
             case PassConstants.PASS_CODE_ERROR_APP:
-                errorText = "未获取到游戏信息";
+            case PassConstants.PASS_CODE_ERROR_DEVICENO:
+                apiErrorCode = APIConstants.ERROR_GAME_INIT;
                 break;
             case PassConstants.PASS_CODE_ERROR_DEVICEBUSY:
-                errorText = "试玩人数过多，请稍后再试";
+                apiErrorCode = APIConstants.ERROR_DEVICE_BUSY;
                 break;
             case PassConstants.PASS_CODE_ERROR_DEFAULT:
-                errorText = "操作失败,请联系管理员";
+                apiErrorCode = APIConstants.ERROR_OTHER;
                 break;
             default:
-                errorText = defaultErrorMsg;
+                apiErrorCode = APIConstants.ERROR_APPLY_DEVICE;
                 break;
         }
-
-        return errorText;
+        return apiErrorCode;
     }
-
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import kptech.game.kit.msg.IMsgReceiver;
+import com.kptach.lib.inter.game.APIConstants;
 
 public interface IDeviceControl {
 

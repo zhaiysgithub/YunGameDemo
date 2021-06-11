@@ -252,6 +252,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/kp_view_settings_sendback_img"/>
                 <TextView
+                    android:id="@+id/tvBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/back_icon"
@@ -266,6 +267,8 @@
                     android:layout_alignParentRight="true"
                     android:textColor="@color/common_white"
                     android:layout_marginRight="5dp"
+                    android:layout_toEndOf="@id/tvBack"
+                    android:layout_marginStart="10dp"
                     android:text=""/>
             </RelativeLayout>
 

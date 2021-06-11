@@ -3,17 +3,11 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-
 import androidx.annotation.NonNull;
-
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.json.JSONObject;
 import org.xutils.x;
-
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.manager.UserAuthManager;
@@ -29,10 +23,7 @@ public class GameBox {
     public Application mApplication = null;
     public String appKey = null;
 
-//    public static RefWatcher sRefWatcher;
-
     public static void init(@NonNull Application application, String appKey) {
-//        sRefWatcher = LeakCanary.install(application);
 
         if (box == null) {
             synchronized(GameBoxManager.class) {

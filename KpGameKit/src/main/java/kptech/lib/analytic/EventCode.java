@@ -1,6 +1,6 @@
 package kptech.lib.analytic;
 
-import kptech.game.kit.APIConstants;
+import com.kptach.lib.inter.game.APIConstants;
 
 public class EventCode {
     //启动游戏界面
@@ -217,9 +217,9 @@ public class EventCode {
     public static String getDeviceEventCode(int code){
         if (code == APIConstants.APPLY_DEVICE_SUCCESS){
             return DATA_DEVICE_APPLY_OK;
-        }else if(code == APIConstants.ERROR_NO_DEVICE){
+        }else if(code == APIConstants.ERROR_DEVICE_BUSY){
             return DATA_DEVICE_APPLY_BUSY;
-        }else if(code == APIConstants.ERROR_NETWORK_ERROR){
+        }else if(code == APIConstants.ERROR_NETWORK){
             return DATA_DEVICE_NET_ERROR;
         }
 
