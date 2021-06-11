@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private GameAdapter mGameAdapter;
     private EditText mGidText;
     private EditText mPkgText;
+    private TextView mSelPkg;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);
+        mSelPkg = findViewById(R.id.tvSelGame);
 
         x.Ext.init(getApplication());
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
@@ -102,6 +104,12 @@ public class MainActivity extends AppCompatActivity {
         GameBox.init(getApplication(), APP_ID);
 
         loadGame();
+        mSelPkg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainModel.showAlertDialog(mPkgText);
+            }
+        });
     }
 
     public void startGame(View v) {

@@ -1,9 +1,12 @@
 package com.yd.yunapp.gamebox.model;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.yd.yunapp.gamebox.activity.MainActivity;
@@ -28,7 +31,7 @@ public class MainModel {
     public String getTitleStr() {
         String appName = AppUtils.getAppName(activity);
         String appVersionName = AppUtils.getVersionName(activity);
-        return appName + " " + appVersionName;
+        return "SDK3.0" + " ; " + appVersionName;
     }
 
     /**
@@ -119,5 +122,31 @@ public class MainModel {
                 Toast.makeText(activity,errorStr,Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private int mSelWhich;
+    /**
+     * 显示单选框
+     */
+    public void showAlertDialog(EditText editText) {
+        final String[] items = {"百度SDK3.0测试包名:cn.missevan","华为SDK测试包名:com.rydts.nb"};
+
+        AlertDialog.Builder singleDialog = new AlertDialog.Builder(activity);
+        singleDialog.setTitle("请选择需要测试的SDK对应的包名");
+        singleDialog.setSingleChoiceItems(items, 0, (dialog, which) -> mSelWhich = which);
+        singleDialog.setPositiveButton("确定", (dialog, which) -> {
+            dialog.dismiss();
+            if (mSelWhich != -1){
+                String item = items[mSelWhich];
+                int at = item.indexOf(":");
+                int length = item.length();
+                String pkg = item.substring(at + 1);
+                editText.setText(pkg);
+
+            }
+        });
+        singleDialog.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
+
+        singleDialog.show();
     }
 }

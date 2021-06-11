@@ -67,7 +67,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
                 JSONObject err = dObj.optJSONObject("error");
                 JSONObject devInfo = dObj.optJSONObject("resultInfo");
                 if (devInfo==null || devInfo.length()<=0) {
-                    code = APIConstants.ERROR_NO_DEVICE;
+                    code = APIConstants.ERROR_DEVICE_BUSY;
                     msg = err.toString();
                 }else {
                     code = APIConstants.APPLY_DEVICE_SUCCESS;
@@ -80,12 +80,12 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
                 JSONObject json = new JSONObject();
                 json.put("code", c);
                 json.put("msg", m);
-                code = APIConstants.ERROR_API_CALL_ERROR;
+                code = APIConstants.ERROR_CALL_API;
                 msg = json.toString();
             }
         }catch (Exception e){
             Logger.error(TAG,"device connect error:" + e.getMessage());
-            code = APIConstants.ERROR_API_CALL_ERROR;
+            code = APIConstants.ERROR_CALL_API;
             msg = e.getMessage();
         }
 
@@ -99,7 +99,7 @@ public class RequestDeviceTask extends AsyncTask<String,Void,HashMap> {
     protected void onPostExecute(HashMap ret) {
         if(mCallback!=null){
             if (ret == null){
-                mCallback.onResult(APIConstants.ERROR_API_CALL_ERROR, "申请设备接口错误");
+                mCallback.onResult(APIConstants.ERROR_CALL_API, "申请设备接口错误");
                 return;
             }
 

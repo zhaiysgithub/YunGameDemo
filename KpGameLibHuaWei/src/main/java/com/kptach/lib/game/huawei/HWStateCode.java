@@ -42,4 +42,8 @@ public class HWStateCode {
     public static final int code_set_resolution_error = 8193;
     //无效操作
     public static final int code_invalid_operation = 65535;
+
+    //错误的code 数组
+    public static final int[] errorCodeArray = {796, 770, 1539, 1540, 1541, 1542, 2305, 2306, 2307
+            , 2308, 2560, 3329, 3330, 3331, 4352, 4353, 4865};
 }

@@ -19,8 +19,10 @@ import com.kptach.lib.inter.game.IGameCallback;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class HWDeviceControl implements IDeviceControl {
 
@@ -303,11 +305,25 @@ public class HWDeviceControl implements IDeviceControl {
                 if (mActivity.isFinishing()){
                     return;
                 }
+                int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
+                if (stateIndex >= 0){
+                    //SDK游戏内部报错
+                    mCallback.onGameCallback(msg, APIConstants.ERROR_GAME_INNER);
+                    return;
+                }
                 switch (state){
                     case HWStateCode.code_connecting:
+                        mCallback.onGameCallback(hwDirection + ";" + msg,APIConstants.GAME_START_CONNECT);
+                        break;
                     case HWStateCode.code_reconnecting_success:
-//                        setScreenOrientation(hwDirection);
-                        mCallback.onGameCallback(hwDirection + "",APIConstants.GAME_START_CONNECT);
+                    case HWStateCode.code_connect_success:
+                    case HWStateCode.code_verifying:
+                    case HWStateCode.code_verify_success:
+                    case HWStateCode.code_game_starting:
+                    case HWStateCode.code_reconnection:
+                    case HWStateCode.code_switch_foregroud:
+                    case HWStateCode.code_switch_backgroud:
+                        //TODO 不处理
                         break;
                     case HWStateCode.code_game_start_success:
                         sdkIsRelease = false;
@@ -316,6 +332,7 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_available_time_usedup:
                         mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);
                         break;
+                    case HWStateCode.code_switch_background_timeout:
                     case HWStateCode.code_notouch_timeout:
 //                        mCallback.onGameCallback("长时间未操作", APIConstants.TIMEOUT_NO_OPS);
                         try{
@@ -327,15 +344,6 @@ public class HWDeviceControl implements IDeviceControl {
                             e.printStackTrace();
                         }
                         break;
-                    case HWStateCode.code_switch_background_timeout:
-//                        mCallback.onGameCallback(msg, APIConstants.TIMEOUT_SWITCH_BACKGROUND);
-                        break;
-                    case HWStateCode.code_switch_backgroud:
-//                        mCallback.onGameCallback(msg, APIConstants.SWITCH_BACKGROUND);
-                        break;
-                    case HWStateCode.code_switch_foregroud:
-//                        mCallback.onGameCallback(msg, APIConstants.SWITCH_FOREGROUND);
-                        break;
                     case HWStateCode.code_game_exit:
                         sdkIsRelease = true;
                         break;
@@ -345,8 +353,12 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_set_resolution_error:
                         mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_ERROR);
                         break;
-                    default:
-//                        mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                    case HWStateCode.code_verify_parameter_missing:
+                    case HWStateCode.code_verify_parameter_invalid:
+                        mCallback.onGameCallback(msg, APIConstants.ERROR_AUTH);
+                        break;
+                    case HWStateCode.code_invalid_operation:
+                        mCallback.onGameCallback(msg, APIConstants.ERROR_OTHER);
                         break;
                 }
             });

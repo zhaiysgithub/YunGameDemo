@@ -244,10 +244,10 @@ public class BDSdkDeviceControl implements IDeviceControl {
             }
         }catch (Exception e){
             Logger.error(TAG, "doPlay error: " + e.getMessage());
-            callback("doPlay error: " + e.getMessage(), APIConstants.ERROR_API_CALL_ERROR);
+            callback("doPlay error: " + e.getMessage(), APIConstants.ERROR_CALL_API);
             return;
         }
-        callback("doPlay faile", APIConstants.ERROR_API_CALL_ERROR);
+        callback("doPlay faile", APIConstants.ERROR_CALL_API);
     }
 
     public static class PlayInitListener implements IPlayInitListener {

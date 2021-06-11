@@ -215,7 +215,7 @@ public class KpPlaySDKManager {
                     info = obj.toString();
                 }catch (Exception e){
                 }
-                ref.get().mPlayListener.onConnectError(info, APIConstants.ERROR_DEVICE_OTHER_ERROR);
+                ref.get().mPlayListener.onConnectError(info, APIConstants.ERROR_OTHER);
                 ref.get().isStarted = false;
             }
         }

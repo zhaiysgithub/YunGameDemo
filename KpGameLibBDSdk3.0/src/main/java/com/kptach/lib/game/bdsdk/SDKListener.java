@@ -30,7 +30,7 @@ public class SDKListener implements IPlayListener, IVideoListener {
     @Override
     public void onConnectError(String str, int i) {
         if(ref!=null && ref.get()!=null){
-            ref.get().callback(str, APIConstants.ERROR_DEVICE_OTHER_ERROR);
+            ref.get().callback(str, APIConstants.ERROR_OTHER);
         }
     }
 
