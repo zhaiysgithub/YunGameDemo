@@ -20,7 +20,7 @@ android {
         }
         debug {
             minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -69,6 +69,7 @@ dependencies {
     //红手指游戏库适配
 //    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
     implementation project(path: ':KpGameLibRedfinger')
+    implementation project(path: ':KpGameLibBDSdk3.0')
 
     //百度游戏库适配
 //

@@ -468,6 +468,7 @@ public class GameBoxManager {
     }
 
 
+
     /**
      * 游戏列表获取，游戏列表支持分页获取。
      * @param page

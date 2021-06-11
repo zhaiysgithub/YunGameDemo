@@ -3,6 +3,7 @@ package kptech.lib.fatory;
 import android.app.Application;
 
 import com.kptach.lib.game.baidu.BdGameBoxManager;
+import com.kptach.lib.game.bdsdk.BDSdkGameBoxManager;
 import com.kptach.lib.game.huawei.HWGameBoxManager;
 import com.kptach.lib.game.redfinger.RedGameBoxManager;
 import com.kptach.lib.inter.game.IGameBoxManager;
@@ -25,7 +26,7 @@ public class GameBoxManagerFactory {
             try {
                 if (sdkType == GameInfo.SdkType.BD || sdkType == GameInfo.SdkType.DEFAULT){
                     if (bdManager == null) {
-                        bdManager = (IGameBoxManager) newInstance(BdGameBoxManager.class.getName(), null, null);
+                        bdManager = (IGameBoxManager) newInstance(BDSdkGameBoxManager.class.getName(), null, null);
                     }
                     instance = bdManager;
                 }else if (sdkType == GameInfo.SdkType.REDF){

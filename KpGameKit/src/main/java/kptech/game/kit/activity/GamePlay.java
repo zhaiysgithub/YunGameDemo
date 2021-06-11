@@ -941,13 +941,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
             //获取云手机分辨率，按比例显示画面
             int[] size = mDeviceControl.getVideoSize();
-            boolean isLandSpaceGame = false;
             if (size != null && size.length == 2) {
                 //视频尺寸
                 int vw = size[0];
                 int vh = size[1];
-
-                isLandSpaceGame = vw > vh;
 
                 //屏幕尺寸
                 int sw = mContentView.getWidth();
@@ -965,8 +962,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 int videoHeight = vh < vw ? vw : vh;
 
                 //宽高比
-                float videoScale = (float) videoWidth / (float) videoHeight; //视频宽高比
-                float screenScale = (float) screenWidth / (float) screenHeight; //屏幕宽高比
+                float videoScale = (float) videoWidth / (float) videoHeight;
+                float screenScale = (float) screenWidth / (float) screenHeight;
 
                 float widthScale = (float) videoWidth / (float) screenWidth;
                 float heightScale = (float) videoHeight / (float) screenHeight;
@@ -979,7 +976,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     resizeHeight = (int) (screenWidth / videoScale);
                 }
             }
-//            setScreenOrientation(isLandSpaceGame);
+
             resizeVideoContainer(mMenuView.mVideoScale);
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
