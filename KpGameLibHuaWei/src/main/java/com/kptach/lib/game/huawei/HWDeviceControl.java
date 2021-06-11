@@ -86,14 +86,14 @@ public class HWDeviceControl implements IDeviceControl {
                     if (sdkParams.containsKey("ip")){
                         sdkParams.put("ip","114.116.222.169");
                     }
-                    //测试修改超时时间
+                   /* //测试修改超时时间
                     if (sdkParams.containsKey("game_timeout")){
                         sdkParams.put("game_timeout","100");
                     }
                     //测试可试玩时间
                     if (sdkParams.containsKey("available_playtime")){
                         sdkParams.put("available_playtime","200");
-                    }
+                    }*/
                     if (sdkParams.containsKey("game_timeout")){
                         gameTimeout = sdkParams.get("game_timeout");
                     }
