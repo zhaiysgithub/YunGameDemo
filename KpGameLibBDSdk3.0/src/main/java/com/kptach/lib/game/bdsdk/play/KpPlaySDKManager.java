@@ -177,6 +177,13 @@ public class KpPlaySDKManager {
         }
     }
 
+    public String getPadCode() {
+        if (mPlayMCISdkManager != null) {
+            return mPlayMCISdkManager.getPadCode();
+        }
+        return "";
+    }
+
     public void onNoOpsTimeout(int type, long timeout){
         stop();
         if (mPlayListener != null){

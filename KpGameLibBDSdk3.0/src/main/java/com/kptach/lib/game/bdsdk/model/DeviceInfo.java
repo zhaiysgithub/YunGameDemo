@@ -34,7 +34,6 @@ public class DeviceInfo {
 //    }
 //    public Pass pass = Pass.REDFIRGER;
 
-    public String padCode;
     public String videoQuality;
     public ResolutionRatio resolutionRatio;
     public boolean isAudio;
@@ -100,7 +99,6 @@ public class DeviceInfo {
     @Override
     public String toString() {
         return "DeviceInfo{" +
-                "padCode='" + padCode + '\'' +
                 ", videoQuality='" + videoQuality + '\'' +
                 ", resolutionRatio=" + resolutionRatio +
                 ", isAudio=" + isAudio +
@@ -120,7 +118,6 @@ public class DeviceInfo {
     public String toJsonString(){
         JSONObject obj = new JSONObject();
         try {
-            obj.put("padCode",padCode);
             obj.put("videoQuality",videoQuality);
             obj.put("resolutionRatio",resolutionRatio.toJsonString());
             obj.put("isAudio",isAudio);
