@@ -31,7 +31,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/MainAppTheme">
+        android:theme="@style/AppTheme">
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -90,9 +90,6 @@
 
         <activity android:name="com.yd.yunapp.gamebox.activity.TransDialogActivity"
             android:theme="@style/AppTheme.HalfTransparent"
-            />
-        <activity android:name="com.yd.yunapp.gamebox.activity.XiaoYuOtherActivity"
-            android:launchMode="singleTop"
             />
     </application>
 

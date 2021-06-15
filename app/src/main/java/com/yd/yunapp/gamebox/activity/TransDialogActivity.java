@@ -26,19 +26,8 @@ public class TransDialogActivity extends AppCompatActivity {
         }
         findViewById(R.id.tvDialogText).setOnClickListener(v -> {
             //发送广播关闭页面关闭此页面
-//            sendBroadCast();
-//            TransDialogActivity.this.finish();
             setResult(9001, getIntent());
             TransDialogActivity.this.finish();
         });
-    }
-
-    private void sendBroadCast() {
-        //"KP_Cloud_Game_Play_StartActivity"
-        Intent intent = new Intent();
-        intent.setAction("KP_Cloud_Game_Play_StartActivity");
-        intent.putExtra("className", "com.yd.yunapp.gamebox.activity.XiaoYuOtherActivity");
-        intent.putExtra("option", "exit");
-        sendBroadcast(intent);
     }
 }

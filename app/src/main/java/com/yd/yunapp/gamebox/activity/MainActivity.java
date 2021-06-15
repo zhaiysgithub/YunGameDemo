@@ -85,12 +85,19 @@ public class MainActivity extends AppCompatActivity {
         mCorpKey = mSp.getString("corpKey", null);
 //        String APP_ID = appIdByPass3;
 
+        StringBuilder sb = new StringBuilder();
+        sb.append(mainModel.getVersionName());
+        sb.append("\n");
         TextView coprKey = findViewById(R.id.corpkey);
         if (mCorpKey == null) {
-            coprKey.setText("请配置CorpKey");
+            sb.append("请配置CorpKey");
+            coprKey.setText(sb.toString());
             coprKey.setTextColor(Color.RED);
         } else {
-            coprKey.setText((Env.isTestEnv() ? "测试环境" : "正式环境") + "\n CorpKey: " + mCorpKey);
+            sb.append((Env.isTestEnv() ? "测试环境" : "正式环境"));
+            sb.append("\n CorpKey:");
+            sb.append(mCorpKey);
+            coprKey.setText(sb.toString());
         }
 
         //打印log信息，正式版本需要关闭
