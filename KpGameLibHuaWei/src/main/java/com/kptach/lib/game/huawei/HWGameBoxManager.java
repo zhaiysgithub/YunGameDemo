@@ -17,15 +17,12 @@ import java.util.HashMap;
 
 public class HWGameBoxManager implements IGameBoxManager {
 
-    private Application mApplication;
-    private String mResource;
     private boolean isDebug;
-    private boolean sdkIsInit = false;
 
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> iGameCallback) {
-        mApplication = application;
         try {
+            String mResource;
             if (params != null){
                 if (params.containsKey("resource")){
                     Object resObjcet = params.get("resource");
@@ -39,11 +36,11 @@ public class HWGameBoxManager implements IGameBoxManager {
                         isDebug = (boolean) debugObjcet;
                     }
                 }
-                CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
+                CloudGameManager.CreateCloudGameInstance().enableDebugLog(isDebug);
                 //是否使用真机输入法
                 CloudGameManager.CreateCloudGameInstance().enableRemoteIME(true);
 
-                HWCloudGameUtils.setDebug(true);
+                HWCloudGameUtils.setDebug(isDebug);
 
             }
         }catch (Exception e){
@@ -52,7 +49,6 @@ public class HWGameBoxManager implements IGameBoxManager {
 
         boolean tabletDevice = (application.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
                 Configuration.SCREENLAYOUT_SIZE_LARGE;
-//        CloudGameManager.CreateCloudGameInstance().deinit();
         CloudGameManager.CreateCloudGameInstance().init(application
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
     }

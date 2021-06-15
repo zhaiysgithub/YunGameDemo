@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.kptach.lib.game.huawei.HWDeviceControl;
 import com.kptach.lib.inter.game.APIConstants;
 
 import org.json.JSONObject;
@@ -89,7 +90,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private static final int MSG_SHOW_AUTH = 3;
     private static final int MSG_GAME_EXIT = 4;
 
-    private ImageView mIvPaper;
     private ViewGroup mContentView;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
@@ -238,7 +238,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     }
     private void initView(View rootView) {
-        mIvPaper = findViewById(R.id.ivWallPaper);
+
         mContentView = findViewById(R.id.content_view);
 
         mPlayStatueView = new PlayStatusLayout.Builder(this)
