@@ -262,7 +262,6 @@ public class DeviceControl implements IDeviceControl{
      */
     private void loadGameAd(){
         try {
-            this.mGameInfo.showAd = GameInfo.GAME_AD_SHOW_OFF;
             //加载广告
             if (this.mAdManager != null && this.mGameInfo.showAd == GameInfo.GAME_AD_SHOW_ON) {
                 this.mAdManager.loadGameAd(new IAdCallback<String>() {
@@ -313,8 +312,7 @@ public class DeviceControl implements IDeviceControl{
      * @return
      */
     private void sendClientNotice(){
-//        boolean conRecoverCloudDataOpen = ProferencesUtils.getBoolean(mActivity, "conRecoverCloudData", true);
-        boolean conRecoverCloudDataOpen = false;
+        boolean conRecoverCloudDataOpen = ProferencesUtils.getBoolean(mActivity, "conRecoverCloudData", true);
         if (mGameInfo.recoverCloudData == 1 && conRecoverCloudDataOpen){
             if (mGameStartCallback!=null){
                 mGameStartCallback.onAPICallback("", APIConstants.RECOVER_DATA_LOADING);

@@ -1,9 +1,8 @@
 package kptech.game.kit.manager;
 
+import android.os.Handler;
 import com.kptach.lib.inter.game.APIConstants;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -12,7 +11,6 @@ import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import kptech.game.kit.PassConstants;
 import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.model.PassDeviceResponseBean;
@@ -48,13 +46,24 @@ public class KpPassCMWManager {
             public void run() {
                 requestDevicePost(passParams, new PassCMWCallback() {
                     @Override
-                    public void onSuccess(PassDeviceResponseBean result) {
-                        callback.onSuccess(result);
+                    public void onSuccess(final PassDeviceResponseBean result) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(result);
+                            }
+                        });
                     }
 
                     @Override
-                    public void onError(int errorCode, String errorMsg) {
-                        callback.onError(errorCode, errorMsg);
+                    public void onError(final int errorCode,final String errorMsg) {
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError(errorCode, errorMsg);
+                            }
+                        });
                     }
                 });
             }
@@ -189,4 +198,6 @@ public class KpPassCMWManager {
         }
         return apiErrorCode;
     }
+
+    private final Handler mHandler = new Handler();
 }

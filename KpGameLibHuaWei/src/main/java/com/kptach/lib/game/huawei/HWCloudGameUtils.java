@@ -1,7 +1,5 @@
 package com.kptach.lib.game.huawei;
 
-import android.content.Context;
-import android.content.res.Configuration;
 import android.util.Log;
 
 
