@@ -36,7 +36,7 @@ public class DeviceInfo {
 
     public String videoQuality;
     public ResolutionRatio resolutionRatio;
-    public boolean isAudio;
+    public boolean isAudio = true;
 
     public int gop;
     public int bitrate;
