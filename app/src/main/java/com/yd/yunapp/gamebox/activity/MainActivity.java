@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
     private final String pkgbdPass3 = "cn.missevan";
     private final String pkghwPass3 = "com.rydts.nb";
+    private String mCorpKey;
 
 
     @SuppressLint("SetTextI18n")
@@ -81,27 +82,27 @@ public class MainActivity extends AppCompatActivity {
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
-//        String APP_ID = mSp.getString("corpKey", null);
-        String APP_ID = appIdByPass3;
+        mCorpKey = mSp.getString("corpKey", null);
+//        String APP_ID = appIdByPass3;
 
         TextView coprKey = findViewById(R.id.corpkey);
-        if (APP_ID == null) {
+        if (mCorpKey == null) {
             coprKey.setText("请配置CorpKey");
             coprKey.setTextColor(Color.RED);
         } else {
-            coprKey.setText((Env.isTestEnv() ? "测试环境" : "正式环境") + "\n CorpKey: " + APP_ID);
+            coprKey.setText((Env.isTestEnv() ? "测试环境" : "正式环境") + "\n CorpKey: " + mCorpKey);
         }
 
         //打印log信息，正式版本需要关闭
         GameBoxManager.setDebug(BuildConfig.DEBUG);
-        GameBoxManager.setAppKey(APP_ID);
+        GameBoxManager.setAppKey(mCorpKey);
 
         mGameInfos = new ArrayList<>();
         ListView mGameList = findViewById(R.id.game_list);
         mGameAdapter = new GameAdapter(mGameInfos);
         mGameList.setAdapter(mGameAdapter);
 
-        GameBox.init(getApplication(), APP_ID);
+        GameBox.init(getApplication(), mCorpKey);
 
         loadGame();
         mSelPkg.setOnClickListener(new View.OnClickListener() {
@@ -113,36 +114,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startGame(View v) {
-        /*GameInfo info = new GameInfo();
-        int gid = 0;
-        try {
-            String gidTest = mGidText.getText().toString();
-            gid = Integer.parseInt(gidTest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (gid == 0) {
-            Toast.makeText(this, "gid错误", Toast.LENGTH_SHORT).show();
+        if (mCorpKey == null || mCorpKey.isEmpty()){
+            Toast.makeText(MainActivity.this,"请配置CorpKey",Toast.LENGTH_SHORT).show();
             return;
         }
-
-        info.gid = gid;
-        info.pkgName = mPkgText.getText().toString();
-        info.name = "网易游戏联运Demo";
-
-        runGame(info);*/
-
+        boolean useSDK2 = kptech.game.kit.BuildConfig.useSDK2;
         GameInfo info = new GameInfo();
-        String pkgName = mPkgText.getText().toString();
-        if (pkgName.isEmpty()){
-            Toast.makeText(this, "包名不能为空", Toast.LENGTH_SHORT).show();
-            return;
+        if (useSDK2) {
+            int gid = 0;
+            try {
+                String gidTest = mGidText.getText().toString();
+                gid = Integer.parseInt(gidTest);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (gid == 0) {
+                Toast.makeText(this, "gid错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            info.gid = gid;
+            info.pkgName = mPkgText.getText().toString();
+            info.name = "网易游戏联运Demo";
+
+        } else {
+            if (!mCorpKey.equals(appIdByPass3)){
+                Toast.makeText(MainActivity.this,"请使用3.0的corpKey",Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String pkgName = mPkgText.getText().toString();
+            if (pkgName.isEmpty()){
+                Toast.makeText(this, "包名不能为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!pkgName.equals(pkgbdPass3) && !pkgName.equals(pkghwPass3)){
+                Toast.makeText(this, "包名参数错误", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            info.pkgName = pkgName;
         }
-        if (!pkgName.equals(pkgbdPass3) && !pkgName.equals(pkghwPass3)){
-            Toast.makeText(this, "包名参数错误", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        info.pkgName = pkgName;
         runGame(info);
     }
 
@@ -214,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

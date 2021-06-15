@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 16
-        versionName "1.2.1.12"
+        versionName "1.4.0.0"
     }
 
 
@@ -17,10 +17,12 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "useSDK2" , "${USESDK2}"
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "useSDK2" , "${USESDK2}"
         }
     }
 
@@ -69,7 +71,7 @@ dependencies {
     //红手指游戏库适配
 //    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
     implementation project(path: ':KpGameLibRedfinger')
-    implementation project(path: ':KpGameLibBDSdk3.0')
+
 
     //百度游戏库适配
 //
@@ -80,9 +82,11 @@ dependencies {
         implementation project(path: ':KpGameLibBaidu')
 //        implementation files('../kplib/libs/KpGameLib-BD-v1.0.3.jar')
     }
-
-    //华为SDK
-    implementation project(path: ':KpGameLibHuaWei')
+    if (!rootProject.ext.USESDK2){
+        implementation project(path: ':KpGameLibBDSdk3.0')
+        //华为SDK
+        implementation project(path: ':KpGameLibHuaWei')
+    }
 
 }
 

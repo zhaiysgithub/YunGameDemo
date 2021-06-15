@@ -29,6 +29,7 @@ import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
 import kptech.game.kit.env.Env;
 import kptech.lib.constants.SharedKeys;
+import kptech.lib.constants.Urls;
 import kptech.lib.data.RequestAppInfoTask;
 import kptech.lib.data.RequestTask;
 import kptech.lib.fatory.GameBoxManagerFactory;
@@ -367,19 +368,53 @@ public class GameBoxManager {
         }
         devLoading = true;
 
-        KpPassCMWManager.instance().startRequestPassCMW(mCorpID, inf.pkgName, new PassCMWCallback() {
+        boolean useSDK2 = BuildConfig.useSDK2;
+        if (useSDK2){
+            applyDeviceBy2(activity, inf, callback);
+        } else {
+            applyDeviceBy3(activity, inf, callback);
+        }
+    }
+
+    /**
+     * 使用SDK2.0打包
+     */
+    private void applyDeviceBy2(final Activity activity, final GameInfo info, final APICallback<IDeviceControl> callback){
+        HashMap<String,Object> sdkParams = new HashMap<>();
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
+        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
+
+        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(info.useSDK, mApplication, sdkParams);
+        gameBoxManager.applyCloudDevice(activity, info.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
+            @Override
+            public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
+                dealApplyDeviceCallback(innerControl, code, info, callback);
+            }
+        });
+    }
+
+    /**
+     * 使用SDK3.0打包
+     */
+    private void applyDeviceBy3(final Activity activity, final GameInfo info, final APICallback<IDeviceControl> callback){
+
+        KpPassCMWManager.instance().startRequestPassCMW(mCorpID, info.pkgName, new PassCMWCallback() {
             @Override
             public void onSuccess(PassDeviceResponseBean result) {
                 if (result == null){
-                   callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
-                   return;
+                    callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
+                    return;
                 }
                 Logger.info("KpPassCMWManager","result = " + result.toString());
                 int code = result.code;
                 if(code == PassConstants.PASS_CODE_SUCCESS){
-                    //启动游戏创建deviceControl
                     initDeviceControl(activity, result.data
-                            , inf, mCorpID, callback);
+                            , info, callback);
                     return;
                 }
                 int erroCode = KpPassCMWManager.instance().getErrorCode(code);
@@ -394,8 +429,9 @@ public class GameBoxManager {
         });
     }
 
+    //启动游戏创建deviceControl
     private void initDeviceControl(@NonNull Activity activity, PassDeviceResponseBean.PassData data
-            ,@NonNull final GameInfo inf, final String corpKey
+            ,@NonNull final GameInfo inf
             , @NonNull final APICallback<IDeviceControl> callback) {
 
         HashMap<String,Object> sdkParams = new HashMap<>();
@@ -415,59 +451,65 @@ public class GameBoxManager {
 
             @Override
             public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
-                devLoading = false;
-
-                DeviceControl control = null;
-                if (innerControl != null){
-                    control = new DeviceControl(innerControl, inf);
-                    control.setCorpKey(corpKey);
-                }
-
-                try {
-                    //发送打点事件
-                    Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
-                    if (control != null){
-                        event.setPadcode(control.getPadcode());
-                    }
-                    event.setErrMsg(""+code);
-                    HashMap<String,Object> ext = new HashMap<>();
-                    ext.put("code", code);
-                    if(innerControl!=null && innerControl.getSdkType()!=null){
-                        ext.put("useSDK", innerControl.getSdkType().toString());
-                    }
-                    event.setExt(ext);
-                    MobclickAgent.sendEvent(event);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                try {
-                    //发送事件耗时统计
-                    long useTm = mTimeDuration.duration();
-                    HashMap<String,Object> data = new HashMap<>();
-                    data.put("stime", mTimeDuration.getSavedTime());
-                    data.put("etime", mTimeDuration.getCurentTime());
-                    data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
-                    data.put("code", code);
-                    Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
-                    event.setGamePkg(inf.pkgName);
-                    if (control != null){
-                        event.setPadcode(control.getPadcode());
-                    }
-                    MobclickAgent.sendTMEvent(event);
-
-                    mTimeDuration = null;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                //回调方法
-                callback.onAPICallback(control, code);
+                dealApplyDeviceCallback(innerControl, code, inf, callback);
             }
         });
     }
 
+    /**
+     * 处理申请设备后的逻辑
+     */
+    private void dealApplyDeviceCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code
+            , GameInfo inf, final APICallback<IDeviceControl> callback){
+        devLoading = false;
 
+        DeviceControl control = null;
+        if (innerControl != null){
+            control = new DeviceControl(innerControl, inf);
+            control.setCorpKey(mCorpID);
+        }
+
+        try {
+            //发送打点事件
+            Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
+            if (control != null){
+                event.setPadcode(control.getPadcode());
+            }
+            event.setErrMsg(""+code);
+            HashMap<String,Object> ext = new HashMap<>();
+            ext.put("code", code);
+            if(innerControl!=null && innerControl.getSdkType()!=null){
+                ext.put("useSDK", innerControl.getSdkType().toString());
+            }
+            event.setExt(ext);
+            MobclickAgent.sendEvent(event);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try {
+            //发送事件耗时统计
+            long useTm = mTimeDuration.duration();
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("stime", mTimeDuration.getSavedTime());
+            data.put("etime", mTimeDuration.getCurentTime());
+            data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
+            data.put("code", code);
+            Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
+            event.setGamePkg(inf.pkgName);
+            if (control != null){
+                event.setPadcode(control.getPadcode());
+            }
+            MobclickAgent.sendTMEvent(event);
+
+            mTimeDuration = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        //回调方法
+        callback.onAPICallback(control, code);
+    }
 
     /**
      * 游戏列表获取，游戏列表支持分页获取。

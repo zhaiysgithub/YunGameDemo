@@ -17,7 +17,7 @@
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
-        <item></item>
+        <item>2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>
     </string-array>
 
     <!-- Reply Preference -->
@@ -28,6 +28,7 @@
         <item>快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
+        <item>pass3.0</item>
     </string-array>
 
     <string-array name="release_corpkey_values">
@@ -37,5 +38,6 @@
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
+        <item>2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>
     </string-array>
 </resources>
