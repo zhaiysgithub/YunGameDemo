@@ -1,9 +1,8 @@
 package com.kptach.lib.game.baidu;
 
 import android.app.Activity;
-import android.view.accessibility.AccessibilityNodeInfo;
+import android.os.Handler;
 
-import com.mci.play.PlaySdkManager;
 import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
 
@@ -23,9 +22,11 @@ public class BdDeviceControl implements IDeviceControl {
     private String mPadcode = "";
     private boolean mIsSoundEnable = true;
     private String mPicQuality = "";
+    private Handler mainHandler;
 
     protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this.mDeviceControl = control;
+        mainHandler = new Handler();
         parseDeviceToken();
     }
 
@@ -75,12 +76,19 @@ public class BdDeviceControl implements IDeviceControl {
         }
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>(){
             @Override
-            public void onAPICallback(String s, int i) {
-                if (callback != null){
-                    callback.onGameCallback(s, i);
-                }
-                if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
-                    switchQuality(getVideoQuality());
+            public void onAPICallback(final String s, final int i) {
+                if (mainHandler != null){
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (callback != null){
+                                callback.onGameCallback(s, i);
+                            }
+                            if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
+                                switchQuality(getVideoQuality());
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -91,6 +99,11 @@ public class BdDeviceControl implements IDeviceControl {
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
+        if (mainHandler != null){
+            mainHandler.removeCallbacksAndMessages(null);
+            mainHandler = null;
+        }
+
     }
 
     @Override
