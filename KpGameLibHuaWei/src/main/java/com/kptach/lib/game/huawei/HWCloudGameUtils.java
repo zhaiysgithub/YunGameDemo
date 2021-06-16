@@ -13,13 +13,19 @@ public class HWCloudGameUtils {
         isDebug = debug;
     }
 
+    public static void info(String msg){
+        if (isDebug){
+            Log.i(TAG, msg);
+        }
+    }
+
     public static void info(String tag, String msg){
         if (isDebug){
             Log.i(TAG + tag, msg);
         }
     }
 
-    public static void error(String tag, String err){
+    public static void error(String err){
         if (err != null){
             Log.e(TAG, err);
         }
