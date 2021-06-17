@@ -8,7 +8,7 @@ public class HWCloudGameUtils {
 
     private static final String TAG = "kpgamekit.hw.";
 
-    private static boolean isDebug = false;
+    private static boolean isDebug = true;
     public static void setDebug(boolean debug){
         isDebug = debug;
     }

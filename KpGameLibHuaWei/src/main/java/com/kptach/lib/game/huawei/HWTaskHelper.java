@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -58,7 +57,7 @@ public class HWTaskHelper {
     }
 
     private String requestAppInfo(String corpKey, String sdkVersion, int soVersion, String cpuInfo) {
-        String requestUrl = HWFileUtils.soInfoUrl;
+        String requestUrl = HWFileUtils.soInfoTestUrl;
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
         InputStreamReader isr = null;

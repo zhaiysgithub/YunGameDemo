@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -22,8 +21,6 @@ import java.util.concurrent.Executors;
  * 步骤：校验版本，下载zip, 压缩zip,
  */
 public class HWLoadLibHelper {
-
-    private static final String TAG = "HW";
 
     private static final int WHAT_REQUEST_APPINFO_SUCCESS = 0;
     private static final int WHAT_REQUEST_APPINFO_FAIL = 1;
@@ -42,6 +39,7 @@ public class HWLoadLibHelper {
     private ILoadLibListener mListener;
     private boolean isLoading;
     private String mCpuInfo;
+    private File mSoDir;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
 
@@ -50,10 +48,16 @@ public class HWLoadLibHelper {
         try {
             sharedPreferences = context.getSharedPreferences(HWFileUtils.SP_HWLIB, Context.MODE_PRIVATE);
             mLibDir = context.getDir("lib", Context.MODE_PRIVATE);
+
+//            String property = System.getProperty("java.library.path");
+//            String soPath = property.split(":")[0];
+//            mSoDir = new File(soPath);
+            String soFilePath = context.getApplicationInfo().nativeLibraryDir;
+            mSoDir = new File(soFilePath);
             if (!mLibDir.exists()) {
                 mkdirs = mLibDir.mkdirs();
             }
-            Log.e(TAG, "dir:" + mLibDir.getAbsolutePath() + ";mkdirs = " + mkdirs);
+            HWCloudGameUtils.info("dir:" + mLibDir.getAbsolutePath() + ";mkdirs = " + mkdirs);
             createZipFile();
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,13 +217,14 @@ public class HWLoadLibHelper {
             isDel = file.delete();
             HWCloudGameUtils.info("unZipFileDel:name=" + fileName + ";isDel=" + isDel);
         }
-        File destDir = new File(mLibDir, mCpuInfo);
+       /* File destDir = new File(mSoDir, mCpuInfo);
+        boolean mkdirs = false;
         if (!destDir.exists()) {
-            boolean mkdirs = destDir.mkdirs();
-            HWCloudGameUtils.info("startUnZipFile:destDir=" + mkdirs);
-        }
+            mkdirs = destDir.mkdirs();
+        }*/
+//        HWCloudGameUtils.info("startUnZipFile:destDir=" + mkdirs + ";path = " + destDir.getAbsolutePath());
         executor.execute(() -> {
-            int code = HWFileUtils.unzipFile(new File(zipFilePath), destDir);
+            int code = HWFileUtils.unzipFile(new File(zipFilePath), mSoDir);
             int what = (code == 0 ? WHAT_UNZIP_SUCCESS : WHAT_UNZIP_FAIL);
             mHandler.sendEmptyMessage(what);
         });

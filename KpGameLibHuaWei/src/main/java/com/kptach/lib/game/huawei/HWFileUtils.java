@@ -20,7 +20,8 @@ public class HWFileUtils {
     public static final String so_libopus = "libopus.so";
     public static final String so_libVideoDecoder = "libVideoDecoder.so";*/
 
-    public static final String soInfoUrl = "https://test-operation.kuaipantech.com/kp/api/hwso/version/info";
+    public static final String soInfoTestUrl = "https://test-operation.kuaipantech.com/kp/api/hwso/version/info";
+    public static final String soInfoUrl = "https://api.omsys.kuaipantech.com/kp/api/hwso/version/info";
     public static final String SP_HWLIB = "sp_hwlib";
     public static final String SPKEY_MD5 = "spkey_somd5";
     public static final String SPKEY_VER = "spkey_sover";
