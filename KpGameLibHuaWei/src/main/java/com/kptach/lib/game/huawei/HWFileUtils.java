@@ -2,15 +2,12 @@ package com.kptach.lib.game.huawei;
 
 import android.os.Build;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -23,14 +20,27 @@ public class HWFileUtils {
     public static final String so_libopus = "libopus.so";
     public static final String so_libVideoDecoder = "libVideoDecoder.so";*/
 
+    public static final String soInfoUrl = "https://test-operation.kuaipantech.com/kp/api/hwso/version/info";
+    public static final String SP_HWLIB = "sp_hwlib";
+    public static final String SPKEY_MD5 = "spkey_somd5";
+    public static final String SPKEY_VER = "spkey_sover";
+    public static final String SPKEY_UNZIPOK = "spkey_unzipok";
+    //zip文件名称
+    public static final String libZipName = "hwsolib.zip";
 
     // 获取CPU名字
     public static String getCpuName() {
         String cpuAbi;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            String [] cpuAbis = Build.SUPPORTED_ABIS;
-            cpuAbi = cpuAbis[0];
-        }else {
+            String[] cpuAbis = Build.SUPPORTED_ABIS;
+//            boolean contains = Arrays.asList(cpuAbis).contains("arm64-v8a");
+//            cpuAbi = contains ? "arm64-v8a" : "armeabi-v7a";
+            if (cpuAbis != null && cpuAbis.length > 0) {
+                cpuAbi = cpuAbis[0];
+            } else {
+                cpuAbi = "armeabi-v7a";
+            }
+        } else {
             cpuAbi = Build.CPU_ABI;
         }
         return cpuAbi;
@@ -93,14 +103,15 @@ public class HWFileUtils {
 
     /**
      * 解压缩 zip 文件
-     * @param zipFile  待压缩的文件
-     * @param destDir  压缩后文件的存储目标目录
+     *
+     * @param zipFile 待压缩的文件
+     * @param destDir 压缩后文件的存储目标目录
      * @return -1:error  0:success
      */
-    public static int unzipFileByKeyword(final File zipFile, final File destDir) {
+    public static int unzipFile(final File zipFile, final File destDir) {
         int BUFFER_LEN = 2048;
         InputStream in = null;
-        OutputStream out = null;
+        FileOutputStream out = null;
         try {
 
             if (zipFile == null || destDir == null) {
@@ -109,32 +120,42 @@ public class HWFileUtils {
 
             ZipFile zip = new ZipFile(zipFile);
             Enumeration<?> entries = zip.entries();
-            while (entries.hasMoreElements()){
+            while (entries.hasMoreElements()) {
 
                 ZipEntry entry = ((ZipEntry) entries.nextElement());
+                //获得的元素是否是目录，是就跳过
+                if (entry.isDirectory()) {
+                    continue;
+                }
                 String entryName = entry.getName().replace("\\", "/");
-                File file = new File(destDir, entryName);
-
-                in = new BufferedInputStream(zip.getInputStream(entry));
-                out = new BufferedOutputStream(new FileOutputStream(file));
+                int speIndex = entryName.indexOf("/");
+                String libName = entryName.substring(speIndex + 1);
+                File file = new File(destDir, libName);
+                if (!file.exists()) {
+                    boolean newFile = file.createNewFile();
+                    HWCloudGameUtils.info("file:" + file.getName() + ";newFile = " + newFile);
+                }
+                in = zip.getInputStream(entry);
+                out = new FileOutputStream(file);
                 byte[] buffer = new byte[BUFFER_LEN];
                 int len;
                 while ((len = in.read(buffer)) != -1) {
                     out.write(buffer, 0, len);
                 }
+                out.flush();
             }
             return 0;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try{
+            try {
                 if (in != null) {
                     in.close();
                 }
                 if (out != null) {
                     out.close();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

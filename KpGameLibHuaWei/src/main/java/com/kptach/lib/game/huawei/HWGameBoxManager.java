@@ -2,6 +2,8 @@ package com.kptach.lib.game.huawei;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
 import com.huawei.cloudgame.api.CloudGameManager;
@@ -10,8 +12,6 @@ import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -22,7 +22,7 @@ public class HWGameBoxManager implements IGameBoxManager {
     private String corpKey = "";
     private String sdkVersion = "";
     private HWLoadLibHelper mLibHelper;
-    private int soVersion = 1;
+    public static int soVersion = 1;
 
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> iGameCallback) {
@@ -54,9 +54,6 @@ public class HWGameBoxManager implements IGameBoxManager {
                         isDebug = (boolean) debugObjcet;
                     }
                 }
-
-                startInitCloudGameManager(application);
-
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -65,16 +62,16 @@ public class HWGameBoxManager implements IGameBoxManager {
 
     }
 
-    private void startInitCloudGameManager(Application application){
-        CloudGameManager.CreateCloudGameInstance().enableDebugLog(isDebug);
+    private void startInitCloudGameManager(Activity activity){
+        CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
         //是否使用真机输入法
         CloudGameManager.CreateCloudGameInstance().enableRemoteIME(true);
 
-        HWCloudGameUtils.setDebug(isDebug);
+        HWCloudGameUtils.setDebug(true);
 
-        boolean tabletDevice = (application.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
+        boolean tabletDevice = (activity.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
                 Configuration.SCREENLAYOUT_SIZE_LARGE;
-        CloudGameManager.CreateCloudGameInstance().init(application
+        CloudGameManager.CreateCloudGameInstance().init(activity
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
     }
 
@@ -88,18 +85,21 @@ public class HWGameBoxManager implements IGameBoxManager {
     public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
         //创建 deviceControl
         try{
-            String pkgName = "";
-            HWDeviceControl instance = new HWDeviceControl(params);
+            /*String pkgName = "";
+
             JSONObject obj = new JSONObject(gameInf);
             if (obj.has("pkgName")){
                 pkgName = obj.optString("pkgName");
-            }
+            }*/
             if (callback == null){
                 return;
             }
+
             mLibHelper.loadLib(corpKey, sdkVersion, soVersion, (code, msg) -> {
                 HWCloudGameUtils.info("loadLib: code = " + code + ";msg = " + msg);
                 if (code == HWLoadLibHelper.LOADLIB_STATUS_SUCCESS){
+                    startInitCloudGameManager(activity);
+                    HWDeviceControl instance = new HWDeviceControl(params);
                     callback.onGameCallback(instance, APIConstants.APPLY_DEVICE_SUCCESS);
                 }else {
                     callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
@@ -107,9 +107,7 @@ public class HWGameBoxManager implements IGameBoxManager {
             });
         }catch (Exception e){
             e.printStackTrace();
-            if (callback != null){
-                callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
-            }
+            callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
         }
 
 

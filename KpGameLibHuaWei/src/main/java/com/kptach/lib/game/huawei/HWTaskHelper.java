@@ -13,7 +13,7 @@ import java.net.URL;
 
 public class HWTaskHelper {
 
-    private static final int BUFFER_SIZE = 4096; // 8k ~ 32K
+    private static final int BUFFER_SIZE = 1024;
 
     private HWTaskHelper() {
     }
@@ -26,66 +26,58 @@ public class HWTaskHelper {
         return HWTaskHelperHolder.helper;
     }
 
-    public void getAppSoInfo(String corpKey, String sdkVersion, String cpuInfo
+    public void getAppSoInfo(String corpKey, String sdkVersion, int soVersion, String cpuInfo
             , TaskCallback listener) {
 
         if (listener == null) {
             return;
         }
 
-        String result = requestAppInfo(corpKey, sdkVersion, cpuInfo);
-        int code;
+        String result = requestAppInfo(corpKey, sdkVersion, soVersion, cpuInfo);
+        if (result == null || result.isEmpty()){
+            listener.onFaile(-3, "request so info result empty");
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject(result);
             int c = jsonObject.getInt("c");
             if (c == 0) {
                 JSONObject dObj = jsonObject.getJSONObject("d");
                 String md5 = dObj.optString("md5");
-                String url = dObj.optString("libUrl");
-                String soVersion = dObj.optString("soVersion");
-
-                listener.onSucces(url, md5, soVersion);
+                String dataUrl = dObj.optString("data");
+//                int version = dObj.optInt("version");
+                listener.onSucces(dataUrl, md5);
             } else {
-                String errorMsg = jsonObject.getString("m");
-                code = -1;
-                listener.onFaile(code, errorMsg);
+                listener.onFaile(-1, result);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            code = -2;
-            String errorMsg = e.getMessage();
-            listener.onFaile(code, errorMsg);
+            listener.onFaile(-2, e.getMessage());
         }
 
     }
 
-    private String requestAppInfo(String corpKey, String sdkVersion, String cpuInfo) {
-        String requestUrl = HWLoadLibHelper.checkVerionUrl;
-        HWCloudGameUtils.info("requestAppInfo:" + requestUrl);
-        OutputStream outputStream = null;
+    private String requestAppInfo(String corpKey, String sdkVersion, int soVersion, String cpuInfo) {
+        String requestUrl = HWFileUtils.soInfoUrl;
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
         InputStreamReader isr = null;
 
         try {
             String appendUrl = requestUrl +
-                    "?corpKey=" + corpKey +
-                    "&version=" + sdkVersion;
+                    "?corpkey=" + corpKey +
+                    "&cpuInfo=" + cpuInfo +
+                    "&version=" + soVersion +
+                    "&sdkVersion=" + sdkVersion;
 
             URL url = new URL(appendUrl);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
-            postConnection.setRequestMethod("POST");
+            postConnection.setRequestMethod("GET");
             postConnection.setConnectTimeout(1000 * 10);
             postConnection.setReadTimeout(1000 * 10);
-            postConnection.setDoInput(true);
+//            postConnection.setDoInput(true);
             postConnection.setRequestProperty("Content-type", "application/json");
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("cpuInfo",cpuInfo);
-            String dataStr = jsonObject.toString();
-            outputStream = postConnection.getOutputStream();
-            outputStream.write(dataStr.getBytes());
-            outputStream.flush();
 
             final StringBuilder buffer = new StringBuilder();
             int code = postConnection.getResponseCode();
@@ -105,9 +97,6 @@ public class HWTaskHelper {
             e.printStackTrace();
         } finally {
             try {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
                 if (inputStream != null) {
                     inputStream.close();
                 }
@@ -126,19 +115,19 @@ public class HWTaskHelper {
     }
 
     /**
-     * 执行下载流程
+     * 执行下载zip并解压的流程
      */
     public void startDownloadLibZip(String sUrl, File file, DownloadCallback callback) {
         if (callback == null){
             return;
         }
         if (sUrl == null || sUrl.isEmpty()){
-            callback.onSuccess("url is empty");
+            callback.onFailed("url is empty");
             return;
         }
 
         if (file == null || !file.exists()){
-            callback.onSuccess("file == null || !file.exists()");
+            callback.onFailed("file == null || !file.exists()");
             return;
         }
 
@@ -150,7 +139,7 @@ public class HWTaskHelper {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("GET");
-            conn.setDoOutput(false);
+//            conn.setDoOutput(false);
             //超时时间
             conn.setConnectTimeout(10 * 1000);
             conn.setReadTimeout(10 * 1000);
@@ -160,14 +149,16 @@ public class HWTaskHelper {
             //防止屏蔽程序抓取而返回403错误
 //            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
             conn.connect();
-
-            in = conn.getInputStream();
-            out = new FileOutputStream(file,false);
-
-            int byteread;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((byteread = in.read(buffer)) != -1) {
-                out.write(buffer, 0, byteread);
+            out = new FileOutputStream(file);
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200){
+                in = conn.getInputStream();
+                int byteread;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((byteread = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, byteread);
+                }
+                out.flush();
             }
             callback.onSuccess(file.getAbsolutePath());
         } catch (Exception e) {
@@ -189,7 +180,7 @@ public class HWTaskHelper {
 
     public interface TaskCallback {
 
-        void onSucces(String libUrl, String md5, String soVersion);
+        void onSucces(String libUrl, String md5);
 
         void onFaile(int code, String errMsg);
     }

@@ -2,6 +2,7 @@ package com.kptach.lib.game.huawei;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -33,72 +34,120 @@ public class HWLoadLibHelper {
     public static final int LOADLIB_STATUS_SUCCESS = 6;
     public static final int LOADLIB_STATUS_FAIL = 7;
 
-    //校验版本的地址
-    public static final String checkVerionUrl = "";
-    private static final String SPKEY_MD5 = "spkey_somd5";
-    private static final String SPKEY_VER = "spkey_sover";
-    private static final String libZipName = "hwsolib.zip";
-    private String soFilePath;
+    private SharedPreferences sharedPreferences;
+    //存放so和zip的文件夹   data/data/packagename/lib
     private File mLibDir;
+    //zip文件   data/data/packagename/lib/hwsolib.zip
     private File mZipFile;
     private ILoadLibListener mListener;
     private boolean isLoading;
+    private String mCpuInfo;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
 
     public HWLoadLibHelper(Application context) {
         boolean mkdirs = false;
         try {
+            sharedPreferences = context.getSharedPreferences(HWFileUtils.SP_HWLIB, Context.MODE_PRIVATE);
             mLibDir = context.getDir("lib", Context.MODE_PRIVATE);
             if (!mLibDir.exists()) {
                 mkdirs = mLibDir.mkdirs();
             }
             Log.e(TAG, "dir:" + mLibDir.getAbsolutePath() + ";mkdirs = " + mkdirs);
-            mZipFile = new File(mLibDir, libZipName);
+            createZipFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void loadLib(String corpKey,String sdkVersion, int soVersion,ILoadLibListener listener) {
+    /**
+     * 删除重新创建空文件
+     */
+    private void createZipFile() {
+        boolean delete = false;
+        boolean createNewFile = false;
+        try {
+            if (mZipFile != null && mZipFile.exists() && mZipFile.length() > 0) {
+                delete = mZipFile.delete();
+            }
+            if (mZipFile == null) {
+                mZipFile = new File(mLibDir, HWFileUtils.libZipName);
+            }
+            if (!mZipFile.exists()) {
+                createNewFile = mZipFile.createNewFile();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        HWCloudGameUtils.info("mZipFile delete = " + delete + ";createNewFile = " + createNewFile);
+    }
+
+    /**
+     * 检查文件md5是否正确
+     */
+    private boolean checkZipFile(String md5Value) {
+        boolean result = false;
+        if (mZipFile != null && mZipFile.exists() && mZipFile.length() > 0) {
+            result = HWFileUtils.checkLibFile(mZipFile, md5Value);
+        }
+        return result;
+    }
+
+    public void loadLib(String corpKey, String sdkVersion, int soVersion, ILoadLibListener listener) {
         if (listener == null) {
             return;
         }
-        String cpuInfo = HWFileUtils.getCpuName();
-        if (cpuInfo == null || cpuInfo.isEmpty()){
-            listener.onResult(LOADLIB_STATUS_FAIL, "cpuInfo is empty");
-           return;
-        }
         this.mListener = listener;
-        File soFile = new File(mLibDir, cpuInfo);
-        soFilePath = soFile.getAbsolutePath();
-        boolean soFilemkDirs = false;
-        if (!soFile.exists()){
-            soFilemkDirs = soFile.mkdirs();
+
+        mCpuInfo = HWFileUtils.getCpuName();
+        if (mCpuInfo == null || mCpuInfo.isEmpty()) {
+            mListener.onResult(LOADLIB_STATUS_FAIL, "cpuInfo is empty");
+            return;
         }
-        HWCloudGameUtils.info("soFilemkDirs=" + soFilemkDirs + ";soFilePath = " + soFilePath + ";cpuInfo = " + cpuInfo);
-        requestUpdate(corpKey, sdkVersion, cpuInfo);
+
+        int cacheVersion = 0;
+        boolean unzipSuccess = false;
+        String md5Value = "";
+        if (sharedPreferences != null) {
+            cacheVersion = sharedPreferences.getInt(HWFileUtils.SPKEY_VER, 0);
+            unzipSuccess = sharedPreferences.getBoolean(HWFileUtils.SPKEY_UNZIPOK, false);
+            md5Value = sharedPreferences.getString(HWFileUtils.SPKEY_MD5, "");
+        }
+        if (cacheVersion != HWGameBoxManager.soVersion) {
+            requestUpdate(corpKey, sdkVersion, soVersion);
+        } else {
+            boolean zipFileCorrect = checkZipFile(md5Value);
+            if (zipFileCorrect) {
+                if (unzipSuccess) {
+                    mListener.onResult(LOADLIB_STATUS_SUCCESS, "so file correct");
+                } else {
+                    startUnZipFile(mZipFile.getAbsolutePath());
+                }
+            } else {
+                requestUpdate(corpKey, sdkVersion, soVersion);
+            }
+        }
     }
 
     /**
      * 请求版本校验
      */
-    private void requestUpdate(String corpKey, String sdkVersion, String cpuInfo) {
+    private void requestUpdate(String corpKey, String sdkVersion, int soVersion) {
+        createZipFile();
         if (isLoading) {
             return;
         }
-
         isLoading = true;
 
         executor.execute(() ->
-                HWTaskHelper.instance().getAppSoInfo(corpKey, sdkVersion, cpuInfo
+                HWTaskHelper.instance().getAppSoInfo(corpKey, sdkVersion, soVersion, mCpuInfo
                         , new HWTaskHelper.TaskCallback() {
                             @Override
-                            public void onSucces(String libUrl, String md5, String soVersion) {
-                                String[] datas = new String[3];
+                            public void onSucces(String libUrl, String md5) {
+
+                                String[] datas = new String[2];
                                 datas[0] = libUrl;
                                 datas[1] = md5;
-                                datas[2] = soVersion;
                                 Message msg = Message.obtain();
                                 msg.what = WHAT_REQUEST_APPINFO_SUCCESS;
                                 msg.obj = datas;
@@ -119,15 +168,7 @@ public class HWLoadLibHelper {
     /**
      * 下载 lib zip 文件
      */
-    private void downloadLibZip(String url, String md5) {
-        boolean zipIsDel = false;
-        if (mZipFile.exists()) {
-            zipIsDel = mZipFile.delete();
-        }
-        mZipFile = new File(mLibDir, libZipName);
-
-        HWCloudGameUtils.info("zipIsDel=" + zipIsDel);
-
+    private void downloadLibZip(String url) {
         executor.execute(() ->
                 HWTaskHelper.instance().startDownloadLibZip(url, mZipFile, new HWTaskHelper.DownloadCallback() {
 
@@ -149,11 +190,12 @@ public class HWLoadLibHelper {
                 }));
     }
 
+    /**
+     * 解压文件
+     */
     private void startUnZipFile(String zipFilePath) {
 
-        File destDir = mLibDir;
-
-        File[] files = destDir.listFiles();
+        File[] files = mLibDir.listFiles();
         if (files == null || files.length == 0) {
             isLoading = false;
             mListener.onResult(LOADLIB_STATUS_FAIL, " zipFile is empty");
@@ -164,20 +206,20 @@ public class HWLoadLibHelper {
         String fileName;
         for (File file : files) {
             fileName = file.getName();
-            if (libZipName.equals(fileName)) {
+            if (HWFileUtils.libZipName.equals(fileName)) {
                 continue;
             }
             //删除过期文件
             isDel = file.delete();
             HWCloudGameUtils.info("unZipFileDel:name=" + fileName + ";isDel=" + isDel);
         }
-        File soFile = new File(soFilePath);
-        if (!soFile.exists()){
-            boolean mkdirs = soFile.mkdirs();
-            HWCloudGameUtils.info("soFilemkdirs:" + mkdirs);
+        File destDir = new File(mLibDir, mCpuInfo);
+        if (!destDir.exists()) {
+            boolean mkdirs = destDir.mkdirs();
+            HWCloudGameUtils.info("startUnZipFile:destDir=" + mkdirs);
         }
         executor.execute(() -> {
-            int code = HWFileUtils.unzipFileByKeyword(new File(zipFilePath), destDir);
+            int code = HWFileUtils.unzipFile(new File(zipFilePath), destDir);
             int what = (code == 0 ? WHAT_UNZIP_SUCCESS : WHAT_UNZIP_FAIL);
             mHandler.sendEmptyMessage(what);
         });
@@ -194,48 +236,43 @@ public class HWLoadLibHelper {
                 switch (what) {
                     case WHAT_REQUEST_APPINFO_SUCCESS:
                         String[] datas = (String[]) msg.obj;
-                        if (datas == null || datas.length != 3){
+                        if (datas == null || datas.length != 2) {
                             isLoading = false;
                             mListener.onResult(LOADLIB_STATUS_FAIL, "requestAppSoInfo error");
                             return;
                         }
                         String libUrl = datas[0];
                         String md5 = datas[1];
-                        String soVerion = datas[2];
 
-                        /*SharedPreferences sharedPreferences = mContext.getSharedPreferences(SP_HWLIB, Context.MODE_PRIVATE);
-                        String md5Value = sharedPreferences.getString(SPKEY_MD5, "");
-                        String verValue = sharedPreferences.getString(SPKEY_VER, "");*/
-
-                        if (mZipFile != null && mZipFile.exists() && mZipFile.length() > 0) {
-                            if (HWFileUtils.checkLibFile(mZipFile, md5)) {
-                                mListener.onResult(LOADLIB_STATUS_SUCCESS, mZipFile.getAbsolutePath());
-                                return;
-                            }
-                            isLoading = false;
-                        } else {
-                            //执行下载
-                            downloadLibZip(libUrl, md5);
+                        //本地存储md5和so版本
+                        if (sharedPreferences != null) {
+                            sharedPreferences.edit().putString(HWFileUtils.SPKEY_MD5, md5).putInt(HWFileUtils.SPKEY_VER, HWGameBoxManager.soVersion).apply();
                         }
+                        //执行下载
+                        downloadLibZip(libUrl);
                         break;
 
                     case WHAT_REQUEST_APPINFO_FAIL:
                         String errorMsg = (String) msg.obj;
                         isLoading = false;
-                        File soFile = new File(soFilePath);
-                        if (soFile.exists()){
-                            mListener.onResult(LOADLIB_STATUS_SUCCESS, "requestAppSoInfoError:" + errorMsg);
-                        }else {
-                            mListener.onResult(LOADLIB_STATUS_FAIL, errorMsg);
-                        }
-
+                        mListener.onResult(LOADLIB_STATUS_FAIL, errorMsg);
                         break;
 
                     case WHAT_DOWNLOAD_SUCCESS:
                         //开始解压并存储到指定文件
                         String zipFilePath = (String) msg.obj;
                         if (zipFilePath == null || zipFilePath.isEmpty()) {
+                            isLoading = false;
                             mListener.onResult(LOADLIB_STATUS_FAIL, "zipFile is empty");
+                            return;
+                        }
+                        String md5Value = "";
+                        if (sharedPreferences != null) {
+                            md5Value = sharedPreferences.getString(HWFileUtils.SPKEY_MD5, "");
+                        }
+                        if (!checkZipFile(md5Value)) {
+                            isLoading = false;
+                            mListener.onResult(LOADLIB_STATUS_FAIL, "zipfile md5 check value is wrong");
                             return;
                         }
 
@@ -245,26 +282,21 @@ public class HWLoadLibHelper {
                     case WHAT_DOWNLOAD_FAIL:
                         isLoading = false;
                         String downloadErroMsg = (String) msg.obj;
-
-                        File downloadPhaseSoFile = new File(soFilePath);
-                        if (downloadPhaseSoFile.exists()){
-                            mListener.onResult(LOADLIB_STATUS_SUCCESS, "DOWNLOAD_FAIL:" + downloadErroMsg);
-                        }else {
-                            mListener.onResult(LOADLIB_STATUS_FAIL, downloadErroMsg);
-                        }
+                        mListener.onResult(LOADLIB_STATUS_FAIL, downloadErroMsg);
                         break;
                     case WHAT_UNZIP_SUCCESS:
+                        if (sharedPreferences != null) {
+                            sharedPreferences.edit().putBoolean(HWFileUtils.SPKEY_UNZIPOK, true).apply();
+                        }
                         isLoading = false;
                         mListener.onResult(LOADLIB_STATUS_SUCCESS, mLibDir.getAbsolutePath());
                         break;
                     case WHAT_UNZIP_FAIL:
-                        isLoading = false;
-                        File unZipPhaseSoFile = new File(soFilePath);
-                        if (unZipPhaseSoFile.exists()){
-                            mListener.onResult(LOADLIB_STATUS_SUCCESS, "UNZIP_FAIL:unzipFile error");
-                        }else {
-                            mListener.onResult(LOADLIB_STATUS_FAIL, "unzipFile error");
+                        if (sharedPreferences != null) {
+                            sharedPreferences.edit().putBoolean(HWFileUtils.SPKEY_UNZIPOK, false).apply();
                         }
+                        isLoading = false;
+                        mListener.onResult(LOADLIB_STATUS_FAIL, "unzipFile error");
                         break;
 
                 }
