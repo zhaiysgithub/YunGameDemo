@@ -64,7 +64,10 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     @Override
     public String getPadcode() {
-      return KpPlaySDKManager.getInstance().getPadCode();
+        if (mDeviceInfo != null){
+            return mDeviceInfo.padCode;
+        }
+        return null;
     }
 
     @Override

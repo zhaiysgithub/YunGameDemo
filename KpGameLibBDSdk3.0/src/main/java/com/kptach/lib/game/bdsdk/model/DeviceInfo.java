@@ -46,6 +46,7 @@ public class DeviceInfo {
     public int perDownFPS;
     public int encodeType;
 
+    public String padCode;
     public String deviceParams;
     public int apiLevel = 2;
     public int useSSL = 0;
@@ -65,6 +66,7 @@ public class DeviceInfo {
                     deviceInfo.apiLevel = extObj.has("apiLevel") ? extObj.optInt("apiLevel") : 2;
                     deviceInfo.useSSL = extObj.has("useSSL") ? extObj.optInt("useSSL") : 0;
                 }
+                deviceInfo.padCode= obj.optString("padCode");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -99,7 +101,7 @@ public class DeviceInfo {
     @Override
     public String toString() {
         return "DeviceInfo{" +
-                ", videoQuality='" + videoQuality + '\'' +
+                "videoQuality='" + videoQuality + '\'' +
                 ", resolutionRatio=" + resolutionRatio +
                 ", isAudio=" + isAudio +
                 ", gop=" + gop +
@@ -109,6 +111,7 @@ public class DeviceInfo {
                 ", perUpFPS=" + perUpFPS +
                 ", perDownFPS=" + perDownFPS +
                 ", encodeType=" + encodeType +
+                ", padCode='" + padCode + '\'' +
                 ", deviceParams='" + deviceParams + '\'' +
                 ", apiLevel=" + apiLevel +
                 ", useSSL=" + useSSL +
@@ -128,6 +131,7 @@ public class DeviceInfo {
             obj.put("perUpFPS",perUpFPS);
             obj.put("perDownFPS",perDownFPS);
             obj.put("encodeType",encodeType);
+            obj.put("padCode",encodeType);
             obj.put("apiLevel",apiLevel);
             obj.put("useSSL",useSSL);
         }catch (Exception e){
