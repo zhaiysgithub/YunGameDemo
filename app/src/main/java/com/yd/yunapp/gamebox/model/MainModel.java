@@ -13,6 +13,7 @@ import com.yd.yunapp.gamebox.activity.MainActivity;
 import com.yd.yunapp.gamebox.UserCertificationDialog;
 import com.yd.yunapp.gamebox.utils.AppUtils;
 
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBox;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.Params;
@@ -30,8 +31,14 @@ public class MainModel {
 
     public String getTitleStr() {
         String appName = AppUtils.getAppName(activity);
+
+        return BuildConfig.useSDK2 ? "SDK2.0" : "SDK3.0";
+    }
+
+    public String getVersionName(){
         String appVersionName = AppUtils.getVersionName(activity);
-        return "SDK3.0" + " ; " + appVersionName;
+        String sdkVersion = BuildConfig.VERSION_NAME;
+        return "app版本:" + appVersionName + ";SDK版本:" + sdkVersion;
     }
 
     /**
