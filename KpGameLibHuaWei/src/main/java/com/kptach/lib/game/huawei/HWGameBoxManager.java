@@ -95,7 +95,7 @@ public class HWGameBoxManager implements IGameBoxManager {
                 return;
             }
 
-            mLibHelper.loadLib(corpKey, sdkVersion, soVersion, (code, msg) -> {
+            /*mLibHelper.loadLib(corpKey, sdkVersion, soVersion, (code, msg) -> {
                 HWCloudGameUtils.info("loadLib: code = " + code + ";msg = " + msg);
                 if (code == HWLoadLibHelper.LOADLIB_STATUS_SUCCESS){
                     startInitCloudGameManager(activity);
@@ -104,7 +104,11 @@ public class HWGameBoxManager implements IGameBoxManager {
                 }else {
                     callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
                 }
-            });
+            });*/
+
+            startInitCloudGameManager(activity);
+            HWDeviceControl instance = new HWDeviceControl(params);
+            callback.onGameCallback(instance, APIConstants.APPLY_DEVICE_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();
             callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
