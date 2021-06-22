@@ -8,9 +8,15 @@ public class HWCloudGameUtils {
 
     private static final String TAG = "kpgamekit.hw.";
 
-    private static boolean isDebug = false;
+    private static boolean isDebug = true;
     public static void setDebug(boolean debug){
         isDebug = debug;
+    }
+
+    public static void info(String msg){
+        if (isDebug){
+            Log.i(TAG, msg);
+        }
     }
 
     public static void info(String tag, String msg){
@@ -19,7 +25,7 @@ public class HWCloudGameUtils {
         }
     }
 
-    public static void error(String tag, String err){
+    public static void error(String err){
         if (err != null){
             Log.e(TAG, err);
         }

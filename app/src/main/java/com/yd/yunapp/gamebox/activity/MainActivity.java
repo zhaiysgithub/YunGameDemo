@@ -100,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
             coprKey.setText(sb.toString());
         }
 
+        if (appIdByPass3.equals(mCorpKey)){
+            mSelPkg.setVisibility(View.VISIBLE);
+        }else {
+            mSelPkg.setVisibility(View.GONE);
+        }
+
         //打印log信息，正式版本需要关闭
         GameBoxManager.setDebug(BuildConfig.DEBUG);
         GameBoxManager.setAppKey(mCorpKey);
@@ -112,12 +118,7 @@ public class MainActivity extends AppCompatActivity {
         GameBox.init(getApplication(), mCorpKey);
 
         loadGame();
-        mSelPkg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainModel.showAlertDialog(mPkgText);
-            }
-        });
+        mSelPkg.setOnClickListener(v -> mainModel.showAlertDialog(mPkgText));
     }
 
     public void startGame(View v) {

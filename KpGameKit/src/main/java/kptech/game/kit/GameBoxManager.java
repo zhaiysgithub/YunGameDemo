@@ -444,6 +444,8 @@ public class GameBoxManager {
         }else if(iaas.equals("HW")){
             inf.useSDK = GameInfo.SdkType.HW;
             sdkParams.put("deviceid",data.deviceid);
+            sdkParams.put("corpKey",mCorpID);
+            sdkParams.put("sdkVersion", BuildConfig.VERSION_NAME);
         }
 
         IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, activity.getApplication(),sdkParams);
