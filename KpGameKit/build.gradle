@@ -52,14 +52,6 @@ dependencies {
     //网络请求发送队列主要用来发送日志
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
 
-    //游戏库
-    if (rootProject.ext.BAIDU_154){
-        implementation files('../kplib/libs/Game-V1.5.4.jar')
-    }else {
-        implementation files('../kplib/libs/Game-V1.6.0.0_0604.jar')
-    }
-
-
     //广告sdk
 //    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
     implementation project(path: ':KpGameAd')
@@ -68,28 +60,20 @@ dependencies {
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
     implementation project(path: ':kpinter')
 
-    //红手指游戏库适配
-//    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
-    implementation project(path: ':KpGameLibRedfinger')
-
-
-    //百度游戏库适配
-//
-    if (rootProject.ext.BAIDU_154){
-        implementation project(path: ':KpGameLibBaidu_154')
-//        implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
-    }else {
-        implementation project(path: ':KpGameLibBaidu')
-//        implementation files('../kplib/libs/KpGameLib-BD-v1.0.3.jar')
-    }
     if (!rootProject.ext.USESDK2){
+        implementation files('../KpLib/libs/CloudPhoneAndroidSDK-3.0.15.jar')
         implementation project(path: ':KpGameLibBDSdk3.0')
         //华为SDK
         implementation project(path: ':KpGameLibHuaWei')
+    } else {
+        implementation files('../kplib/libs/Game-V1.6.0.0_0604.jar')
+        implementation project(path: ':KpGameLibBaidu')
+        //红手指游戏库适配
+        implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
+//        implementation project(path: ':KpGameLibRedfinger')
     }
 
 }
-
 
 //aar打包
 apply from: 'maven-release-aar.gradle'

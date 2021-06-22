@@ -5,10 +5,10 @@ apply plugin: 'maven-publish'
 // 2.maven-信息
 ext {// ext is a gradle closure allowing the declaration of global properties
     PUBLISH_GROUP_ID = 'kptech.game.kit'
-    if (rootProject.ext.BAIDU_154){
-        PUBLISH_ARTIFACT_ID = 'gamebox-154'
-    }else {
+    if (rootProject.ext.USESDK2){
         PUBLISH_ARTIFACT_ID = 'gamebox'
+    }else {
+        PUBLISH_ARTIFACT_ID = 'gamebox_3'
     }
     PUBLISH_PACKAGING = 'aar'
     PUBLISH_VERSION = android.defaultConfig.versionName

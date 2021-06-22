@@ -27,7 +27,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.kptach.lib.game.huawei.HWDeviceControl;
 import com.kptach.lib.inter.game.APIConstants;
 
 import org.json.JSONObject;
@@ -877,7 +876,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private static final int CODE_REQUEST_DOWNLOAD_PERMISSION = 1025;
 
     private void checkAndRequestPermission() {
-        /*if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT < 23) {
             checkInitCloudPhoneSDK();
             return;
         }
@@ -901,9 +900,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             requestPermissions(requestPermissions, CODE_REQUEST_PERMISSION);
         } else {
             checkInitCloudPhoneSDK();
-        }*/
+        }
 
-        checkInitCloudPhoneSDK();
+//        checkInitCloudPhoneSDK();
     }
 
     @Override

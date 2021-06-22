@@ -40,10 +40,8 @@ allprojects {
     }
 
     ext {
-        //百度旧版本
-        BAIDU_154 = false
 
-        USESDK2 = false
+        USESDK2 = true
     }
 }
 

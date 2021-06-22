@@ -81,8 +81,14 @@ public class BdDeviceControl implements IDeviceControl {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            int code = i;
+                            if (i == 1001){
+                                code = APIConstants.CONNECT_DEVICE_SUCCESS;
+                            }else if(i == 1002){
+                                code = APIConstants.RECONNECT_DEVICE_SUCCESS;
+                            }
                             if (callback != null){
-                                callback.onGameCallback(s, i);
+                                callback.onGameCallback(s, code);
                             }
                             if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
                                 switchQuality(getVideoQuality());

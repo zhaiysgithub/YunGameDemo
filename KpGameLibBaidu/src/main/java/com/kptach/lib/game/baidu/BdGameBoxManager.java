@@ -73,7 +73,7 @@ public class BdGameBoxManager implements IGameBoxManager {
     }
 
     @Override
-    public void applyCloudDevice(Activity activity, String inf, final IGameCallback<IDeviceControl> callback) {
+    public void applyCloudDevice(final Activity activity, String inf, final IGameCallback<IDeviceControl> callback) {
         if (devLoading){
             return;
         }
@@ -91,16 +91,23 @@ public class BdGameBoxManager implements IGameBoxManager {
         addDeviceInfo(manager);
         manager.applyCloudDevice(game, new APICallback<DeviceControl>() {
             @Override
-            public void onAPICallback(DeviceControl inner, int code) {
-                devLoading = false;
+            public void onAPICallback(final DeviceControl inner,final int code) {
+                if (activity != null && !activity.isFinishing()){
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            devLoading = false;
 
-                IDeviceControl control = null;
-                if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-                    control = new BdDeviceControl(inner);
-                }
+                            IDeviceControl control = null;
+                            if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
+                                control = new BdDeviceControl(inner);
+                            }
 
-                if (callback != null){
-                    callback.onGameCallback(control, code);
+                            if (callback != null){
+                                callback.onGameCallback(control, code);
+                            }
+                        }
+                    });
                 }
             }
         });
