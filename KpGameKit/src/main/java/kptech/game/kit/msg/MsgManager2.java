@@ -18,17 +18,22 @@ import kptech.game.kit.utils.ProferencesUtils;
 
 public class MsgManager2 extends MsgSuper {
 
-    /*private MsgManager2(Activity activity, String corpId, String pkgName){
-        super(activity, corpId, pkgName);
-    }*/
     private static boolean inited = false;
-    private static MsgManager2 mMsgManager2;
 
-    public static MsgManager2 getInstance() {
-        return mMsgManager2;
+    private MsgManager2(){
+        super();
     }
 
-    private Messager.ICallback mCallback =  new Messager.ICallback() {
+    private static class MsgHandlerHolder{
+        private static final MsgManager2 INSTANCE = new MsgManager2();
+    }
+
+    public static MsgManager2 instance(){
+
+        return MsgHandlerHolder.INSTANCE;
+    }
+
+    private final Messager.ICallback mCallback =  new Messager.ICallback() {
         @Override
         public void onMessage( String msg) {
             Logger.info("MsgManager", "onMessage: " + msg);
@@ -52,17 +57,20 @@ public class MsgManager2 extends MsgSuper {
     };
     @Override
     public void init(Application application, String corpId) {
+        super.init(application, corpId);
         Messager.init(application);
         inited = true;
     }
 
     @Override
     public void setDebug(boolean debug) {
+        super.setDebug(debug);
         Messager.setDebug(debug);
     }
 
     @Override
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName) {
+        super.start(activity, corpId, padCode, pkgName, gameId, gameName);
         if (!inited) {
             Logger.error("MsgManager", "kpckit messager not initialized");
             return;
@@ -77,33 +85,29 @@ public class MsgManager2 extends MsgSuper {
             padCode = padCode.substring(2,padCode.length());
         }
 
-        if (mMsgManager2 == null){
-            mMsgManager2 = new MsgManager2(activity, corpId, pkgName);
-        }
+        initGameMsg(activity, corpId, pkgName);
         Messager.getInstance().addCallback(mCallback);
 
-        if (mMsgManager2 != null){
-            mMsgManager2.setPadCode("VM"+padCode);
-            mMsgManager2.setGameId(gameId);
-            mMsgManager2.setGameName(gameName);
-            mMsgManager2.setPkgName(pkgName);
-        }
+        setPadCode("VM"+padCode);
+        setGameId(gameId);
+        setGameName(gameName);
+        setPkgName(pkgName);
 
         String wsurl = null;
         try {
             wsurl = ProferencesUtils.getString(activity, SharedKeys.KEY_GAME_APP_WSURL, null);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        if (padCode != null) {
-//            Messager.getInstance().start(1, padCode);
-            Messager.getInstance().startWithUri(wsurl, 1, padCode);
-        }
+//      Messager.getInstance().start(1, padCode);
+        Messager.getInstance().startWithUri(wsurl, 1, padCode);
 
     }
 
     @Override
     public void sendMessage(String msg) {
+        super.sendMessage(msg);
         try {
             Messager.getInstance().send(msg);
         } catch (Exception e) {
@@ -113,16 +117,14 @@ public class MsgManager2 extends MsgSuper {
 
     @Override
     public void stop() {
+        super.stop();
         try {
             if (Messager.getInstance().isConnected()) {
                 Messager.getInstance().close();
             }
 
-            if (mMsgManager2 != null) {
-                Messager.getInstance().removeCallback(mCallback);
-                mMsgManager2.destory();
-                mMsgManager2 = null;
-            }
+            Messager.getInstance().removeCallback(mCallback);
+            destory();
         }catch (Exception e){
             Logger.error("MsgManager",e.getMessage());
         }
@@ -185,6 +187,7 @@ public class MsgManager2 extends MsgSuper {
 
     @Override
     public void onLogout() {
+        super.onLogout();
         JSONObject obj = new JSONObject();
         try {
             obj.put("event","logout");
@@ -197,6 +200,7 @@ public class MsgManager2 extends MsgSuper {
 
     @Override
     public void onLogin(int code, String err, Map<String, Object> map) {
+        super.onLogin(code, err, map);
         JSONObject obj = null;
         try {
             if (map!=null){
@@ -223,6 +227,7 @@ public class MsgManager2 extends MsgSuper {
 
     @Override
     public void onPay(int code, String err, Map<String, Object> map) {
+        super.onPay(code, err, map);
         JSONObject obj = null;
         try {
             if (map!=null){

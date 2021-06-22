@@ -15,11 +15,11 @@ public class Env {
     private static int mEnvType;
 
     public static boolean isTestEnv(){
-        try {
+        /*try {
             return mDebug || mEnvType == ENV_DEBUG;
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
-        }
+        }*/
         return false;
     }
 

@@ -28,23 +28,25 @@ public class MsgManager3 extends MsgSuper {
     }
 
     public static MsgManager3 instance(){
-
         return MsgHandlerHolder.INSTANCE;
     }
 
 
     @Override
     public void init(Application application, String corpId) {
+        super.init(application, corpId);
         Messager.init(application, null);
         inited = true;
     }
 
     @Override
     public void setDebug(boolean debug) {
+        super.setDebug(debug);
         Messager.setDebug(debug);
     }
 
-    private Messager.ICallback mCallback =  new Messager.ICallback() {
+
+    private final Messager.ICallback mCallback =  new Messager.ICallback() {
         @Override
         public void onMessage(String topic, String msg) {
             Logger.info("MsgManager", "onMessage: " + msg);
@@ -69,6 +71,7 @@ public class MsgManager3 extends MsgSuper {
 
     @Override
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName) {
+        super.start(activity, corpId, padCode, pkgName, gameId, gameName);
         if (!inited) {
             Logger.error("MsgManager", "kpckit messager not initialized");
             return;
@@ -99,14 +102,13 @@ public class MsgManager3 extends MsgSuper {
 //        }
 
         int deviceType = CloudUtils.isCloudPhone() ? Messager.MESSAGER_TYPE_VMSERVICE : Messager.MESSAGER_TYPE_ANDROID;
-        if (padCode != null) {
-            Messager.getInstance().start(deviceType, padCode);
-        }
+        Messager.getInstance().start(deviceType, padCode);
 
     }
 
     @Override
     public void sendMessage(String msg) {
+        super.sendMessage(msg);
         try {
             Messager.getInstance().send(msg);
         } catch (Exception e) {
@@ -116,12 +118,14 @@ public class MsgManager3 extends MsgSuper {
 
     @Override
     public void stop() {
+        super.stop();
         try {
             if (Messager.getInstance().isConnected()) {
                 Messager.getInstance().stop();
             }
 
             Messager.getInstance().removeCallback(mCallback);
+            destory();
         } catch (Exception e) {
             Logger.error("MsgManager", e.getMessage());
         }
@@ -184,6 +188,7 @@ public class MsgManager3 extends MsgSuper {
 
     @Override
     public void onLogout() {
+        super.onLogout();
         JSONObject obj = new JSONObject();
         try {
             obj.put("c", "100012");
@@ -199,6 +204,7 @@ public class MsgManager3 extends MsgSuper {
 
     @Override
     public void onLogin(int code, String err, Map<String, Object> map) {
+        super.onLogin(code, err, map);
         JSONObject obj = null;
         JSONObject data = null;
         try {
@@ -228,6 +234,7 @@ public class MsgManager3 extends MsgSuper {
 
     @Override
     public void onPay(int code, String err, Map<String, Object> map) {
+        super.onPay(code, err, map);
         JSONObject obj = null;
         JSONObject data = null;
         try {

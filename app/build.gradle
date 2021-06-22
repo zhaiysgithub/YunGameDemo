@@ -16,6 +16,7 @@ android {
         multiDexEnabled true
 
     }
+
     signingConfigs {
         debug {
             storeFile file('./xiaobaobao.keystore')

@@ -10,47 +10,43 @@ import kptech.game.kit.BuildConfig;
 import kptech.game.kit.msg.IMsgReceiver;
 import kptech.game.kit.msg.MsgHandler;
 import kptech.game.kit.msg.MsgManager2;
+import kptech.game.kit.utils.Logger;
 
 /**
  * @author chenggongzhao
  * @version $
- * @des
- * @updateAuthor $
- * @updateDes
  */
 public class MsgSuper implements MsgHandler.ICallback{
     protected MsgHandler mHandler;
     protected String mCorpKey;
     protected WeakReference<IMsgReceiver> mReceiverRef;
 
-    protected static MsgSuper mInstance;
+    private static MsgSuper mInstance;
 
     public MsgSuper(){
-        createRender();
+
     }
 
     public static MsgSuper getInstance(){
+        if (mInstance == null){
+            createRender();
+        }
         return mInstance;
     }
 
-
-    protected void initGameMsg(Activity activity, String corpId, String pkgName){
+    public void initGameMsg(Activity activity, String corpId, String pkgName){
         this.mCorpKey = corpId;
         this.mHandler = new MsgHandler(activity, corpId, pkgName);
         this.mHandler.setCallback(this);
     }
 
-    public void createRender(){
+    private static void createRender(){
         if (!BuildConfig.useSDK2){
             mInstance = MsgManager3.instance();
         }else {
-            mInstance = null;
-//            mInstance = MsgManager2.instance();
+            mInstance = MsgManager2.instance();
         }
     }
-
-
-
 
     public void setMessageReceiver(IMsgReceiver receiver) {
         if (receiver != null) {
@@ -58,7 +54,7 @@ public class MsgSuper implements MsgHandler.ICallback{
         }
     }
 
-    protected void destory() {
+    public void destory() {
         this.mHandler.destory();
         this.mHandler = null;
         try {
@@ -66,74 +62,62 @@ public class MsgSuper implements MsgHandler.ICallback{
                 mReceiverRef.clear();
                 mReceiverRef = null;
             }
+            mInstance = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected void setPadCode(String padCode){
+    public void setPadCode(String padCode){
         if (mHandler!=null){
             mHandler.setPadCode(padCode);
         }
     }
 
-    protected void setGameId(String gameId){
+    public void setGameId(String gameId){
         if (mHandler!=null){
             mHandler.setGameId(gameId);
         }
     }
 
-    protected void setGameName(String gameName){
+    public void setGameName(String gameName){
         if (mHandler!=null){
             mHandler.setGameName(gameName);
         }
     }
 
-    protected void setPkgName(String pkgName){
+    public void setPkgName(String pkgName){
         if (mHandler!=null){
             mHandler.setPkgName(pkgName);
         }
     }
 
     public void init(Application application, String corpId){
-//        if (mInstance != null){
-//            mInstance.init(application, corpId);
-//        }
-
+        Logger.info("MsgSuper","init:hashCode=" + mInstance.hashCode() + ";className = " + mInstance.getClass().getName());
     }
 
     public void setDebug(boolean debug){
-//        if (mInstance != null){
-//            mInstance.setDebug(debug);
-//        }
-
     }
 
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
-//        mInstance.subStart(activity, corpId, padCode, pkgName, gameId, gameName);
     }
 
     public void sendMessage(String msg){
-//        mInstance.sendMessage(msg);
     }
 
     public void stop(){
-//        mInstance.stop();
     }
-
 
     @Override
     public void onLogin(int code, String err, Map<String, Object> map) {
-//        mInstance.onLogin(code, err, map);
     }
 
     @Override
     public void onPay(int code, String err, Map<String, Object> map) {
-//        mInstance.onPay(code, err, map);
     }
 
     @Override
     public void onLogout() {
-//        mInstance.onLogout();
     }
+
 }
