@@ -122,7 +122,9 @@ public class KpPassCMWManager {
                         passData.devicetype = JsonUtils.optString(passDataJson, "devicetype");
                         passData.devicenum = JsonUtils.optString(passDataJson, "devicenum");
                         passData.direction = JsonUtils.optInt(passDataJson, "direction");
-                        passData.resource = passDataJson.get("resource");
+                        if (passDataJson.has("resource")){
+                            passData.resource = passDataJson.get("resource");
+                        }
                     }
                     responseBean.data = passData;
 
