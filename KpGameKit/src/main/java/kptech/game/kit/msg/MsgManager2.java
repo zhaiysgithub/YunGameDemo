@@ -7,42 +7,68 @@ import android.os.Message;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import kptech.cloud.kit.msg.Messager;
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.msg.mqtt.MsgSuper;
 import kptech.lib.constants.SharedKeys;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.ProferencesUtils;
 
-public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
-//    private static final Logger logger = new Logger("MsgManager") ;
+public class MsgManager2 extends MsgSuper {
 
-//    public interface IMessageReceiver {
-//        void onMessageReceived(String msg);
-//    }
-
+    /*private MsgManager2(Activity activity, String corpId, String pkgName){
+        super(activity, corpId, pkgName);
+    }*/
     private static boolean inited = false;
-    private static MsgManager mMsgManager;
-    public static void init(Application application, String corpId){
+    private static MsgManager2 mMsgManager2;
+
+    public static MsgManager2 getInstance() {
+        return mMsgManager2;
+    }
+
+    private Messager.ICallback mCallback =  new Messager.ICallback() {
+        @Override
+        public void onMessage( String msg) {
+            Logger.info("MsgManager", "onMessage: " + msg);
+            sendHandle(msg);
+        }
+
+        @Override
+        public void onConnect(int code, String s) {
+            Logger.info("MsgManager", "onConnect code: " + code + " msg: " + s);
+        }
+
+        @Override
+        public void onClose(int code, String s) {
+            Logger.info("MsgManager", "onClose code: " + code + " msg: " + s);
+        }
+
+        @Override
+        public void onFailure(int code, String s) {
+            Logger.error("MsgManager", "onFailure code: " + code + " msg: " + s);
+        }
+    };
+    @Override
+    public void init(Application application, String corpId) {
         Messager.init(application);
         inited = true;
     }
-    public static void setDebug(boolean debug){
+
+    @Override
+    public void setDebug(boolean debug) {
         Messager.setDebug(debug);
     }
-    public static MsgManager getInstance(){
-        return mMsgManager;
-    }
 
-    public static void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
-        if (!inited){
+    @Override
+    public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName) {
+        if (!inited) {
             Logger.error("MsgManager", "kpckit messager not initialized");
             return;
         }
 
-        if (padCode == null || "".equals(padCode)){
+        if (padCode == null || "".equals(padCode)) {
             Logger.error("MsgManager", "padcode is null");
             return;
         }
@@ -51,128 +77,57 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
             padCode = padCode.substring(2,padCode.length());
         }
 
-        if (mMsgManager == null){
-            mMsgManager = new MsgManager(activity, corpId, pkgName);
+        if (mMsgManager2 == null){
+            mMsgManager2 = new MsgManager2(activity, corpId, pkgName);
         }
-        Messager.getInstance().addCallback(mMsgManager);
+        Messager.getInstance().addCallback(mCallback);
 
-        if (mMsgManager != null){
-            mMsgManager.setPadCode("VM"+padCode);
-            mMsgManager.setGameId(gameId);
-            mMsgManager.setGameName(gameName);
-            mMsgManager.setPkgName(pkgName);
+        if (mMsgManager2 != null){
+            mMsgManager2.setPadCode("VM"+padCode);
+            mMsgManager2.setGameId(gameId);
+            mMsgManager2.setGameName(gameName);
+            mMsgManager2.setPkgName(pkgName);
         }
 
         String wsurl = null;
         try {
             wsurl = ProferencesUtils.getString(activity, SharedKeys.KEY_GAME_APP_WSURL, null);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
-        if (padCode!=null){
+        if (padCode != null) {
 //            Messager.getInstance().start(1, padCode);
-            Messager.getInstance().startWithUri(wsurl,1, padCode);
+            Messager.getInstance().startWithUri(wsurl, 1, padCode);
         }
 
     }
 
-    public static void sendMessage(String msg){
+    @Override
+    public void sendMessage(String msg) {
         try {
             Messager.getInstance().send(msg);
-        }catch (Exception e){
-            Logger.error("MsgManager",e.getMessage());
+        } catch (Exception e) {
+            Logger.error("MsgManager", e.getMessage());
         }
     }
 
-    public static void stop(){
+    @Override
+    public void stop() {
         try {
-            if (Messager.getInstance().isConnected()){
+            if (Messager.getInstance().isConnected()) {
                 Messager.getInstance().close();
             }
 
-            if (mMsgManager!=null){
-                Messager.getInstance().removeCallback(mMsgManager);
-                mMsgManager.destory();
-                mMsgManager = null;
+            if (mMsgManager2 != null) {
+                Messager.getInstance().removeCallback(mCallback);
+                mMsgManager2.destory();
+                mMsgManager2 = null;
             }
         }catch (Exception e){
             Logger.error("MsgManager",e.getMessage());
         }
     }
 
-
-    private MsgHandler mHandler;
-    private String mCorpKey;
-    private MsgManager(Activity activity, String corpId, String pkgName){
-        this.mCorpKey = corpId;
-        this.mHandler = new MsgHandler(activity, corpId, pkgName);
-        this.mHandler.setCallback(this);
-    }
-
-
-    private void destory(){
-        this.mHandler.destory();
-        this.mHandler = null;
-        try {
-            if (mReceiverRef != null){
-                mReceiverRef.clear();
-                mReceiverRef = null;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private void setPadCode(String padCode){
-        if (mHandler!=null){
-            mHandler.setPadCode(padCode);
-        }
-    }
-
-    private void setGameId(String gameId){
-        if (mHandler!=null){
-            mHandler.setGameId(gameId);
-        }
-    }
-
-    private void setGameName(String gameName){
-        if (mHandler!=null){
-            mHandler.setGameName(gameName);
-        }
-    }
-
-    private void setPkgName(String pkgName){
-        if (mHandler!=null){
-            mHandler.setPkgName(pkgName);
-        }
-    }
-
-    private WeakReference<IMsgReceiver>  mReceiverRef;
-    public void setMessageReceiver(IMsgReceiver receiver){
-        if (receiver != null){
-            mReceiverRef = new WeakReference<>(receiver);
-        }
-    }
-
-    @Override
-    public void onMessage(String msg) {
-        Logger.info("MsgManager","onMessage: " + msg);
-        sendHandle(msg);
-    }
-
-    @Override
-    public void onConnect(int code, String s) {
-        Logger.info("MsgManager","onConnect code: " + code +" msg: " + s);
-    }
-
-    @Override
-    public void onClose(int code, String s) {
-        Logger.info("MsgManager","onClose code: " + code + " msg: " + s);
-    }
-
-    @Override
-    public void onFailure(int code, String s) {
-        Logger.error("MsgManager","onFailure code: " + code + " msg: " + s);
-    }
 
     private void sendHandle(String msg){
         if (msg == null) {
