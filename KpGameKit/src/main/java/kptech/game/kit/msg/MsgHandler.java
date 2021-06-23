@@ -27,11 +27,10 @@ import kptech.lib.data.AccountTask;
 public class MsgHandler extends Handler {
 //    private static final Logger logger = new Logger("MsgHandler") ;
 
-    protected static final int MSG_LOGIN = 1;
-    protected static final int MSG_RELOGIN = 2;
-    protected static final int MSG_PAY = 3;
-    protected static final int MSG_LOGOUT = 4;
-
+    public static final int MSG_LOGIN = 1;
+    public static final int MSG_RELOGIN = 2;
+    public static final int MSG_PAY = 3;
+    public static final int MSG_LOGOUT = 4;
 
 
     private Activity mActivity;
@@ -71,10 +70,77 @@ public class MsgHandler extends Handler {
         }
     }
 
-    protected interface ICallback {
-        void onLogin(int code, String err, Map<String, Object> map);
-        void onPay(int code, String err, Map<String, Object> map);
-        void onLogout();
+    private void handlePay(String msg){
+        if (mPayDialog!=null && mPayDialog.isShowing()){
+            return;
+        }
+
+        if (mActivity == null || mActivity.isFinishing()){
+            //回调
+            if (mCallback!=null){
+                mCallback.onPay(0, "页面参数错误", null);
+            }
+            return;
+        }
+
+        HashMap<String,Object> params = new HashMap<>();
+        try {
+            JSONObject obj = new JSONObject(msg);
+            Iterator<String> keys = obj.keys();
+            while (keys.hasNext()){
+                String key = keys.next();
+                if ("event".equals(key) || "c".equals(key)) {
+                    continue;
+                }
+                params.put(key, obj.get(key));
+            }
+        }catch (Exception e){
+            Logger.error("MsgHandler",e.getMessage());
+        }
+
+        Map<String, Object> loginData = getLoginData();
+        String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
+        String phone = loginData.containsKey("phone" )? loginData.get("phone").toString() : null;
+
+        //判断用户是否已登录
+        if (guid == null){
+            Toast.makeText(mActivity, "用户未登录", Toast.LENGTH_SHORT).show();
+            //回调
+            if (mCallback!=null){
+                mCallback.onPay(0, "用户未登录", null);
+            }
+            return;
+        }
+
+        mPayDialog = new PayActivity(mActivity, mCorpId, mGameId, mPkgName, mPadCode);
+        mPayDialog.setParams(params);
+        mPayDialog.setUserInfo(guid, phone);
+
+        mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mPayDialog = null;
+                try {
+                    if (systemUi != -1){
+                        mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
+                    }
+                }catch (Exception e){
+                    Logger.error("MsgHandler", e.getMessage());
+                }
+
+            }
+        });
+        mPayDialog.setCallback(new PayActivity.ICallback() {
+            @Override
+            public void onResult(int result, String err, Map<String,Object> map) {
+                //支付完成
+                if (mCallback!=null){
+                    mCallback.onPay(result==1?1:0, err, map);
+                }
+            }
+        });
+        systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
+        mPayDialog.show();
     }
 
     public MsgHandler(Activity activity, String corpId, String pkgName){
@@ -316,77 +382,12 @@ public class MsgHandler extends Handler {
         }
     }
 
-    private void handlePay(String msg){
-        if (mPayDialog!=null && mPayDialog.isShowing()){
-            return;
-        }
+    public interface ICallback {
+        void onLogin(int code, String err, Map<String, Object> map);
 
-        if (mActivity == null || mActivity.isFinishing()){
-            //回调
-            if (mCallback!=null){
-                mCallback.onPay(0, "页面参数错误", null);
-            }
-            return;
-        }
+        void onPay(int code, String err, Map<String, Object> map);
 
-        HashMap<String,Object> params = new HashMap<>();
-        try {
-            JSONObject obj = new JSONObject(msg);
-            Iterator<String> keys = obj.keys();
-            while (keys.hasNext()){
-                String key = keys.next();
-                if ("event".equals(key)){
-                    continue;
-                }
-                params.put(key, obj.get(key));
-            }
-        }catch (Exception e){
-            Logger.error("MsgHandler",e.getMessage());
-        }
-
-        Map<String, Object> loginData = getLoginData();
-        String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
-        String phone = loginData.containsKey("phone" )? loginData.get("phone").toString() : null;
-
-        //判断用户是否已登录
-        if (guid == null){
-            Toast.makeText(mActivity, "用户未登录", Toast.LENGTH_SHORT).show();
-            //回调
-            if (mCallback!=null){
-                mCallback.onPay(0, "用户未登录", null);
-            }
-            return;
-        }
-
-        mPayDialog = new PayActivity(mActivity, mCorpId, mGameId, mPkgName, mPadCode);
-        mPayDialog.setParams(params);
-        mPayDialog.setUserInfo(guid, phone);
-
-        mPayDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mPayDialog = null;
-                try {
-                    if (systemUi != -1){
-                        mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
-                    }
-                }catch (Exception e){
-                    Logger.error("MsgHandler", e.getMessage());
-                }
-
-            }
-        });
-        mPayDialog.setCallback(new PayActivity.ICallback() {
-            @Override
-            public void onResult(int result, String err, Map<String,Object> map) {
-                //支付完成
-                if (mCallback!=null){
-                    mCallback.onPay(result==1?1:0, err, map);
-                }
-            }
-        });
-        systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
-        mPayDialog.show();
+        void onLogout();
     }
 
     /**

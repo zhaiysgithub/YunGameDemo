@@ -48,6 +48,7 @@ dependencies {
 
     //云通讯SDK
     implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')
+    implementation files('../kplib/libs/KpCKit-v2.0.0.jar')
 
     //网络请求发送队列主要用来发送日志
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')

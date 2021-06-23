@@ -21,6 +21,7 @@ import com.kptach.lib.inter.game.IGameCallback;
 import kptech.game.kit.callback.PassCMWCallback;
 import kptech.game.kit.manager.KpPassCMWManager;
 import kptech.game.kit.model.PassDeviceResponseBean;
+import kptech.game.kit.msg.mqtt.MsgSuper;
 import kptech.game.kit.view.LoadingPageView;
 import kptech.lib.ad.AdManager;
 import kptech.lib.analytic.DeviceInfo;
@@ -33,7 +34,6 @@ import kptech.lib.constants.Urls;
 import kptech.lib.data.RequestAppInfoTask;
 import kptech.lib.data.RequestTask;
 import kptech.lib.fatory.GameBoxManagerFactory;
-import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
@@ -65,7 +65,7 @@ public class GameBoxManager {
         }
 
         //Messager
-        MsgManager.setDebug(debug);
+        MsgSuper.getInstance().setDebug(debug);
     }
 
     public static GameBoxManager getInstance() {
@@ -243,7 +243,7 @@ public class GameBoxManager {
                         }
 
                         //初始化通讯
-                        MsgManager.init(mApplication, mCorpID);
+                        MsgSuper.getInstance().init(mApplication, mCorpID);
 
                         //回调初始化
                         if (this.callback != null){

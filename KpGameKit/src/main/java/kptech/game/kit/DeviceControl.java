@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.HashMap;
 
+import kptech.game.kit.msg.mqtt.MsgSuper;
 import kptech.lib.ad.AdManager;
 import kptech.lib.ad.IAdCallback;
 import kptech.lib.analytic.DeviceInfo;
@@ -24,7 +25,6 @@ import kptech.lib.analytic.MobclickAgent;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.data.RequestClientNotice;
 import kptech.game.kit.msg.IMsgReceiver;
-import kptech.game.kit.msg.MsgManager;
 import kptech.lib.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
@@ -90,7 +90,7 @@ public class DeviceControl implements IDeviceControl{
         }
 
         //连接设备
-        MsgManager.start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
+        MsgSuper.getInstance().start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
         //同步设备信息
         sendMockDeviceInfo();
@@ -107,7 +107,7 @@ public class DeviceControl implements IDeviceControl{
     public void stopGame() {
 
         try {
-            MsgManager.stop();
+            MsgSuper.getInstance().stop();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -239,10 +239,11 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
         try {
-            MsgManager manager = MsgManager.getInstance();
+            MsgSuper manager = MsgSuper.getInstance();
             if (manager != null){
                 manager.setMessageReceiver(receiver);
             }
+
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -251,7 +252,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendMessage(String msg) {
         try {
-            MsgManager.sendMessage(msg);
+            MsgSuper.getInstance().sendMessage(msg);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -630,7 +631,7 @@ public class DeviceControl implements IDeviceControl{
             mPlayTimeHandler = null;
         }
     }
-
+    @Override
     public String getDeviceInfo(){
         if (mInnerControl == null){
             return "";
