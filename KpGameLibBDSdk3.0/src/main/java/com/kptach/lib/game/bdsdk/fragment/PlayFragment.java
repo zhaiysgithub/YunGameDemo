@@ -81,6 +81,7 @@ public class PlayFragment extends Fragment {
 
     private void connect(){
         if (mPlaySDKManager != null){
+            mPlaySDKManager.setBusinessType(2);
             mPlaySDKManager.start(getActivity(), mMCISdkView);
         }
     }

@@ -73,7 +73,7 @@ public class KpPlaySDKManager {
         mPlayMCISdkManager = new PlaySdkManager(activity, false);
 
         //5、set game parameters
-        if (mPlayMCISdkManager.setParams(this.mDeviceInfo.deviceParams, this.mGamePkg, this.mDeviceInfo.apiLevel, this.mDeviceInfo.useSSL, mciSdkView, new InnerPlayListener(this)) != 0) {
+        if (mPlayMCISdkManager.setParams(this.mDeviceInfo.deviceParams, this.mGamePkg, 1, this.mDeviceInfo.useSSL, mciSdkView, new InnerPlayListener(this)) != 0) {
             //设置参数错误，返回
             return;
         }
@@ -190,6 +190,13 @@ public class KpPlaySDKManager {
             mPlayListener.onNoOpsTimeout(type, timeout);
         }
     }
+
+    public void setBusinessType(int businessType){
+        if (mPlayMCISdkManager != null){
+            mPlayMCISdkManager.setBusinessType(businessType);
+        }
+    }
+
 
     private static class InnerPlayListener extends SWDataSourceListener {
         WeakReference<KpPlaySDKManager> ref = null;
@@ -312,6 +319,7 @@ public class KpPlaySDKManager {
             sdkInitSuccess();
             return;
         }
+//        MCILog.addLogSwitchTypes("15");
 
         int logType = BDSdkGameBoxManager.debug ? PlaySdkManager.LOG_DEFAULT : PlaySdkManager.LOG_WARN;
 
