@@ -637,4 +637,11 @@ public class DeviceControl implements IDeviceControl{
         }
         return mInnerControl.getDeviceInfo();
     }
+
+    @Override
+    public void setVideoDisplayMode(boolean isFill) {
+        if (mInnerControl != null){
+            mInnerControl.setVideoDisplayMode(isFill);
+        }
+    }
 }

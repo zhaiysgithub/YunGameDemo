@@ -216,6 +216,11 @@ public class BDSdkDeviceControl implements IDeviceControl {
         return mDeviceInfo.deviceParams;
     }
 
+    @Override
+    public void setVideoDisplayMode(boolean isFill) {
+        //TODO 设置图像显示模式
+    }
+
     public void callback(String text, int code){
         if (mHandler != null){
             Object[] objs = new Object[]{code, text};

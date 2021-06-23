@@ -81,9 +81,12 @@ public class MainActivity extends AppCompatActivity {
         setTitle(mainModel.getTitleStr());
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        //测试appID
-        mCorpKey = mSp.getString("corpKey", null);
-//        String APP_ID = appIdByPass3;
+        if(kptech.game.kit.BuildConfig.useSDK2){
+            //测试appID
+            mCorpKey = mSp.getString("corpKey", null);
+        }else {
+            mCorpKey = appIdByPass3;
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append(mainModel.getVersionName());
@@ -232,7 +235,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        if(kptech.game.kit.BuildConfig.useSDK2){
+            getMenuInflater().inflate(R.menu.main, menu);
+        }
         return true;
     }
 

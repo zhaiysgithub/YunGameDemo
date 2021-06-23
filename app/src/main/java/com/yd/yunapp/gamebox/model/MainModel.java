@@ -133,9 +133,10 @@ public class MainModel {
 
     private int mSelWhich;
     /**
-     * 显示单选框
+     * 显示单选
      */
     public void showAlertDialog(EditText editText) {
+        mSelWhich = 0;
         final String[] items = {"百度SDK3.0测试包名:cn.missevan","华为SDK测试包名:com.rydts.nb"};
 
         AlertDialog.Builder singleDialog = new AlertDialog.Builder(activity);

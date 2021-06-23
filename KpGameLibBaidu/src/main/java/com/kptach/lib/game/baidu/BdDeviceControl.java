@@ -341,4 +341,9 @@ public class BdDeviceControl implements IDeviceControl {
         return "";
     }
 
+    @Override
+    public void setVideoDisplayMode(boolean isFill) {
+        //TODO 设置图像显示模式
+    }
+
 }

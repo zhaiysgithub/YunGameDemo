@@ -128,6 +128,8 @@ public interface IDeviceControl {
      */
     String getDeviceInfo();
 
+    void setVideoDisplayMode(boolean isFill);
+
     /**
      * 试玩监听
      */

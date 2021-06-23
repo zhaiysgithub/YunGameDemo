@@ -131,6 +131,12 @@ public interface IDeviceControl {
     String getDeviceInfo();
 
     /**
+     * 设置图像显示模式
+     * @param isFill 是否是全屏
+     */
+    void setVideoDisplayMode(boolean isFill);
+
+    /**
      * 试玩监听
      */
     interface PlayListener {

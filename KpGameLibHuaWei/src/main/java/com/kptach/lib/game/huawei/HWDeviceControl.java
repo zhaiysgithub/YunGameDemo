@@ -276,7 +276,8 @@ public class HWDeviceControl implements IDeviceControl {
         return CloudGameManager.CreateCloudGameInstance().getDetailString();
     }
 
-    public void setDisplayMode(boolean isFill) {
+    @Override
+    public void setVideoDisplayMode(boolean isFill) {
         CloudGameManager.CreateCloudGameInstance().setDisplayMode(isFill ? CloudGameParas.DisplayMode.DISPLAY_MODE_FILL : CloudGameParas.DisplayMode.DISPLAY_MODE_FIT);
 
     }
