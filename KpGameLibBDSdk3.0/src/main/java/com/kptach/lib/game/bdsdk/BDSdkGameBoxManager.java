@@ -73,7 +73,7 @@ public class BDSdkGameBoxManager implements IGameBoxManager {
         int code = 0;
         String devInfo = "";
         if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
-            control = new BDSdkDeviceControl(devInfo, finalPkgName);
+            control = new BDSdkDeviceControl(devInfo, finalPkgName, "");
         }
 
         if (callback != null) {
@@ -87,6 +87,8 @@ public class BDSdkGameBoxManager implements IGameBoxManager {
 
 
         String deviceData = params.get("resource").toString();
+        String deviceId = params.get("deviceid").toString();
+
         Logger.info("KpPassCMWManager", "result.data = " + deviceData);
         String pkgName = "";
         try {
@@ -96,7 +98,7 @@ public class BDSdkGameBoxManager implements IGameBoxManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        IDeviceControl control = (IDeviceControl) new BDSdkDeviceControl(deviceData, pkgName);
+        IDeviceControl control = (IDeviceControl) new BDSdkDeviceControl(deviceData, pkgName, deviceId);
 
         if (callback != null) {
             callback.onGameCallback(control, APIConstants.APPLY_DEVICE_SUCCESS);

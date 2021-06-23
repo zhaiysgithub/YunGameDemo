@@ -51,7 +51,7 @@ public class DeviceInfo {
     public int apiLevel = 2;
     public int useSSL = 0;
 
-    public static DeviceInfo getInstance(String str){
+    public static DeviceInfo getInstance(String str,String deviceId){
         if (str == null){
             return null;
         }
@@ -66,7 +66,8 @@ public class DeviceInfo {
                     deviceInfo.apiLevel = extObj.has("apiLevel") ? extObj.optInt("apiLevel") : 2;
                     deviceInfo.useSSL = extObj.has("useSSL") ? extObj.optInt("useSSL") : 0;
                 }
-                deviceInfo.padCode= obj.optString("padCode");
+//                deviceInfo.padCode= obj.optString("padCode");
+                deviceInfo.padCode= deviceId;
             } catch (Exception e) {
                 e.printStackTrace();
             }

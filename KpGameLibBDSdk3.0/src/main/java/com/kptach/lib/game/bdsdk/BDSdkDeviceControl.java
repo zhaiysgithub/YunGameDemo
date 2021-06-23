@@ -39,8 +39,8 @@ public class BDSdkDeviceControl implements IDeviceControl {
     private DeviceInfo mDeviceInfo;
     private String mPkgName;
 
-    public BDSdkDeviceControl(String devInfo, String pkgName){
-        this.mDeviceInfo = DeviceInfo.getInstance(devInfo);
+    public BDSdkDeviceControl(String devInfo, String pkgName, String deviceId){
+        this.mDeviceInfo = DeviceInfo.getInstance(devInfo, deviceId);
         this.mPkgName = pkgName;
         this.mHandler = new MyHandler(this);
     }

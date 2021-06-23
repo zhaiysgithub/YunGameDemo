@@ -438,12 +438,12 @@ public class GameBoxManager {
         sdkParams.put("resource",data.resource);
         sdkParams.put("direction",data.direction);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
+        sdkParams.put("deviceid",data.deviceid);
         String iaas = data.iaas;
         if (iaas.equals("BD")){
             inf.useSDK = GameInfo.SdkType.BD;
         }else if(iaas.equals("HW")){
             inf.useSDK = GameInfo.SdkType.HW;
-            sdkParams.put("deviceid",data.deviceid);
             sdkParams.put("corpKey",mCorpID);
             sdkParams.put("sdkVersion", BuildConfig.VERSION_NAME);
         }
