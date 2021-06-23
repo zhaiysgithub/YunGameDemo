@@ -15,9 +15,12 @@ import kptech.game.kit.BuildConfig;
 import kptech.game.kit.msg.MsgHandler;
 import kptech.game.kit.utils.Logger;
 
+import static kptech.game.kit.msg.BaseMsgReceiver.EVENT_EXIT;
+
 public class MsgManager3 extends MsgSuper {
 
     private static boolean inited = false;
+    private String pkgName;
 
     private MsgManager3(){
         super();
@@ -35,7 +38,8 @@ public class MsgManager3 extends MsgSuper {
     @Override
     public void init(Application application, String corpId) {
         super.init(application, corpId);
-        Messager.init(application, null);
+        int deviceType = CloudUtils.isCloudPhone() ? Messager.MESSAGER_CLIENT_TYPE_VMSERVICE : Messager.MESSAGER_CLIENT_TYPE_ANDROID;
+        Messager.init(application, deviceType);
         inited = true;
     }
 
@@ -82,27 +86,17 @@ public class MsgManager3 extends MsgSuper {
             return;
         }
 
-        if (padCode.toLowerCase().startsWith("vm")) {
-            padCode = padCode.substring(2, padCode.length());
-        }
-
         initGameMsg(activity, corpId, pkgName);
+        this.pkgName = pkgName;
 
         Messager.getInstance().addCallback(mCallback);
 
-        setPadCode("VM" + padCode);
+        setPadCode(padCode);
         setGameId(gameId);
         setGameName(gameName);
         setPkgName(pkgName);
 
-//        String wsurl = null;
-//        try {
-//            wsurl = ProferencesUtils.getString(activity, SharedKeys.KEY_GAME_APP_WSURL, null);
-//        } catch (Exception e) {
-//        }
-
-        int deviceType = CloudUtils.isCloudPhone() ? Messager.MESSAGER_TYPE_VMSERVICE : Messager.MESSAGER_TYPE_ANDROID;
-        Messager.getInstance().start(deviceType, padCode);
+        Messager.getInstance().start(padCode);
 
     }
 
@@ -153,19 +147,19 @@ public class MsgManager3 extends MsgSuper {
         try {
 
             String event = obj.getString("c");
-            if ("100011".equals(event)) {
+            String appPkgName = obj.getString("p");
+            if ("100011".equals(event) && this.pkgName.equals(appPkgName)) {
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGIN);
-            } else if ("reLogin".equals(event)) {
-                mHandler.sendEmptyMessage(MsgHandler.MSG_RELOGIN);
-            } else if ("100031".equals(event)) {
-                mHandler.sendMessage(Message.obtain(mHandler, MsgHandler.MSG_PAY, msg));
-            } else if ("100021".equals(event)) {
+            } else if ("100031".equals(event) && this.pkgName.equals(appPkgName)) {
+                String payOrderMsg = obj.getString("d");
+                mHandler.sendMessage(Message.obtain(mHandler, MsgHandler.MSG_PAY, payOrderMsg));
+            } else if ("100021".equals(event) && this.pkgName.equals(appPkgName)) {
                 mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
-            } else if ("100041".equals(event)) {
+            } else if ("100041".equals(event) && this.pkgName.equals(appPkgName)) {
                 if (mReceiverRef != null && mReceiverRef.get() != null) {
-                    mReceiverRef.get().onMessageReceived(event, null);
+                    mReceiverRef.get().onMessageReceived(EVENT_EXIT, null);
                 }
-            } else if ("echo".equals(event)) {
+            } else if ("echo".equals(event) && this.pkgName.equals(appPkgName)) {
                 echo(obj);
             }
         } catch (JSONException e) {
@@ -194,7 +188,8 @@ public class MsgManager3 extends MsgSuper {
             obj.put("c", "100012");
             JSONObject data = new JSONObject();
             data.put("result", 1);
-            obj.put("d", data.toString());
+            obj.put("d", data);
+            obj.put("p",this.pkgName);
             obj.put("t", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -210,15 +205,16 @@ public class MsgManager3 extends MsgSuper {
         try {
             if (map != null) {
                 data = new JSONObject(map);
-                obj = new JSONObject();
             }
-
+            obj = new JSONObject();
             obj.put("c", "100012");
-            data.put("result", code);
             if (code == 0) {
+                data = new JSONObject();
                 data.put("error", err);
             }
-            obj.put("d", data.toString());
+            data.put("result", code);
+            obj.put("d", data);
+            obj.put("p",this.pkgName);
             obj.put("t", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -240,15 +236,17 @@ public class MsgManager3 extends MsgSuper {
         try {
             if (map != null) {
                 data = new JSONObject(map);
-                obj = new JSONObject();
             }
-
+            obj = new JSONObject();
             obj.put("c", "100032");
-            data.put("result", code);
+
             if (code == 0) {
+                data = new JSONObject();
                 data.put("error", err);
             }
-            obj.put("d", data.toString());
+            data.put("result", code);
+            obj.put("d", data);
+            obj.put("p",this.pkgName);
             obj.put("t", System.currentTimeMillis());
         } catch (JSONException e) {
             e.printStackTrace();

@@ -89,7 +89,7 @@ public class MsgHandler extends Handler {
             Iterator<String> keys = obj.keys();
             while (keys.hasNext()){
                 String key = keys.next();
-                if ("event".equals(key) || "c".equals(key)) {
+                if ("event".equals(key) ) {
                     continue;
                 }
                 params.put(key, obj.get(key));

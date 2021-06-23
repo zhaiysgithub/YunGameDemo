@@ -47,6 +47,9 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     @Override
     public void startGame(Activity activity, int res, IGameCallback<String> callback) {
+        if( activity == null || activity.isFinishing()){
+            return;
+        }
         this.mActivity = activity;
         this.mCallback = callback;
         this.mContainer = res;
