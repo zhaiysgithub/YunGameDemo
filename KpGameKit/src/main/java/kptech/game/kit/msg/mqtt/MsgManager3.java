@@ -185,7 +185,7 @@ public class MsgManager3 extends MsgSuper {
         super.onLogout();
         JSONObject obj = new JSONObject();
         try {
-            obj.put("c", "100012");
+            obj.put("c", "100022");
             JSONObject data = new JSONObject();
             data.put("result", 1);
             obj.put("d", data);
