@@ -28,7 +28,7 @@ public class MsgManager2 extends MsgSuper {
         private static final MsgManager2 INSTANCE = new MsgManager2();
     }
 
-    public static MsgManager2 instance(){
+    public static synchronized MsgManager2 instance(){
 
         return MsgHandlerHolder.INSTANCE;
     }

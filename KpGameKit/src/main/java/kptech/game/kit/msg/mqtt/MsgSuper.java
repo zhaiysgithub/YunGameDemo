@@ -21,7 +21,7 @@ public class MsgSuper implements MsgHandler.ICallback{
     protected String mCorpKey;
     protected WeakReference<IMsgReceiver> mReceiverRef;
 
-    private static MsgSuper mInstance;
+    private static volatile MsgSuper mInstance;
 
     public MsgSuper(){
 

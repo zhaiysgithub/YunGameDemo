@@ -211,7 +211,7 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     @Override
     public SdkType getSdkType() {
-        return SdkType.REDF;
+        return SdkType.BD;
     }
 
     @Override

@@ -647,6 +647,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mRecordView.reset();
             mRecordView.setVisibility(View.GONE);
 
+            GameBoxManager.getInstance().setDevLoading(false);
+
             checkAndRequestPermission();
 
         } catch (Exception e) {

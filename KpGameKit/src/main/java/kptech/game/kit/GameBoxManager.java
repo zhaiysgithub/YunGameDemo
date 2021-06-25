@@ -407,6 +407,7 @@ public class GameBoxManager {
             @Override
             public void onSuccess(PassDeviceResponseBean result) {
                 if (result == null){
+                    devLoading=false;
                     callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
                     return;
                 }
@@ -417,12 +418,14 @@ public class GameBoxManager {
                             , info, callback);
                     return;
                 }
+                devLoading = false;
                 int erroCode = KpPassCMWManager.instance().getErrorCode(code);
                 callback.onAPICallback(null, erroCode);
             }
 
             @Override
             public void onError(int errorCode, String errorMsg) {
+                devLoading = false;
                 Logger.error("GamePlay", "申请设备接口失败,code = " + errorCode + "; errorMsg = " + errorMsg);
                 callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
             }

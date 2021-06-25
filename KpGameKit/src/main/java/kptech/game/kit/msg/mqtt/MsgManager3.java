@@ -30,7 +30,7 @@ public class MsgManager3 extends MsgSuper {
         private static final MsgManager3 INSTANCE = new MsgManager3();
     }
 
-    public static MsgManager3 instance(){
+    public static  synchronized MsgManager3 instance(){
         return MsgHandlerHolder.INSTANCE;
     }
 
