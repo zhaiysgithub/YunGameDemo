@@ -10,6 +10,7 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -524,7 +525,13 @@ public class GameBoxManager {
      */
     public List<GameInfo> queryGameList(int page, int limit) {
         if (mCorpID != null && !"".equals(mCorpID)){
-            List<GameInfo> list = RequestTask.queryGameList(mCorpID, page, limit);
+            List<GameInfo> list = null;
+            if (BuildConfig.useSDK2){
+                list = RequestTask.queryGameList(mCorpID, page, limit);
+            }else {
+                list = RequestTask.queryGameListByPass3(mCorpID, page, limit);
+            }
+
             return list;
         }
         return null;

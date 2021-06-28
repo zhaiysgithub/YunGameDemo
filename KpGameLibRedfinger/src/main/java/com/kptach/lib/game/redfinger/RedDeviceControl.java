@@ -216,6 +216,11 @@ public class RedDeviceControl implements IDeviceControl {
         return mDeviceInfo.deviceParams;
     }
 
+    @Override
+    public void setVideoDisplayMode(boolean isFill) {
+
+    }
+
     public void callback(String text, int code){
         if (mHandler != null){
             Object[] objs = new Object[]{code, text};

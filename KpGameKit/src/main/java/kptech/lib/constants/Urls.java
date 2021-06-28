@@ -38,6 +38,7 @@ public class Urls {
     }
 
     public static final String URL_REQUEST_DEVICE = "/api/device/connect/test";
+    public static final String URL_PASS_GAMES = "/api/device/games";
 
     public static String getRequestDeviceUrl(String address){
         //暂时还未部署到生产环境

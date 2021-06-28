@@ -33,7 +33,6 @@ import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
 import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
-import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
 import org.xutils.x;
 import java.util.ArrayList;
@@ -53,12 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private GameAdapter mGameAdapter;
     private EditText mGidText;
     private EditText mPkgText;
-    private TextView mSelPkg;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
-    private final String pkgbdPass3 = "cn.missevan";
-    private final String pkghwPass3 = "com.rydts.nb";
     private String mCorpKey;
 
 
@@ -72,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);
-        mSelPkg = findViewById(R.id.tvSelGame);
 
         x.Ext.init(getApplication());
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
@@ -103,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
             coprKey.setText(sb.toString());
         }
 
-        if (appIdByPass3.equals(mCorpKey)){
-            mSelPkg.setVisibility(View.VISIBLE);
-        }else {
-            mSelPkg.setVisibility(View.GONE);
-        }
-
         //打印log信息，正式版本需要关闭
         GameBoxManager.setDebug(BuildConfig.DEBUG);
         GameBoxManager.setAppKey(mCorpKey);
@@ -121,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         GameBox.init(getApplication(), mCorpKey);
 
         loadGame();
-        mSelPkg.setOnClickListener(v -> mainModel.showAlertDialog(mPkgText));
     }
 
     public void startGame(View v) {
@@ -156,10 +144,6 @@ public class MainActivity extends AppCompatActivity {
             String pkgName = mPkgText.getText().toString();
             if (pkgName.isEmpty()){
                 Toast.makeText(this, "包名不能为空", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!pkgName.equals(pkgbdPass3) && !pkgName.equals(pkghwPass3)){
-                Toast.makeText(this, "包名参数错误", Toast.LENGTH_SHORT).show();
                 return;
             }
             info.pkgName = pkgName;

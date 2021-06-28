@@ -1,11 +1,14 @@
 package kptech.lib.data;
 
+import com.kptach.lib.inter.game.APIConstants;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,6 +18,7 @@ import java.util.List;
 
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.utils.JsonUtils;
 import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
 
@@ -82,6 +86,89 @@ public class RequestTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    public static List<GameInfo> queryGameListByPass3(String corpKey, int page, int limit){
+        String gameUrl = Urls.getRequestDeviceUrl(Urls.URL_PASS_GAMES);
+
+        BufferedReader reader = null;
+        OutputStream writeStream = null;
+        InputStreamReader isr = null;
+        try{
+
+            JSONObject jsonParams = new JSONObject();
+            jsonParams.put("corpKey",corpKey);
+            String jsonStr = jsonParams.toString();
+
+            URL url = new URL(gameUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(1000*10);
+            conn.setReadTimeout(1000*10);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Charset", "UTF-8");
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setRequestProperty("accept", "application/json");
+            byte[] writeBytes = jsonStr.getBytes();
+            conn.setRequestProperty("Content-Length", String.valueOf(writeBytes.length));
+            writeStream = conn.getOutputStream();
+            writeStream.write(writeBytes);
+            writeStream.flush();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200){
+                isr = new InputStreamReader(conn.getInputStream());
+                reader = new BufferedReader(isr);
+                String result = reader.readLine();
+                Logger.info(TAG, "queryGameListByPass3=" + result);
+
+                if (result != null && !result.isEmpty()){
+                    JSONObject resultJson = new JSONObject(result);
+                    int code = JsonUtils.optInt(resultJson,"code");
+                    if (code == 0){
+                        JSONArray dataJsonArray = resultJson.getJSONArray("data");
+                        int num = dataJsonArray.length();
+                        List<GameInfo> list = new ArrayList<>();
+                        if (num > 0){
+                            for(int i = 0; i< num; i++){
+                                String gameJsonStr = dataJsonArray.get(i).toString();
+                                JSONObject gameJsonObject = new JSONObject(gameJsonStr);
+                                String name = JsonUtils.optString(gameJsonObject,"name");
+                                String pkgName = JsonUtils.optString(gameJsonObject,"pkgName");
+                                String appUrl = JsonUtils.optString(gameJsonObject,"appUrl");
+                                GameInfo gameInfo = new GameInfo();
+                                gameInfo.name = name;
+                                gameInfo.pkgName = pkgName;
+                                gameInfo.downloadUrl = appUrl;
+                                list.add(gameInfo);
+                            }
+                        }
+                        return list;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (writeStream != null) {
+                    writeStream.close();
+                }
+                if (isr != null) {
+                    isr.close();
+                }
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return null;
     }
 
