@@ -2,6 +2,7 @@ package com.kptach.lib.game.baidu;
 
 import android.app.Activity;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
@@ -26,7 +27,7 @@ public class BdDeviceControl implements IDeviceControl {
 
     protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this.mDeviceControl = control;
-        mainHandler = new Handler();
+        mainHandler = new Handler(Looper.getMainLooper());
         parseDeviceToken();
     }
 
