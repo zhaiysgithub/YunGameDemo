@@ -56,6 +56,7 @@ public class GameBoxManager {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private static boolean mDebug = false;
+    private static MsgSuper msgManager = MsgSuper.getInstance();
     public static void setDebug(boolean debug){
         mDebug = debug;
 
@@ -65,7 +66,7 @@ public class GameBoxManager {
         }
 
         //Messager
-        MsgSuper.getInstance().setDebug(debug);
+        msgManager.setDebug(debug);
     }
 
     public static GameBoxManager getInstance() {
@@ -243,7 +244,7 @@ public class GameBoxManager {
                         }
 
                         //初始化通讯
-                        MsgSuper.getInstance().init(mApplication, mCorpID);
+                        msgManager.init(mApplication, mCorpID);
 
                         //回调初始化
                         if (this.callback != null){

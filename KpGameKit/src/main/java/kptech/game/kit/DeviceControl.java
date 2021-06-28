@@ -49,6 +49,7 @@ public class DeviceControl implements IDeviceControl{
     private boolean mIsSoundEnable = true;
     private String mPicQuality = "";
 
+    private MsgSuper msgManager = MsgSuper.getInstance();
     //耗时统计
     private boolean sendTmEvent = false;
     private MillisecondsDuration mTimeDuration;
@@ -90,7 +91,7 @@ public class DeviceControl implements IDeviceControl{
         }
 
         //连接设备
-        MsgSuper.getInstance().start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
+        msgManager.start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
         //同步设备信息
         sendMockDeviceInfo();
@@ -107,7 +108,7 @@ public class DeviceControl implements IDeviceControl{
     public void stopGame() {
 
         try {
-            MsgSuper.getInstance().stop();
+            msgManager.stop();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -239,9 +240,9 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
         try {
-            MsgSuper manager = MsgSuper.getInstance();
-            if (manager != null){
-                manager.setMessageReceiver(receiver);
+           
+            if (msgManager != null){
+                msgManager.setMessageReceiver(receiver);
             }
 
         }catch (Exception e){
@@ -252,7 +253,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendMessage(String msg) {
         try {
-            MsgSuper.getInstance().sendMessage(msg);
+            msgManager.sendMessage(msg);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
