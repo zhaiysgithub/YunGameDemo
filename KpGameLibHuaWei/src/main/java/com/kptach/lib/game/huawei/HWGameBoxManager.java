@@ -23,7 +23,7 @@ public class HWGameBoxManager implements IGameBoxManager {
     public static int soVersion = 1;
     private HashMap<String, Object> params;
     @Override
-    public void initLib(Application application, HashMap params, IGameCallback<String> iGameCallback) {
+    public void initLib(Application application, HashMap params, IGameCallback<String> callback) {
 
         //TODO 检测 so 文件是否存在，不存在执行下载
         /*if (mLibHelper == null){
@@ -57,8 +57,6 @@ public class HWGameBoxManager implements IGameBoxManager {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 
     private void startInitCloudGameManager(Activity activity){

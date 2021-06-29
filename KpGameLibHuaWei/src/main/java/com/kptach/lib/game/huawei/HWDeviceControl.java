@@ -360,7 +360,7 @@ public class HWDeviceControl implements IDeviceControl {
             if (orientation == 1){
                 oriParams = 0;
             }
-//            setScreenOrientation(oriParams);
+            setScreenOrientation(oriParams);
             /*if (mActivity != null && mViewgroup != null && mPlayListener != null){
                  mActivity.runOnUiThread(() -> {
                      if (mActivity.isFinishing()){

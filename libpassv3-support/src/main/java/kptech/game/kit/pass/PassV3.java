@@ -55,10 +55,10 @@ public class PassV3 implements IGameBoxManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        if (pkgName == null || "".equals(pkgName)){
-//            callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
-//            return;
-//        }
+        if ("".equals(pkgName)){
+            callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
+            return;
+        }
         KpPassCMWManager.instance().startRequestPassCMW(mCorpID, pkgName, new PassCMWCallback() {
             @Override
             public void onSuccess(PassDeviceResponseBean result) {
@@ -76,17 +76,20 @@ public class PassV3 implements IGameBoxManager {
                     sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
                     sdkParams.put("deviceid",result.data.deviceid);
                     sdkParams.put("corpKey",mCorpID);
-                    String iaas = result.data.iaas;
+                    String iaas = "";
+                    if (result.data != null){
+                        iaas = result.data.iaas;
+                    }
 
                     gameBoxManager = GameBoxManagerFactory.getGameBoxManager(iaas, activity.getApplication(), null);
-                    gameBoxManager.initLib(activity.getApplication(), sdkParams, new IGameCallback<String>() {
-                        @Override
-                        public void onGameCallback(String msg, int code) {
-                            if (code == 1) {
-                                gameBoxManager.applyCloudDevice(activity, gameInf, callback);
-                            }
-                        }
-                    });
+                    if (gameBoxManager != null){
+                        gameBoxManager.initLib(activity.getApplication(), sdkParams, null);
+                        gameBoxManager.applyCloudDevice(activity, gameInf, callback);
+                    }else {
+                        Logger.error("KpPassCMWManager","iaas error:" + iaas);
+                        int erroCode = KpPassCMWManager.instance().getErrorCode(code);
+                        callback.onGameCallback(null, erroCode);
+                    }
                     return;
                 }
                 int erroCode = KpPassCMWManager.instance().getErrorCode(code);

@@ -44,7 +44,7 @@ dependencies {
 
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
     implementation project(path: ':kpinter')
-    implementation files('../Kplib/libs/cloudgame.jar')
+    implementation files('libs/cloudgame.jar')
 }
 
 

@@ -38,33 +38,18 @@ public class KpPassCMWManager {
     }
 
     private void executeRunnable(final String passParams, final PassCMWCallback callback){
-        executor.execute(new Runnable() {
+        executor.execute(() -> requestDevicePost(passParams, new PassCMWCallback() {
             @Override
-            public void run() {
-                requestDevicePost(passParams, new PassCMWCallback() {
-                    @Override
-                    public void onSuccess(final PassDeviceResponseBean result) {
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onSuccess(result);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(final int errorCode,final String errorMsg) {
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onError(errorCode, errorMsg);
-                            }
-                        });
-                    }
-                });
+            public void onSuccess(final PassDeviceResponseBean result) {
+                mHandler.post(() -> callback.onSuccess(result));
             }
-        });
+
+            @Override
+            public void onError(final int errorCode,final String errorMsg) {
+
+                mHandler.post(() -> callback.onError(errorCode, errorMsg));
+            }
+        }));
     }
 
     public static final String URL_REQUEST_DEVICE = "/api/device/connect/test";

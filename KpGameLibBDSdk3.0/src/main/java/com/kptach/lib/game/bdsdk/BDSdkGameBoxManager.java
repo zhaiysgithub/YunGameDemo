@@ -50,12 +50,12 @@ public class BDSdkGameBoxManager implements IGameBoxManager {
         String deviceData = params.get("resource").toString();
         String deviceId = params.get("deviceid").toString();
 
-        Logger.info("KpPassCMWManager", "result.data = " + deviceData);
+//        Logger.info("KpPassCMWManager", "result.data = " + deviceData);
         String pkgName = "";
         try {
             JSONObject packInfo = new JSONObject(gameInf);
             pkgName = packInfo.optString("pkgName");
-            Logger.info("KpPassCMWManager", "result.data  deviceData = " + deviceData);
+//            Logger.info("KpPassCMWManager", "result.data  deviceData = " + deviceData);
         } catch (JSONException e) {
             e.printStackTrace();
         }

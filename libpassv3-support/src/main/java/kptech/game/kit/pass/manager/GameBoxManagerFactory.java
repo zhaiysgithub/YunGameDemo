@@ -8,9 +8,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
 public class GameBoxManagerFactory {
-    private static IGameBoxManager bd2Manager = null;
     private static IGameBoxManager bd3Manager = null;
-    private static IGameBoxManager rfManager = null;
     private static IGameBoxManager hwManager = null;
 
     private static byte[] lock = new byte[0];
