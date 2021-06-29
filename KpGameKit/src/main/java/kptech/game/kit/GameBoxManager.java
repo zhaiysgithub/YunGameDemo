@@ -238,7 +238,7 @@ public class GameBoxManager {
                         }
 
                         //初始化通讯
-                        MsgManager.getInstance().init(mApplication, mDebug);
+                        MsgManager.init(mApplication, mDebug);
 
                         //回调初始化
                         if (this.callback != null){

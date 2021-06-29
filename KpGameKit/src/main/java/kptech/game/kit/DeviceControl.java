@@ -52,6 +52,7 @@ public class DeviceControl implements IDeviceControl{
     //耗时统计
     private boolean sendTmEvent = false;
     private MillisecondsDuration mTimeDuration;
+    private MsgManager msgManager ;
 
     protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control){
         this(control,null);
@@ -90,7 +91,8 @@ public class DeviceControl implements IDeviceControl{
         }
 
         //连接设备
-        MsgManager.getInstance().start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
+        msgManager =  MsgManager.getInstance();
+        msgManager.start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
         //同步设备信息
         sendMockDeviceInfo();
@@ -107,7 +109,7 @@ public class DeviceControl implements IDeviceControl{
     public void stopGame() {
 
         try {
-            MsgManager.getInstance().stop();
+            msgManager.stop();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -243,7 +245,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
         try {
-            MsgManager.getInstance().setMessageReceiver(receiver);
+            msgManager.setMessageReceiver(receiver);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -252,7 +254,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendMessage(String msg) {
         try {
-            MsgManager.getInstance().sendMessage(msg);
+            msgManager.sendMessage(msg);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
