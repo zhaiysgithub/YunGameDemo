@@ -21,16 +21,16 @@ public class HWGameBoxManager implements IGameBoxManager {
     private String mResource = "";
     private String corpKey = "";
     private String sdkVersion = "";
-    private HWLoadLibHelper mLibHelper;
+//    private HWLoadLibHelper mLibHelper;
     public static int soVersion = 1;
 
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> iGameCallback) {
 
         //TODO 检测 so 文件是否存在，不存在执行下载
-        if (mLibHelper == null){
+        /*if (mLibHelper == null){
             mLibHelper = new HWLoadLibHelper(application);
-        }
+        }*/
 
         try {
 

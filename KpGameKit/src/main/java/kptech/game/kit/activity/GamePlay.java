@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -251,11 +250,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
             @Override
             public void onVideoResize(boolean scale) {
-//                resizeVideoContainer(scale);
+                resizeVideoContainer(scale);
                 //scale 代表是否按照比例显示
-                if (mDeviceControl != null){
+                /*if (mDeviceControl != null){
                     mDeviceControl.setVideoDisplayMode(!scale);
-                }
+                }*/
             }
         });
         mMenuView.setOnExitClickListener(new View.OnClickListener() {

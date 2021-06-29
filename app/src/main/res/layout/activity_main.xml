@@ -43,12 +43,41 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/game_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f5f5f5"
-        android:divider="#f5f5f5"
-        android:dividerHeight="1dp" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/game_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f5f5f5"
+                android:divider="#f5f5f5"
+                android:dividerHeight="1dp" />
+
+            <FrameLayout
+                android:id="@+id/layoutProgress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="#c0c0c0">
+
+                <ProgressBar
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"/>
+
+            </FrameLayout>
+
+        </FrameLayout>
+
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>

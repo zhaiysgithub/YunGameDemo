@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.kuaipan.game.demo.BuildConfig;
@@ -55,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
     private MainModel mainModel;
     private SharedPreferences mSp = null;
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
+//    private final String appIdByPass3 = "2VVt8PL2WPv1GI6-e8cccbcde2a0a16c";
     private String mCorpKey;
+    private SwipeRefreshLayout mRefreshLayout;
+    private View mLayoutProgress;
 
 
     @SuppressLint("SetTextI18n")
@@ -68,12 +73,16 @@ public class MainActivity extends AppCompatActivity {
 
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);
+        mRefreshLayout = findViewById(R.id.refreshLayout);
+        mLayoutProgress = findViewById(R.id.layoutProgress);
 
         x.Ext.init(getApplication());
         x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
 
         mainModel = new MainModel(this);
         setTitle(mainModel.getTitleStr());
+
+        mRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         if(kptech.game.kit.BuildConfig.useSDK2){
@@ -110,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
         GameBox.init(getApplication(), mCorpKey);
 
         loadGame();
+        mGameList.setOnScrollListener(mListViewScrollListener);
+        mRefreshLayout.setOnRefreshListener(mRefreshListener);
     }
 
     public void startGame(View v) {
@@ -314,32 +325,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadGame() {
+
+        mLayoutProgress.setVisibility(View.VISIBLE);
         new Thread(() -> {
             List<GameInfo> result = GameBoxManager.getInstance().queryGameList(0, 50);
-
+            mGameInfos.clear();
             if (result != null && result.size() > 0) {
                 mGameInfos.addAll(result);
-                mHandler.sendEmptyMessage(0);
             }
+            mHandler.sendEmptyMessage(0);
         }).start();
     }
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
+            mLayoutProgress.setVisibility(View.GONE);
+            mRefreshLayout.setRefreshing(false);
             mGameAdapter.refresh(new ArrayList<>(mGameInfos));
         }
     };
 
     private void startShowDialog() {
-        /*Intent intent = new Intent(MainActivity.this, TransDialogActivity.class);
-        startActivity(intent);*/
         sendBroadCast();
     }
 
 
     private void sendBroadCast() {
-        //"KP_Cloud_Game_Play_StartActivity"
         Intent intent = new Intent();
         intent.setAction("KP_Cloud_Game_Play_StartActivity");
         intent.putExtra("className","com.yd.yunapp.gamebox.activity.TransDialogActivity");
@@ -354,4 +366,22 @@ public class MainActivity extends AppCompatActivity {
 
         sendBroadcast(intent);
     }
+
+
+    private final SwipeRefreshLayout.OnRefreshListener mRefreshListener = this::loadGame;
+
+    private final AbsListView.OnScrollListener mListViewScrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if (view != null){
+                View firstView = view.getChildAt(firstVisibleItem);
+                mRefreshLayout.setEnabled(firstVisibleItem == 0 && (firstView == null || firstView.getTop() == 0));
+            }
+        }
+    };
 }

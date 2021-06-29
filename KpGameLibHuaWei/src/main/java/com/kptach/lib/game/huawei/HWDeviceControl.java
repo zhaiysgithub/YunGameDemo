@@ -80,9 +80,9 @@ public class HWDeviceControl implements IDeviceControl {
                     sdkParams.put("touch_timeout", "0");
                     //备用参数
                     sdkParams.put("user_id", "");
-                    if (sdkParams.containsKey("ip")){
+                    /*if (sdkParams.containsKey("ip")){
                         sdkParams.put("ip","114.116.222.169");
-                    }
+                    }*/
                     if (sdkParams.containsKey("game_timeout")){
                         gameTimeout = sdkParams.get("game_timeout");
                     }
@@ -101,6 +101,9 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public void startGame(Activity activity, int res, IGameCallback<String> callback) {
+        if (callback == null){
+            return;
+        }
         try {
             mCallback = callback;
             ViewGroup viewGroup = activity.findViewById(res);
@@ -118,17 +121,12 @@ public class HWDeviceControl implements IDeviceControl {
             mediaConfigMap.put("bitrate", Integer.toString(10000000));
             CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
 
-            CloudGameManager.CreateCloudGameInstance().setDisplayMode(CloudGameParas.DisplayMode.DISPLAY_MODE_FIT);
+            setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
-            if (callback != null){
-                callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
-            }
-            setScreenOrientation(hwDirection);
+            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
-            if (callback != null){
-                callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
-            }
+            callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
         }
 
     }
@@ -151,7 +149,6 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public String getVideoQuality() {
-        //TODO 待修改
         String videoQuality;
         if (videoResolution == CloudGameParas.Resolution.DISPLAY_1080P) {
             videoQuality = APIConstants.DEVICE_VIDEO_QUALITY_HD;
@@ -161,7 +158,6 @@ public class HWDeviceControl implements IDeviceControl {
                 videoResolution == CloudGameParas.Resolution.DISPLAY_480P) {
             videoQuality = APIConstants.DEVICE_VIDEO_QUALITY_LS;
         } else {
-            // TODO 自动分辨率
             videoQuality = APIConstants.DEVICE_VIDEO_QUALITY_AUTO;
         }
         resolutionQuality = videoQuality;
@@ -170,12 +166,8 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public int[] getVideoSize() {
-        /*try {
-            //TODO 获取视频尺寸
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        return new int[]{1280, 720};
+
+        return null;
     }
 
     @Override
@@ -360,18 +352,23 @@ public class HWDeviceControl implements IDeviceControl {
             //TODO
             HWCloudGameUtils.info("onRecvCloudGameData","bytes=" + new String(bytes, StandardCharsets.UTF_8) + ";length=" + length);
         });
-        //游戏画面方向变化监听器
+        //游戏画面方向变化监听器  获取游戏画面方向的变化
         CloudGameManager.CreateCloudGameInstance().registerOnOrientationChangeListener(orientation -> {
-
+            //1、横屏 0、竖屏
             HWCloudGameUtils.info("onOrientationChange","orientation=" + orientation);
-            if (mActivity != null && mViewgroup != null && mPlayListener != null){
+            int oriParams = 1;
+            if (orientation == 1){
+                oriParams = 0;
+            }
+//            setScreenOrientation(oriParams);
+            /*if (mActivity != null && mViewgroup != null && mPlayListener != null){
                  mActivity.runOnUiThread(() -> {
                      if (mActivity.isFinishing()){
                          return;
                      }
                      mPlayListener.onScreenChange(orientation);
                  });
-            }
+            }*/
         });
 
         //统计数据监听  每相隔10S数据监听

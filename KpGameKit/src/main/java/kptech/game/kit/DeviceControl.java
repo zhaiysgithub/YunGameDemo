@@ -113,6 +113,10 @@ public class DeviceControl implements IDeviceControl{
         }
 
         mInnerControl.stopGame();
+        if (mPlayTimeHandler != null){
+            mPlayTimeHandler.removeCallbacksAndMessages(null);
+            mPlayTimeHandler = null;
+        }
 
         try {
             if (mAdManager != null){

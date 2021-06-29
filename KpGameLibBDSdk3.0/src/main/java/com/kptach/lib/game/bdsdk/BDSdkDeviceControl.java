@@ -1,10 +1,14 @@
 package com.kptach.lib.game.bdsdk;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.kptach.lib.game.bdsdk.model.DeviceInfo;
 import com.kptach.lib.game.bdsdk.play.IPlayInitListener;
@@ -38,6 +42,8 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     private DeviceInfo mDeviceInfo;
     private String mPkgName;
+    private int videoWidth = 0;
+    private int videoHeight = 0;
 
     public BDSdkDeviceControl(String devInfo, String pkgName, String deviceId){
         this.mDeviceInfo = DeviceInfo.getInstance(devInfo, deviceId);
@@ -119,13 +125,16 @@ public class BDSdkDeviceControl implements IDeviceControl {
     public int[] getVideoSize() {
         try {
             if(mDeviceInfo != null && mDeviceInfo.resolutionRatio != null){
-                return new int[]{mDeviceInfo.resolutionRatio.width, mDeviceInfo.resolutionRatio.height};
+                videoWidth = mDeviceInfo.resolutionRatio.width;
+                videoHeight = mDeviceInfo.resolutionRatio.height;
+                return new int[]{videoWidth, videoHeight};
             }
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
-
-        return new int[]{720, 1280};
+        videoWidth = 720;
+        videoHeight = 1280;
+        return new int[]{videoWidth, videoHeight};
     }
 
     @Override
@@ -221,7 +230,70 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     @Override
     public void setVideoDisplayMode(boolean isFill) {
-        //TODO 设置图像显示模式
+        try{
+            if (mActivity != null && mContainer > 0){
+                View containerView = mActivity.findViewById(mContainer);
+                //屏幕尺寸
+                int sw = containerView.getWidth();
+                int sh = containerView.getHeight();
+
+                if (sw <= 0 || sh <= 0) {
+                    DisplayMetrics displayMetrics = mActivity.getResources().getDisplayMetrics();
+                    sw = displayMetrics.widthPixels;
+                    sh = displayMetrics.heightPixels;
+                }
+
+                //处理横竖屏
+                int screenWidth = sh < sw ? sh : sw;
+                int screenHeight = sh < sw ? sw : sh;
+                int vw = videoHeight < videoWidth ? videoHeight : videoWidth;
+                int vh = videoHeight < videoWidth ? videoWidth : videoHeight;
+
+                //宽高比
+                float videoScale = (float) vw / (float) vh;
+//                float screenScale = (float) screenWidth / (float) screenHeight;
+
+                float widthScale = (float) vw / (float) screenWidth;
+                float heightScale = (float) vh / (float) screenHeight;
+                int resizeWidth = 0;
+                int resizeHeight = 0;
+                if (widthScale < heightScale) {
+                    resizeHeight = screenHeight;
+                    resizeWidth = (int) (screenHeight * videoScale);
+                } else {
+                    resizeWidth = screenWidth;
+                    resizeHeight = (int) (screenWidth / videoScale);
+                }
+                if (isFill){
+                    //全屏
+                    ViewGroup.LayoutParams lp = containerView.getLayoutParams();
+                    lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    containerView.setLayoutParams(lp);
+                }else {
+                    Configuration mConfiguration = mActivity.getResources().getConfiguration(); //获取设置的配置信息
+                    int ori = mConfiguration.orientation; //获取屏幕方向
+                    if (resizeWidth > 0 && resizeHeight > 0) {
+                        if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+                            //横屏
+                            ViewGroup.LayoutParams lp = containerView.getLayoutParams();
+                            lp.width = resizeHeight;
+                            lp.height = resizeWidth;
+                            containerView.setLayoutParams(lp);
+                        } else if (ori == Configuration.ORIENTATION_PORTRAIT) {
+                            //竖屏
+                            ViewGroup.LayoutParams lp = containerView.getLayoutParams();
+                            lp.width = resizeWidth;
+                            lp.height = resizeHeight;
+                            containerView.setLayoutParams(lp);
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public void callback(String text, int code){
