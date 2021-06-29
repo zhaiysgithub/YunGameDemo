@@ -37,6 +37,7 @@ import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
 
 import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSp = null;
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
 //    private final String appIdByPass3 = "2VVt8PL2WPv1GI6-e8cccbcde2a0a16c";
+//    private final String pkgbdPass3 = "com.kptach.pluginkit.test";
+//    private final String pkghwPass3 = "com.rydts.nb";
     private String mCorpKey;
     private SwipeRefreshLayout mRefreshLayout;
     private View mLayoutProgress;

@@ -2,23 +2,20 @@ package kptech.lib.fatory;
 
 import android.app.Application;
 
-//import com.kptach.lib.game.baidu.BdGameBoxManager;
-//import com.kptach.lib.game.bdsdk.BDSdkGameBoxManager;
-//import com.kptach.lib.game.huawei.HWGameBoxManager;
-//import com.kptach.lib.game.redfinger.RedGameBoxManager;
 import com.kptach.lib.inter.game.IGameBoxManager;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
-import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameInfo;
+import kptech.game.kit.utils.Logger;
+
 
 public class GameBoxManagerFactory {
+    private static final String TAG = "GameBoxManagerFactory";
     private static IGameBoxManager bd2Manager = null;
-    private static IGameBoxManager bd3Manager = null;
     private static IGameBoxManager rfManager = null;
-    private static IGameBoxManager hwManager = null;
+    private static IGameBoxManager passv3Manager = null;
 
     private static byte[] lock = new byte[0];
 
@@ -26,38 +23,30 @@ public class GameBoxManagerFactory {
         synchronized (lock){
             IGameBoxManager instance = null;
             try {
-                if (sdkType == GameInfo.SdkType.BD || sdkType == GameInfo.SdkType.DEFAULT){
-                    if (BuildConfig.useSDK2){
+                if (isSupportPassV3()){
+                    if (passv3Manager == null) {
+                        passv3Manager = (IGameBoxManager) newInstance("kptech.game.kit.pass.PassV3", null, null);
+                    }
+                    instance = passv3Manager;
+                }else {
+                    if (sdkType == GameInfo.SdkType.BD || sdkType == GameInfo.SdkType.DEFAULT){
                         if (bd2Manager == null){
                             bd2Manager = (IGameBoxManager) newInstance("com.kptach.lib.game.baidu.BdGameBoxManager", null, null);
                         }
                         instance = bd2Manager;
-                    }else {
-                        //3.0 SDK
-                        if (bd3Manager == null){
-                            bd3Manager = (IGameBoxManager) newInstance("com.kptach.lib.game.bdsdk.BDSdkGameBoxManager", null, null);
+                    }else if (sdkType == GameInfo.SdkType.REDF){
+                        if (rfManager == null) {
+                            rfManager = (IGameBoxManager) newInstance("com.kptach.lib.game.redfinger.RedGameBoxManager", null, null);
                         }
-                        instance = bd3Manager;
+                        instance = rfManager;
                     }
-                }else if (sdkType == GameInfo.SdkType.REDF){
-                    if (rfManager == null) {
-                        rfManager = (IGameBoxManager) newInstance("com.kptach.lib.game.redfinger.RedGameBoxManager", null, null);
-                    }
-                    instance = rfManager;
-                } else if(sdkType == GameInfo.SdkType.HW) {
-                    if (hwManager == null){
-                        hwManager = (IGameBoxManager) newInstance("com.kptach.lib.game.huawei.HWGameBoxManager", null,null);
-                    }
-                    instance = hwManager;
                 }
             }catch (Exception e){
                 e.printStackTrace();
             }
-
             if (instance != null){
                 instance.initLib(app, params, null);
             }
-
             return instance;
         }
     }
@@ -66,6 +55,16 @@ public class GameBoxManagerFactory {
         Class newoneClass = Class.forName(className);
         Constructor cons = newoneClass.getConstructor(argsClass);
         return cons.newInstance(args);
+    }
+
+    public static boolean isSupportPassV3(){
+        try {
+            Class.forName("kptech.game.kit.pass.PassV3");
+            return true;
+        }catch (Exception e){
+            Logger.info(TAG, "isSupportPassV3 " + false);
+        }
+        return false;
     }
 
 }

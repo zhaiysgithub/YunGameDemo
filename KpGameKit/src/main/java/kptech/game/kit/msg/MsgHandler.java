@@ -31,6 +31,8 @@ public class MsgHandler extends Handler {
     public static final int MSG_RELOGIN = 2;
     public static final int MSG_PAY = 3;
     public static final int MSG_LOGOUT = 4;
+    public static final int MSG_EXIT = 5;
+    public static final int MSG_ECHO = 6;
 
 
     private Activity mActivity;

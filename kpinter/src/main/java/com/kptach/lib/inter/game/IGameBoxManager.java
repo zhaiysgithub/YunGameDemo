@@ -34,12 +34,12 @@ public interface IGameBoxManager {
      */
     void applyCloudDevice(Activity activity, String gameInf, IGameCallback<IDeviceControl> callback);
 
-    /**
-     * 创建deviceControl对象
-     * @param activity
-     * @param gameInf
-     * @param params
-     * @param callback
-     */
-    void createDeviceControl(Activity activity, String gameInf, HashMap<String,Object> params, IGameCallback<IDeviceControl> callback);
+//    /**
+//     * 创建deviceControl对象
+//     * @param activity
+//     * @param gameInf
+//     * @param params
+//     * @param callback
+//     */
+//    void createDeviceControl(Activity activity, String gameInf, HashMap<String,Object> params, IGameCallback<IDeviceControl> callback);
 }

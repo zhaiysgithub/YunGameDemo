@@ -52,8 +52,7 @@
             android:name="kptech.game.kit.download.DownloadTask"
             android:enabled="true" android:exported="true"
             />
-        <service android:name="kptech.cloud.kit.mqtt.service.MqttService">
-        </service>
+
         <provider
             android:name=".provider.FileProviderAdapter"
             android:authorities="${applicationId}.fileProvider"

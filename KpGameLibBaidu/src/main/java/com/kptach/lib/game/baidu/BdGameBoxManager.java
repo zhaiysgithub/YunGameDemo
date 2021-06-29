@@ -3,6 +3,11 @@ package com.kptach.lib.game.baidu;
 import android.app.Activity;
 import android.app.Application;
 
+import com.kptach.lib.game.baidu.utils.DeviceUtils;
+import com.kptach.lib.game.baidu.utils.Logger;
+import com.kptach.lib.inter.game.IDeviceControl;
+import com.kptach.lib.inter.game.IGameBoxManager;
+import com.kptach.lib.inter.game.IGameCallback;
 import com.yd.yunapp.gameboxlib.APICallback;
 import com.yd.yunapp.gameboxlib.APIConstants;
 import com.yd.yunapp.gameboxlib.CloudPhoneManager;
@@ -15,12 +20,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.kptach.lib.inter.game.IDeviceControl;
-import com.kptach.lib.inter.game.IGameBoxManager;
-import com.kptach.lib.inter.game.IGameCallback;
-import com.kptach.lib.game.baidu.utils.DeviceUtils;
-import com.kptach.lib.game.baidu.utils.Logger;
 
 public class BdGameBoxManager implements IGameBoxManager {
     private static final String TAG = BdGameBoxManager.class.getSimpleName();
@@ -111,11 +110,6 @@ public class BdGameBoxManager implements IGameBoxManager {
                 }
             }
         });
-    }
-
-    @Override
-    public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
-
     }
 
     private GameInfo getLibGameInfo(String inf){

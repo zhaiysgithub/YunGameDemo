@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.HashMap;
 
-import kptech.game.kit.msg.mqtt.MsgSuper;
+import kptech.game.kit.msg.MsgManager;
 import kptech.lib.ad.AdManager;
 import kptech.lib.ad.IAdCallback;
 import kptech.lib.analytic.DeviceInfo;
@@ -90,7 +90,7 @@ public class DeviceControl implements IDeviceControl{
         }
 
         //连接设备
-        MsgSuper.getInstance().start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
+        MsgManager.getInstance().start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
 
         //同步设备信息
         sendMockDeviceInfo();
@@ -107,7 +107,7 @@ public class DeviceControl implements IDeviceControl{
     public void stopGame() {
 
         try {
-            MsgSuper.getInstance().stop();
+            MsgManager.getInstance().stop();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -243,11 +243,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
         try {
-            MsgSuper manager = MsgSuper.getInstance();
-            if (manager != null){
-                manager.setMessageReceiver(receiver);
-            }
-
+            MsgManager.getInstance().setMessageReceiver(receiver);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
@@ -256,7 +252,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendMessage(String msg) {
         try {
-            MsgSuper.getInstance().sendMessage(msg);
+            MsgManager.getInstance().sendMessage(msg);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }

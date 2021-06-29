@@ -2,8 +2,6 @@ package com.kptach.lib.game.huawei;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
 import com.huawei.cloudgame.api.CloudGameManager;
@@ -23,7 +21,7 @@ public class HWGameBoxManager implements IGameBoxManager {
     private String sdkVersion = "";
 //    private HWLoadLibHelper mLibHelper;
     public static int soVersion = 1;
-
+    private HashMap<String, Object> params;
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> iGameCallback) {
 
@@ -54,6 +52,7 @@ public class HWGameBoxManager implements IGameBoxManager {
                         isDebug = (boolean) debugObjcet;
                     }
                 }
+                this.params = params;
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -76,12 +75,10 @@ public class HWGameBoxManager implements IGameBoxManager {
     }
 
     @Override
-    public void applyCloudDevice(Activity activity, String s, IGameCallback<IDeviceControl> iGameCallback) {
-
-
+    public void applyCloudDevice(Activity activity, String gameInf, IGameCallback<IDeviceControl> callback) {
+        createDeviceControl(activity, gameInf, params, callback );
     }
 
-    @Override
     public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
         //创建 deviceControl
         try{
