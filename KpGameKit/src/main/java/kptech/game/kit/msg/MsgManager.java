@@ -33,7 +33,7 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
 
     public static void init(Application application, boolean isDebug){
         if (mMsgManager == null) {
-            synchronized(GameBoxManager.class) {
+            synchronized(MsgManager.class) {
                 if (mMsgManager == null) {
                     mMsgManager = new MsgManager(application, isDebug);
                 }
@@ -45,7 +45,7 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
         return mMsgManager;
     }
 
-    public MsgManager(Application application, boolean debug){
+    private MsgManager(Application application, boolean debug){
         //判断是否存在通讯类
         helper = getMessageHelper();
         if (helper == null){
