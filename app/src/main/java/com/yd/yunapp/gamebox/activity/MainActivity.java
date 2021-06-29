@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPkgText;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
-    private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
+//    private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
+//    private final String appIdByPass3 = "2VVqGiHPPuJ18EQ-29ff84c5476aabf2";
 //    private final String appIdByPass3 = "2VVt8PL2WPv1GI6-e8cccbcde2a0a16c";
 //    private final String pkgbdPass3 = "com.kptach.pluginkit.test";
 //    private final String pkghwPass3 = "com.rydts.nb";
@@ -88,12 +89,8 @@ public class MainActivity extends AppCompatActivity {
         mRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        if(kptech.game.kit.BuildConfig.useSDK2){
-            //测试appID
-            mCorpKey = mSp.getString("corpKey", null);
-        }else {
-            mCorpKey = appIdByPass3;
-        }
+        //测试appID
+        mCorpKey = mSp.getString("corpKey", null);
 
         StringBuilder sb = new StringBuilder();
         sb.append(mainModel.getVersionName());
@@ -151,10 +148,7 @@ public class MainActivity extends AppCompatActivity {
             info.name = "网易游戏联运Demo";
 
         } else {
-            if (!mCorpKey.equals(appIdByPass3)){
-                Toast.makeText(MainActivity.this,"请使用3.0的corpKey",Toast.LENGTH_SHORT).show();
-                return;
-            }
+
             String pkgName = mPkgText.getText().toString();
             if (pkgName.isEmpty()){
                 Toast.makeText(this, "包名不能为空", Toast.LENGTH_SHORT).show();
@@ -233,9 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(kptech.game.kit.BuildConfig.useSDK2){
-            getMenuInflater().inflate(R.menu.main, menu);
-        }
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 

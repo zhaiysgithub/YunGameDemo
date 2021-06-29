@@ -7,7 +7,7 @@
         <item>测试快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>测试网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
-        <item>pass3.0</item>
+
     </string-array>
 
     <string-array name="debug_corpkey_values">
@@ -17,7 +17,6 @@
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
-        <item>2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>
     </string-array>
 
     <!-- Reply Preference -->
@@ -28,7 +27,6 @@
         <item>快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
-        <item>pass3.0</item>
     </string-array>
 
     <string-array name="release_corpkey_values">
@@ -38,6 +36,17 @@
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
         <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
+    </string-array>
+
+
+    <!--PASS3.0使用的corpKey-->
+    <string-array name="corpkey_pass3_key">
+        <item>华为 2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>
+        <item>百度 2VVylSNUI5p3M05-f0f2e63c8f2ad33e</item>
+    </string-array>
+
+    <string-array name="corpkey_pass3_value">
         <item>2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>
+        <item>2VVylSNUI5p3M05-f0f2e63c8f2ad33e</item>
     </string-array>
 </resources>

@@ -2,7 +2,6 @@ package com.kptach.lib.game.huawei;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 import android.view.ViewGroup;
 
@@ -80,9 +79,7 @@ public class HWDeviceControl implements IDeviceControl {
                     sdkParams.put("touch_timeout", "0");
                     //备用参数
                     sdkParams.put("user_id", "");
-                    /*if (sdkParams.containsKey("ip")){
-                        sdkParams.put("ip","114.116.222.169");
-                    }*/
+
                     if (sdkParams.containsKey("game_timeout")){
                         gameTimeout = sdkParams.get("game_timeout");
                     }
@@ -134,7 +131,7 @@ public class HWDeviceControl implements IDeviceControl {
     @Override
     public void stopGame() {
         CloudGameManager.CreateCloudGameInstance().exitCloudApp();
-        CloudGameManager.CreateCloudGameInstance().deinit();
+//        CloudGameManager.CreateCloudGameInstance().deinit();
     }
 
     @Override
@@ -260,13 +257,13 @@ public class HWDeviceControl implements IDeviceControl {
         CloudGameManager.CreateCloudGameInstance().setResolution(resolution);
     }
 
-    public String getHSdkVersion() {
+    /*public String getHSdkVersion() {
         return CloudGameManager.CreateCloudGameInstance().getVersion();
     }
 
     public String getDetailStr(){
         return CloudGameManager.CreateCloudGameInstance().getDetailString();
-    }
+    }*/
 
     @Override
     public void setVideoDisplayMode(boolean isFill) {
@@ -404,7 +401,7 @@ public class HWDeviceControl implements IDeviceControl {
                 });
 
             }
-        },10);
+        },5);
     }
 
     /**
@@ -414,12 +411,7 @@ public class HWDeviceControl implements IDeviceControl {
     private void setScreenOrientation(int orientation) {
         if (mActivity != null && mViewgroup != null){
             boolean directionLand = (orientation == 0);
-            int curOri = mActivity.getResources().getConfiguration().orientation;
-            boolean isLandSpace = (curOri == Configuration.ORIENTATION_LANDSCAPE);
-            if (isLandSpace == directionLand){
-                return;
-            }
-            mActivity.setRequestedOrientation(directionLand ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            mActivity.setRequestedOrientation(directionLand ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 

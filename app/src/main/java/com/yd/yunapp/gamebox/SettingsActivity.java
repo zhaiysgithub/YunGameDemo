@@ -16,6 +16,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.kuaipan.game.demo.R;
 
+import kptech.game.kit.BuildConfig;
 import kptech.game.kit.env.Env;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -80,24 +81,22 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             ListPreference listPreference = findPreference("corpKey");
-            if (Env.isTestEnv()){
-                listPreference.setEntries(R.array.debug_corpkey_entries);
-                listPreference.setEntryValues(R.array.debug_corpkey_values);
-            }else {
-                listPreference.setEntries(R.array.release_corpkey_entries);
-                listPreference.setEntryValues(R.array.release_corpkey_values);
+            if (listPreference == null){
+                return;
             }
-
-//            findPreference("env").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//                @Override
-//                public boolean onPreferenceChange(Preference preference, Object newValue) {
-//                    if (newValue instanceof Boolean){
-//                        boolean val = (boolean)newValue;
-//                        Env.setEnv(getContext(), val ? Env.ENV_DEBUG : Env.ENV_RELEASE);
-//                    }
-//                    return true;
-//                }
-//            });
+            boolean useSDK2 = BuildConfig.useSDK2;
+            if (useSDK2){
+                if (Env.isTestEnv()){
+                    listPreference.setEntries(R.array.debug_corpkey_entries);
+                    listPreference.setEntryValues(R.array.debug_corpkey_values);
+                }else {
+                    listPreference.setEntries(R.array.release_corpkey_entries);
+                    listPreference.setEntryValues(R.array.release_corpkey_values);
+                }
+            }else {
+                listPreference.setEntries(R.array.corpkey_pass3_key);
+                listPreference.setEntryValues(R.array.corpkey_pass3_value);
+            }
 
         }
 

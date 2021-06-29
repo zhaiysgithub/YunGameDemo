@@ -29,7 +29,7 @@ dependencies {
     implementation project(path: ':kpinter')
 
 //    implementation 'kptech.game.kit:kpinter:1.0.2'
-    provided files('../KpLib/libs/Game-V1.6.0.0_0604.jar')
+    implementation files('libs/Game-V1.6.0.0_0604.jar')
 }
 
 

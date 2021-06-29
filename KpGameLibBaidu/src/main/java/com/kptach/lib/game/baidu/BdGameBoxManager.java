@@ -91,19 +91,23 @@ public class BdGameBoxManager implements IGameBoxManager {
         manager.applyCloudDevice(game, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(final DeviceControl inner,final int code) {
+                devLoading = false;
                 if (activity != null && !activity.isFinishing()){
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            devLoading = false;
-
+                            int resultCode = code;
                             IDeviceControl control = null;
                             if (code == APIConstants.APPLY_DEVICE_SUCCESS) {
                                 control = new BdDeviceControl(inner);
+                            }else if (code == APIConstants.ERROR_NO_DEVICE){
+                                resultCode = com.kptach.lib.inter.game.APIConstants.ERROR_DEVICE_BUSY;
+                            }else if(code == APIConstants.ERROR_NETWORK_ERROR){
+                                resultCode = com.kptach.lib.inter.game.APIConstants.ERROR_NETWORK;
                             }
 
                             if (callback != null){
-                                callback.onGameCallback(control, code);
+                                callback.onGameCallback(control, resultCode);
                             }
                         }
                     });
