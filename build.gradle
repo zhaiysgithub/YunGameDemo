@@ -41,7 +41,7 @@ allprojects {
 
     ext {
 
-        USESDK2 = true
+        USESDK2 = false
     }
 }
 

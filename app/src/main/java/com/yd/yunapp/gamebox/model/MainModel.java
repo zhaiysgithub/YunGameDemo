@@ -2,15 +2,14 @@ package com.yd.yunapp.gamebox.model;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.yd.yunapp.gamebox.activity.MainActivity;
 import com.yd.yunapp.gamebox.UserCertificationDialog;
+import com.yd.yunapp.gamebox.activity.MainActivity;
 import com.yd.yunapp.gamebox.utils.AppUtils;
 
 import kptech.game.kit.BuildConfig;
@@ -137,7 +136,7 @@ public class MainModel {
      */
     public void showAlertDialog(EditText editText) {
         mSelWhich = 0;
-        final String[] items = {"百度SDK3.0测试包名:cn.missevan","华为SDK测试包名:com.rydts.nb"};
+        final String[] items = {"百度SDK3.0测试包名:com.kptach.pluginkit.test","华为SDK测试包名:com.rydts.nb"};
 
         AlertDialog.Builder singleDialog = new AlertDialog.Builder(activity);
         singleDialog.setTitle("请选择需要测试的SDK对应的包名");

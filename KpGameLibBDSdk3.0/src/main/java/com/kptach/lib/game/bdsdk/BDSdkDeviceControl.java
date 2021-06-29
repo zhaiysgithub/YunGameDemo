@@ -6,20 +6,19 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
 
+import com.kptach.lib.game.bdsdk.fragment.PlayFragment;
 import com.kptach.lib.game.bdsdk.model.DeviceInfo;
 import com.kptach.lib.game.bdsdk.play.IPlayInitListener;
 import com.kptach.lib.game.bdsdk.play.KpPlaySDKManager;
 import com.kptach.lib.game.bdsdk.utils.Logger;
+import com.kptach.lib.game.bdsdk.utils.MillisecondsDuration;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.inter.game.SensorConstants;
+import com.mci.play.PlaySdkManager;
 
 import java.lang.ref.WeakReference;
-
-import com.kptach.lib.game.bdsdk.fragment.PlayFragment;
-import com.kptach.lib.game.bdsdk.utils.MillisecondsDuration;
-import com.mci.play.PlaySdkManager;
 
 public class BDSdkDeviceControl implements IDeviceControl {
     private static final String TAG = BDSdkDeviceControl.class.getSimpleName();
@@ -211,7 +210,7 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
     @Override
     public SdkType getSdkType() {
-        return SdkType.REDF;
+        return SdkType.BD3;
     }
 
     @Override

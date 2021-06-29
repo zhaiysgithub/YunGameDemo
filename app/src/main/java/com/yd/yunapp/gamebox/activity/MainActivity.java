@@ -33,9 +33,9 @@ import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
 import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
-import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
 import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private MainModel mainModel;
     private SharedPreferences mSp = null;
     private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
-    private final String pkgbdPass3 = "cn.missevan";
+    private final String pkgbdPass3 = "com.kptach.pluginkit.test";
     private final String pkghwPass3 = "com.rydts.nb";
     private String mCorpKey;
 
