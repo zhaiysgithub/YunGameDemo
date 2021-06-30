@@ -83,7 +83,7 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
                 }
             }
             if (obj != null) {
-                Messager.getInstance().send(obj.toString());
+                messager.send(obj.toString());
             }
         } catch (JSONException e) {
             Log.e("", e.getMessage());
