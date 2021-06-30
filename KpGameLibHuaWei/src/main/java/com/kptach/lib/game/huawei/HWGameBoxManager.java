@@ -68,6 +68,7 @@ public class HWGameBoxManager implements IGameBoxManager {
 
         boolean tabletDevice = (activity.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
                 Configuration.SCREENLAYOUT_SIZE_LARGE;
+        HWCloudGameUtils.info("DevType", "isDevPad = " + tabletDevice);
         CloudGameManager.CreateCloudGameInstance().init(activity
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
     }
@@ -78,6 +79,7 @@ public class HWGameBoxManager implements IGameBoxManager {
     }
 
     public void createDeviceControl(Activity activity, String gameInf, HashMap<String, Object> params, IGameCallback<IDeviceControl> callback) {
+        HWDeviceControl instance = null;
         //创建 deviceControl
         try{
             /*String pkgName = "";
@@ -102,10 +104,13 @@ public class HWGameBoxManager implements IGameBoxManager {
             });*/
 
             startInitCloudGameManager(activity);
-            HWDeviceControl instance = new HWDeviceControl(params);
+            instance = new HWDeviceControl(params);
             callback.onGameCallback(instance, APIConstants.APPLY_DEVICE_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();
+            if (instance != null){
+                instance.stopGame();
+            }
             callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
         }
 

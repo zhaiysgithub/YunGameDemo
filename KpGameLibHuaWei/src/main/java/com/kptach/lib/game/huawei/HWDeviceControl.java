@@ -38,6 +38,7 @@ public class HWDeviceControl implements IDeviceControl {
     private Activity mActivity;
     private String gameTimeout;
     private String availablePlayTime;
+    private final int []screenSize = new int[2];
 
     public HWDeviceControl(HashMap<String, Object> params) {
         //默认取消静音
@@ -111,18 +112,20 @@ public class HWDeviceControl implements IDeviceControl {
             activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
             int width = displayMetrics.widthPixels;
             int height = displayMetrics.heightPixels;
+            screenSize[0] = width;
+            screenSize[1] = height;
             HashMap<String, String> mediaConfigMap = new HashMap<>();
             mediaConfigMap.put("physical_width", Integer.toString(width));
             mediaConfigMap.put("physical_height", Integer.toString(height));
-            mediaConfigMap.put("frame_rate", Integer.toString(30));
-            mediaConfigMap.put("bitrate", Integer.toString(10000000));
+//            mediaConfigMap.put("frame_rate", Integer.toString(30));
+//            mediaConfigMap.put("bitrate", Integer.toString(10000000));
             CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
-
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
             callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
+            stopGame();
             callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
         }
 
@@ -131,7 +134,7 @@ public class HWDeviceControl implements IDeviceControl {
     @Override
     public void stopGame() {
         CloudGameManager.CreateCloudGameInstance().exitCloudApp();
-//        CloudGameManager.CreateCloudGameInstance().deinit();
+        CloudGameManager.CreateCloudGameInstance().deinit();
     }
 
     @Override
@@ -163,8 +166,7 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public int[] getVideoSize() {
-
-        return null;
+        return screenSize;
     }
 
     @Override
@@ -262,7 +264,9 @@ public class HWDeviceControl implements IDeviceControl {
     }
 
     public String getDetailStr(){
-        return CloudGameManager.CreateCloudGameInstance().getDetailString();
+        String detailString = CloudGameManager.CreateCloudGameInstance().getDetailString();
+        HWCloudGameUtils.info("detailString", detailString);
+        return detailString;
     }*/
 
     @Override
@@ -339,6 +343,9 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_invalid_operation:
                         mCallback.onGameCallback(msg, APIConstants.ERROR_OTHER);
                         break;
+                    case HWStateCode.code_server_unreachable: //服务不可用
+                        mCallback.onGameCallback(msg, APIConstants.ERROR_NETWORK);
+                        break;
                 }
             });
 
@@ -358,17 +365,17 @@ public class HWDeviceControl implements IDeviceControl {
                 oriParams = 0;
             }
             setScreenOrientation(oriParams);
-            /*if (mActivity != null && mViewgroup != null && mPlayListener != null){
+            if (mActivity != null && mViewgroup != null && mPlayListener != null){
                  mActivity.runOnUiThread(() -> {
                      if (mActivity.isFinishing()){
                          return;
                      }
                      mPlayListener.onScreenChange(orientation);
                  });
-            }*/
+            }
         });
 
-        //统计数据监听  每相隔10S数据监听
+        //统计数据监听  每相隔5S数据监听
         CloudGameManager.CreateCloudGameInstance().registerStatDataListener(statData -> {
 
             HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);

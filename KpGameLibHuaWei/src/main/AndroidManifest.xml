@@ -5,7 +5,7 @@
     <application>
 
         <service android:name="com.huawei.cloudgame.service.CASService"
-            android:exported="true"
+            android:exported="false"
             android:enabled="true"
             />
     </application>

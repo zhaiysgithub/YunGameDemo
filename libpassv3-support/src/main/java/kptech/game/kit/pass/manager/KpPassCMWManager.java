@@ -57,7 +57,7 @@ public class KpPassCMWManager {
     public static String getRequestDeviceUrl(String address){
         //暂时还未部署到生产环境
 //        String envUrl = Env.isTestEnv() ? "http://dev.paascmw.kuaipantech.com" : "http://inter.paascmw.kuaipantech.com";
-        String envUrl = "http://dev.paascmw.kuaipantech.com";
+        String envUrl = "https://dev.paascmw.kuaipantech.com";
         return envUrl + address;
     }
 
