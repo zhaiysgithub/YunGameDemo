@@ -61,3 +61,24 @@
 -keep class com.squareup.picasso.* {*;}
 -keep class com.bun.miitmdid.core.** {*;}
 
+-keep class com.kptach.lib.game.huawei.** { *; }
+-keep class com.huawei.cloudgame.** { *; }
+-keep class a.a.a.** { *; }
+-libraryjars ../KpGameLibHuaWei/libs/cloudgame.jar
+-keepdirectories ../KpGameLibHuaWei/src/main/jniLibs/arm64-v8a/
+-keepdirectories ../KpGameLibHuaWei/src/main/jniLibs/armeabi-v7a/
+
+
+
+-keep class com.kptach.lib.game.bdsdk.** { *; }
+-libraryjars ../KpGameLibBDSdk3.0/libs/CloudPhoneAndroidSDK-3.0.15.jar
+
+-keep class kptech.game.kit.msg.mqtt.** { *; }
+-keep class kptech.game.kit.msg.mqtt.MessageHelper { *; }
+-libraryjars ../libmsgmqtt/libs/KpCKit-v2.0.0.jar
+
+-keep class kptech.game.kit.pass.** { *; }
+-keep class kptech.game.kit.pass.manager.** { *; }
+
+-keep class kptech.game.kit.msg.ws.** { *; }
+-libraryjars ../libmsgws/libs/KpCKit-v1.0.8-10.jar

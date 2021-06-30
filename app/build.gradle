@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 3
-        versionName "1.0.18"
+        versionName "1.0.19"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -59,6 +59,10 @@ android {
         flatDir {
             dirs 'libs'
         }
+    }
+
+    packagingOptions {
+        doNotStrip "**/*.so"
     }
 
     compileOptions {

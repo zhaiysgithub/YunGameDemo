@@ -40,3 +40,9 @@
 #-keep class com.mci.play.** { *; }
 #-keep class com.yd.yunapp.** { *; }
 #-keep class com.bun.miitmdid.core.** {*;}
+
+-keep class com.kptach.lib.game.huawei.** { *; }
+-keep class com.huawei.cloudgame.service.CASService { *; }
+-keep class com.kptach.lib.game.bdsdk.** { *; }
+-keep class kptech.game.kit.msg.mqtt.** { *; }
+-keep class kptech.game.kit.pass.** { *; }
