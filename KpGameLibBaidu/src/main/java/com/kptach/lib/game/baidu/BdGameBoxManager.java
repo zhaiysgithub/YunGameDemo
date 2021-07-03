@@ -91,6 +91,7 @@ public class BdGameBoxManager implements IGameBoxManager {
         manager.applyCloudDevice(game, new APICallback<DeviceControl>() {
             @Override
             public void onAPICallback(final DeviceControl inner,final int code) {
+                Logger.error(TAG,"code = " + code);
                 devLoading = false;
                 if (activity != null && !activity.isFinishing()){
                     activity.runOnUiThread(new Runnable() {
