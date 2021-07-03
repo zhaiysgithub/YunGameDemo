@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 16
-        versionName "1.4.0.0"
+        versionName rootProject.ext.VERSION_NAME
     }
 
 
