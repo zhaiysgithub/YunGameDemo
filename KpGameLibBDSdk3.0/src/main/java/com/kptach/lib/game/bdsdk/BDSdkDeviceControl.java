@@ -154,15 +154,14 @@ public class BDSdkDeviceControl implements IDeviceControl {
         if (level == null){
             return;
         }
-
         if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
             KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_AUTO);
         }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
-            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_HD);
-        }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
-            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_FLUENCY);
+            KpPlaySDKManager.getInstance().setVideoLevel(1);
         }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
-            KpPlaySDKManager.getInstance().setVideoLevel(PlaySdkManager.VIDEO_LEVEL_STANDARD);
+            KpPlaySDKManager.getInstance().setVideoLevel(2);
+        } else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
+            KpPlaySDKManager.getInstance().setVideoLevel(3);
         }
     }
 
