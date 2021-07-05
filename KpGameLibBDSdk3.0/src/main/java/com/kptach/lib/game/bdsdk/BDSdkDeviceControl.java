@@ -102,13 +102,13 @@ public class BDSdkDeviceControl implements IDeviceControl {
             case PlaySdkManager.VIDEO_LEVEL_AUTO:
                 str = APIConstants.DEVICE_VIDEO_QUALITY_AUTO;
                 break;
-            case PlaySdkManager.VIDEO_LEVEL_HD:
+            case 1:
                 str = APIConstants.DEVICE_VIDEO_QUALITY_HD;
                 break;
-            case PlaySdkManager.VIDEO_LEVEL_STANDARD:
+            case 2:
                 str = APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY;
                 break;
-            case PlaySdkManager.VIDEO_LEVEL_FLUENCY:
+            case 3:
                 str = APIConstants.DEVICE_VIDEO_QUALITY_LS;
                 break;
 
