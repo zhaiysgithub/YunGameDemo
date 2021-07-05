@@ -82,3 +82,6 @@
 
 -keep class kptech.game.kit.msg.ws.** { *; }
 -libraryjars ../libmsgws/libs/KpCKit-v1.0.8-10.jar
+
+-keep class com.kptach.lib.game.baidu.** { *; }
+-libraryjars ../KpGameLibBaidu/libs/Game-V1.6.0.0_0604.jar
