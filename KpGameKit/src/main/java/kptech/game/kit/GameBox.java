@@ -3,6 +3,8 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+
 import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +72,7 @@ public class GameBox {
         }
 
         String miniPkgVersion = "";
-        /*try {
+        try {
             //判断本地是否已经安装
             // 优先级 ： 本地游戏最高，其次是微包，
             String packageName = activity.getApplicationInfo().packageName;
@@ -105,7 +107,7 @@ public class GameBox {
             }
         }catch (Exception e){
             Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
-        }*/
+        }
 
         Logger.info("GameBox", "启动云游戏，gameInfo:" + gameInfo.toString());
 
