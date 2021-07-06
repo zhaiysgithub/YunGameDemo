@@ -51,6 +51,7 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                 String sk = dObj.has("sk") ? dObj.getString("sk") : null;
                 String ch = dObj.has("ch") ? dObj.getString("ch") : null;
                 String paas =  dObj.has("paas") ? dObj.getString("paas") : null;
+                String kp3CorpKey = dObj.has("kp3Corpkey") ? dObj.getString("kp3Corpkey") : null;
 
                 //缓存数据
                 ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_KEY, ak);
@@ -60,6 +61,9 @@ public class RequestAppInfoTask extends AsyncTask<String,Void,Boolean> {
                 }
                 if (paas != null){
                     ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_PAAS, paas);
+                    if (paas.equals("KP")){
+                        ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_APP_PAAS3CORPKEY, kp3CorpKey);
+                    }
                 }
 
                 Config.saveConfig(mContext, dObj);

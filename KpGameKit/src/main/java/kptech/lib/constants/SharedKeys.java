@@ -8,6 +8,8 @@ public class SharedKeys {
     public static final String KEY_GAME_APP_ADJSON = "kp_kit_adjson";
     public static final String KEY_GAME_APP_ADENABLE = "kp_kit_adenable";
     public static final String KEY_GAME_APP_WSURL = "kp_kit_game_ckiturl";
+    //PASS3.0 申请设备的corpKey
+    public static final String KEY_GAME_APP_PAAS3CORPKEY = "key_game_app_paas3corpkey";
 
     public static final String KEY_PAY_CONF = "kp_kit_payconf";
 

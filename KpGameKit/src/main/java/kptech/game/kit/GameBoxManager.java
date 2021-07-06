@@ -371,6 +371,10 @@ public class GameBoxManager {
         sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
+        String pass3CorpKey = ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_PAAS3CORPKEY,null);
+        if (pass3CorpKey != null && !pass3CorpKey.isEmpty()){
+            sdkParams.put("params_key_pass3CorpKey",pass3CorpKey);
+        }
 
         IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
         gameBoxManager.applyCloudDevice(activity, inf.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
@@ -379,97 +383,8 @@ public class GameBoxManager {
                 dealApplyDeviceCallback(innerControl, code, inf, callback);
             }
         });
-
-
-//        boolean useSDK2 = BuildConfig.useSDK2;
-//        if (useSDK2){
-//            applyDeviceBy2(activity, inf, callback);
-//        } else {
-//            applyDeviceBy3(activity, inf, callback);
-//        }
     }
 
-//    /**
-//     * 使用SDK2.0打包
-//     */
-//    private void applyDeviceBy2(final Activity activity, final GameInfo info, final APICallback<IDeviceControl> callback){
-//        HashMap<String,Object> sdkParams = new HashMap<>();
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_USERID, DeviceInfo.getUserId(mApplication));
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKURL, Urls.GET_DEVICE_CONNECT);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_SDKVER, BuildConfig.VERSION_NAME);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_AK, AK);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_BD_SK, SK);
-//
-//        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(info.useSDK, mApplication, sdkParams);
-//        gameBoxManager.applyCloudDevice(activity, info.toJsonString(), new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>() {
-//            @Override
-//            public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
-//                dealApplyDeviceCallback(innerControl, code, info, callback);
-//            }
-//        });
-//    }
-//
-//    /**
-//     * 使用SDK3.0打包
-//     */
-//    private void applyDeviceBy3(final Activity activity, final GameInfo info, final APICallback<IDeviceControl> callback){
-//
-//        KpPassCMWManager.instance().startRequestPassCMW(mCorpID, info.pkgName, new PassCMWCallback() {
-//            @Override
-//            public void onSuccess(PassDeviceResponseBean result) {
-//                if (result == null){
-//                    callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
-//                    return;
-//                }
-//                Logger.info("KpPassCMWManager","result = " + result.toString());
-//                int code = result.code;
-//                if(code == PassConstants.PASS_CODE_SUCCESS){
-//                    initDeviceControl(activity, result.data
-//                            , info, callback);
-//                    return;
-//                }
-//                int erroCode = KpPassCMWManager.instance().getErrorCode(code);
-//                callback.onAPICallback(null, erroCode);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode, String errorMsg) {
-//                Logger.error("GamePlay", "申请设备接口失败,code = " + errorCode + "; errorMsg = " + errorMsg);
-//                callback.onAPICallback(null, APIConstants.ERROR_APPLY_DEVICE);
-//            }
-//        });
-//    }
-
-//    //启动游戏创建deviceControl
-//    private void initDeviceControl(@NonNull Activity activity, PassDeviceResponseBean.PassData data
-//            ,@NonNull final GameInfo inf
-//            , @NonNull final APICallback<IDeviceControl> callback) {
-//
-//        HashMap<String,Object> sdkParams = new HashMap<>();
-//        sdkParams.put("resource",data.resource);
-//        sdkParams.put("direction",data.direction);
-//        sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, BuildConfig.DEBUG);
-//        sdkParams.put("deviceid",data.deviceid);
-//        String iaas = data.iaas;
-//        if (iaas.equals("BD")){
-//            inf.useSDK = GameInfo.SdkType.BD;
-//        }else if(iaas.equals("HW")){
-//            inf.useSDK = GameInfo.SdkType.HW;
-//            sdkParams.put("corpKey",mCorpID);
-//            sdkParams.put("sdkVersion", BuildConfig.VERSION_NAME);
-//        }
-//
-//        IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, activity.getApplication(),sdkParams);
-//        gameBoxManager.createDeviceControl(activity, inf.toJsonString(), sdkParams, new IGameCallback<com.kptach.lib.inter.game.IDeviceControl>(){
-//
-//            @Override
-//            public void onGameCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code) {
-//                dealApplyDeviceCallback(innerControl, code, inf, callback);
-//            }
-//        });
-//    }
 
     /**
      * 处理申请设备后的逻辑
@@ -535,11 +450,12 @@ public class GameBoxManager {
     public List<GameInfo> queryGameList(int page, int limit) {
         if (mCorpID != null && !"".equals(mCorpID)){
             List<GameInfo> list = null;
-            if (BuildConfig.useSDK2){
+            /*if (BuildConfig.useSDK2){
                 list = RequestTask.queryGameList(mCorpID, page, limit);
             }else {
                 list = RequestTask.queryGameListByPass3(mCorpID, page, limit);
-            }
+            }*/
+            list = RequestTask.queryGameList(mCorpID, page, limit);
 
             return list;
         }

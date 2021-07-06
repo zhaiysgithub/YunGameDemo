@@ -22,10 +22,11 @@ import kptech.game.kit.pass.manager.PassDeviceResponseBean;
 
 public class PassV3 implements IGameBoxManager {
     private static final String TAG = "IGameBoxManager";
-    String mCorpID;
-    boolean mDebug;
-    HashMap mParams;
-    IGameBoxManager gameBoxManager;
+    private String mCorpID;
+    private String pass3Corpkey;
+    private boolean mDebug;
+    private HashMap mParams;
+    private IGameBoxManager gameBoxManager;
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> callback) {
         try {
@@ -35,6 +36,9 @@ public class PassV3 implements IGameBoxManager {
                 }
                 if (params.containsKey(PARAMS_KEY_CORPID)){
                     mCorpID = (String) params.get(PARAMS_KEY_CORPID);
+                }
+                if (params.containsKey("params_key_pass3CorpKey")){
+                    pass3Corpkey = (String) params.get("params_key_pass3CorpKey");
                 }
 
                 mParams = params;
@@ -59,7 +63,7 @@ public class PassV3 implements IGameBoxManager {
             callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
             return;
         }
-        KpPassCMWManager.instance().startRequestPassCMW(mCorpID, pkgName, new PassCMWCallback() {
+        KpPassCMWManager.instance().startRequestPassCMW(pass3Corpkey, pkgName, new PassCMWCallback() {
             @Override
             public void onSuccess(PassDeviceResponseBean result) {
                 if (result == null){
