@@ -15,12 +15,14 @@ public class Env {
     private static int mEnvType;
 
     public static boolean isTestEnv(){
-        try {
+        //TODO PASS3.0未部署到线上环境，暂时使用测试环境测试
+        /*try {
             return mDebug || mEnvType == ENV_DEBUG;
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
         }
-        return false;
+        return false;*/
+        return true;
     }
 
     public static final int ENV_DEBUG = 2;

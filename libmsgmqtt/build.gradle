@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     buildTypes {
@@ -24,6 +24,40 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':kpinter')
+//    implementation project(path: ':kpinter')
+    implementation 'kptech.game.kit:kpinter:1.0.3'
     implementation files('libs/KpCKit-v2.0.0.jar')
+}
+
+// 1.maven-插件
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+// 2.maven-信息
+ext {// ext is a gradle closure allowing the declaration of global properties
+    PUBLISH_GROUP_ID = 'kptech.game.kit'
+    PUBLISH_ARTIFACT_ID = 'msgmqtt'
+    PUBLISH_PACKAGING = 'aar'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+}
+
+
+// 3.maven-路径
+uploadArchives {
+    repositories.mavenDeployer {
+        //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
+        //注意”file://“ + 路径，有三个斜杠，别漏了
+        repository(url: "file:///C:/maven")
+        //远程仓库的地址
+        /*repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
+            //nexus登录的用户名和密码
+            authentication(userName: "admin", password: "kpmvn!#%246")
+        }*/
+        pom.project {
+            groupId project.PUBLISH_GROUP_ID
+            artifactId project.PUBLISH_ARTIFACT_ID
+            version project.PUBLISH_VERSION
+            packaging project.PUBLISH_PACKAGING
+        }
+    }
 }
