@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@color/common_white"
-        android:visibility="gone">
+        >
     </FrameLayout>
 
     <kptech.game.kit.view.FloatMenuView

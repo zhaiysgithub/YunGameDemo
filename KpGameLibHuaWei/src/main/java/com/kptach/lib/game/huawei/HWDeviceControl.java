@@ -117,12 +117,13 @@ public class HWDeviceControl implements IDeviceControl {
             HashMap<String, String> mediaConfigMap = new HashMap<>();
             mediaConfigMap.put("physical_width", Integer.toString(width));
             mediaConfigMap.put("physical_height", Integer.toString(height));
-//            mediaConfigMap.put("frame_rate", Integer.toString(30));
-//            mediaConfigMap.put("bitrate", Integer.toString(10000000));
+            mediaConfigMap.put("frame_rate", Integer.toString(30));
+            mediaConfigMap.put("bitrate", Integer.toString(10000000));
             CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
-            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+//            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+            callback.onGameCallback("startCloudApp", APIConstants.GAME_LOADING);
         } catch (Exception e) {
             e.printStackTrace();
             stopGame();
@@ -135,6 +136,9 @@ public class HWDeviceControl implements IDeviceControl {
     public void stopGame() {
         CloudGameManager.CreateCloudGameInstance().exitCloudApp();
         CloudGameManager.CreateCloudGameInstance().deinit();
+        if (mCallback != null){
+            mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
+        }
     }
 
     @Override
@@ -310,7 +314,8 @@ public class HWDeviceControl implements IDeviceControl {
                         break;
                     case HWStateCode.code_game_start_success:
                         sdkIsRelease = false;
-                        mCallback.onGameCallback(msg,APIConstants.GAME_SDK_INIT_SUCCESS);
+                        mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+//                        mCallback.onGameCallback(msg,APIConstants.GAME_SDK_INIT_SUCCESS);
                         break;
                     case HWStateCode.code_available_time_usedup:
                         mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);

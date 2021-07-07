@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
         versionCode 3
-        versionName "1.0.23"
+        versionName "1.0.24"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
@@ -81,7 +81,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.1.1'
 
 //    implementation project(path: ':KpGameKit')
-    implementation 'kptech.game.kit:gamebox_3:2.0.0.0'
+    implementation 'kptech.game.kit:gamebox_3:2.0.0.1'
 //    implementation (name:'KpGameKit-release-v2.1.0.12',ext:'aar')
 //    implementation ('kptech.game.kit:gamebox:1.4.0.0')
 

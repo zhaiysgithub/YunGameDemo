@@ -243,7 +243,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 .setGameInfo(mGameInfo)
                 .create();
         mPlayStatueView.setCallback(new PlayStatusCallback(GamePlay.this));
-        ((ViewGroup) rootView).addView(mPlayStatueView, 0);
+        int childCount = ((ViewGroup) rootView).getChildCount();
+        ((ViewGroup) rootView).addView(mPlayStatueView, childCount);
 
         mMenuView = findViewById(R.id.float_menu);
         mMenuView.setPkgVersion(miniPkgVersion);
@@ -616,7 +617,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 return;
             }
 
-            mVideoContainer.setVisibility(View.GONE);
+//            mVideoContainer.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
 
@@ -636,7 +637,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private void reloadGame() {
         try {
 
-            mVideoContainer.setVisibility(View.GONE);
+//            mVideoContainer.setVisibility(View.GONE);
+            mVideoContainer.removeAllViews();
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
 
