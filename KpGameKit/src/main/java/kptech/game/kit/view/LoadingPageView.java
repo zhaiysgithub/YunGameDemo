@@ -26,6 +26,7 @@ public abstract class LoadingPageView extends FrameLayout {
     private Handler mHandler;
     private boolean mPausePro;
     private int mPro = 0;
+    public int mIconResId = 0;
 
     public LoadingPageView(@NonNull Context context) {
         super(context);
@@ -44,6 +45,7 @@ public abstract class LoadingPageView extends FrameLayout {
 
 
     private void initView() {
+        mIconResId = 0;
         mHandler = new LoadingHandler(this);
         inflateView();
     }
@@ -64,6 +66,13 @@ public abstract class LoadingPageView extends FrameLayout {
 
     protected void updateLoadingText(String msg){
 
+    }
+
+    /**
+     * 设置本地的图片资源
+     */
+    public void setLocalResIcon(int resId){
+        this.mIconResId = resId;
     }
 
     private void updateText(){

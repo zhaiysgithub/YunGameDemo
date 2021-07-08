@@ -255,6 +255,7 @@ public class PlayStatusLayout extends FrameLayout {
         private View errorView;
         private View authView;
         private GameInfo gameInfo;
+        private int iconResId;
 
         public Builder(Context context) {
             this.context = context;
@@ -280,6 +281,11 @@ public class PlayStatusLayout extends FrameLayout {
             return this;
         }
 
+        public Builder setIconResId(int resId){
+            this.iconResId = resId;
+            return this;
+        }
+
         public PlayStatusLayout create(){
 
             if (loadingView == null){
@@ -292,15 +298,19 @@ public class PlayStatusLayout extends FrameLayout {
                     if (xiaoYuChannel){
                         loadingView = new XiaoYuLoadingPage(context);
                     }else{
+
                         loadingView = new DefaultLoadingView(context);
+                        if (iconResId > 0){
+                            ((DefaultLoadingView)loadingView).setLocalResIcon(iconResId);
+                        }
                     }
                 }
             }
             if (errorView == null) {
-                errorView = new PlayErrorView(context);
+                errorView = new PlayErrorView(context, iconResId);
             }
             if (authView == null) {
-                authView = new UserAuthView(context);
+                authView = new UserAuthView(context, iconResId);
             }
 
             loadingView.setId(viewid_loading);

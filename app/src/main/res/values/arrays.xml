@@ -40,17 +40,20 @@
 
 
     <!--PASS3.0使用的corpKey-->
-    <string-array name="corpkey_pass3_key">
-<!--        <item>华为 2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>-->
-<!--        <item>华为 2VeJoxlocli1xfy-94b625081fd8ac1b</item>-->
-<!--        <item>百度 2VVylSNUI5p3M05-f0f2e63c8f2ad33e</item>-->
-        <item>KP3 2VeMZlx2poU3eFr-85287aebd9ed43aa</item>
+    <string-array name="corpkey_pass3_key_debug">
+        <item>KP3华为测试_test 2VeMZlx2poU3eFr-85287aebd9ed43aa</item>
     </string-array>
 
-    <string-array name="corpkey_pass3_value">
-<!--        <item>2VVnlPiVdjy2HpL-c9ae70a3e652ffba</item>-->
-<!--        <item>2VeJoxlocli1xfy-94b625081fd8ac1b</item>-->
-<!--        <item>2VVylSNUI5p3M05-f0f2e63c8f2ad33e</item>-->
+    <string-array name="corpkey_pass3_value_debug">
         <item>2VeMZlx2poU3eFr-85287aebd9ed43aa</item>
+    </string-array>
+
+
+    <string-array name="corpkey_pass3_key_release">
+        <item>KP3华为测试 2VePT4zse0f2UFz-a2bec13ec9afadae</item>
+    </string-array>
+
+    <string-array name="corpkey_pass3_value_release">
+        <item>2VePT4zse0f2UFz-a2bec13ec9afadae</item>
     </string-array>
 </resources>

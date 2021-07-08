@@ -15,13 +15,15 @@ import kptech.game.kit.R;
 public class UserAuthView extends LinearLayout implements View.OnClickListener {
     private ImageView mGameIcon;
     private TextView mGameName;
+    private int mIconResId;
 
 
     private OnClickListener mBackListener;
     private OnClickListener mAuthListener;
 
-    public UserAuthView(Context context) {
+    public UserAuthView(Context context, int iconResId) {
         super(context);
+        this.mIconResId = iconResId;
         initView();
     }
 
@@ -77,11 +79,18 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
 
     public void setInfo(String name, String iconUrl) {
         mGameName.setText(name);
-        if (iconUrl!=null && !"".equals(iconUrl)){
-            try {
-                Picasso.with(getContext()).load(iconUrl).into(mGameIcon);
-            }catch (Exception e){}
+        try{
+            if (mIconResId > 0){
+                Picasso.with(getContext()).load(mIconResId).into(mGameIcon);
+            }else {
+                if (iconUrl != null && !"".equals(iconUrl)){
+                    Picasso.with(getContext()).load(iconUrl).into(mGameIcon);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     @Override

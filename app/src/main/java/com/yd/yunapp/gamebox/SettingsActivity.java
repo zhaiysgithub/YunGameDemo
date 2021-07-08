@@ -94,8 +94,14 @@ public class SettingsActivity extends AppCompatActivity {
                     listPreference.setEntryValues(R.array.release_corpkey_values);
                 }
             }else {
-                listPreference.setEntries(R.array.corpkey_pass3_key);
-                listPreference.setEntryValues(R.array.corpkey_pass3_value);
+                if (Env.isTestEnv()){
+                    listPreference.setEntries(R.array.corpkey_pass3_key_debug);
+                    listPreference.setEntryValues(R.array.corpkey_pass3_value_debug);
+                }else {
+                    listPreference.setEntries(R.array.corpkey_pass3_key_release);
+                    listPreference.setEntryValues(R.array.corpkey_pass3_value_release);
+                }
+
             }
 
         }

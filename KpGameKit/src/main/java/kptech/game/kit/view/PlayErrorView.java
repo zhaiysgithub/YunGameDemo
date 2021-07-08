@@ -27,6 +27,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     private ViewGroup mErrorDownBtn;
 
     private GameInfo mGameInfo;
+    private int mIconResId;
 
 //    private OnClickListener mBackListener;
 //    private OnClickListener mDownListener;
@@ -45,8 +46,9 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         this.mListener = listener;
     }
 
-    public PlayErrorView(Context context) {
+    public PlayErrorView(Context context, int iconResId) {
         super(context);
+        mIconResId = iconResId;
         initView();
     }
 
@@ -80,11 +82,19 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         mErrorText.setText(err);
 
         if (this.mGameInfo!=null){
-            if (this.mGameInfo.iconUrl!=null && !"".equals(this.mGameInfo.iconUrl)){
-                try {
-                    Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
-                }catch (Exception e){}
+            try{
+                if (mIconResId > 0){
+                    Picasso.with(getContext()).load(mIconResId).into(mGameIcon);
+                }else {
+                    String netIconUrl = this.mGameInfo.iconUrl;
+                    if (netIconUrl != null && !netIconUrl.isEmpty()){
+                        Picasso.with(getContext()).load(netIconUrl).into(mGameIcon);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
+
             if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
                 //显示下载按钮
                 mErrorDownBtn.setTag("down");

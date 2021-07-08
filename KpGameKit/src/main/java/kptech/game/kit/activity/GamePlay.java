@@ -111,6 +111,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private int mErrorCode = -1;
     private String mErrorMsg = null;
     private String miniPkgVersion;
+    private int iconResId;
 
     private Params mCustParams;
 
@@ -190,6 +191,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         backTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
 
         mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
+        iconResId = mCustParams.get(ParamKey.EXTRA_GAME_ICON, 0);
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
@@ -241,6 +243,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mPlayStatueView = new PlayStatusLayout.Builder(this)
                 .setGameInfo(mGameInfo)
+                .setIconResId(iconResId)
                 .create();
         mPlayStatueView.setCallback(new PlayStatusCallback(GamePlay.this));
         int childCount = ((ViewGroup) rootView).getChildCount();

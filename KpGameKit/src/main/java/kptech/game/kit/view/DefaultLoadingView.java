@@ -76,9 +76,18 @@ public class DefaultLoadingView extends LoadingPageView {
     @Override
     protected void setLoadingInfo(GameInfo gameInfo) {
         mNameText.setText(gameInfo.name);
-        String iconUrl = gameInfo.iconUrl;
-        if (iconUrl != null && !iconUrl.isEmpty()) {
-            Picasso.with(getContext()).load(iconUrl).into(mIconImg);
+        try {
+            if (mIconResId > 0){
+                //显示本地icon
+                Picasso.with(getContext()).load(mIconResId).into(mIconImg);
+            }else {
+                String iconUrl = gameInfo.iconUrl;
+                if (iconUrl != null && !iconUrl.isEmpty()) {
+                    Picasso.with(getContext()).load(iconUrl).into(mIconImg);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

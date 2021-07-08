@@ -71,6 +71,7 @@ public class HWGameBoxManager implements IGameBoxManager {
         HWCloudGameUtils.info("DevType", "isDevPad = " + tabletDevice);
         CloudGameManager.CreateCloudGameInstance().init(activity
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
+
     }
 
     @Override

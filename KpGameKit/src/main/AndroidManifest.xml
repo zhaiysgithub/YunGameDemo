@@ -63,6 +63,12 @@
                 android:resource="@xml/update_file_provider" />
         </provider>
 
+        <!--华为SDK需要的service-->
+        <service android:name="com.huawei.cloudgame.service.CASService"
+            android:exported="false"
+            android:enabled="true"
+            />
+
     </application>
     <queries>
         <package android:name="com.tencent.mm" />

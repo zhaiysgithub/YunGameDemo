@@ -24,7 +24,7 @@ public class HWDeviceControl implements IDeviceControl {
     //声音是否开启
     private boolean iSoundUnMute;
     //设置分辨率
-    private CloudGameParas.Resolution videoResolution = CloudGameParas.Resolution.DISPLAY_720P;
+    private CloudGameParas.Resolution videoResolution = CloudGameParas.Resolution.DISPLAY_1080P;
     //分辨率
     private String resolutionQuality = "";
     //设备deviceID
