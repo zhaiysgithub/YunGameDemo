@@ -14,6 +14,7 @@ public class HWStateCode {
     public static final int code_server_inner_error = 1539;
     public static final int code_game_starting = 1792;
     public static final int code_game_start_success = 2048;
+    public static final int code_game_first_frame = 6144;
     public static final int code_game_package_notexist = 2305;
     public static final int code_game_start_failed = 2306;
     public static final int code_start_parameter_missing = 2308;

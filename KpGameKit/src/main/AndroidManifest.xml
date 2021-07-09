@@ -70,12 +70,12 @@
             />
 
     </application>
-    <queries>
+    <!--<queries>
         <package android:name="com.tencent.mm" />
         <package android:name="com.eg.android.AlipayGphone"/>
         <package android:name="com.tencent.qqlite"/>
         <package android:name="com.tencent.mobileqq"/>
         <package android:name="com.sina.weibo" />
-    </queries>
+    </queries>-->
 
 </manifest>

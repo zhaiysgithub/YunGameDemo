@@ -26,7 +26,7 @@ allprojects {
 
         //本地maven库
 //        maven { url uri("file:///Users/zhangqinglou/work/maven") }
-        maven { url uri("file:///C:/maven") }
+//        maven { url uri("file:///C:/maven") }
 
         //快盘maven库
 //        maven {
@@ -42,7 +42,7 @@ allprojects {
     ext {
 
         USESDK2 = false
-        VERSION_NAME = USESDK2 ?"1.2.1.15":"2.0.0.1"
+        VERSION_NAME = USESDK2 ?"1.2.1.15":"2.0.0.0"
     }
 }
 

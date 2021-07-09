@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.0"
 
         consumerProguardFiles "consumer-rules.pro"
 
@@ -52,7 +52,7 @@ dependencies {
 }
 
 
-task makeJar(type: Copy) {
+/*task makeJar(type: Copy) {
     //设置拷贝的文件
     from('build/intermediates/aar_main_jar/release/')
     //打进jar包后的文件目录
@@ -62,7 +62,17 @@ task makeJar(type: Copy) {
     include('classes.jar')
     //重命名
     rename ('classes.jar',"KpGameLib-HW-v${android.defaultConfig.versionName}.jar")
+}*/
+
+task makeJar(type: Jar) {
+    def jar_name = "KpGameLib-HW-v${android.defaultConfig.versionName}.jar"
+    delete "build/libs/${jar_name}"
+    archiveName("${jar_name}")
+    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
+    from (project.zipTree('libs/cloudgame.jar'))
+    destinationDir(file('build/lib'))
 }
+
 makeJar.dependsOn(build)
 
 

@@ -37,6 +37,20 @@ android {
             dirs 'libs','../app/libs'
         }
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs','src/main/jniLibs']
+        }
+    }
+
+    packagingOptions {
+        doNotStrip "**/*.so"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -45,9 +59,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.xutils:xutils:3.3.36'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     //广告sdk
-    implementation 'kptech.game.kit:gamead-normal:1.0.1.3'
+//    implementation 'kptech.game.kit:gamead-normal:1.0.1.3'
 //    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义
@@ -61,23 +76,26 @@ dependencies {
     if (rootProject.ext.USESDK2){
         //云通讯SDK
 //        implementation project(path: ':libmsgws')
-        implementation 'kptech.game.kit:msgws:1.0.0'
+//        implementation 'kptech.game.kit:msgws:1.0.0'
         //百度游戏库
 //        implementation project(path: ':KpGameLibBaidu')
-        implementation 'kptech.game.kit:libbd:1.0.3'
+//        implementation 'kptech.game.kit:libbd:1.0.3'
     }else {
         //云通讯SDK
 //        implementation project(path: ':libmsgmqtt')
-        implementation 'kptech.game.kit:msgmqtt:1.0.0'
+//        implementation 'kptech.game.kit:msgmqtt:1.0.0'
+        implementation files('libs/mqtt-v1.0.0.jar')
         //快盘PassV3支持库
 //        implementation project(path: ':libpassv3-support')
-        implementation 'kptech.game.kit:passv3support:1.0.0'
+//        implementation 'kptech.game.kit:passv3support:1.0.0'
+        implementation files('libs/passv3-support-v1.0.0.jar')
         //华为游戏库
 //        implementation project(path: ':KpGameLibHuaWei')
-        implementation 'kptech.game.kit:libhuawei:1.0.1'
+//        implementation 'kptech.game.kit:libhuawei:1.0.1'
+        implementation files('libs/KpGameLib-HW-v1.0.0.jar')
         //百度游戏库
 //        implementation project(path: ':KpGameLibBDSdk3.0')
-        implementation 'kptech.game.kit:libbd3:1.0.0'
+//        implementation 'kptech.game.kit:libbd3:1.0.0'
     }
 }
 

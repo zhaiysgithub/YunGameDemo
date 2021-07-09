@@ -315,7 +315,12 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_game_start_success:
                         sdkIsRelease = false;
                         mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
-//                        mCallback.onGameCallback(msg,APIConstants.GAME_SDK_INIT_SUCCESS);
+                        break;
+                    case HWStateCode.code_game_first_frame:
+                        if (sdkIsRelease){
+                            sdkIsRelease = false;
+                            mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+                        }
                         break;
                     case HWStateCode.code_available_time_usedup:
                         mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);

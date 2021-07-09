@@ -29,6 +29,16 @@ dependencies {
     implementation files('libs/KpCKit-v2.0.0.jar')
 }
 
+task makeJar(type: Jar) {
+    def jar_name = "mqtt-v${android.defaultConfig.versionName}.jar"
+    delete "build/libs/${jar_name}"
+    archiveName("${jar_name}")
+    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
+    from (project.zipTree('libs/KpCKit-v2.0.0.jar'))
+    destinationDir(file('build/lib'))
+}
+makeJar.dependsOn(build)
+
 // 1.maven-插件
 apply plugin: 'maven'
 apply plugin: 'maven-publish'

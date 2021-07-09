@@ -61,8 +61,7 @@ public class HWGameBoxManager implements IGameBoxManager {
 
     private void startInitCloudGameManager(Activity activity){
         CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
-        //是否使用真机输入法
-        CloudGameManager.CreateCloudGameInstance().enableRemoteIME(true);
+
 
         HWCloudGameUtils.setDebug(true);
 
@@ -72,6 +71,8 @@ public class HWGameBoxManager implements IGameBoxManager {
         CloudGameManager.CreateCloudGameInstance().init(activity
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
 
+        //是否使用真机输入法
+        CloudGameManager.CreateCloudGameInstance().enableRemoteIME(true);
     }
 
     @Override
