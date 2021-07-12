@@ -61,7 +61,7 @@ public class GameInfo implements Parcelable {
         DEFAULT,
         BD,
         REDF,
-        HW
+        KP
     }
 
     public GameInfo() {

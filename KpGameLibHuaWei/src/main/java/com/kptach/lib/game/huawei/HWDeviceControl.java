@@ -76,8 +76,8 @@ public class HWDeviceControl implements IDeviceControl {
                         }
                     }
                     sdkParams.put("launcher_activity", "");
-                    //无操作超时的时长，单位是秒
-                    sdkParams.put("touch_timeout", "0");
+                    //前台无操作超时的时长，单位是秒 5min
+                    sdkParams.put("touch_timeout", "300");
                     //备用参数
                     sdkParams.put("user_id", "");
 
@@ -134,10 +134,17 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public void stopGame() {
-        CloudGameManager.CreateCloudGameInstance().exitCloudApp();
-        CloudGameManager.CreateCloudGameInstance().deinit();
-        if (mCallback != null){
-            mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
+        try{
+            if (!sdkIsRelease){
+                sdkIsRelease = true;
+                CloudGameManager.CreateCloudGameInstance().exitCloudApp();
+                CloudGameManager.CreateCloudGameInstance().deinit();
+            }
+            if (mCallback != null){
+                mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -326,10 +333,15 @@ public class HWDeviceControl implements IDeviceControl {
                         mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);
                         break;
                     case HWStateCode.code_switch_background_timeout:
+                        //切换后台超时
+                        sdkIsRelease = true;
+                        mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_CONNECT_DEVICE);
+                        break;
                     case HWStateCode.code_notouch_timeout:
 //                        mCallback.onGameCallback("长时间未操作", APIConstants.TIMEOUT_NO_OPS);
                         try{
                             if (mPlayListener != null){
+                                sdkIsRelease = true;
                                 long noOpsTime = Long.parseLong(gameTimeout);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
                             }
@@ -388,8 +400,8 @@ public class HWDeviceControl implements IDeviceControl {
         //统计数据监听  每相隔5S数据监听
         CloudGameManager.CreateCloudGameInstance().registerStatDataListener(statData -> {
 
-            HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);
-            if (statData != null && !statData.isEmpty() && mActivity != null && mViewgroup != null){
+//            HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);
+            if (mActivity != null && mViewgroup != null){
 
                 mActivity.runOnUiThread(() -> {
                     try {
@@ -400,6 +412,12 @@ public class HWDeviceControl implements IDeviceControl {
                         //网络延迟
                         if (mPlayListener != null){
                             int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
+//                            HWCloudGameUtils.info("onReceiveStatData","rtt=" + rtt);
+                            if (rtt < 10){
+                                rtt = 10;
+                            }else if (rtt > 1000){
+                                rtt = 1000;
+                            }
                             mPlayListener.onPingUpdate(rtt);
                         }
 
@@ -418,7 +436,7 @@ public class HWDeviceControl implements IDeviceControl {
                 });
 
             }
-        },5);
+        },1);
     }
 
     /**
