@@ -24,10 +24,21 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':kpinter')
-//    implementation 'kptech.game.kit:kpinter:1.0.3'
+//    implementation project(path: ':kpinter')
+    implementation 'kptech.game.kit:kpinter:1.0.4'
     implementation files('libs/KpCKit-v1.0.8-10.jar')
 }
+
+task makeJar(type: Jar) {
+    def jar_name = "libmsgws-v${android.defaultConfig.versionName}.jar"
+    delete "build/libs/${jar_name}"
+    archiveName("${jar_name}")
+    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
+    from (project.zipTree('libs/KpCKit-v1.0.8-10.jar'))
+    destinationDir(file('build/lib'))
+}
+
+makeJar.dependsOn(build)
 
 // 1.maven-插件
 apply plugin: 'maven'

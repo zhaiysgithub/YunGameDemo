@@ -46,8 +46,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
 
-//    implementation 'kptech.game.kit:kpinter:1.0.3'
-    implementation project(path: ':kpinter')
+    implementation 'kptech.game.kit:kpinter:1.0.4'
+//    implementation project(path: ':kpinter')
     implementation files('libs/cloudgame.jar')
 }
 

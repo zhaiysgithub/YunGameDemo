@@ -50,3 +50,4 @@
 -keep class kptech.game.kit.pass.** { *; }
 -keep class kptech.game.kit.pass.manager.** { *; }
 -keep class kptech.game.kit.msg.ws.** { *; }
+-keep class com.kptach.lib.game.baidu.** { *; }

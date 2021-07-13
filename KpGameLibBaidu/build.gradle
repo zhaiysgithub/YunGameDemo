@@ -26,31 +26,24 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':kpinter')
+//    implementation project(path: ':kpinter')
 
-//    implementation 'kptech.game.kit:kpinter:1.0.3'
+    implementation 'kptech.game.kit:kpinter:1.0.4'
     implementation files('libs/Game-V1.6.0.0_0604.jar')
 }
 
 
-task makeJar(type: Copy) {
-    //删除存在的
-//    delete "../KpLib/libs/KpGameLib-BD-v${android.defaultConfig.versionName}.jar"
-    //设置拷贝的文件
-    from('build/intermediates/aar_main_jar/release/')
-    //打进jar包后的文件目录
-//    into('build/libs/')
-    into('../kplib/libs/')
-    //将classes.jar放入build/libs/目录下
-    //include ,exclude参数来设置过滤
-    //（我们只关心classes.jar这个文件）
-    include('classes.jar')
-    //重命名
-    rename ('classes.jar',"KpGameLib-BD-v${android.defaultConfig.versionName}.jar")
+task makeJar(type: Jar) {
+    def jar_name = "KpGameLib-BD-v${android.defaultConfig.versionName}.jar"
+    delete "build/libs/${jar_name}"
+    archiveName("${jar_name}")
+    from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
+    from (project.zipTree('libs/Game-V1.6.0.0_0604.jar'))
+    destinationDir(file('build/lib'))
 }
 
-
 makeJar.dependsOn(build)
+
 
 
 // 1.maven-插件
