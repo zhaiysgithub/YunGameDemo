@@ -39,6 +39,7 @@ public class PlaySettingsView extends LinearLayout {
     private int mSize = 0;
 
     private ViewGroup mLayout;
+    private View mLayoutVideoSize;
     private RadioGroup mVideoSizeGroup;
     private RadioGroup mVideoQualityGroup;
     private CheckBox mAudioCheckbox;
@@ -159,6 +160,10 @@ public class PlaySettingsView extends LinearLayout {
         }
     }
 
+    private void setVideoSizeLayoutVisiable(IDeviceControl deviceControl){
+        //TODO 华为设备下取消屏幕比例栏
+    }
+
     private void initVideoQuality(){
         if (mVideoQuality == null && mDeviceControl != null){
             mVideoQuality = mDeviceControl.getVideoQuality();
@@ -186,6 +191,7 @@ public class PlaySettingsView extends LinearLayout {
             }
         });
         mLayout = view.findViewById(R.id.layout);
+        mLayoutVideoSize = view.findViewById(R.id.layoutVideoSize);
         mLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

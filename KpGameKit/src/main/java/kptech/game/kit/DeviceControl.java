@@ -1,6 +1,7 @@
 package kptech.game.kit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -25,6 +26,7 @@ import kptech.lib.analytic.MobclickAgent;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.data.RequestClientNotice;
 import kptech.game.kit.msg.IMsgReceiver;
+import kptech.lib.fatory.GameBoxManagerFactory;
 import kptech.lib.thread.HeartThread;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
@@ -329,6 +331,19 @@ public class DeviceControl implements IDeviceControl{
 
             //调用通知接口
             try {
+                //TODO 待测试
+                boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
+                if (supportPassV3){
+                    if (msgManager != null){
+                        String backupMsgForPaas = getBackupMsgForPaas(mActivity, mGameInfo.pkgName);
+                        msgManager.sendMessage(backupMsgForPaas);
+                    }
+
+                    if (mGameHandler != null) {
+                        mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), 1000);
+                    }
+                    return;
+                }
                 new RequestClientNotice()
                         .setCallback(new RequestClientNotice.ICallback() {
                             @Override
@@ -646,5 +661,22 @@ public class DeviceControl implements IDeviceControl{
         if (mInnerControl != null){
             mInnerControl.setVideoDisplayMode(isFill);
         }
+    }
+
+    public String getBackupMsgForPaas(Context context, String packageName){
+        JSONObject obj = new JSONObject();
+        try{
+            String userId = DeviceInfo.getUserId(context);
+            obj.put("c","200011");
+            obj.put("t",System.currentTimeMillis());
+            obj.put("c",packageName);
+            JSONObject d = new JSONObject();
+            d.put("uid", userId);
+            obj.put("d", d);
+            return obj.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
     }
 }
