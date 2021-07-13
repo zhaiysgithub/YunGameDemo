@@ -64,7 +64,7 @@ public class KpPassCMWManager {
     private void requestDevicePost(String jsonStr, PassCMWCallback callback) {
         if (jsonStr == null || "".equals(jsonStr.trim())) {
             Logger.error(TAG, "jsonStr is null or empty");
-            callback.onError(APIConstants.ERROR_CALL_API, defaultErrorMsg);
+            callback.onError(APIConstants.ERROR_OTHER, "jsonStr is null or empty");
             return;
         }
         String url = getRequestDeviceUrl(URL_REQUEST_DEVICE);
@@ -174,7 +174,7 @@ public class KpPassCMWManager {
             case PassConstants.PASS_CODE_ERROR_AUTH:
             case PassConstants.PASS_CODE_ERROR_APP:
             case PassConstants.PASS_CODE_ERROR_DEVICENO:
-                apiErrorCode = APIConstants.ERROR_GAME_INIT;
+                apiErrorCode = APIConstants.ERROR_SDK_INIT;
                 break;
             case PassConstants.PASS_CODE_ERROR_DEVICEBUSY:
                 apiErrorCode = APIConstants.ERROR_DEVICE_BUSY;

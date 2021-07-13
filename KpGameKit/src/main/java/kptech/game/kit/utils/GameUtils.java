@@ -8,9 +8,6 @@ public class GameUtils {
 
         String msg;
         switch (code) {
-            case APIConstants.ERROR_GAME_INIT:
-                msg = "游戏初始化错误";
-                break;
             case APIConstants.ERROR_CALL_API:
                 msg = "接口错误,请稍后再试";
                 break;
@@ -35,20 +32,14 @@ public class GameUtils {
             case APIConstants.ERROR_NETWORK:
                 msg = "网络错误，请检查网络后再试";
                 break;
-            case APIConstants.ERROR_DEVICE_EXPIRED:
-                msg = "设备过期";
-                break;
             case APIConstants.ERROR_SDK_INIT:
                 msg = "初始化游戏失败";
                 break;
             case APIConstants.ERROR_GAME_INFO:
-                msg = "未获取到游戏信息";
+                msg = "游戏信息错误";
                 break;
             case APIConstants.ERROR_GAME_CANCLED:
                 msg = "游戏被取消启动";
-                break;
-            case APIConstants.GAME_SDK_INIT_SUCCESS:
-                msg = "启动游戏成功";
                 break;
             case APIConstants.AD_LOADING:
                 msg = "广告加载中";
@@ -62,12 +53,6 @@ public class GameUtils {
             case APIConstants.TIMEOUT_AVAILABLE_TIME:
                 msg = "可用时间到达";
                 break;
-            case APIConstants.TIMEOUT_NO_OPS:
-                msg = "长时间未操作";
-                break;
-            case APIConstants.GAME_EXIT_SUCCESS:
-                msg = "游戏退出";
-                break;
             case APIConstants.DATA_FPS_GAME:
                 msg = "游戏帧率数据";
                 break;
@@ -80,7 +65,7 @@ public class GameUtils {
             case APIConstants.SWITCH_GAME_RESOLUTION_ERROR:
                 msg = "切换游戏分辨率失败";
                 break;
-            case APIConstants.ERROR_GAME_INNER:
+            case APIConstants.ERROR_SDK_INNER:
                 msg = "游戏数据内部错误";
                 break;
             case APIConstants.ERROR_OTHER:

@@ -5,15 +5,10 @@ import java.lang.annotation.RetentionPolicy;
 
 public class APIConstants {
 
-    //游戏初始化错误
-    public static final int ERROR_GAME_INIT = 100;
-    //调用API错误
-    public static final int ERROR_CALL_API = 101;
-    //认证失败
-    public static final int ERROR_AUTH = 102;
+
     //申请设备成功
     public static final int APPLY_DEVICE_SUCCESS = 1000;
-    //申请设别失败
+    //申请设备失败
     public static final int ERROR_APPLY_DEVICE = 1001;
     //连接设备成功
     public static final int CONNECT_DEVICE_SUCCESS = 1002;
@@ -27,42 +22,40 @@ public class APIConstants {
     public static final int ERROR_DEVICE_BUSY = 1006;
     //网络错误
     public static final int ERROR_NETWORK = 1007;
-    //设备过期
-    public static final int ERROR_DEVICE_EXPIRED = 1008;
-    //初始化游戏失败 (启动游戏失败)
-    public static final int ERROR_SDK_INIT = 1009;
-    //无该游戏信息
-    public static final int ERROR_GAME_INFO = 1010;
+    //SDK初始化失败
+    public static final int ERROR_SDK_INIT = 1008;
+    //游戏信息错误
+    public static final int ERROR_GAME_INFO = 1009;
     //游戏被取消启动
-    public static final int ERROR_GAME_CANCLED = 1011;
-    //启动游戏成功
-    public static final int GAME_SDK_INIT_SUCCESS = 1012;
+    public static final int ERROR_GAME_CANCLED = 1010;
     //广告加载中
-    public static final int AD_LOADING = 1013;
+    public static final int AD_LOADING = 1011;
     //游戏加载中
-    public static final int GAME_LOADING = 1014;
+    public static final int GAME_LOADING = 1012;
     //云手机数据恢复中
-    public static final int RECOVER_DATA_LOADING = 1015;
+    public static final int RECOVER_DATA_LOADING = 1013;
     //可用时间到达
-    public static final int TIMEOUT_AVAILABLE_TIME = 1016;
-    //长时间未操作
-    public static final int TIMEOUT_NO_OPS = 1017;
-    //游戏退出
-    public static final int GAME_EXIT_SUCCESS = 1018;
+    public static final int TIMEOUT_AVAILABLE_TIME = 1014;
     //游戏帧率数据
-    public static final int DATA_FPS_GAME = 1019;
+    public static final int DATA_FPS_GAME = 1015;
     //网络延迟数据
-    public static final int DATA_NETWORK_LATENCY = 1020;
+    public static final int DATA_NETWORK_LATENCY = 1016;
     //切换游戏分辨率成功
-    public static final int SWITCH_GAME_RESOLUTION_SUCCESS = 1021;
+    public static final int SWITCH_GAME_RESOLUTION_SUCCESS = 1017;
     //切换游戏分辨率失败
-    public static final int SWITCH_GAME_RESOLUTION_ERROR = 1022;
+    public static final int SWITCH_GAME_RESOLUTION_ERROR = 1018;
     //游戏数据内部错误
-    public static final int ERROR_GAME_INNER = 1023;
-    //游戏开始连接成功 (处理游戏开始连接到游戏启动成功这段时间黑屏问题)
-    public static final int GAME_START_CONNECT = 1024;
+    public static final int ERROR_SDK_INNER = 1019;
+    //调用API错误
+    public static final int ERROR_CALL_API = 1020;
+    //认证失败
+    public static final int ERROR_AUTH = 1021;
+
     //其他错误联系管理员
     public static final int ERROR_OTHER = 65535;
+
+
+
 
 
 

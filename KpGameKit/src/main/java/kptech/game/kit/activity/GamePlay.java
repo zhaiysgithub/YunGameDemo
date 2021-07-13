@@ -515,12 +515,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mDeviceControl.setPlayListener(this);
                 mDeviceControl.setMessageReceiver(mMsgReceiver);
                 playSuccess();
-            } else if(code == APIConstants.GAME_START_CONNECT) {
-                //游戏开始连接
-//                mIvPaper.setVisibility(View.VISIBLE);
-            } else if(code == APIConstants.GAME_SDK_INIT_SUCCESS) {
-                //游戏启动成功
-//                mIvPaper.setVisibility(View.GONE);
             } else if(code == APIConstants.TIMEOUT_AVAILABLE_TIME){
                 //试玩时间到达
                 showTimeoutDialog("试玩时间到达");

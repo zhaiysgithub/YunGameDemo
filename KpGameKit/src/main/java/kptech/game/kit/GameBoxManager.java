@@ -109,15 +109,15 @@ public class GameBoxManager {
         if (mApplication == null){
             Logger.error("GameBoxManager","Init application is null");
             if (callback != null){
-                callback.onAPICallback("Application is null", APIConstants.ERROR_GAME_INIT);
+                callback.onAPICallback("Application is null", APIConstants.ERROR_SDK_INIT);
             }
             return;
         }
         if (mCorpID==null || "".equals(mCorpID.trim())){
-            Logger.error("GameBoxManager","Init appKey is null");
+            Logger.error("GameBoxManager","Init CorpID is null");
             //回调初始化
             if (callback != null){
-                callback.onAPICallback("CorID is null", APIConstants.ERROR_GAME_INIT);
+                callback.onAPICallback("CorpID is null", APIConstants.ERROR_SDK_INIT);
             }
             return;
         }

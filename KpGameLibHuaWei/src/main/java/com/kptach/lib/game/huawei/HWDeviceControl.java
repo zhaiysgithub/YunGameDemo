@@ -302,13 +302,11 @@ public class HWDeviceControl implements IDeviceControl {
                 int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
                 if (stateIndex >= 0){
                     //SDK游戏内部报错
-                    mCallback.onGameCallback(msg, APIConstants.ERROR_GAME_INNER);
+                    mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
                     return;
                 }
                 switch (state){
                     case HWStateCode.code_connecting:
-                        mCallback.onGameCallback(hwDirection + ";" + msg,APIConstants.GAME_START_CONNECT);
-                        break;
                     case HWStateCode.code_reconnecting_success:
                     case HWStateCode.code_connect_success:
                     case HWStateCode.code_verifying:
@@ -335,7 +333,7 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_switch_background_timeout:
                         //切换后台超时
                         sdkIsRelease = true;
-                        mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_CONNECT_DEVICE);
+                        mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_OTHER);
                         break;
                     case HWStateCode.code_notouch_timeout:
 //                        mCallback.onGameCallback("长时间未操作", APIConstants.TIMEOUT_NO_OPS);
