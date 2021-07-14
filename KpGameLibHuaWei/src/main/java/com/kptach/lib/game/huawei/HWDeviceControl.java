@@ -76,8 +76,11 @@ public class HWDeviceControl implements IDeviceControl {
                         }
                     }
                     sdkParams.put("launcher_activity", "");
-                    //前台无操作超时的时长，单位是秒 5min
-                    sdkParams.put("touch_timeout", "300");
+                    if (!sdkParams.containsKey("touch_timeout")){
+                        //前台无操作超时的时长，单位是秒 5min
+                        sdkParams.put("touch_timeout", "300");
+                    }
+
                     //备用参数
                     sdkParams.put("user_id", "");
 
