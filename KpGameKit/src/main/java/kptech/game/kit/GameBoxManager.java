@@ -51,7 +51,6 @@ public class GameBoxManager {
     private boolean devLoading = false;
     private boolean mShowCustomerLoadingView;
     private LoadingPageView mCustomerLoadingView;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){

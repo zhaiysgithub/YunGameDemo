@@ -11,6 +11,10 @@ import androidx.annotation.NonNull;
 
 import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.inter.game.APIConstants;
+import com.kptach.lib.inter.game.IPlayDataListener;
+import com.kptach.lib.inter.game.IPlayScreenListener;
+import com.kptach.lib.inter.game.IPlayStateListener;
+
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -181,7 +185,7 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void sendCloudMessage(String event, String data) {
-
+        //TODO 云消息发送事件
     }
 
     @Override
@@ -196,22 +200,60 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void registerPlayStateListener(PlayStateListener listener) {
-
+        if (listener == null || mInnerControl == null){
+            return;
+        }
+        mInnerControl.registerPlayStateListener(listener::onNotify);
     }
 
     @Override
     public void registerPlayDataListener(PlayDataListener listener) {
+        if (listener == null || mInnerControl == null){
+            return;
+        }
+        mInnerControl.registerPlayDataListener(new IPlayDataListener(){
 
+            @Override
+            public void onPingUpdate(int ping) {
+                listener.onPingUpdate(ping);
+            }
+
+            @Override
+            public boolean onNoOpsTimeout(int type, long timeout) {
+                return listener.onNoOpsTimeout(type, timeout);
+            }
+
+            @Override
+            public void onSteamInfo(int fps, int stream) {
+                listener.onSteamInfo(fps, stream);
+            }
+        });
     }
 
     @Override
     public void registerPlayScreenListener(PlayScreenListener listener) {
+        if (listener == null || mInnerControl == null){
+            return;
+        }
+        mInnerControl.registerPlayScreenListener(new IPlayScreenListener() {
+            @Override
+            public void onVideoSizeChange(int width, int height) {
+                listener.onVideoSizeChange(width, height);
+            }
 
+            @Override
+            public void onOrientationChange(int orientation) {
+                listener.onOrientationChange(orientation);
+            }
+        });
     }
 
     @Override
     public void registerCloudMessageListener(CloudMessageListener listener) {
-
+        if (msgManager == null || listener == null){
+            return;
+        }
+        //TODO 云消息接收事件
     }
 
     @Override
@@ -228,7 +270,7 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void startGame(Activity activity, int container) {
-
+        startGame(activity, container, null);
     }
     @Override
     public void setPlayListener(final PlayListener listener) {
