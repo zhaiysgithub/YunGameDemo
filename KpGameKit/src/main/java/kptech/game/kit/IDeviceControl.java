@@ -235,7 +235,7 @@ public interface IDeviceControl {
          * @param fps
          * @param stream
          */
-        void onSteamInfo(int fps, int stream);
+        void onSteamInfo(int fps, long bitrate);
     }
 
     /**

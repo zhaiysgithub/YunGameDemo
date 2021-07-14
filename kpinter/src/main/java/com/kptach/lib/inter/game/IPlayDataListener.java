@@ -18,6 +18,8 @@ public interface IPlayDataListener {
 
     /**
      * 流信息
+     * @param fps  帧率
+     * @param bitrate  码率
      */
-    void onSteamInfo(int fps, int stream);
+    void onSteamInfo(int fps, long bitrate);
 }

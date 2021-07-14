@@ -224,8 +224,8 @@ public class DeviceControl implements IDeviceControl{
             }
 
             @Override
-            public void onSteamInfo(int fps, int stream) {
-                listener.onSteamInfo(fps, stream);
+            public void onSteamInfo(int fps, long bitrate) {
+                listener.onSteamInfo(fps, bitrate);
             }
         });
     }

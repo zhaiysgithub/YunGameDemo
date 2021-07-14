@@ -42,6 +42,12 @@ public class HWDeviceControl implements IDeviceControl {
     private String gameTimeout;
     private String availablePlayTime;
     private final int []screenSize = new int[2];
+    //游戏状态监听
+    private IPlayStateListener mStateListener;
+    //游戏数据监听
+    private IPlayDataListener mDataListener;
+    //游戏屏幕数据监听
+    private IPlayScreenListener mScreenListener;
 
     public HWDeviceControl(HashMap<String, Object> params) {
         //默认取消静音
@@ -102,24 +108,22 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public void registerPlayStateListener(IPlayStateListener listener) {
-
+        this.mStateListener = listener;
     }
 
     @Override
     public void registerPlayDataListener(IPlayDataListener listener) {
-
+        this.mDataListener = listener;
     }
 
     @Override
     public void registerPlayScreenListener(IPlayScreenListener listener) {
-
+        this.mScreenListener = listener;
     }
 
     @Override
     public void startGame(Activity activity, int res, IGameCallback<String> callback) {
-        if (callback == null){
-            return;
-        }
+
         try {
             mCallback = callback;
             ViewGroup viewGroup = activity.findViewById(res);
@@ -140,12 +144,15 @@ public class HWDeviceControl implements IDeviceControl {
             CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
-//            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
-            callback.onGameCallback("startCloudApp", APIConstants.GAME_LOADING);
+            if (callback != null){
+                callback.onGameCallback("startCloudApp", APIConstants.GAME_LOADING);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             stopGame();
-            callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
+            if (callback != null){
+                callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
+            }
         }
 
     }
@@ -165,6 +172,9 @@ public class HWDeviceControl implements IDeviceControl {
             }
             if (mCallback != null){
                 mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
+            }
+            if (mStateListener != null){
+                mStateListener.onNotify(APIConstants.RELEASE_SUCCESS, "game release success");
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -314,7 +324,7 @@ public class HWDeviceControl implements IDeviceControl {
         CloudGameManager.CreateCloudGameInstance().registerCloudAppStateListener((state, msg) -> {
 
             HWCloudGameUtils.info("onNotify","state=" + state + ";msg=" + msg);
-            if (mCallback == null || mActivity == null || mViewgroup == null){
+            if (mActivity == null || mViewgroup == null){
                 return;
             }
             mActivity.runOnUiThread(() -> {
@@ -325,7 +335,12 @@ public class HWDeviceControl implements IDeviceControl {
                 int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
                 if (stateIndex >= 0){
                     //SDK游戏内部报错
-                    mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                    if (mCallback != null){
+                        mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                    }
+                    if (mStateListener != null){
+                        mStateListener.onNotify(APIConstants.ERROR_SDK_INNER, msg);
+                    }
                     return;
                 }
                 switch (state){
@@ -342,29 +357,55 @@ public class HWDeviceControl implements IDeviceControl {
                         break;
                     case HWStateCode.code_game_start_success:
                         sdkIsRelease = false;
-                        mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.CONNECT_DEVICE_SUCCESS, "connect device success");
+                        }
                         break;
                     case HWStateCode.code_game_first_frame:
                         if (sdkIsRelease){
                             sdkIsRelease = false;
-                            mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+                            if (mCallback != null) {
+                                mCallback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+                            }
+
+                            if (mStateListener != null){
+                                mStateListener.onNotify(APIConstants.CONNECT_DEVICE_SUCCESS , "connect device success");
+                            }
                         }
                         break;
                     case HWStateCode.code_available_time_usedup:
-                        mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback("试玩时间到达:" + availablePlayTime, APIConstants.TIMEOUT_AVAILABLE_TIME);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.TIMEOUT_AVAILABLE_TIME, "试玩时间:"+ availablePlayTime +"到达");
+                        }
                         break;
                     case HWStateCode.code_switch_background_timeout:
                         //切换后台超时
                         sdkIsRelease = true;
-                        mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_OTHER);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_OTHER);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.ERROR_OTHER, "switch background timeout");
+                        }
                         break;
                     case HWStateCode.code_notouch_timeout:
-//                        mCallback.onGameCallback("长时间未操作", APIConstants.TIMEOUT_NO_OPS);
                         try{
                             if (mPlayListener != null){
                                 sdkIsRelease = true;
                                 long noOpsTime = Long.parseLong(gameTimeout);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
+                            }
+
+                            if (mDataListener != null){
+                                sdkIsRelease = true;
+                                long noOpsTime = Long.parseLong(gameTimeout);
+                                mDataListener.onNoOpsTimeout(2,noOpsTime);
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -374,20 +415,45 @@ public class HWDeviceControl implements IDeviceControl {
                         sdkIsRelease = true;
                         break;
                     case HWStateCode.code_set_resolution_success:
-                        mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS, msg);
+                        }
                         break;
                     case HWStateCode.code_set_resolution_error:
-                        mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_ERROR);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_ERROR);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.SWITCH_GAME_RESOLUTION_ERROR, msg);
+                        }
                         break;
                     case HWStateCode.code_verify_parameter_missing:
                     case HWStateCode.code_verify_parameter_invalid:
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_AUTH);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback(msg, APIConstants.ERROR_AUTH);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.ERROR_AUTH, msg);
+                        }
                         break;
                     case HWStateCode.code_invalid_operation:
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_OTHER);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback(msg, APIConstants.ERROR_OTHER);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.ERROR_OTHER, msg);
+                        }
                         break;
                     case HWStateCode.code_server_unreachable: //服务不可用
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_NETWORK);
+                        if (mCallback != null) {
+                            mCallback.onGameCallback(msg, APIConstants.ERROR_NETWORK);
+                        }
+                        if (mStateListener != null){
+                            mStateListener.onNotify(APIConstants.ERROR_NETWORK, msg);
+                        }
                         break;
                 }
             });
@@ -416,6 +482,20 @@ public class HWDeviceControl implements IDeviceControl {
                      mPlayListener.onScreenChange(orientation);
                  });
             }
+
+            if (mActivity != null && mViewgroup != null && mScreenListener != null){
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mActivity.isFinishing()){
+                            return;
+                        }
+                        //1、横屏 0、竖屏
+                        mScreenListener.onOrientationChange(orientation);
+                    }
+                });
+            }
+
         });
 
         //统计数据监听  每相隔5S数据监听
