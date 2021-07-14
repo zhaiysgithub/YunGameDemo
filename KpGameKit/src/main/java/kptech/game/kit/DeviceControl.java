@@ -70,7 +70,6 @@ public class DeviceControl implements IDeviceControl{
         //解析deviceToken
 //        parseDeviceToken();
     }
-
     @Override
     public void startGame(Activity activity, int res, APICallback<String> callback) {
 
@@ -181,6 +180,11 @@ public class DeviceControl implements IDeviceControl{
     }
 
     @Override
+    public void sendCloudMessage(String event, String data) {
+
+    }
+
+    @Override
     public void sendSensorInputData(int sendor, int type, byte[] data) {
         mInnerControl.sendSensorInputData(sendor, type, data);
     }
@@ -188,6 +192,26 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendSensorInputData(int sendor, int sensorType, float... data) {
         mInnerControl.sendSensorInputData(sendor, sensorType, data);
+    }
+
+    @Override
+    public void registerPlayStateListener(PlayStateListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayDataListener(PlayDataListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayScreenListener(PlayScreenListener listener) {
+
+    }
+
+    @Override
+    public void registerCloudMessageListener(CloudMessageListener listener) {
+
     }
 
     @Override
@@ -202,6 +226,10 @@ public class DeviceControl implements IDeviceControl{
         });
     }
 
+    @Override
+    public void startGame(Activity activity, int container) {
+
+    }
     @Override
     public void setPlayListener(final PlayListener listener) {
         mInnerControl.setPlayListener(new com.kptach.lib.inter.game.IDeviceControl.PlayListener() {

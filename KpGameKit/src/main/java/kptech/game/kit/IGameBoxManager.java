@@ -3,6 +3,7 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface IGameBoxManager {
@@ -10,10 +11,19 @@ public interface IGameBoxManager {
      * 初始化
      * @param application
      * @param appKey
+     * @param params
+     * @param callback
+     */
+    void init(Application application, String appKey, HashMap params, APICallback<String> callback);
+
+
+    /**
+     * 初始化
+     * @param application
+     * @param appKey
      * @param callback
      */
     void init(Application application, String appKey, APICallback<String> callback);
-
     /**
      * 申请云设备
      * @param activity
@@ -21,6 +31,27 @@ public interface IGameBoxManager {
      * @param callback
      */
     void applyCloudDevice(Activity activity, GameInfo inf, APICallback<IDeviceControl> callback);
+
+    /**
+     *
+     * @param activity
+     * @param pkgName
+     * @param callback
+     */
+    void applyCloudDevice(Activity activity, String pkgName, APICallback<IDeviceControl> callback);
+
+    /**
+     * 加入队列
+     * @param pkgName
+     * @param checkInterval
+     * @param callback
+     */
+    void joinQueue(String pkgName, int checkInterval, APICallback<QueueRankInfo> callback);
+
+    /**
+     * 退出队列
+     */
+    void exitQueue();
 
     /**
      * 游戏列表获取，游戏列表支持分页获取。
