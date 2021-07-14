@@ -58,9 +58,9 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     //快盘定义接口
-    implementation 'kptech.game.kit:kpinter:1.0.4'
+//    implementation 'kptech.game.kit:kpinter:1.0.4'
 
-//    implementation project(path: ':kpinter')
+    implementation project(path: ':kpinter')
 }
 
 // 1.maven-插件
