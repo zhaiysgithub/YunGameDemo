@@ -19,6 +19,9 @@ import com.kptach.lib.game.bdsdk.utils.MillisecondsDuration;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.IPlayDataListener;
+import com.kptach.lib.inter.game.IPlayScreenListener;
+import com.kptach.lib.inter.game.IPlayStateListener;
 import com.kptach.lib.inter.game.SensorConstants;
 import com.mci.play.PlaySdkManager;
 
@@ -51,6 +54,21 @@ public class BDSdkDeviceControl implements IDeviceControl {
     }
 
     @Override
+    public void registerPlayStateListener(IPlayStateListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayDataListener(IPlayDataListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayScreenListener(IPlayScreenListener listener) {
+
+    }
+
+    @Override
     public void startGame(Activity activity, int res, IGameCallback<String> callback) {
         if( activity == null || activity.isFinishing()){
             return;
@@ -63,6 +81,11 @@ public class BDSdkDeviceControl implements IDeviceControl {
 
         //初始化SDK
         KpPlaySDKManager.getInstance().loadSdk(activity.getApplication(), initListener);
+    }
+
+    @Override
+    public void startGame(Activity activity, int container) {
+
     }
 
     @Override

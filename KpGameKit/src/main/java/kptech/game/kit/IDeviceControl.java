@@ -90,7 +90,6 @@ public interface IDeviceControl {
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_AUTO} 自动
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_HD} 高清
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_ORDINARY} 普通
-     * {@link APIConstants#DEVICE_VIDEO_QUALITY_HS} 一般
      * {@link APIConstants#DEVICE_VIDEO_QUALITY_LS} 流畅
      */
     void switchQuality(@APIConstants.VideoQuality String level);

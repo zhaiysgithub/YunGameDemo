@@ -6,15 +6,17 @@ import android.app.Application;
 import java.util.HashMap;
 import java.util.List;
 
+import kptech.game.kit.model.GameBoxConfig;
+
 public interface IGameBoxManager {
     /**
      * 初始化
      * @param application
      * @param appKey
-     * @param params
+     * @param gameConfig
      * @param callback
      */
-    void init(Application application, String appKey, HashMap params, APICallback<String> callback);
+    void init(Application application, String appKey, GameBoxConfig gameConfig, APICallback<String> callback);
 
 
     /**

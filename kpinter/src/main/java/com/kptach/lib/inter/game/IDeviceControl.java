@@ -11,12 +11,34 @@ public interface IDeviceControl {
     }
 
     /**
+     * 游戏状态，游戏启动成功、数据加载、预加载
+     */
+    void registerPlayStateListener(IPlayStateListener listener);
+
+
+    /**
+     * 游戏相关数据事件，延时、超时、帧率、码率
+     */
+    void registerPlayDataListener (IPlayDataListener listener);
+
+    /**
+     * 屏幕事件, 屏幕方向、分辨率
+     */
+    void registerPlayScreenListener(IPlayScreenListener listener);
+
+
+    /**
      * 启动游戏
      * @param activity
      * @param res
      * @param callback
      */
     void startGame(Activity activity, int res, IGameCallback<String> callback);
+
+    /**
+     * 启动游戏
+     */
+    void startGame(Activity activity, int container);
 
     /**
      * 停止试玩，在退出试玩的时候必须回调，否则无法进行下一次试玩

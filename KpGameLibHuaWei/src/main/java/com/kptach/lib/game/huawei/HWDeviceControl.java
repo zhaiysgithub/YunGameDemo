@@ -10,6 +10,9 @@ import com.huawei.cloudgame.api.CloudGameParas;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
+import com.kptach.lib.inter.game.IPlayDataListener;
+import com.kptach.lib.inter.game.IPlayScreenListener;
+import com.kptach.lib.inter.game.IPlayStateListener;
 
 import org.json.JSONObject;
 
@@ -98,6 +101,21 @@ public class HWDeviceControl implements IDeviceControl {
     }
 
     @Override
+    public void registerPlayStateListener(IPlayStateListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayDataListener(IPlayDataListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayScreenListener(IPlayScreenListener listener) {
+
+    }
+
+    @Override
     public void startGame(Activity activity, int res, IGameCallback<String> callback) {
         if (callback == null){
             return;
@@ -129,6 +147,11 @@ public class HWDeviceControl implements IDeviceControl {
             stopGame();
             callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
         }
+
+    }
+
+    @Override
+    public void startGame(Activity activity, int container) {
 
     }
 

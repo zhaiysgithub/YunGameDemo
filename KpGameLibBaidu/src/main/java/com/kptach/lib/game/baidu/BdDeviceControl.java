@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.kptach.lib.inter.game.IPlayDataListener;
+import com.kptach.lib.inter.game.IPlayScreenListener;
+import com.kptach.lib.inter.game.IPlayStateListener;
 import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
 
@@ -69,6 +72,21 @@ public class BdDeviceControl implements IDeviceControl {
     }
 
     @Override
+    public void registerPlayStateListener(IPlayStateListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayDataListener(IPlayDataListener listener) {
+
+    }
+
+    @Override
+    public void registerPlayScreenListener(IPlayScreenListener listener) {
+
+    }
+
+    @Override
     public void startGame(Activity activity, int res, final IGameCallback<String> callback) {
         if (mDeviceControl == null){
             if (callback != null){
@@ -99,6 +117,11 @@ public class BdDeviceControl implements IDeviceControl {
                 }
             }
         });
+    }
+
+    @Override
+    public void startGame(Activity activity, int container) {
+
     }
 
     @Override
