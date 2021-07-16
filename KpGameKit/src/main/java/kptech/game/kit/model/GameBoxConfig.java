@@ -12,16 +12,25 @@ public class GameBoxConfig implements Parcelable {
     public String bitrate;
 
     //分辨率
-    public GameResolution gameResolution;
+    public String gameResolution;
+
+    //是否启动本地输入法
+    public boolean enableRemoteIme = true;
 
     //其他信息
     public String extraInfo;
 
-    protected GameBoxConfig(Parcel in) {
-        bitrate = in.readString();
-        extraInfo = in.readString();
+    public GameBoxConfig(){
+
     }
 
+
+    protected GameBoxConfig(Parcel in) {
+        bitrate = in.readString();
+        gameResolution = in.readString();
+        enableRemoteIme = in.readByte() != 0;
+        extraInfo = in.readString();
+    }
 
     public static final Creator<GameBoxConfig> CREATOR = new Creator<GameBoxConfig>() {
         @Override
@@ -43,6 +52,8 @@ public class GameBoxConfig implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(bitrate);
+        dest.writeString(gameResolution);
+        dest.writeByte((byte) (enableRemoteIme ? 1 : 0));
         dest.writeString(extraInfo);
     }
 }

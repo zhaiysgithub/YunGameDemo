@@ -6,6 +6,9 @@ import com.kptach.lib.inter.game.APIConstants;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+
+import java.util.Map;
+
 import kptech.game.kit.msg.IMsgReceiver;
 
 public interface IDeviceControl {
@@ -64,7 +67,7 @@ public interface IDeviceControl {
      * 当前声音是否打开
      * @return
      */
-    boolean isSoundEnable();
+    boolean isAudioEnable();
 
     /**
      * 试玩声音开关
@@ -216,11 +219,6 @@ public interface IDeviceControl {
      * 云游戏数据监听器
      */
     interface PlayDataListener {
-        /**
-         * 网络延时反馈
-         * @param ping 网络延时，单位ms
-         */
-        void onPingUpdate(int ping);
 
         /**
          * 无操作超时回调
@@ -232,10 +230,8 @@ public interface IDeviceControl {
 
         /**
          * 流信息
-         * @param fps
-         * @param stream
          */
-        void onSteamInfo(int fps, long bitrate);
+        void onDataInfo(String dataInfo);
     }
 
     /**

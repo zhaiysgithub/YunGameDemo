@@ -32,7 +32,7 @@ public interface IGameBoxManager {
      * @param inf
      * @param callback
      */
-    void applyCloudDevice(Activity activity, GameInfo inf, APICallback<IDeviceControl> callback);
+    void applyCloudDevice(Activity activity, GameInfo inf, APICallback<DeviceControl> callback);
 
     /**
      *
@@ -40,7 +40,7 @@ public interface IGameBoxManager {
      * @param pkgName
      * @param callback
      */
-    void applyCloudDevice(Activity activity, String pkgName, APICallback<IDeviceControl> callback);
+    void applyCloudDevice(Activity activity, String pkgName, APICallback<DeviceControl> callback);
 
     /**
      * 加入队列

@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class HWDeviceControl implements IDeviceControl {
 
@@ -42,6 +43,7 @@ public class HWDeviceControl implements IDeviceControl {
     private String gameTimeout;
     private String availablePlayTime;
     private final int []screenSize = new int[2];
+    private String bitrate = "10000000";
     //游戏状态监听
     private IPlayStateListener mStateListener;
     //游戏数据监听
@@ -140,18 +142,24 @@ public class HWDeviceControl implements IDeviceControl {
             mediaConfigMap.put("physical_width", Integer.toString(width));
             mediaConfigMap.put("physical_height", Integer.toString(height));
             mediaConfigMap.put("frame_rate", Integer.toString(30));
-            mediaConfigMap.put("bitrate", Integer.toString(10000000));
+            mediaConfigMap.put("bitrate", bitrate);
             CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
             if (callback != null){
                 callback.onGameCallback("startCloudApp", APIConstants.GAME_LOADING);
             }
+            if (mStateListener != null){
+                mStateListener.onNotify(APIConstants.GAME_LOADING, "game loading");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             stopGame();
             if (callback != null){
                 callback.onGameCallback(e.getMessage(), APIConstants.ERROR_CONNECT_DEVICE);
+            }
+            if (mStateListener != null){
+                mStateListener.onNotify(APIConstants.ERROR_CONNECT_DEVICE, e.getMessage());
             }
         }
 
@@ -176,6 +184,10 @@ public class HWDeviceControl implements IDeviceControl {
             if (mStateListener != null){
                 mStateListener.onNotify(APIConstants.RELEASE_SUCCESS, "game release success");
             }
+
+            mStateListener = null;
+            mDataListener = null;
+            mScreenListener = null;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -498,7 +510,7 @@ public class HWDeviceControl implements IDeviceControl {
 
         });
 
-        //统计数据监听  每相隔5S数据监听
+        //统计数据监听  每相隔1S数据监听
         CloudGameManager.CreateCloudGameInstance().registerStatDataListener(statData -> {
 
 //            HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);
@@ -509,27 +521,36 @@ public class HWDeviceControl implements IDeviceControl {
                         if (mActivity.isFinishing()){
                             return;
                         }
-
+                        //帧数
+//                        long videoFrameCount = CloudGameManager.CreateCloudGameInstance().getRecvdVideoFrameCount();
+                        JSONObject jsonState = new JSONObject(statData);
+                        String refresh_fps = jsonState.optString("refresh_fps");
+                        if (refresh_fps.isEmpty() || refresh_fps.equals("0")){
+                            return;
+                        }
+                        //延迟数值
+                        int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
+                        if (rtt == 0){
+                            rtt = 5;
+                        }else if (rtt > 1000){
+                            rtt = 1000;
+                        }
                         //网络延迟
                         if (mPlayListener != null){
-                            int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
-//                            HWCloudGameUtils.info("onReceiveStatData","rtt=" + rtt);
-                            if (rtt < 10){
-                                rtt = 10;
-                            }else if (rtt > 1000){
-                                rtt = 1000;
-                            }
+
                             mPlayListener.onPingUpdate(rtt);
                         }
+                        if (mDataListener != null){
 
-                        /*if (mCallback != null){
-                            JSONObject json = new JSONObject(statData);
-                            String refresh_fps = "";
-                            if (json.has("refresh_fps")){
-                                refresh_fps = json.getString("refresh_fps");
-                            }
-//                                  mCallback.onGameCallback(refresh_fps, APIConstants.REFRESH_FPS);
-                        }*/
+                            //{"refresh_fps":"30","refresh_ping":“10”,"refresh_bitrate":"10000000"}
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("refresh_fps", refresh_fps);
+                            jsonObject.put("refresh_ping", rtt + "");
+                            jsonObject.put("refresh_bitrate", bitrate);
+                            mDataListener.onSteamInfo(jsonObject.toString());
+                        }
+
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }

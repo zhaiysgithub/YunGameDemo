@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kptech.game.kit.APICallback;
+import kptech.game.kit.DeviceControl;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.GameInfo;
@@ -120,9 +121,9 @@ public class GameRunningActivity extends Activity implements APICallback<String>
 
     private void startCloudPhone() {
         mLoadingText.setText("正在加载云手机");
-        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<IDeviceControl>() {
+        GameBoxManager.getInstance().applyCloudDevice(this, mGameInfo, new APICallback<DeviceControl>() {
             @Override
-            public void onAPICallback(IDeviceControl deviceControl, final int code) {
+            public void onAPICallback(DeviceControl deviceControl, final int code) {
                 mDeviceControl = deviceControl;
                 mHandler.post(new Runnable() {
                     @Override

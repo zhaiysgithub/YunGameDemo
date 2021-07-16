@@ -157,6 +157,9 @@ public class KpPassCMWManager {
             jsonObject.put("protocol", "ws");//  wss -- 加密方式 ws -- 非加密方式
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             jsonObject.put("uuid", uuid);
+            //测试指定设备
+//            jsonObject.put("deviceNum","17db99bf473b4838b493435894670f37");
+//            jsonObject.put("machineId","cn-east-3");
             jsonObject.put("ts", System.currentTimeMillis());
             return jsonObject.toString();
         } catch (Exception e) {

@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
-import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.utils.Logger;
 
 public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
@@ -61,6 +60,15 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
         if (receiver != null) {
             mReceiverRef = new WeakReference<>(receiver);
         }
+    }
+    public void connect(){
+        if (helper != null){
+            helper.connect();
+        }
+    }
+
+    public void disconnect(){
+
     }
 
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
@@ -108,13 +116,18 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
         }
     }
 
+
     public void sendMessage(String msg){
+        sendMessage(msg,1);
+    }
+
+    public void sendMessage(String msg, int code){
         Logger.info(TAG, "sendMessage " + msg);
         if (helper == null){
             Logger.error(TAG, "sendMessage return, helper is null");
             return;
         }
-        helper.sendMessage(MessageAction.Third, 1, null, msg);
+        helper.sendMessage(MessageAction.Third, code, null, msg);
     }
 
     @Override

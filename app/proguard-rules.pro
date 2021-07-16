@@ -63,7 +63,7 @@
 
 -keep class com.kptach.lib.game.huawei.** { *; }
 -keep class com.huawei.cloudgame.** { *; }
--keep class a.a.a.** { *; }
+
 
 -keep class com.kptach.lib.game.bdsdk.** { *; }
 

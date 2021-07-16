@@ -13,12 +13,12 @@ import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IPlayDataListener;
 import com.kptach.lib.inter.game.IPlayScreenListener;
-import com.kptach.lib.inter.game.IPlayStateListener;
 
 import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import kptech.game.kit.msg.MsgManager;
 import kptech.lib.ad.AdManager;
@@ -59,6 +59,7 @@ public class DeviceControl implements IDeviceControl{
     private boolean sendTmEvent = false;
     private MillisecondsDuration mTimeDuration;
     private MsgManager msgManager ;
+    private CloudMessageListener mCloudMsgListener;
 
     protected DeviceControl(com.kptach.lib.inter.game.IDeviceControl control){
         this(control,null);
@@ -98,7 +99,20 @@ public class DeviceControl implements IDeviceControl{
         //连接设备
         msgManager =  MsgManager.getInstance();
         msgManager.start(activity, GameBoxManager.mCorpID, getPadcode(), this.mGameInfo.pkgName, this.mGameInfo.kpGameId, this.mGameInfo.name);
+        /*msgManager.setMessageReceiver(new IMsgReceiver() {
+            @Override
+            public void onMessageReceived(String msg) {
+                if (mCloudMsgListener != null){
+                    //TODO 解析数据格式
+//                    mCloudMsgListener.onMessage();
+                }
+            }
 
+            @Override
+            public void onMessageReceived(String event, Map<String, Object> params) {
+
+            }
+        });*/
         //同步设备信息
         sendMockDeviceInfo();
 
@@ -144,7 +158,7 @@ public class DeviceControl implements IDeviceControl{
     }
 
     @Override
-    public boolean isSoundEnable() {
+    public boolean isAudioEnable() {
         return mInnerControl.isSoundEnable();
     }
 
@@ -186,6 +200,10 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void sendCloudMessage(String event, String data) {
         //TODO 云消息发送事件
+        if (msgManager != null){
+
+//            msgManager.sendMessage();
+        }
     }
 
     @Override
@@ -214,18 +232,13 @@ public class DeviceControl implements IDeviceControl{
         mInnerControl.registerPlayDataListener(new IPlayDataListener(){
 
             @Override
-            public void onPingUpdate(int ping) {
-                listener.onPingUpdate(ping);
-            }
-
-            @Override
             public boolean onNoOpsTimeout(int type, long timeout) {
                 return listener.onNoOpsTimeout(type, timeout);
             }
 
             @Override
-            public void onSteamInfo(int fps, long bitrate) {
-                listener.onSteamInfo(fps, bitrate);
+            public void onSteamInfo(String streamData) {
+                listener.onDataInfo(streamData);
             }
         });
     }
@@ -250,10 +263,8 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void registerCloudMessageListener(CloudMessageListener listener) {
-        if (msgManager == null || listener == null){
-            return;
-        }
-        //TODO 云消息接收事件
+
+        this.mCloudMsgListener = listener;
     }
 
     @Override
@@ -317,6 +328,7 @@ public class DeviceControl implements IDeviceControl{
     @Override
     public void setMessageReceiver(IMsgReceiver receiver) {
         try {
+
             msgManager.setMessageReceiver(receiver);
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
@@ -401,19 +413,7 @@ public class DeviceControl implements IDeviceControl{
 
             //调用通知接口
             try {
-                //TODO 待测试
-                boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
-                if (supportPassV3){
-                    if (msgManager != null){
-                        String backupMsgForPaas = getBackupMsgForPaas(mActivity, mGameInfo.pkgName);
-                        msgManager.sendMessage(backupMsgForPaas);
-                    }
 
-                    if (mGameHandler != null) {
-                        mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), 1000);
-                    }
-                    return;
-                }
                 new RequestClientNotice()
                         .setCallback(new RequestClientNotice.ICallback() {
                             @Override
@@ -425,12 +425,20 @@ public class DeviceControl implements IDeviceControl{
                                         sleeptime = Long.parseLong(obj.getString("sleeptime"));
                                     }
                                 }catch (Exception e){
+                                    e.printStackTrace();
                                 }
                                 //默认等待3秒
                                 if (sleeptime <= 0){
                                     sleeptime = 3000;
                                 }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
+                                boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
+                                //PASS3.0云存档
+                                if (supportPassV3 && msgManager != null){
+                                    String backupdValue = getBackupMsgForPaas(mActivity);
+                                    Logger.info(TAG,"backupMsgForPaas=" + backupdValue);
+                                    msgManager.sendMessage(backupdValue, 200011);
+                                }
                                 //延时3秒
                                 if (mGameHandler != null) {
                                     mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
@@ -733,16 +741,18 @@ public class DeviceControl implements IDeviceControl{
         }
     }
 
-    public String getBackupMsgForPaas(Context context, String packageName){
-        JSONObject obj = new JSONObject();
+    public String getBackupMsgForPaas(Context context){
+
         try{
+            JSONObject obj = new JSONObject();
             String userId = DeviceInfo.getUserId(context);
-            obj.put("c","200011");
-            obj.put("t",System.currentTimeMillis());
-            obj.put("c",packageName);
-            JSONObject d = new JSONObject();
-            d.put("uid", userId);
-            obj.put("d", d);
+//            obj.put("c","200011");
+//            obj.put("t",System.currentTimeMillis());
+//            obj.put("p",packageName);
+//            JSONObject d = new JSONObject();
+//            d.put("uid", userId);
+//            obj.put("d", d);
+            obj.put("uid", userId);
             return obj.toString();
         }catch (Exception e){
             e.printStackTrace();

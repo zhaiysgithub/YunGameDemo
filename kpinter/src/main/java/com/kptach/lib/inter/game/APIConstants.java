@@ -56,12 +56,6 @@ public class APIConstants {
 
 
 
-
-
-
-
-
-
     public static final String DEVICE_VIDEO_QUALITY_HD = "GRADE_LEVEL_HD";
     public static final String DEVICE_VIDEO_QUALITY_ORDINARY = "GRADE_LEVEL_ORDINARY";
     public static final String DEVICE_VIDEO_QUALITY_HS = "GRADE_LEVEL_HS";

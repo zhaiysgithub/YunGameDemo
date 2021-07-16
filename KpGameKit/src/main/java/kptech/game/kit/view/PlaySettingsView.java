@@ -154,7 +154,7 @@ public class PlaySettingsView extends LinearLayout {
     }
 
     private void initAudioEnable(){
-        mAudioSwitch = mDeviceControl.isSoundEnable();
+        mAudioSwitch = mDeviceControl.isAudioEnable();
         if (mAudioCheckbox.isEnabled() != mAudioSwitch){
             mAudioCheckbox.setEnabled(mAudioSwitch);
         }

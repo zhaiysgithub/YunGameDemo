@@ -60,8 +60,8 @@ public class HWGameBoxManager implements IGameBoxManager {
     }
 
     private void startInitCloudGameManager(Activity activity){
-        CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
 
+        CloudGameManager.CreateCloudGameInstance().enableDebugLog(isDebug);
 
         HWCloudGameUtils.setDebug(true);
 

@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import kptech.game.kit.env.Env;
+import kptech.game.kit.model.GameBoxConfig;
 import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
@@ -39,7 +40,7 @@ import kptech.lib.data.RequestTask;
 import kptech.lib.fatory.GameBoxManagerFactory;
 
 
-public class GameBoxManager {
+public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
 
     private static final String TAG = "GameBoxManager";
     private static Application mApplication = null;
@@ -89,6 +90,11 @@ public class GameBoxManager {
 
     public boolean isGameBoxManagerInited(){
         return this.isInited;
+    }
+
+    @Override
+    public void init(Application application, String appKey, GameBoxConfig gameConfig, APICallback<String> callback) {
+        init(application, appKey, callback);
     }
 
     public synchronized void init(Application application, String appKey, APICallback<String> callback){
@@ -312,12 +318,34 @@ public class GameBoxManager {
         return true;
     }
 
+    @Override
+    public void applyCloudDevice(Activity activity, String pkgName, APICallback<DeviceControl> callback) {
+        if (callback == null){
+            return;
+        }
+        if (activity == null || activity.isFinishing() || pkgName == null || pkgName.isEmpty()) {
+            callback.onAPICallback(null, APIConstants.ERROR_SDK_INIT);
+            return;
+        }
+        if (devLoading){
+            callback.onAPICallback(null, APIConstants.GAME_LOADING);
+            return;
+        }
+        GameInfo gameInfo = new GameInfo();
+        gameInfo.pkgName = pkgName;
+        //大于0目的是挽留弹出测试
+        gameInfo.gid = 1;
+        gameInfo.useSDK = GameInfo.SdkType.KP;
+        applyCloudDevice(activity,gameInfo,callback);
+
+    }
+
     /**
      * 申请游戏的云设备
      * @param inf 游戏信息
      * @param callback 申请设备成功则返回状态码：APIConstants.API_CALL_SUCCESS和DeviceControl用于控制设备，否则返回对应错误码。
      */
-    public synchronized void applyCloudDevice(final Activity activity, final GameInfo inf,final APICallback<IDeviceControl> callback){
+    public synchronized void applyCloudDevice(final Activity activity, final GameInfo inf,final APICallback<DeviceControl> callback){
         if (devLoading){
             return;
         }
@@ -362,6 +390,8 @@ public class GameBoxManager {
         }
         devLoading = true;
 
+        MsgManager.getInstance().connect();
+
         HashMap<String,Object> sdkParams = new HashMap<>();
         sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);
         sdkParams.put(IGameBoxManager.PARAMS_KEY_CORPID, mCorpID);
@@ -389,7 +419,7 @@ public class GameBoxManager {
      * 处理申请设备后的逻辑
      */
     private void dealApplyDeviceCallback(com.kptach.lib.inter.game.IDeviceControl innerControl, int code
-            , GameInfo inf, final APICallback<IDeviceControl> callback){
+            , GameInfo inf, final APICallback<DeviceControl> callback){
         devLoading = false;
 
         DeviceControl control = null;
@@ -438,6 +468,16 @@ public class GameBoxManager {
 
         //回调方法
         callback.onAPICallback(control, code);
+    }
+
+    @Override
+    public void joinQueue(String pkgName, int checkInterval, APICallback<QueueRankInfo> callback) {
+        //TODO 添加到队列
+    }
+
+    @Override
+    public void exitQueue() {
+        //TODO 退出队列
     }
 
     /**

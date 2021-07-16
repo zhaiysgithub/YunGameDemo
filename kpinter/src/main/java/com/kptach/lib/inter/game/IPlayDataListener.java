@@ -3,12 +3,6 @@ package com.kptach.lib.inter.game;
 public interface IPlayDataListener {
 
     /**
-     * 网络延时反馈
-     * @param ping 网络延时，单位ms
-     */
-    void onPingUpdate(int ping);
-
-    /**
      * 无操作超时回调
      * @param type 类型。1为后台，2为前台
      * @param timeout 超时时长，单位s
@@ -18,8 +12,7 @@ public interface IPlayDataListener {
 
     /**
      * 流信息
-     * @param fps  帧率
-     * @param bitrate  码率
+     * {"refresh_fps":"30","refresh_ping":“10”,"refresh_bitrate":"10000000"}
      */
-    void onSteamInfo(int fps, long bitrate);
+    void onSteamInfo(String streamData);
 }

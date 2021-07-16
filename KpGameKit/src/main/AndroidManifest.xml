@@ -45,6 +45,11 @@
             android:configChanges="screenSize|keyboardHidden|orientation"
             android:theme="@style/MyTheme.Activity.GamePlay"
             android:launchMode="singleTask"/>
+        <!--PASS3 developer 版本的测试页面-->
+        <activity android:name=".activity.DeveloperGameActivity"
+            android:configChanges="screenSize|keyboardHidden|orientation"
+            android:theme="@style/MyTheme.Activity.GamePlay"
+            android:launchMode="singleTask"/>
 
         <activity android:name="kptech.game.kit.dialog.WebViewActivity"  />
 
