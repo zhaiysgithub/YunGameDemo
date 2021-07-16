@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 16
-        versionName "1.2.1.14"
+        versionName "1.2.1.17"
     }
 
 
@@ -59,7 +59,7 @@ dependencies {
 
 
     //广告sdk
-    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
+//    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
 //    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义

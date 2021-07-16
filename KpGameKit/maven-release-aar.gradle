@@ -20,7 +20,7 @@ uploadArchives {
         //Maven仓库本地路径（可以自己新建文件夹，复制链接过来）
         //注意”file://“ + 路径，有三个斜杠，别漏了
 //        repository(url: "file:///Users/zhangqinglou/work/maven")
-//        repository(url: "file:///C:/Users/zys/work/maven")
+//        repository(url: "file:///C:/maven")
         //远程仓库的地址
         repository(url: "https://maven.kuaipantech.com/repository/maven-releases/") {
             //nexus登录的用户名和密码
