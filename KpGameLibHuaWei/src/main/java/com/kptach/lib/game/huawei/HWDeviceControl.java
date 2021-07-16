@@ -117,12 +117,7 @@ public class HWDeviceControl implements IDeviceControl {
             int height = displayMetrics.heightPixels;
             screenSize[0] = width;
             screenSize[1] = height;
-            HashMap<String, String> mediaConfigMap = new HashMap<>();
-            mediaConfigMap.put("physical_width", Integer.toString(width));
-            mediaConfigMap.put("physical_height", Integer.toString(height));
-            mediaConfigMap.put("frame_rate", Integer.toString(30));
-            mediaConfigMap.put("bitrate", Integer.toString(10000000));
-            CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
+            setResolution(videoResolution);
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
 //            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
@@ -134,6 +129,22 @@ public class HWDeviceControl implements IDeviceControl {
         }
 
     }
+
+    private void setMediaConfig(CloudGameParas.Resolution resolution){
+        HashMap<String, String> mediaConfigMap = new HashMap<>();
+        mediaConfigMap.put("physical_width", Integer.toString(screenSize[0]));
+        mediaConfigMap.put("physical_height", Integer.toString(screenSize[1]));
+        mediaConfigMap.put("frame_rate", Integer.toString(30));
+        if (resolution == CloudGameParas.Resolution.DISPLAY_1080P){
+            mediaConfigMap.put("bitrate", Integer.toString(10000000));
+        }else if(resolution == CloudGameParas.Resolution.DISPLAY_720P){
+            mediaConfigMap.put("bitrate", Integer.toString(3000000));
+        }else if(resolution == CloudGameParas.Resolution.DISPLAY_540P){
+            mediaConfigMap.put("bitrate", Integer.toString(1800000));
+        }
+        CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
+    }
+
 
     @Override
     public void stopGame() {
@@ -270,6 +281,8 @@ public class HWDeviceControl implements IDeviceControl {
 
     public void setResolution(CloudGameParas.Resolution resolution) {
         this.videoResolution = resolution;
+        HWCloudGameUtils.info("setResolution:" + resolution.name());
+        setMediaConfig(videoResolution);
         CloudGameManager.CreateCloudGameInstance().setResolution(resolution);
     }
 
@@ -414,8 +427,8 @@ public class HWDeviceControl implements IDeviceControl {
                         if (mPlayListener != null){
                             int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
 //                            HWCloudGameUtils.info("onReceiveStatData","rtt=" + rtt);
-                            if (rtt < 10){
-                                rtt = 10;
+                            if (rtt < 1){
+                                rtt = 1;
                             }else if (rtt > 1000){
                                 rtt = 1000;
                             }
