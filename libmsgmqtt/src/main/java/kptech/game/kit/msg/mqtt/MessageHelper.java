@@ -33,6 +33,13 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
     }
 
     @Override
+    public void connect(){
+        if (messager != null){
+            messager.connect();
+        }
+    }
+
+    @Override
     public void destory() {
         if (messager != null){
             messager.stop();
@@ -71,9 +78,11 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
             String respCode= getRespCode(event);
             if (respCode != null){
                 obj.put("c", respCode);
+            }else {
+                obj.put("c", code + "");
             }
             obj.put("p",this.pkgName);
-            obj.put("t", System.currentTimeMillis());
+            obj.put("t", System.currentTimeMillis() + "");
             if (data != null){
                 try {
                     JSONObject dataJson = new JSONObject(data);
@@ -85,7 +94,8 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
             if (obj != null) {
                 messager.send(obj.toString());
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             Log.e("", e.getMessage());
         }
     }

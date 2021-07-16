@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
         mCorpKey = mSp.getString("corpKey", null);
+//        mCorpKey = "2VePUgHy1Az3tYy-ab2d1be8ac2ea91e";
 
         StringBuilder sb = new StringBuilder();
         sb.append(mainModel.getVersionName());

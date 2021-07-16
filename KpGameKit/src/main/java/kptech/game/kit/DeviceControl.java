@@ -331,16 +331,22 @@ public class DeviceControl implements IDeviceControl{
 
             //调用通知接口
             try {
-                //TODO 待测试
                 boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
-                if (supportPassV3){
-                    if (msgManager != null){
-                        String backupMsgForPaas = getBackupMsgForPaas(mActivity, mGameInfo.pkgName);
-                        msgManager.sendMessage(backupMsgForPaas);
-                    }
+                //PASS3.0云存档
+                if (supportPassV3 && msgManager != null){
+                    //云存档代码先注释
+//                    String backupdValue = getBackupMsgForPaas(mActivity);
+//                    Logger.info(TAG,"backupMsgForPaas=" + backupdValue);
 
                     if (mGameHandler != null) {
-                        mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), 1000);
+                        /*mGameHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                msgManager.sendMessage(backupdValue, 200011);
+                                mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE));
+                            }
+                        },2000);*/
+                        mGameHandler.sendMessage(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE));
                     }
                     return;
                 }
@@ -361,6 +367,7 @@ public class DeviceControl implements IDeviceControl{
                                     sleeptime = 3000;
                                 }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
+
                                 //延时3秒
                                 if (mGameHandler != null) {
                                     mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
@@ -371,6 +378,10 @@ public class DeviceControl implements IDeviceControl{
                 return;
             }catch (Exception e){
                 e.printStackTrace();
+                //延时3秒
+                if (mGameHandler != null) {
+                    mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), 3000);
+                }
             }
         }
 
@@ -663,16 +674,11 @@ public class DeviceControl implements IDeviceControl{
         }
     }
 
-    public String getBackupMsgForPaas(Context context, String packageName){
+    public String getBackupMsgForPaas(Context context){
         JSONObject obj = new JSONObject();
         try{
             String userId = DeviceInfo.getUserId(context);
-            obj.put("c","200011");
-            obj.put("t",System.currentTimeMillis());
-            obj.put("c",packageName);
-            JSONObject d = new JSONObject();
-            d.put("uid", userId);
-            obj.put("d", d);
+            obj.put("uid", userId);
             return obj.toString();
         }catch (Exception e){
             e.printStackTrace();

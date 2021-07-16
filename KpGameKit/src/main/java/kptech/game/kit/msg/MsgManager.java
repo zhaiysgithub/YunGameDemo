@@ -63,6 +63,16 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
         }
     }
 
+    public void connect(){
+        if (helper != null){
+            helper.connect();
+        }
+    }
+
+    public void disconnect(){
+
+    }
+
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
         Logger.info(TAG, "start " + corpId + " | " + padCode + " | " + pkgName);
         if (helper == null){
@@ -109,12 +119,16 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
     }
 
     public void sendMessage(String msg){
+        sendMessage(msg, 1);
+    }
+
+    public void sendMessage(String msg, int code){
         Logger.info(TAG, "sendMessage " + msg);
         if (helper == null){
             Logger.error(TAG, "sendMessage return, helper is null");
             return;
         }
-        helper.sendMessage(MessageAction.Third, 1, null, msg);
+        helper.sendMessage(MessageAction.Third, code, null, msg);
     }
 
     @Override

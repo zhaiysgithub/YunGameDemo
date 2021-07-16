@@ -66,8 +66,8 @@ dependencies {
 //    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义
-    implementation 'kptech.game.kit:kpinter:1.0.4'
-//    implementation project(path: ':kpinter')
+//    implementation 'kptech.game.kit:kpinter:1.0.4'
+    implementation project(path: ':kpinter')
 
     //网络请求发送队列主要用来发送日志
 //    implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')
@@ -82,11 +82,11 @@ dependencies {
 //        implementation files('libs/libmsgws-v1.0.0.jar')
     }else {
         //云通讯SDK
-//        implementation project(path: ':libmsgmqtt')
-        implementation files('libs/mqtt-v1.0.0.jar')
+        implementation project(path: ':libmsgmqtt')
+//        implementation files('libs/mqtt-v1.0.0.jar')
         //快盘PassV3支持库
-//        implementation project(path: ':libpassv3-support')
-        implementation files('libs/passv3-support-v1.0.0.jar')
+        implementation project(path: ':libpassv3-support')
+//        implementation files('libs/passv3-support-v1.0.0.jar')
         //华为游戏库
         implementation project(path: ':KpGameLibHuaWei')
 //        implementation files('libs/KpGameLib-HW-v1.0.1.jar')

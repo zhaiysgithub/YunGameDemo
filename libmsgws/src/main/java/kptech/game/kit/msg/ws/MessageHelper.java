@@ -33,6 +33,11 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
     }
 
     @Override
+    public void connect() {
+        
+    }
+
+    @Override
     public void destory() {
         if (messager != null){
             messager.removeCallback(this);

@@ -7,6 +7,7 @@ import java.util.Map;
 public interface IMessageHelper {
 
     void init(Application app, IMessageCallback callback, boolean debug);
+    void connect();
     void start(String deviceId);
     void stop();
     void destory();

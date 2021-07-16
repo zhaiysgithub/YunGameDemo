@@ -26,9 +26,9 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation project(path: ':kpinter')
+    implementation project(path: ':kpinter')
 
-    implementation 'kptech.game.kit:kpinter:1.0.4'
+//    implementation 'kptech.game.kit:kpinter:1.0.4'
     implementation files('libs/Game-V1.6.0.0_0604.jar')
 }
 
