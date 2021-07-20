@@ -37,6 +37,7 @@ public class HWDeviceControl implements IDeviceControl {
     private ViewGroup mViewgroup;
     private Activity mActivity;
     private String gameTimeout;
+    private String backNoTouchTimeOut;
     private String availablePlayTime;
     private final int []screenSize = new int[2];
 
@@ -79,6 +80,9 @@ public class HWDeviceControl implements IDeviceControl {
                     if (!sdkParams.containsKey("touch_timeout")){
                         //前台无操作超时的时长，单位是秒 5min
                         sdkParams.put("touch_timeout", "300");
+                        backNoTouchTimeOut = "300";
+                    }else {
+                        backNoTouchTimeOut = sdkParams.get("touch_timeout");
                     }
 
                     //备用参数
@@ -152,8 +156,8 @@ public class HWDeviceControl implements IDeviceControl {
             if (!sdkIsRelease){
                 sdkIsRelease = true;
                 CloudGameManager.CreateCloudGameInstance().exitCloudApp();
-                CloudGameManager.CreateCloudGameInstance().deinit();
             }
+            CloudGameManager.CreateCloudGameInstance().deinit();
             if (mCallback != null){
                 mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
             }
@@ -346,13 +350,22 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_available_time_usedup:
                         mCallback.onGameCallback("试玩时间到达:" + availablePlayTime,APIConstants.TIMEOUT_AVAILABLE_TIME);
                         break;
-                    case HWStateCode.code_switch_background_timeout:
-                        //切换后台超时
+                    case HWStateCode.code_switch_background_timeout://切换后台超时
+                        try{
+                            if (mPlayListener != null){
+                                sdkIsRelease = true;
+                                long noOpsTime = Long.parseLong(backNoTouchTimeOut);
+                                mPlayListener.onNoOpsTimeout(2,noOpsTime);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        break;
+                    case HWStateCode.code_game_exit:
                         sdkIsRelease = true;
-                        mCallback.onGameCallback("switch background timeout", APIConstants.ERROR_OTHER);
                         break;
                     case HWStateCode.code_notouch_timeout:
-//                        mCallback.onGameCallback("长时间未操作", APIConstants.TIMEOUT_NO_OPS);
+                        //前台无操作超时
                         try{
                             if (mPlayListener != null){
                                 sdkIsRelease = true;
@@ -362,9 +375,6 @@ public class HWDeviceControl implements IDeviceControl {
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-                        break;
-                    case HWStateCode.code_game_exit:
-                        sdkIsRelease = true;
                         break;
                     case HWStateCode.code_set_resolution_success:
                         mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS);

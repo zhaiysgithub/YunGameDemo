@@ -2,6 +2,7 @@ package com.kptach.lib.game.huawei;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
 
 import com.huawei.cloudgame.api.CloudGameManager;
@@ -59,16 +60,16 @@ public class HWGameBoxManager implements IGameBoxManager {
         }
     }
 
-    private void startInitCloudGameManager(Activity activity){
+    private void startInitCloudGameManager(Context context){
         CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
 
 
         HWCloudGameUtils.setDebug(true);
 
-        boolean tabletDevice = (activity.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
+        boolean tabletDevice = (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
                 Configuration.SCREENLAYOUT_SIZE_LARGE;
         HWCloudGameUtils.info("DevType", "isDevPad = " + tabletDevice);
-        CloudGameManager.CreateCloudGameInstance().init(activity
+        CloudGameManager.CreateCloudGameInstance().init(context
                 , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
 
         //是否使用真机输入法
@@ -105,7 +106,7 @@ public class HWGameBoxManager implements IGameBoxManager {
                 }
             });*/
 
-            startInitCloudGameManager(activity);
+            startInitCloudGameManager(activity.getApplicationContext());
             instance = new HWDeviceControl(params);
             callback.onGameCallback(instance, APIConstants.APPLY_DEVICE_SUCCESS);
         }catch (Exception e){
