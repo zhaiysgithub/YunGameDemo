@@ -182,6 +182,55 @@ public class Event implements Cloneable {
         return map;
     }
 
+    public String toTimeRequestPaasMap(int wttm){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("sessionid",this.traceId != null ? this.traceId : "");
+            jsonObject.put("wttm",wttm);
+            jsonObject.put("clnttm",System.currentTimeMillis() + "");
+            jsonObject.put("uid",this.userId != null ? this.userId : "");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    /**
+     *
+     * @param eventType  事件的类型
+     * @param extData  扩展数据，可自定义，错误信息需要必填errcode、errmsg字段
+     */
+    public String getPaas3TraceP(int eventType, String extData){
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("sessionid",(this.traceId != null ? this.traceId : ""));
+            jsonObject.put("type",eventType);
+            jsonObject.put("evt",this.event);
+            jsonObject.put("clnttm",System.currentTimeMillis() + "");
+
+            JSONObject dataObject = new JSONObject();
+            dataObject.put("uid",(this.userId != null ? this.userId : ""));
+            dataObject.put("corpkey",(this.clientId != null ? this.clientId : ""));
+            dataObject.put("pkgname",(this.gamePkg != null ? this.gamePkg : ""));
+            dataObject.put("padcode",(this.padcode != null ? this.padcode : ""));
+            dataObject.put("webrtc", -1);
+            dataObject.put("wss", -1);
+            dataObject.put("sdkversion", this.ver);
+            dataObject.put("from", "Andr");
+            dataObject.put("ext",extData);
+
+            jsonObject.put("data",dataObject);
+
+            return jsonObject.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return  "";
+    }
+
+
 //    public String toTimeRequestJson(){
 //        StringBuilder sb = new StringBuilder();
 //

@@ -3,7 +3,6 @@ package kptech.game.kit;
 import android.app.Activity;
 import android.app.Application;
 
-import java.util.HashMap;
 import java.util.List;
 
 import kptech.game.kit.model.GameBoxConfig;
@@ -45,15 +44,19 @@ public interface IGameBoxManager {
     /**
      * 加入队列
      * @param pkgName
-     * @param checkInterval
      * @param callback
      */
-    void joinQueue(String pkgName, int checkInterval, APICallback<QueueRankInfo> callback);
+    void joinQueue(String pkgName, APICallback<String> callback);
+
+    /**
+     * 获取队列信息
+     */
+    void fetchQueueInfo(String pkgName, APICallback<String> callback);
 
     /**
      * 退出队列
      */
-    void exitQueue();
+    void exitQueue(APICallback<String> callback);
 
     /**
      * 游戏列表获取，游戏列表支持分页获取。

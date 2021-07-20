@@ -9,6 +9,7 @@ import android.os.Message;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.google.gson.JsonObject;
 import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IPlayDataListener;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.utils.ApiCodeConvertUtils;
 import kptech.lib.ad.AdManager;
 import kptech.lib.ad.IAdCallback;
 import kptech.lib.analytic.DeviceInfo;
@@ -103,7 +105,6 @@ public class DeviceControl implements IDeviceControl{
             @Override
             public void onMessageReceived(String msg) {
                 if (mCloudMsgListener != null){
-                    //TODO 解析数据格式
 //                    mCloudMsgListener.onMessage();
                 }
             }
@@ -432,13 +433,13 @@ public class DeviceControl implements IDeviceControl{
                                     sleeptime = 3000;
                                 }
                                 Logger.info(TAG, "clientNotice, ret = " + ret);
-                                boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
-                                //PASS3.0云存档
+                                //PAAS3.0云存档  TODO 暂时取消PAAS云存档
+                                /*boolean supportPassV3 = GameBoxManagerFactory.isSupportPassV3();
                                 if (supportPassV3 && msgManager != null){
                                     String backupdValue = getBackupMsgForPaas(mActivity);
                                     Logger.info(TAG,"backupMsgForPaas=" + backupdValue);
                                     msgManager.sendMessage(backupdValue, 200011);
-                                }
+                                }*/
                                 //延时3秒
                                 if (mGameHandler != null) {
                                     mGameHandler.sendMessageDelayed(Message.obtain(mGameHandler, MSG_GAME_EXEC, FLAG_NOTICE), sleeptime);
@@ -571,9 +572,15 @@ public class DeviceControl implements IDeviceControl{
 
         //发送打点事件
         try {
+            //paas 开始申请视频流打点
+            Event videoReadyRecvingEvent = Event.getEvent(EventCode.DATA_VIDEO_READY_RECVING_TRACE,mGameInfo.pkgName,getPadcode());
+            MobclickAgent.sendPaas3TraceEvent(videoReadyRecvingEvent,1,"");
+
             Event event = Event.getEvent(EventCode.DATA_VIDEO_READY_RECVING, mGameInfo.pkgName, getPadcode());
             MobclickAgent.sendEvent(event);
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         //发送事件耗时统计
         if (!sendTmEvent) {
@@ -622,13 +629,33 @@ public class DeviceControl implements IDeviceControl{
 
                 //发送打点事件
                 try {
+                    String[] videoStatusArr = ApiCodeConvertUtils.getVideoStatusCode(code);
+                    if (videoStatusArr != null && videoStatusArr.length == 2){
+                        int eventType = Integer.parseInt(videoStatusArr[1]);
+                        if (eventType > 0){
+                            String eventName = videoStatusArr[0];
+                            Event passVideoEvent = Event.getEvent(eventName,mGameInfo.pkgName, getPadcode());
+                            String extData = "";
+                            if (eventType == EventCode.TYPE_TRACE_PROCE_ERROR){
+                                JSONObject dataJson = new JSONObject();
+                                dataJson.put("errcode",code);
+                                dataJson.put("errmsg",msg);
+                                extData = dataJson.toString();
+                            }
+                            MobclickAgent.sendPaas3TraceEvent(passVideoEvent,eventType,extData);
+                        }
+                    }
+
+
                     Event event = Event.getEvent(EventCode.getGameEventCode(code), mGameInfo.pkgName, getPadcode(), msg, null);
                     HashMap ext = new HashMap<>();
                     ext.put("code", code);
                     ext.put("msg", msg);
                     event.setExt(ext);
                     MobclickAgent.sendEvent(event);
-                }catch (Exception e){}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 //发送事件耗时统计
                 if (sendTmEvent){
@@ -675,6 +702,7 @@ public class DeviceControl implements IDeviceControl{
     //心跳统计游戏运行时长
     private Handler mPlayTimeHandler = null;
     private long playTimestamp = 0;
+    private final int delayTime = 15 * 1000;
     private synchronized void startSendPlayTime(){
         if (mPlayTimeHandler == null) {
             mPlayTimeHandler = new Handler(HeartThread.getInstance().getLooper()){
@@ -700,12 +728,15 @@ public class DeviceControl implements IDeviceControl{
                         try {
                             Event event = Event.getEvent(EventCode.DATA_GAME_PLAY_TIME, mGameInfo.pkgName, getPadcode());
                             event.setHearttimes(len);
+                            //发送PAAS3心跳数据
+                            MobclickAgent.sendPlayTimeEventPAAS(event,delayTime);
                             MobclickAgent.sendPlayTimeEvent(event);
+
                         }catch (Exception e){}
 
                         //心跳10秒
                         if (mPlayTimeHandler!=null){
-                            mPlayTimeHandler.sendEmptyMessageDelayed(1, 15*1000);
+                            mPlayTimeHandler.sendEmptyMessageDelayed(1, delayTime);
                         }
                     }
                 }

@@ -235,4 +235,68 @@ public class EventCode {
         }
         return DATA_VIDEO_START_RECVINGERR;
     }
+
+
+    // 新定义事件
+    //正常流程事件
+    public static final int TYPE_TRACE_PROCE_NORMAL = 1;
+    //非正常流程事件，失败类型
+    public static final int TYPE_TRACE_PROCE_FAIL = 2;
+    //非正常流程事件，错误类型
+    public static final int TYPE_TRACE_PROCE_ERROR = 3;
+    //正常流程事件
+    //SDK被成功加载
+    public static final String DATA_SDK_LOADED_TRACE = "DATA_SDK_LOADED";
+    //SDK调⽤初始化函数
+    public static final String DATA_SDK_INIT_TRACE = "DATA_SDK_INIT";
+    //调⽤初始化函数完成,可以申请设备
+    public static final String DATA_SDK_INITSUCC_TRACE = "DATA_SDK_INITSUCC";
+    //开始申请设备
+    public static final String DATA_DEVICE_APPLY_START_TRACE = "DATA_DEVICE_APPLY_START";
+    //申请设备成功
+    public static final String DATA_DEVICE_APPLY_OK_TRACE = "DATA_DEVICE_APPLY_OK";
+    //开始申请视频流
+    public static final String DATA_VIDEO_READY_RECVING_TRACE = "DATA_VIDEO_READY_RECVING";
+    //成功获取视频流
+    public static final String DATA_VIDEO_START_RECVING_TRACE = "DATA_VIDEO_START_RECVING";
+    //关闭视频流
+    public static final String DATA_VIDEO_CLOSE_TRACE = "DATA_VIDEO_CLOSE";
+
+    //⾮正常流程事件 -- 失败类型
+    //SDK调⽤初始化函数失败或出现错误
+    public static final String DATA_SDK_INITERROR_TRACE = "DATA_SDK_INITERROR";
+    //申请设备超时
+    public static final String DATA_DEVICE_APPLY_TIMEOUT_TRACE = "DATA_DEVICE_APPLY_TIMEOUT";
+
+    //⾮正常流程事件 -- 错误类型
+    //设备申请失败
+    public static final String DATA_DEVICE_APPLY_FAILED_TRACE = "DATA_DEVICE_APPLY_FAILED";
+    //CorpKey不存在，对应设备申请接⼝错误码：10000
+    public static final String DATA_CHECK_FAILED_CORPKEY_TRACE = "DATA_CHECK_FAILED_CORPKEY";
+    //pkgname错误，APP不存在，对应设备申请接⼝错 误码：10001PkgName错误，即APP不存在
+    public static final String DATA_DEVICE_APP_UNDEFINE_TRACE = "DATA_DEVICE_APP_UNDEFINE";
+    //未授权的APP访问，即该APP未授权给该企业使⽤， 对应设备申请接⼝错误码：10002
+    public static final String DATA_DEVICE_APP_NOTMATCH_TRACE = "DATA_DEVICE_APP_NOTMATCH";
+    //⽆空闲设备（设备已经安装APP但设备都在使⽤中未释放），对应设备申请接⼝错误码：10003
+    public static final String DATA_DEVICE_APPLY_BUSY_TRACE = "DATA_DEVICE_APPLY_BUSY";
+    //APP未安装到相关设备，对应设备申请接⼝错误码： 10004
+    public static final String DATA_DEVICE_APP_NOTINSTALL_TRACE = "DATA_DEVICE_APP_NOTINSTALL";
+    //该企业未分配设备，对应设备申请接⼝错误码： 10005
+    public static final String DATA_DEVICE_ERROR_NODEVICE_TRACE = "DATA_DEVICE_ERROR_NODEVICE";
+    //IAAS调⽤错误，对应设备申请接⼝错误码：10006
+    public static final String DATA_DEVICE_ERROR_IAAS_TRACE = "DATA_DEVICE_ERROR_IAAS";
+    //未定义错误，对应设备申请接⼝未定义的错误码
+    public static final String DATA_DEVICE_ERROR_UNKNOWN_TRACE = "DATA_DEVICE_ERROR_UNKNOWN";
+    //游戏启动错误
+    public static final String DATA_DEVICE_APP_FAILED_TRACE = "DATA_DEVICE_APP_FAILED";
+    //调⽤底层IaaS供应商SDK的播放视频函数错误
+    public static final String DATA_RUNTIME_SDK_ERROR_CALLPLAY_TRACE = "DATA_RUNTIME_SDK_ERROR_CALLPLAY";
+    //视频播放中⽹络出错
+    public static final String DATA_VIDEO_NET_CONN_ERROR_TRACE = "DATA_VIDEO_NET_CONN_ERROR";
+    //视频播放中出现了⾮⽹络错误，是IaaS供应商已定义的错误
+    public static final String DATA_VIDEO_FAILED_PLAYING_TRACE = "DATA_VIDEO_FAILED_PLAYING";
+    //视频播放中出现了⾮⽹络错误，是IaaS供应商未定义 的错误
+    public static final String DATA_VIDEO_FAILED_UNKNOWN_TRACE = "DATA_VIDEO_FAILED_UNKNOWN";
+
+
 }

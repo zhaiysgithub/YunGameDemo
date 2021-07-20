@@ -50,6 +50,28 @@ public class APIConstants {
     public static final int ERROR_CALL_API = 1020;
     //认证失败
     public static final int ERROR_AUTH = 1021;
+    //PAAS申请设备IAAS错误
+    public static final int ERROR_PAAS_APPLY_IAAS = 1022;
+    //PAAS申请设备超时
+    public static final int ERROR_PAAS_APPLY_TIMEOUT = 1023;
+
+    //队列操作 code
+
+    //队列接口返回正常
+    public static final int QUEUE_RET_SUCCESS = 1100;
+    //队列服务异常，稍后再试
+    public static final int QUEUE_ERROR_RESULT = 1101;
+    //队列服务异常，稍后再试
+    public static final int QUEUE_ERROR_DATA = 1102;
+    //该用户已经在队列中
+    public static final int QUEUE_IN_TEAM = 1103;
+    //队列不存在
+    public static final int QUEUE_ERROR_EXIST = 1104;
+    //队列用户不在队列
+    public static final int QUEUE_NOTIN_TEAM = 1105;
+    //队列其他错误
+    public static final int QUEUE_RET_ERROR = 1106;
+
 
     //其他错误联系管理员
     public static final int ERROR_OTHER = 65535;

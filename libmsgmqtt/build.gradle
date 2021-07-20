@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
     }
 
     buildTypes {
@@ -34,7 +34,7 @@ task makeJar(type: Jar) {
     delete "build/libs/${jar_name}"
     archiveName("${jar_name}")
     from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
-    from (project.zipTree('libs/KpCKit-v2.0.0.jar'))
+    from (project.zipTree('libs/KpCKit-v2.0.1.jar'))
     destinationDir(file('build/lib'))
 }
 makeJar.dependsOn(build)

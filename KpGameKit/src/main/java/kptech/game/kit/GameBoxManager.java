@@ -14,15 +14,15 @@ import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
 
-import java.util.ArrayList;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import kptech.game.kit.env.Env;
 import kptech.game.kit.model.GameBoxConfig;
 import kptech.game.kit.msg.MsgManager;
+import kptech.game.kit.utils.ApiCodeConvertUtils;
 import kptech.game.kit.utils.DeviceUtils;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.MillisecondsDuration;
@@ -35,6 +35,7 @@ import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
 import kptech.lib.constants.SharedKeys;
 import kptech.lib.constants.Urls;
+import kptech.lib.data.QueueTask;
 import kptech.lib.data.RequestAppInfoTask;
 import kptech.lib.data.RequestTask;
 import kptech.lib.fatory.GameBoxManagerFactory;
@@ -51,7 +52,9 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
     private boolean isInited = false;
     private boolean devLoading = false;
     private boolean mShowCustomerLoadingView;
+    private String mPkgName;
     private LoadingPageView mCustomerLoadingView;
+    private GameBoxConfig mGameBoxConfig;
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -94,6 +97,11 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
 
     @Override
     public void init(Application application, String appKey, GameBoxConfig gameConfig, APICallback<String> callback) {
+        if (callback == null){
+            return;
+        }
+
+        mGameBoxConfig = gameConfig;
         init(application, appKey, callback);
     }
 
@@ -141,6 +149,9 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
 
         mTimeDuration = new MillisecondsDuration();
         try {
+            Event paas3Event = Event.getEvent(EventCode.DATA_SDK_INIT_TRACE);
+            MobclickAgent.sendPaas3TraceEvent(paas3Event,EventCode.TYPE_TRACE_PROCE_NORMAL,"");
+
             //发送打点事件
             Event event = Event.getEvent(EventCode.DATA_SDK_INIT_START);
             event.setExt(getDeviceInfo(application));
@@ -181,11 +192,6 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
         }
         return params;
     }
-
-    public String getLogFilePath() {
-        return "";
-    }
-
 
     private class InitHandler extends Handler{
         public InitHandler(){
@@ -285,6 +291,12 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
 
         boolean ret = true;
         try {
+            //发送paas3 SDK初始化事件
+            Event paas3Event = Event.getEvent(ret ? EventCode.DATA_SDK_LOADED_TRACE : EventCode.DATA_SDK_INITERROR_TRACE);
+            int paas3EventType = ret ? EventCode.TYPE_TRACE_PROCE_NORMAL : EventCode.TYPE_TRACE_PROCE_ERROR;
+            MobclickAgent.sendPaas3TraceEvent(paas3Event,paas3EventType,"");
+
+
             //发送打点事件
             Event event = Event.getEvent(ret ? EventCode.DATA_SDK_INIT_OK : EventCode.DATA_SDK_INIT_FAILED);
             HashMap<String,Object> ext = new HashMap<>();
@@ -296,6 +308,13 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
             e.printStackTrace();
         }
 
+        try {
+            //调用初始化函数完成
+            Event paas3Event = Event.getEvent(EventCode.DATA_SDK_INITSUCC_TRACE);
+            MobclickAgent.sendPaas3TraceEvent(paas3Event,EventCode.TYPE_TRACE_PROCE_NORMAL,"");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         try {
             //发送事件耗时统计
@@ -360,6 +379,8 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
             return;
         }
 
+        mPkgName = inf.pkgName;
+
         try {
             //重置打点数据
             Event.resetTrackIdFromBase();
@@ -370,6 +391,11 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
 
             //发送打点事件
             MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_DEVICE_APPLY_START, inf.pkgName, ext));
+
+            //开始申请设备打点
+            Event applyDeviceEvent = Event.getEvent(EventCode.DATA_DEVICE_APPLY_START_TRACE);
+            MobclickAgent.sendPaas3TraceEvent(applyDeviceEvent,EventCode.TYPE_TRACE_PROCE_NORMAL,"");
+
 
             if (mTimeDuration == null) {
                 mTimeDuration = new MillisecondsDuration();
@@ -383,6 +409,7 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
             Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_START, useTm, data);
             event.setGamePkg(inf.pkgName);
             MobclickAgent.sendTMEvent(event);
+
 
             mTimeDuration = new MillisecondsDuration();
         }catch (Exception e){
@@ -422,21 +449,33 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
             , GameInfo inf, final APICallback<DeviceControl> callback){
         devLoading = false;
 
+        String padCode = "";
         DeviceControl control = null;
         if (innerControl != null){
             control = new DeviceControl(innerControl, inf);
             control.setCorpKey(mCorpID);
+            padCode = control.getPadcode();
         }
-
+        int outCode = ApiCodeConvertUtils.getPaasApplyDeviceErrorCode(code);
         try {
+            //PAAS3 申请设备的打点
+            String[] eventMsgArr = ApiCodeConvertUtils.getTraceEventByApplyDeviceCode(code);
+            if (eventMsgArr != null && eventMsgArr.length == 3){
+               String eventCodeName = eventMsgArr[0];
+               int eventType = Integer.parseInt(eventMsgArr[1]);
+               String extJsonStr = eventMsgArr[2];
+               Event applyDeviceRetEvent = Event.getEvent(eventCodeName,mPkgName,padCode);
+               MobclickAgent.sendPaas3TraceEvent(applyDeviceRetEvent,eventType,extJsonStr);
+            }
+
             //发送打点事件
-            Event event = Event.getEvent(EventCode.getDeviceEventCode(code), inf.pkgName);
+            Event event = Event.getEvent(EventCode.getDeviceEventCode(outCode), inf.pkgName);
             if (control != null){
                 event.setPadcode(control.getPadcode());
             }
-            event.setErrMsg(""+code);
+            event.setErrMsg(""+outCode);
             HashMap<String,Object> ext = new HashMap<>();
-            ext.put("code", code);
+            ext.put("code", outCode);
             if(innerControl!=null && innerControl.getSdkType()!=null){
                 ext.put("useSDK", innerControl.getSdkType().toString());
             }
@@ -452,8 +491,8 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
             HashMap<String,Object> data = new HashMap<>();
             data.put("stime", mTimeDuration.getSavedTime());
             data.put("etime", mTimeDuration.getCurentTime());
-            data.put("state", code == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
-            data.put("code", code);
+            data.put("state", outCode == APIConstants.APPLY_DEVICE_SUCCESS ? "ok" : "failed");
+            data.put("code", outCode);
             Event event = Event.getTMEvent(EventCode.DATA_TMDATA_DEVICE_END, useTm, data);
             event.setGamePkg(inf.pkgName);
             if (control != null){
@@ -467,17 +506,60 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
         }
 
         //回调方法
-        callback.onAPICallback(control, code);
+        callback.onAPICallback(control, outCode);
     }
 
     @Override
-    public void joinQueue(String pkgName, int checkInterval, APICallback<QueueRankInfo> callback) {
-        //TODO 添加到队列
+    public void joinQueue(String pkgName, APICallback<String> callback) {
+        new QueueTask(mApplication,QueueTask.ACTION_PUSH).setCorpKey(mCorpID).setPkgName(pkgName).setCallback(jsonData -> {
+            try {
+                if (callback != null){
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    int code = jsonObject.optInt("code");
+                    String msg = jsonObject.optString("msg");
+                    callback.onAPICallback(msg, code);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                callback.onAPICallback(e.getMessage(),APIConstants.QUEUE_RET_ERROR);
+            }
+        }).execute();
+
     }
 
     @Override
-    public void exitQueue() {
-        //TODO 退出队列
+    public void fetchQueueInfo(String pkgName, APICallback<String> callback) {
+        new QueueTask(mApplication,QueueTask.ACTION_FETCH).setCorpKey(mCorpID).setPkgName(pkgName).setCallback(jsonData -> {
+            try {
+                if (callback != null){
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    int code = jsonObject.optInt("code");
+                    String msg = jsonObject.optString("msg");
+                    callback.onAPICallback(msg, code);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                callback.onAPICallback(e.getMessage(),APIConstants.QUEUE_RET_ERROR);
+            }
+        }).execute();
+    }
+
+    @Override
+    public void exitQueue(APICallback<String> callback) {
+        //退出队列
+        new QueueTask(mApplication,QueueTask.ACTION_POP).setCorpKey(mCorpID).setPkgName(mPkgName).setCallback(jsonData -> {
+            try {
+                if (callback != null){
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    int code = jsonObject.optInt("code");
+                    String msg = jsonObject.optString("msg");
+                    callback.onAPICallback(msg, code);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                callback.onAPICallback(e.getMessage(),APIConstants.QUEUE_RET_ERROR);
+            }
+        }).execute();
     }
 
     /**
@@ -570,4 +652,7 @@ public class GameBoxManager implements kptech.game.kit.IGameBoxManager {
         return mCustomerLoadingView;
     }
 
+    public GameBoxConfig getGameBoxConfig() {
+        return mGameBoxConfig;
+    }
 }

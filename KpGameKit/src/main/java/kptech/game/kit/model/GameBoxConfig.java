@@ -17,6 +17,9 @@ public class GameBoxConfig implements Parcelable {
     //是否启动本地输入法
     public boolean enableRemoteIme = true;
 
+    //tUid
+    public String tUid;
+
     //其他信息
     public String extraInfo;
 
@@ -28,6 +31,7 @@ public class GameBoxConfig implements Parcelable {
     protected GameBoxConfig(Parcel in) {
         bitrate = in.readString();
         gameResolution = in.readString();
+        tUid = in.readString();
         enableRemoteIme = in.readByte() != 0;
         extraInfo = in.readString();
     }
@@ -55,5 +59,6 @@ public class GameBoxConfig implements Parcelable {
         dest.writeString(gameResolution);
         dest.writeByte((byte) (enableRemoteIme ? 1 : 0));
         dest.writeString(extraInfo);
+        dest.writeString(tUid);
     }
 }

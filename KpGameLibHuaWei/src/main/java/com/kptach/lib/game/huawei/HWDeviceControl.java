@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class HWDeviceControl implements IDeviceControl {
 
@@ -88,7 +87,9 @@ public class HWDeviceControl implements IDeviceControl {
                     }
                     sdkParams.put("launcher_activity", "");
                     //前台无操作超时的时长，单位是秒 5min
-                    sdkParams.put("touch_timeout", "300");
+                    if (!sdkParams.containsKey("touch_timeout")){
+                        sdkParams.put("touch_timeout", "300");
+                    }
                     //备用参数
                     sdkParams.put("user_id", "");
 
@@ -138,12 +139,7 @@ public class HWDeviceControl implements IDeviceControl {
             int height = displayMetrics.heightPixels;
             screenSize[0] = width;
             screenSize[1] = height;
-            HashMap<String, String> mediaConfigMap = new HashMap<>();
-            mediaConfigMap.put("physical_width", Integer.toString(width));
-            mediaConfigMap.put("physical_height", Integer.toString(height));
-            mediaConfigMap.put("frame_rate", Integer.toString(30));
-            mediaConfigMap.put("bitrate", bitrate);
-            CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
+            setResolution(videoResolution);
             setVideoDisplayMode(true);
             CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
             if (callback != null){
@@ -169,6 +165,22 @@ public class HWDeviceControl implements IDeviceControl {
     public void startGame(Activity activity, int container) {
 
     }
+
+    private void setMediaConfig(CloudGameParas.Resolution resolution){
+        HashMap<String, String> mediaConfigMap = new HashMap<>();
+        mediaConfigMap.put("physical_width", Integer.toString(screenSize[0]));
+        mediaConfigMap.put("physical_height", Integer.toString(screenSize[1]));
+        mediaConfigMap.put("frame_rate", Integer.toString(30));
+        if (resolution == CloudGameParas.Resolution.DISPLAY_1080P){
+            mediaConfigMap.put("bitrate", Integer.toString(10000000));
+        }else if(resolution == CloudGameParas.Resolution.DISPLAY_720P){
+            mediaConfigMap.put("bitrate", Integer.toString(3000000));
+        }else if(resolution == CloudGameParas.Resolution.DISPLAY_540P){
+            mediaConfigMap.put("bitrate", Integer.toString(1800000));
+        }
+        CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
+    }
+
 
     @Override
     public void stopGame() {
@@ -312,6 +324,8 @@ public class HWDeviceControl implements IDeviceControl {
 
     public void setResolution(CloudGameParas.Resolution resolution) {
         this.videoResolution = resolution;
+        HWCloudGameUtils.info("setResolution:" + resolution.name());
+        setMediaConfig(videoResolution);
         CloudGameManager.CreateCloudGameInstance().setResolution(resolution);
     }
 
@@ -530,7 +544,7 @@ public class HWDeviceControl implements IDeviceControl {
                         }
                         //延迟数值
                         int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
-                        if (rtt == 0){
+                        if (rtt < 5){
                             rtt = 5;
                         }else if (rtt > 1000){
                             rtt = 1000;

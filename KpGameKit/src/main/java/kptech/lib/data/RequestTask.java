@@ -89,7 +89,7 @@ public class RequestTask {
     }
 
     public static List<GameInfo> queryGameListByPass3(String corpKey, int page, int limit){
-        String gameUrl = Urls.getRequestDeviceUrl(Urls.URL_PASS_GAMES);
+        String gameUrl = Urls.getRequestDeviceUrl(Urls.URL_PAAS_GAMES);
 
         BufferedReader reader = null;
         OutputStream writeStream = null;

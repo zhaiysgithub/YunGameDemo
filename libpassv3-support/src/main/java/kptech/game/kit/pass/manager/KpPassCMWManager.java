@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -71,9 +72,10 @@ public class KpPassCMWManager {
         BufferedReader reader = null;
         OutputStream writeStream = null;
         InputStreamReader isr = null;
+        HttpURLConnection conn = null;
         try {
             URL connURL = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) connURL.openConnection();
+            conn = (HttpURLConnection) connURL.openConnection();
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setDoInput(true);
@@ -126,7 +128,11 @@ public class KpPassCMWManager {
             } else {
                 callback.onError(responseCode, defaultErrorMsg);
             }
-        } catch (Exception e) {
+        }catch (SocketTimeoutException e) {
+            e.printStackTrace();
+            callback.onError(APIConstants.ERROR_PAAS_APPLY_TIMEOUT, e.getMessage());
+        }
+        catch (Exception e) {
             e.printStackTrace();
             callback.onError(APIConstants.ERROR_APPLY_DEVICE, e.getMessage());
         } finally {
@@ -139,6 +145,9 @@ public class KpPassCMWManager {
                 }
                 if (reader != null) {
                     reader.close();
+                }
+                if (conn != null){
+                    conn.disconnect();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -172,17 +181,17 @@ public class KpPassCMWManager {
     public int getErrorCode(int applyDeviceCode){
         int apiErrorCode;
         switch (applyDeviceCode){
-            case PassConstants.PASS_CODE_ERROR_CORPKEY:
-            case PassConstants.PASS_CODE_ERROR_PKGNAME:
-            case PassConstants.PASS_CODE_ERROR_AUTH:
-            case PassConstants.PASS_CODE_ERROR_APP:
-            case PassConstants.PASS_CODE_ERROR_DEVICENO:
+            case PassConstants.PASS_CODE_ERROR_CORPKEY:  //10000
+            case PassConstants.PASS_CODE_ERROR_PKGNAME:  //10001
+            case PassConstants.PASS_CODE_ERROR_AUTH:     //10002
+            case PassConstants.PASS_CODE_ERROR_APP:      //10004
+            case PassConstants.PASS_CODE_ERROR_DEVICENO:  //10005
                 apiErrorCode = APIConstants.ERROR_SDK_INIT;
                 break;
-            case PassConstants.PASS_CODE_ERROR_DEVICEBUSY:
+            case PassConstants.PASS_CODE_ERROR_DEVICEBUSY:  //10003
                 apiErrorCode = APIConstants.ERROR_DEVICE_BUSY;
                 break;
-            case PassConstants.PASS_CODE_ERROR_DEFAULT:
+            case PassConstants.PASS_CODE_ERROR_DEFAULT:   //10006
                 apiErrorCode = APIConstants.ERROR_OTHER;
                 break;
             default:

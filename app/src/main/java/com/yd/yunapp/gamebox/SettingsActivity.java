@@ -95,11 +95,11 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }else {
                 if (Env.isTestEnv()){
-                    listPreference.setEntries(R.array.corpkey_pass3_key_debug);
-                    listPreference.setEntryValues(R.array.corpkey_pass3_value_debug);
+                    listPreference.setEntries(R.array.corpkey_paas3_key_debug);
+                    listPreference.setEntryValues(R.array.corpkey_paas3_value_debug);
                 }else {
-                    listPreference.setEntries(R.array.corpkey_pass3_key_release);
-                    listPreference.setEntryValues(R.array.corpkey_pass3_value_release);
+                    listPreference.setEntries(R.array.corpkey_paas3_key_release);
+                    listPreference.setEntryValues(R.array.corpkey_paas3_value_release);
                 }
 
             }

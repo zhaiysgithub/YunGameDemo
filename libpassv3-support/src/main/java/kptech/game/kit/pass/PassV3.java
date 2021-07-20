@@ -91,13 +91,12 @@ public class PassV3 implements IGameBoxManager {
                         gameBoxManager.applyCloudDevice(activity, gameInf, callback);
                     }else {
                         Logger.error("KpPassCMWManager","iaas error:" + iaas);
-                        int erroCode = KpPassCMWManager.instance().getErrorCode(code);
-                        callback.onGameCallback(null, erroCode);
+                        callback.onGameCallback(null, APIConstants.ERROR_PAAS_APPLY_IAAS);
                     }
                     return;
                 }
-                int erroCode = KpPassCMWManager.instance().getErrorCode(code);
-                callback.onGameCallback(null, erroCode);
+//                int erroCode = KpPassCMWManager.instance().getErrorCode(code);
+                callback.onGameCallback(null, code);
             }
 
             @Override

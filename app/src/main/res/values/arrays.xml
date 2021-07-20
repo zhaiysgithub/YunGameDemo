@@ -40,20 +40,20 @@
 
 
     <!--PASS3.0使用的corpKey-->
-    <string-array name="corpkey_pass3_key_debug">
+    <string-array name="corpkey_paas3_key_debug">
         <item>KP3华为测试_test 2VeMZlx2poU3eFr-85287aebd9ed43aa</item>
     </string-array>
 
-    <string-array name="corpkey_pass3_value_debug">
+    <string-array name="corpkey_paas3_value_debug">
         <item>2VeMZlx2poU3eFr-85287aebd9ed43aa</item>
     </string-array>
 
 
-    <string-array name="corpkey_pass3_key_release">
+    <string-array name="corpkey_paas3_key_release">
         <item>KP3华为测试 2VePT4zse0f2UFz-a2bec13ec9afadae</item>
     </string-array>
 
-    <string-array name="corpkey_pass3_value_release">
+    <string-array name="corpkey_paas3_value_release">
         <item>2VePT4zse0f2UFz-a2bec13ec9afadae</item>
     </string-array>
 </resources>
