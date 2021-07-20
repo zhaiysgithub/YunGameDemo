@@ -129,6 +129,10 @@ public interface IDeviceControl {
 
     String getDeviceInfo();
 
+    void onResume();
+
+    void onPause();
+
     /**
      * 试玩监听
      */

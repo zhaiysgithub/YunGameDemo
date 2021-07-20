@@ -8,6 +8,7 @@ import android.os.Message;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
+import com.kptach.lib.game.baidu.BdDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
 
 import org.json.JSONObject;
@@ -636,5 +637,19 @@ public class DeviceControl implements IDeviceControl{
             return "";
         }
         return mInnerControl.getDeviceInfo();
+    }
+
+    @Override
+    public void onResume() {
+        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
+            ((BdDeviceControl)mInnerControl).onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
+            ((BdDeviceControl)mInnerControl).onPause();
+        }
     }
 }
