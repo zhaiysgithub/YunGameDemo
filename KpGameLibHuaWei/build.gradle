@@ -10,7 +10,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.2"
 
         consumerProguardFiles "consumer-rules.pro"
 
@@ -46,23 +46,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
 
-//    implementation 'kptech.game.kit:kpinter:1.0.4'
-    implementation project(path: ':kpinter')
+    implementation 'kptech.game.kit:kpinter:1.0.4'
+//    implementation project(path: ':kpinter')
     implementation files('libs/cloudgame.jar')
 }
 
-
-/*task makeJar(type: Copy) {
-    //设置拷贝的文件
-    from('build/intermediates/aar_main_jar/release/')
-    //打进jar包后的文件目录
-//    into('build/libs/')
-    into('../kplib/libs/')
-    //将classes.jar放入build/libs/目录下
-    include('classes.jar')
-    //重命名
-    rename ('classes.jar',"KpGameLib-HW-v${android.defaultConfig.versionName}.jar")
-}*/
 
 task makeJar(type: Jar) {
     def jar_name = "KpGameLib-HW-v${android.defaultConfig.versionName}.jar"

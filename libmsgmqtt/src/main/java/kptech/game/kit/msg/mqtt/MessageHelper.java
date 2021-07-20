@@ -32,12 +32,12 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
         }
     }
 
-    @Override
+   /* @Override
     public void connect(){
         if (messager != null){
             messager.connect();
         }
-    }
+    }*/
 
     @Override
     public void destory() {

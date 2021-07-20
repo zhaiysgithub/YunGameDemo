@@ -35,10 +35,10 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':kpinter')
+//    implementation project(path: ':kpinter')
     implementation files('libs/CloudPhoneAndroidSDK-3.0.15.jar')
 
-//    implementation 'kptech.game.kit:kpinter:1.0.4'
+    implementation 'kptech.game.kit:kpinter:1.0.4'
 }
 
 task makeJar(type: Copy) {

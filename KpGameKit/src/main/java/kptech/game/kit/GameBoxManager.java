@@ -238,7 +238,7 @@ public class GameBoxManager {
                         }
 
                         //初始化通讯
-//                        MsgManager.init(mApplication, mDebug);
+                        MsgManager.init(mApplication, mDebug);
 
                         //回调初始化
                         if (this.callback != null){
@@ -363,7 +363,7 @@ public class GameBoxManager {
         }
         devLoading = true;
 
-        MsgManager.getInstance().connect();
+//        MsgManager.getInstance().connect();
 
         HashMap<String,Object> sdkParams = new HashMap<>();
         sdkParams.put(IGameBoxManager.PARAMS_KEY_DEBUG, mDebug);

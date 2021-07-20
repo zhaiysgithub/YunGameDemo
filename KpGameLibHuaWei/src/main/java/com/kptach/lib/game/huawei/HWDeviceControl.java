@@ -36,8 +36,10 @@ public class HWDeviceControl implements IDeviceControl {
     private PlayListener mPlayListener;
     private ViewGroup mViewgroup;
     private Activity mActivity;
+    //后台超时时间
     private String gameTimeout;
-    private String backNoTouchTimeOut;
+    //前台超时时间
+    private String touchTimeOut;
     private String availablePlayTime;
     private final int []screenSize = new int[2];
 
@@ -80,9 +82,9 @@ public class HWDeviceControl implements IDeviceControl {
                     if (!sdkParams.containsKey("touch_timeout")){
                         //前台无操作超时的时长，单位是秒 5min
                         sdkParams.put("touch_timeout", "300");
-                        backNoTouchTimeOut = "300";
+                        touchTimeOut = "300";
                     }else {
-                        backNoTouchTimeOut = sdkParams.get("touch_timeout");
+                        touchTimeOut = sdkParams.get("touch_timeout");
                     }
 
                     //备用参数
@@ -354,7 +356,7 @@ public class HWDeviceControl implements IDeviceControl {
                         try{
                             if (mPlayListener != null){
                                 sdkIsRelease = true;
-                                long noOpsTime = Long.parseLong(backNoTouchTimeOut);
+                                long noOpsTime = Long.parseLong(gameTimeout);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
                             }
                         }catch (Exception e){
@@ -369,7 +371,7 @@ public class HWDeviceControl implements IDeviceControl {
                         try{
                             if (mPlayListener != null){
                                 sdkIsRelease = true;
-                                long noOpsTime = Long.parseLong(gameTimeout);
+                                long noOpsTime = Long.parseLong(touchTimeOut);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
                             }
                         }catch (Exception e){

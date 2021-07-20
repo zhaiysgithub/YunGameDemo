@@ -13,7 +13,6 @@ import org.xutils.x;
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.callback.OnAuthCallback;
 import kptech.game.kit.manager.UserAuthManager;
-import kptech.game.kit.msg.MsgManager;
 import kptech.game.kit.utils.Logger;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
@@ -46,7 +45,6 @@ public class GameBox {
 //        x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
         this.mApplication = application;
         this.appKey = appKey;
-        MsgManager.init(application,BuildConfig.DEBUG);
         GameBoxManager.setAppKey(appKey);
     }
     public void playGame(Activity activity, GameInfo gameInfo){

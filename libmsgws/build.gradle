@@ -24,8 +24,8 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':kpinter')
-//    implementation 'kptech.game.kit:kpinter:1.0.4'
+//    implementation project(path: ':kpinter')
+    implementation 'kptech.game.kit:kpinter:1.0.4'
     implementation files('libs/KpCKit-v1.0.8-10.jar')
 }
 

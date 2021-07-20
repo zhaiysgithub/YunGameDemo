@@ -63,7 +63,7 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
         }
     }
 
-    public void connect(){
+    /*public void connect(){
         if (helper != null){
             helper.connect();
         }
@@ -71,7 +71,7 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
 
     public void disconnect(){
 
-    }
+    }*/
 
     public void start(Activity activity, String corpId, String padCode, String pkgName, String gameId, String gameName){
         Logger.info(TAG, "start " + corpId + " | " + padCode + " | " + pkgName);
