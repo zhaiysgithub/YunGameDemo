@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.utils.Logger;
 import kptech.lib.constants.Urls;
 
 public class RequestClientNotice extends AsyncTask<String,Void,Void> {
@@ -46,6 +47,7 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
 
             ret = request(p);
         }catch (Exception e){
+            e.printStackTrace();
         }
 
         if (mCallback != null){
@@ -58,6 +60,7 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
     //post请求
     private String request(Map pMap) {
         try {
+            Logger.info("clientNotice",pMap.toString());
             URL url = new URL(Urls.NOTICE_URL);
             HttpURLConnection postConnection = (HttpURLConnection) url.openConnection();
             postConnection.setRequestMethod("POST");//post 请求
@@ -84,6 +87,7 @@ public class RequestClientNotice extends AsyncTask<String,Void,Void> {
 
             final StringBuffer buffer = new StringBuffer();
             int code = postConnection.getResponseCode();
+            Logger.info("clientNotice","code=" + code);
             if (code == 200) {//成功
                 InputStream inputStream = postConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));

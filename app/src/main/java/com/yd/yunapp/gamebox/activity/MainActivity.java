@@ -57,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPkgText;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
-//    private final String appIdByPass3 = "2VVnlPiVdjy2HpL-c9ae70a3e652ffba";
-//    private final String appIdByPass3 = "2VVqGiHPPuJ18EQ-29ff84c5476aabf2";
-//    private final String appIdByPass3 = "2VVt8PL2WPv1GI6-e8cccbcde2a0a16c";
-//    private final String pkgbdPass3 = "com.kptach.pluginkit.test";
-//    private final String pkghwPass3 = "com.rydts.nb";
     private String mCorpKey;
     private SwipeRefreshLayout mRefreshLayout;
     private View mLayoutProgress;

@@ -10,7 +10,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.kptach.lib.inter.game.IGameCallback;
-import com.kptach.lib.inter.game.APIConstants;
+
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -684,5 +684,19 @@ public class DeviceControl implements IDeviceControl{
             e.printStackTrace();
         }
         return "";
+    }
+
+    @Override
+    public void onResume() {
+        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
+            ((BdDeviceControl)mInnerControl).onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
+            ((BdDeviceControl)mInnerControl).onPause();
+        }
     }
 }

@@ -34,12 +34,12 @@ public class GameBoxManagerFactory {
                             bd2Manager = (IGameBoxManager) newInstance("com.kptach.lib.game.baidu.BdGameBoxManager", null, null);
                         }
                         instance = bd2Manager;
-                    }else if (sdkType == GameInfo.SdkType.REDF){
+                    }/*else if (sdkType == GameInfo.SdkType.REDF){
                         if (rfManager == null) {
                             rfManager = (IGameBoxManager) newInstance("com.kptach.lib.game.redfinger.RedGameBoxManager", null, null);
                         }
                         instance = rfManager;
-                    }
+                    }*/
                 }
             }catch (Exception e){
                 e.printStackTrace();

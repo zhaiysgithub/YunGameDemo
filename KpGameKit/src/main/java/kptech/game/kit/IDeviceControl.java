@@ -130,6 +130,10 @@ public interface IDeviceControl {
 
     String getDeviceInfo();
 
+    void onResume();
+
+    void onPause();
+
     /**
      * 设置图像显示模式
      * @param isFill 是否是全屏

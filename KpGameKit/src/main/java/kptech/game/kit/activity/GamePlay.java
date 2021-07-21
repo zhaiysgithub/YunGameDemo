@@ -664,6 +664,17 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         if (gameRunSuccess && mDeviceControl != null && gameVoiceSwitchValue){
             mDeviceControl.setAudioSwitch(true);
         }
+        if (mDeviceControl != null){
+            mDeviceControl.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mDeviceControl != null){
+            mDeviceControl.onPause();
+        }
     }
 
     @Override
@@ -834,18 +845,18 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         gameRunSuccess = false;
         gameVoiceSwitchValue = false;
         //前台未操作超时
-        if (type == 2) {
+//        if (type == 2) {
             showTimeoutDialog("您长时间未操作，游戏已释放。");
             if (mDeviceControl != null) {
                 mDeviceControl.stopGame();
             }
             return true;
-        }
+//        }
 
-        exitPlay();
-        Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout / 1000), Toast.LENGTH_LONG).show();
+//        exitPlay();
+//        Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout / 1000), Toast.LENGTH_LONG).show();
 
-        return true;
+//        return true;
     }
 
     @Override
