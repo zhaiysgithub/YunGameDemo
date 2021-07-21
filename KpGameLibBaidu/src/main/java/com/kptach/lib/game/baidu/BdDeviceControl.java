@@ -91,6 +91,11 @@ public class BdDeviceControl implements IDeviceControl {
                             if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
                                 switchQuality(getVideoQuality());
                             }
+
+                            if (i == APIConstants.RELEASE_SUCCESS){
+                                mainHandler.removeCallbacksAndMessages(null);
+                                mainHandler = null;
+                            }
                         }
                     });
                 }
@@ -103,11 +108,6 @@ public class BdDeviceControl implements IDeviceControl {
         if (mDeviceControl != null) {
             mDeviceControl.stopGame();
         }
-        if (mainHandler != null){
-            mainHandler.removeCallbacksAndMessages(null);
-            mainHandler = null;
-        }
-
     }
 
     @Override
@@ -268,6 +268,7 @@ public class BdDeviceControl implements IDeviceControl {
             @Override
             public void onPingUpdate(int i) {
                 try {
+                    Logger.info(TAG,"onPingUpdate:" + i);
                     if (listener != null){
                         listener.onPingUpdate(i);
                     }
@@ -301,7 +302,7 @@ public class BdDeviceControl implements IDeviceControl {
 
             @Override
             public void onPlayInfo(String s) {
-
+                Logger.info(TAG,"onPlayInfo:" + s);
             }
 
 //            @Override

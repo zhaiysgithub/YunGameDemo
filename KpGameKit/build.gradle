@@ -76,8 +76,8 @@ dependencies {
 //        implementation project(path: ':KpGameLibBaidu_154')
         implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
     }else {
-//        implementation project(path: ':KpGameLibBaidu')
-        implementation files('../kplib/libs/KpGameLib-BD-v1.0.4.jar')
+        implementation project(path: ':KpGameLibBaidu')
+//        implementation files('../kplib/libs/KpGameLib-BD-v1.0.4.jar')
     }
 
 }
