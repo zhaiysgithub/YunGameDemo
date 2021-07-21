@@ -27,9 +27,9 @@ public class BdDeviceControl implements IDeviceControl {
 
     protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this.mDeviceControl = control;
-        if (mDeviceControl != null){
+        /*if (mDeviceControl != null){
             mDeviceControl.openRedLog(true);
-        }
+        }*/
         mainHandler = new Handler(Looper.getMainLooper());
         parseDeviceToken();
     }
@@ -305,10 +305,10 @@ public class BdDeviceControl implements IDeviceControl {
 
             }
 
-            @Override
-            public void onPlayInfo(String s) {
-                Logger.info(TAG,"onPlayInfo:" + s);
-            }
+//            @Override
+//            public void onPlayInfo(String s) {
+//                Logger.info(TAG,"onPlayInfo:" + s);
+//            }
 
 //            @Override
 //            public void onScreenChange(int i) {
@@ -358,16 +358,16 @@ public class BdDeviceControl implements IDeviceControl {
 
     public void onResume(){
         Logger.info(TAG,"onResume");
-        if (mDeviceControl != null){
+        /*if (mDeviceControl != null){
             mDeviceControl.resume();
-        }
+        }*/
     }
 
     public void onPause(){
         Logger.info(TAG,"onPause");
-        if (mDeviceControl != null){
+        /*if (mDeviceControl != null){
             mDeviceControl.pause();
-        }
+        }*/
     }
 
 }

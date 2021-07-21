@@ -63,8 +63,10 @@ public class BdGameBoxManager implements IGameBoxManager {
         Logger.setDebug(debug);
 
         //初始化游戏
+        com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).setDebug(debug);
         com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(application).init(ak, sk, ch, false);
 
+        CloudPhoneManager.getInstance(application).setDebug(debug);
         CloudPhoneManager.getInstance(application).init(ak, sk, ch,false);
         isInited = true;
     }

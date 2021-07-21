@@ -10,9 +10,10 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 
 import com.kptach.lib.inter.game.IGameCallback;
-
+import com.kptach.lib.inter.game.APIConstants;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -688,15 +689,32 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void onResume() {
-        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
-            ((BdDeviceControl)mInnerControl).onResume();
-        }
+        /*try{
+            if(mInnerControl != null){
+                //执行百度SDK2.0的resume方法
+                Class<?>  bdcClass = Class.forName("com.kptach.lib.game.baidu.BdDeviceControl");
+                Method method = bdcClass.getMethod("onResume");
+                method.setAccessible(true);
+                method.invoke(bdcClass.newInstance());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+
     }
 
     @Override
     public void onPause() {
-        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
-            ((BdDeviceControl)mInnerControl).onPause();
-        }
+        /*try{
+            if(mInnerControl != null){
+                //执行百度SDK2.0的pause方法
+                Class<?>  bdcClass = Class.forName("com.kptach.lib.game.baidu.BdDeviceControl");
+                Method method = bdcClass.getMethod("onPause");
+                method.setAccessible(true);
+                method.invoke(bdcClass.newInstance());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
     }
 }

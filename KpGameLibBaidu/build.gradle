@@ -29,7 +29,7 @@ dependencies {
 //    implementation project(path: ':kpinter')
 
     implementation 'kptech.game.kit:kpinter:1.0.4'
-    implementation files('../KpLib/libs/gameboxsdk-072016-1.6.2.jar')
+    implementation files('libs/Game-V1.6.0.0_0604.jar')
 }
 
 
@@ -38,7 +38,7 @@ task makeJar(type: Jar) {
     delete "build/libs/${jar_name}"
     archiveName("${jar_name}")
     from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
-    from (project.zipTree('libs/gameboxsdk-072016-1.6.2.jar'))
+    from (project.zipTree('libs/Game-V1.6.0.0_0604.jar'))
     destinationDir(file('build/lib'))
 }
 
