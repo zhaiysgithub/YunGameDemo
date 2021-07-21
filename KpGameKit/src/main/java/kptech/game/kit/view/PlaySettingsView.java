@@ -326,7 +326,7 @@ public class PlaySettingsView extends LinearLayout {
             public boolean onLongClick(View v) {
                 try {
                     if (mDeviceControl != null){
-                        String info = mDeviceControl.getDeviceInfo();
+                        String info = mDeviceControl.getPadcode();
                         StringUtil.copy(getContext(), info);
                         if (Env.isTestEnv()){
                             Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();

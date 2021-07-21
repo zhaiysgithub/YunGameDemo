@@ -248,6 +248,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mPlayStatueView.setCallback(new PlayStatusCallback(GamePlay.this));
         int childCount = ((ViewGroup) rootView).getChildCount();
         ((ViewGroup) rootView).addView(mPlayStatueView, childCount);
+        mPlayStatueView.setOnClickListener(null);
 
         mMenuView = findViewById(R.id.float_menu);
         mMenuView.setPkgVersion(miniPkgVersion);

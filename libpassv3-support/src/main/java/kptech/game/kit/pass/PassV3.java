@@ -24,6 +24,7 @@ public class PassV3 implements IGameBoxManager {
     private static final String TAG = "IGameBoxManager";
     private String mCorpID;
     private String pass3Corpkey;
+    private String mUid;
     private boolean mDebug;
     private HashMap mParams;
     private IGameBoxManager gameBoxManager;
@@ -39,6 +40,9 @@ public class PassV3 implements IGameBoxManager {
                 }
                 if (params.containsKey("params_key_pass3CorpKey")){
                     pass3Corpkey = (String) params.get("params_key_pass3CorpKey");
+                }
+                if (params.containsKey(PARAMS_KEY_USERID)){
+                    mUid = (String) params.get(PARAMS_KEY_USERID);
                 }
 
                 mParams = params;
@@ -63,7 +67,7 @@ public class PassV3 implements IGameBoxManager {
             callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
             return;
         }
-        KpPassCMWManager.instance().startRequestPassCMW(pass3Corpkey, pkgName, new PassCMWCallback() {
+        KpPassCMWManager.instance().startRequestPassCMW(pass3Corpkey, pkgName, mUid, new PassCMWCallback() {
             @Override
             public void onSuccess(PassDeviceResponseBean result) {
                 if (result == null){

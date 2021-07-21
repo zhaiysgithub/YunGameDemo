@@ -32,8 +32,8 @@ public class KpPassCMWManager {
         return PassCMWHolder.INSTANCE;
     }
 
-    public void startRequestPassCMW(final String corpKey, final String pkgName, final PassCMWCallback callback) {
-        final String passParams = createPassParams(corpKey, pkgName);
+    public void startRequestPassCMW(final String corpKey, final String pkgName, final String uid, final PassCMWCallback callback) {
+        final String passParams = createPassParams(corpKey, pkgName, uid);
         executeRunnable(passParams,callback);
     }
 
@@ -147,7 +147,7 @@ public class KpPassCMWManager {
         }
     }
 
-    private String createPassParams(String corpKey, String pkgName) {
+    private String createPassParams(String corpKey, String pkgName, String uid) {
 
         try {
             JSONObject jsonObject = new JSONObject();
@@ -155,8 +155,7 @@ public class KpPassCMWManager {
             jsonObject.put("pkgName", pkgName);
             jsonObject.put("clntType", "ANDR");
             jsonObject.put("protocol", "ws");//  wss -- 加密方式 ws -- 非加密方式
-            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            jsonObject.put("uuid", uuid);
+            jsonObject.put("uuid", uid);
             jsonObject.put("ts", System.currentTimeMillis());
             return jsonObject.toString();
         } catch (Exception e) {

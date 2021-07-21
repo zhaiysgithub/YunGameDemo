@@ -9,7 +9,8 @@ public class GameUtils {
         String msg;
         switch (code) {
             case APIConstants.ERROR_CALL_API:
-                msg = "接口错误,请稍后再试";
+            case APIConstants.ERROR_SDK_INNER:
+                msg = "服务异常，请稍后再试";
                 break;
             case APIConstants.APPLY_DEVICE_SUCCESS:
                 msg = "申请设备成功";
@@ -64,9 +65,6 @@ public class GameUtils {
                 break;
             case APIConstants.SWITCH_GAME_RESOLUTION_ERROR:
                 msg = "切换游戏分辨率失败";
-                break;
-            case APIConstants.ERROR_SDK_INNER:
-                msg = "游戏数据内部错误";
                 break;
             case APIConstants.ERROR_OTHER:
                 msg = "其他错误联系管理员";
