@@ -3,7 +3,6 @@ package kptech.lib.fatory;
 import android.app.Application;
 
 import com.kptach.lib.game.baidu.BdGameBoxManager;
-import com.kptach.lib.game.redfinger.RedGameBoxManager;
 import com.kptach.lib.inter.game.IGameBoxManager;
 
 import java.lang.reflect.Constructor;
@@ -26,12 +25,12 @@ public class GameBoxManagerFactory {
                         bdManager = (IGameBoxManager) newInstance(BdGameBoxManager.class.getName(), null, null);
                     }
                     instance = bdManager;
-                }else if (sdkType == GameInfo.SdkType.REDF){
+                }/*else if (sdkType == GameInfo.SdkType.REDF){
                     if (rfManager == null) {
                         rfManager = (IGameBoxManager) newInstance(RedGameBoxManager.class.getName(), null, null);
                     }
                     instance = rfManager;
-                }
+                }*/
             }catch (Exception e){
                 e.printStackTrace();
             }
