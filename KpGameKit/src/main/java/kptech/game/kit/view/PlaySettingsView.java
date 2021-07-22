@@ -161,8 +161,9 @@ public class PlaySettingsView extends LinearLayout {
     }
 
     private void initVideoQuality(){
-        if (mVideoQuality == null && mDeviceControl != null){
+        if (mDeviceControl != null){
             mVideoQuality = mDeviceControl.getVideoQuality();
+            mVideoQualityGroup.clearCheck();
             if (mVideoQuality != null){
                 if (mVideoQuality.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)) {
                     mVideoQualityGroup.check(R.id.video_quality_auto);
@@ -321,7 +322,7 @@ public class PlaySettingsView extends LinearLayout {
             public boolean onLongClick(View v) {
                 try {
                     if (mDeviceControl != null){
-                        String info = mDeviceControl.getDeviceInfo();
+                        String info = mDeviceControl.getPadcode();
                         StringUtil.copy(getContext(), info);
                         if (Env.isTestEnv()){
                             Toast.makeText(getContext(), "info", Toast.LENGTH_SHORT).show();

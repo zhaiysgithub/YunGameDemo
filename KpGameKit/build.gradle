@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 16
-        versionName "1.2.1.19"
+        versionName "1.2.1.20"
     }
 
 
@@ -77,7 +77,7 @@ dependencies {
         implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
     }else {
 //        implementation project(path: ':KpGameLibBaidu')
-        implementation files('../kplib/libs/KpGameLib-BD-v1.0.4.jar')
+        implementation files('../kplib/libs/KpGameLib-BD-v1.0.5.jar')
     }
 
 }

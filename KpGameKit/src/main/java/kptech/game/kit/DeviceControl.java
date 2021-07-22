@@ -641,15 +641,11 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void onResume() {
-        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
-            ((BdDeviceControl)mInnerControl).onResume();
-        }
+
     }
 
     @Override
     public void onPause() {
-        if (mInnerControl != null && mInnerControl instanceof BdDeviceControl){
-            ((BdDeviceControl)mInnerControl).onPause();
-        }
+
     }
 }
