@@ -27,9 +27,6 @@ public class BdDeviceControl implements IDeviceControl {
 
     protected BdDeviceControl(com.yd.yunapp.gameboxlib.DeviceControl control){
         this.mDeviceControl = control;
-        /*if (mDeviceControl != null){
-            mDeviceControl.openRedLog(true);
-        }*/
         mainHandler = new Handler(Looper.getMainLooper());
         parseDeviceToken();
     }

@@ -689,32 +689,11 @@ public class DeviceControl implements IDeviceControl{
 
     @Override
     public void onResume() {
-        /*try{
-            if(mInnerControl != null){
-                //执行百度SDK2.0的resume方法
-                Class<?>  bdcClass = Class.forName("com.kptach.lib.game.baidu.BdDeviceControl");
-                Method method = bdcClass.getMethod("onResume");
-                method.setAccessible(true);
-                method.invoke(bdcClass.newInstance());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
 
     }
 
     @Override
     public void onPause() {
-        /*try{
-            if(mInnerControl != null){
-                //执行百度SDK2.0的pause方法
-                Class<?>  bdcClass = Class.forName("com.kptach.lib.game.baidu.BdDeviceControl");
-                Method method = bdcClass.getMethod("onPause");
-                method.setAccessible(true);
-                method.invoke(bdcClass.newInstance());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
+
     }
 }

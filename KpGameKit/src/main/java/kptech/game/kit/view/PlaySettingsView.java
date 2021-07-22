@@ -165,8 +165,9 @@ public class PlaySettingsView extends LinearLayout {
     }
 
     private void initVideoQuality(){
-        if (mVideoQuality == null && mDeviceControl != null){
+        if (mDeviceControl != null){
             mVideoQuality = mDeviceControl.getVideoQuality();
+            mVideoQualityGroup.clearCheck();
             if (mVideoQuality != null){
                 if (mVideoQuality.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)) {
                     mVideoQualityGroup.check(R.id.video_quality_auto);
