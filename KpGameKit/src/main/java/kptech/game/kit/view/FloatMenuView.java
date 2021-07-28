@@ -28,7 +28,7 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 //    private View mMenuDialogContentView;
 //    private DeviceControl mDeviceControl;
 //    private boolean mAudioSwitch = true;
-    public boolean mVideoScale = true;
+    public boolean mVideoScale = false;
 //
 //    private int systemUiVisibility = -1;
 //

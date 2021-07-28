@@ -621,7 +621,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
      */
     private void reloadGame() {
         try {
-
+            mVideoContainer.removeAllViews();
             mVideoContainer.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
