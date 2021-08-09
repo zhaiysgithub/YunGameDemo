@@ -52,7 +52,7 @@ public class PlaySettingsView extends LinearLayout {
 
     private String mVideoQuality;
     private boolean mAudioSwitch;
-    public boolean mVideoScale = true;
+    public boolean mVideoScale = false;
     private String showApkVersion = "V:" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE;
 
     long verTime;
