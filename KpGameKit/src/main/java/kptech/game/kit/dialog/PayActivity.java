@@ -90,9 +90,6 @@ public class PayActivity extends Dialog implements View.OnClickListener {
 
     private OnDismissListener mOnDismissListener;
 
-    //当前 pageFinished 的 url
-    private String webClientPageFinishedUrl;
-
     private static final String errorMsgForToast = "系统繁忙，请稍后再试";
 
     private final Handler mHandler = new Handler();
@@ -166,6 +163,10 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                         String errStr = mPayState == PAY_STATE_NONE ? "cancel" : err;
                         mCallback.onResult(0, errStr, map);
                     }
+                }
+
+                if (mHandler != null){
+                    mHandler.removeCallbacks(doPayError);
                 }
 
                 if (mOnDismissListener!=null){
@@ -322,6 +323,11 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                                 String url = Urls.PAY_URL + "?paytype=" + (mPayType == PAY_TYPE_ALIPAY ? "ZFB" : "WX") + "&tradenum=" + tradenum;
                                 webView.loadUrl(url);
 
+                                //支付出现异常错误
+                                if (mHandler != null){
+                                    mHandler.removeCallbacks(doPayError);
+                                    mHandler.postDelayed(doPayError,10 * 1000);
+                                }
                                 return;
                             }
 
@@ -419,7 +425,9 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(url));
                         mActivity.startActivity(intent);
-
+                        if (mHandler != null){
+                            mHandler.removeCallbacks(doPayError);
+                        }
                         try {
                             //发送打点事件
                             String code = EventCode.DATA_PAY_APP_START;
@@ -552,7 +560,6 @@ public class PayActivity extends Dialog implements View.OnClickListener {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                webClientPageFinishedUrl = url;
             }
 
         });
@@ -563,9 +570,6 @@ public class PayActivity extends Dialog implements View.OnClickListener {
                 // TODO 自动生成的方法存根
                 if (newProgress == 100) {
                     mProBar.setVisibility(View.INVISIBLE);//加载完网页进度条消失
-                    //支付出现异常错误
-                    mHandler.removeCallbacks(doPayError);
-                    mHandler.postDelayed(doPayError,800);
                 } else {
                     mProBar.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
                     mProBar.setProgress(newProgress);//设置进度值
@@ -599,10 +603,16 @@ public class PayActivity extends Dialog implements View.OnClickListener {
         @Override
         public void run() {
             if (PayActivity.this.isShowing()){
-                if (webClientPageFinishedUrl.startsWith(Urls.PAY_URL) && mPayState == PAY_STATE_LOAD_WEB){
+
+                if (mPayState == PAY_STATE_LOAD_WEB || mPayState == PAY_STATE_NONE ){
                     mConfirmPaymentBtn.setEnabled(true);
                     mConfirmPaymentBtn.setText("生成订单失败，点击重试");
                     mPayState = PAY_STATE_NONE;
+                }else if (mPayState == PAY_STATE_ERROR){
+                    mConfirmPaymentBtn.setEnabled(true);
+                    mConfirmPaymentBtn.setText("确认支付");
+                    mPayState = PAY_STATE_NONE;
+                    err = null;
                 }
             }
         }

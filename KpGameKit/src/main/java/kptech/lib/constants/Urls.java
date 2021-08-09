@@ -33,7 +33,7 @@ public class Urls {
     public static final String HTTP_PLAT_KPUSER = "http://wxapp.kuaipantech.com/h5demo/Toc/kpuser.php";
 
     public static String getEnvUrl(String url){
-        String BaseUrl = Env.isTestEnv() ? "https://test-operation.kuaipantech.com" : "https://wxapp.kuaipantech.com";
+        String BaseUrl = Env.isTestEnv() ? "http://test-operation.kuaipantech.com" : "https://wxapp.kuaipantech.com";
         return BaseUrl + url;
     }
 
