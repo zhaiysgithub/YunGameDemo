@@ -51,13 +51,16 @@ public class KpPassCMWManager {
             }
         }));
     }
-
-    public static final String URL_REQUEST_DEVICE = "/api/device/connect/test";
+    //测试环境
+//    public static final String URL_REQUEST_DEVICE = "/api/device/connect/test";
+    //线上环境
+    public static final String URL_REQUEST_DEVICE = "/api/device/connect";
 
     public static String getRequestDeviceUrl(String address){
-        //暂时还未部署到生产环境
-//        String envUrl = Env.isTestEnv() ? "http://dev.paascmw.kuaipantech.com" : "http://inter.paascmw.kuaipantech.com";
-        String envUrl = "https://dev.paascmw.kuaipantech.com";
+        //生产环境
+        String envUrl = "https://inter.paascmw.kuaipantech.com";
+        //测试环境
+//        String envUrl = "https://dev.paascmw.kuaipantech.com";
         return envUrl + address;
     }
 
