@@ -31,7 +31,7 @@ public class HWDeviceControl implements IDeviceControl {
     private String hwDeviceId;
     private int hwDirection;
     private final HashMap<String, String> sdkParams = new HashMap<>();
-    private boolean sdkIsRelease;
+    private boolean sdkIsRelease = true;
     private IGameCallback<String> mCallback;
     private PlayListener mPlayListener;
     private ViewGroup mViewgroup;
@@ -158,8 +158,9 @@ public class HWDeviceControl implements IDeviceControl {
             if (!sdkIsRelease){
                 sdkIsRelease = true;
                 CloudGameManager.CreateCloudGameInstance().exitCloudApp();
+                CloudGameManager.CreateCloudGameInstance().deinit();
             }
-            CloudGameManager.CreateCloudGameInstance().deinit();
+
             if (mCallback != null){
                 mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
             }
@@ -321,12 +322,12 @@ public class HWDeviceControl implements IDeviceControl {
                 if (mActivity.isFinishing()){
                     return;
                 }
-                int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
+                /*int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
                 if (stateIndex >= 0){
                     //SDK游戏内部报错
                     mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
                     return;
-                }
+                }*/
                 switch (state){
                     case HWStateCode.code_connecting:
                     case HWStateCode.code_reconnecting_success:
@@ -393,6 +394,11 @@ public class HWDeviceControl implements IDeviceControl {
                         break;
                     case HWStateCode.code_server_unreachable: //服务不可用
                         mCallback.onGameCallback(msg, APIConstants.ERROR_NETWORK);
+                        break;
+                    default:
+                        if (mCallback != null){
+                            mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                        }
                         break;
                 }
             });
