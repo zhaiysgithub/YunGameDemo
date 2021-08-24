@@ -247,12 +247,12 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mMenuView = findViewById(R.id.float_menu);
         mMenuView.setPkgVersion(miniPkgVersion);
-        mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
+        /*mMenuView.setResizeClickListener(new FloatMenuView.VideoResizeListener() {
             @Override
             public void onVideoResize(boolean scale) {
                 resizeVideoContainer(scale);
             }
-        });
+        });*/
         mMenuView.setOnExitClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -631,6 +631,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
             mRecordView.reset();
             mRecordView.setVisibility(View.GONE);
+            GameBoxManager.getInstance().setDevLoading(false);
 
             checkAndRequestPermission();
 
@@ -680,6 +681,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         super.onDestroy();
 
         try {
+            GameBoxManager.getInstance().setDevLoading(false);
             if (mDeviceControl != null) {
                 mDeviceControl.stopGame();
             }
@@ -1001,7 +1003,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
             }
 
-            resizeVideoContainer(mMenuView.mVideoScale);
+//            resizeVideoContainer(mMenuView.mVideoScale);
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
@@ -1050,7 +1052,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        resizeVideoContainer(mMenuView.mVideoScale);
+//        resizeVideoContainer(mMenuView.mVideoScale);
     }
 
 
@@ -1634,7 +1636,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         @Override
         public void onClickCopyInf() {
             if (mDeviceControl != null){
-                String info = mDeviceControl.getDeviceInfo();
+                String info = mDeviceControl.getPadcode();
                 StringUtil.copy(GamePlay.this, info);
                 Toast.makeText(GamePlay.this, "info", Toast.LENGTH_SHORT).show();
             }

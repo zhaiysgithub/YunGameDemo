@@ -95,6 +95,9 @@ public class GameBoxManager {
     }
 
     public boolean isGameBoxManagerInited(){
+        if (AK == null || AK.isEmpty()){
+            this.isInited = false;
+        }
         return this.isInited;
     }
 
@@ -505,5 +508,9 @@ public class GameBoxManager {
 
     public LoadingPageView getmCustomerLoadingView() {
         return mCustomerLoadingView;
+    }
+
+    public void setDevLoading(boolean devLoading) {
+        this.devLoading = devLoading;
     }
 }

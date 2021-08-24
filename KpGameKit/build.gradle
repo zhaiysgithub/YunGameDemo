@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 16
-        versionName "1.2.1.23"
+        versionName "1.2.1.24"
     }
 
 
@@ -54,12 +54,12 @@ dependencies {
     if (rootProject.ext.BAIDU_154){
         implementation files('../kplib/libs/Game-V1.5.4.jar')
     }else {
-        implementation files('../kplib/libs/Game-V1.6.0.0_0604.jar')
+        implementation files('../kplib/libs/gameboxsdk-080916-1.6.2.jar')
     }
 
 
     //广告sdk
-    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
+//    implementation 'kptech.game.kit:gamead-normal:1.0.1.2'
 //    implementation project(path: ':KpGameAd')
 
     //快盘通讯接口定义
@@ -67,7 +67,7 @@ dependencies {
     //implementation project(path: ':kpinter')
 
     //红手指游戏库适配
-    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
+//    implementation files('../kplib/libs/KpGameLib-REDF-v1.0.3.jar')
 //    implementation project(path: ':KpGameLibRedfinger')
 
     //百度游戏库适配
@@ -77,7 +77,7 @@ dependencies {
         implementation files('../kplib/libs/KpGameLib-BD154-v1.0.1.jar')
     }else {
 //        implementation project(path: ':KpGameLibBaidu')
-        implementation files('../kplib/libs/KpGameLib-BD-v1.0.5.jar')
+        implementation files('../kplib/libs/KpGameLib-BD-v1.0.6.jar')
     }
 
 }

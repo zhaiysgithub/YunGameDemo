@@ -3,6 +3,7 @@ package com.kptach.lib.game.baidu;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 
 import com.yd.yunapp.gameboxlib.DeviceControl;
 import com.yd.yunapp.gameboxlib.GamePadKey;
@@ -13,6 +14,9 @@ import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
 import com.kptach.lib.game.baidu.utils.Logger;
+import com.yd.yunapp.gameboxlib.impl.model.GameQualityInfo;
+
+import java.util.List;
 
 public class BdDeviceControl implements IDeviceControl {
     private static final String TAG = BdDeviceControl.class.getSimpleName();
@@ -74,7 +78,24 @@ public class BdDeviceControl implements IDeviceControl {
             if (callback != null){
                 callback.onGameCallback("device control error", -200001 );
             }
+            return;
         }
+
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+            float width_tmp = 1.0f * displayMetrics.widthPixels;
+            float height_tmp = 1.0f * displayMetrics.heightPixels;
+            float scale = Math.max(width_tmp, height_tmp) / Math.min(width_tmp, height_tmp);
+            List<GameQualityInfo> list = mDeviceControl.getGameQualityInfos();
+            for (GameQualityInfo info : list) {
+                info.setHeight((int)(info.getWidth() * scale));
+            }
+            mDeviceControl.setGameQualityList(list);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         mDeviceControl.startGame(activity, res, new com.yd.yunapp.gameboxlib.APICallback<String>(){
             @Override
             public void onAPICallback(final String s, final int i) {
@@ -88,7 +109,7 @@ public class BdDeviceControl implements IDeviceControl {
                             if (i == com.yd.yunapp.gameboxlib.APIConstants.APPLY_DEVICE_SUCCESS){
                                 switchQuality(getVideoQuality());
                             }
-                            if (i == APIConstants.RELEASE_SUCCESS){
+                            if (i == com.yd.yunapp.gameboxlib.APIConstants.RELEASE_SUCCESS){
                                 mainHandler.removeCallbacksAndMessages(null);
                                 mainHandler = null;
                             }
@@ -182,23 +203,32 @@ public class BdDeviceControl implements IDeviceControl {
         mPicQuality = level;
         if (mDeviceControl != null){
             if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_AUTO)){
-                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
+//                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_AUTO);
+                mDeviceControl.switchQuality(2);
             }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_HD)){
-                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD);
+//                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_HD);
+                mDeviceControl.switchQuality(1);
             }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_LS)){
-                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS);
+//                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_LS);
+                mDeviceControl.switchQuality(3);
             }else if (level.equals(APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY)){
-                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+//                mDeviceControl.switchQuality(com.yd.yunapp.gameboxlib.APIConstants.DEVICE_VIDEO_QUALITY_ORDINARY);
+                mDeviceControl.switchQuality(2);
             }
         }
     }
 
     @Override
     public void setAudioSwitch(boolean audioSwitch) {
-        mIsSoundEnable = audioSwitch;
-        if (mDeviceControl != null) {
-            mDeviceControl.setAudioSwitch(audioSwitch);
+        try{
+            mIsSoundEnable = audioSwitch;
+            if (mDeviceControl != null) {
+                mDeviceControl.setAudioSwitch(audioSwitch);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     @Override
@@ -296,6 +326,11 @@ public class BdDeviceControl implements IDeviceControl {
 
             }
 
+            @Override
+            public void onPlayInfo(String s) {
+                Logger.info(TAG,"onPlayInfo:" + s);
+            }
+
 //            @Override
 //            public void onScreenChange(int i) {
 //                if (listener != null){
@@ -334,6 +369,26 @@ public class BdDeviceControl implements IDeviceControl {
             return mDeviceControl.getDeviceToken();
         }
         return "";
+    }
+
+    public void onResume(){
+        try {
+            if (mDeviceControl != null){
+                mDeviceControl.resume();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void onPause(){
+        try {
+            if (mDeviceControl != null){
+                mDeviceControl.pause();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
