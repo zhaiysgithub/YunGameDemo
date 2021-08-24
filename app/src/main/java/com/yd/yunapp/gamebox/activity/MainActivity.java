@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
-//        String APP_ID = mSp.getString("corpKey", null);
+        String APP_ID = mSp.getString("corpKey", null);
 //        String APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
 
         TextView coprKey = findViewById(R.id.corpkey);
