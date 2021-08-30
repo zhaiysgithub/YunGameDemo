@@ -2,6 +2,7 @@ package kptech.game.kit.view;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -14,7 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+
+import org.xutils.common.Callback;
+import org.xutils.x;
 
 import java.lang.ref.WeakReference;
 
@@ -78,7 +81,7 @@ public class DefaultLoadingView extends LoadingPageView {
         mNameText.setText(gameInfo.name);
         String iconUrl = gameInfo.iconUrl;
         if (iconUrl != null && !iconUrl.isEmpty()) {
-            Picasso.with(getContext()).load(iconUrl).into(mIconImg);
+            x.image().bind(mIconImg, iconUrl);
         }
     }
 

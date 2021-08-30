@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 16
-        versionName "1.2.1.24"
+        versionCode 26
+        versionName "1.2.1.26"
     }
 
 
@@ -41,11 +41,11 @@ dependencies {
     //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+//    implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.xutils:xutils:3.3.36'
 
     //云通讯SDK
-    implementation files('../kplib/libs/KpCKit-v1.0.8-10.jar')
+    implementation files('../kplib/libs/KpCKit-v1.0.9.jar')
 
     //网络请求发送队列主要用来发送日志
     implementation files('../kplib/libs/netqueue-v1.0.1_2.jar')

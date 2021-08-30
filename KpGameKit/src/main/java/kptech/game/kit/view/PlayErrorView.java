@@ -9,7 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+
+import org.xutils.x;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
@@ -82,7 +83,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         if (this.mGameInfo!=null){
             if (this.mGameInfo.iconUrl!=null && !"".equals(this.mGameInfo.iconUrl)){
                 try {
-                    Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
+                    x.image().bind(mGameIcon,this.mGameInfo.iconUrl);
                 }catch (Exception e){}
             }
             if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){

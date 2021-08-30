@@ -16,7 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
+
+import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,7 +207,7 @@ public class ExitGameListDialog extends Dialog {
                     imgUrl = gameInfo.iconUrl;
                 }
                 try {
-                    Picasso.with(getContext()).load(imgUrl).into(mImageView);
+                    x.image().bind(mImageView,imgUrl);
                 }catch (Exception e){}
             }
 
