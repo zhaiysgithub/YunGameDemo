@@ -54,7 +54,7 @@ dependencies {
     if (rootProject.ext.BAIDU_154){
         implementation files('../kplib/libs/Game-V1.5.4.jar')
     }else {
-        implementation files('../kplib/libs/gameboxsdk-080916-1.6.2.jar')
+        implementation files('../kplib/libs/gameboxsdk-082719-1.6.2.jar')
     }
 
 
