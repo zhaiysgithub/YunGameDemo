@@ -12,7 +12,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 <!--orderInCategor:同种类菜单的排列顺序。该属性需要设置一个整数值-->
 
     <item
-        android:id="@+id/action_settings"
         android:icon="@android:drawable/ic_menu_manage"
         android:title=""
         app:showAsAction="always" />

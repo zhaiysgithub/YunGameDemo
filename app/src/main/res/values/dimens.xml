@@ -1,5 +1,4 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="common_text_size_middle">18dp</dimen>
     <dimen name="common_text_size_middle_2">15dp</dimen>
     <dimen name="common_text_size_small">13dp</dimen>

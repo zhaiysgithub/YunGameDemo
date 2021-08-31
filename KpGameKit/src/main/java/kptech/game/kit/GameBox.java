@@ -79,13 +79,14 @@ public class GameBox {
         }
 
         String miniPkgVersion = "";
-        /*try {
+        try {
             //判断本地是否已经安装
             // 优先级 ： 本地游戏最高，其次是微包，
             String packageName = activity.getApplicationInfo().packageName;
             String gamePkgName = gameInfo.pkgName; //游戏包名
             String weiBaoPkgName = gamePkgName + ".kpmini"; //微包包名
             PackageManager packageManager = activity.getPackageManager();
+            //原生游戏intent
             Intent intent = packageManager.getLaunchIntentForPackage(gamePkgName);
             if (!packageName.equals(weiBaoPkgName)){ //非微包
                 if(intent != null){
@@ -114,7 +115,7 @@ public class GameBox {
             }
         }catch (Exception e){
             Logger.error("GameBox", "获取本地游戏，error:" + e.getMessage());
-        }*/
+        }
 
         Logger.info("GameBox", "启动云游戏，gameInfo:" + gameInfo.toString());
 
@@ -126,7 +127,7 @@ public class GameBox {
         if (!miniPkgVersion.isEmpty()){
             intent.putExtra(GamePlay.EXTRA_MINI_VERSION,miniPkgVersion);
         }
-
+        //TODO actvity 进入和退出动画
         activity.startActivity(intent);
     }
 

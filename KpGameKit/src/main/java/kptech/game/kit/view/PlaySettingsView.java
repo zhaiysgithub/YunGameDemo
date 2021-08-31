@@ -3,6 +3,7 @@ package kptech.game.kit.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -40,7 +41,6 @@ public class PlaySettingsView extends LinearLayout {
     private int mSize = 0;
 
     private ViewGroup mLayout;
-    private RadioGroup mVideoSizeGroup;
     private RadioGroup mVideoQualityGroup;
     private CheckBox mAudioCheckbox;
 
@@ -128,7 +128,9 @@ public class PlaySettingsView extends LinearLayout {
             if (Env.isTestEnv()){
                 try {
                     mPadcodeTv.setText(deviceControl.getPadcode());
-                }catch (Exception e){}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }else {
                 mPadcodeTv.setVisibility(GONE);
             }
@@ -187,6 +189,11 @@ public class PlaySettingsView extends LinearLayout {
                 dismiss();
             }
         });
+        @SuppressLint("UseCompatLoadingForDrawables")
+        Drawable soundDrawable = getContext().getResources().getDrawable(R.drawable.kp_view_settings_checkbox);
+        int dp_17 = DensityUtil.dip2px(getContext(), 17);
+        soundDrawable.setBounds(0,0,dp_17,dp_17);
+        int dp_2 = DensityUtil.dip2px(getContext(),2);
         mLayout = view.findViewById(R.id.layout);
         mLayout.setOnClickListener(new OnClickListener() {
             @Override
@@ -256,7 +263,7 @@ public class PlaySettingsView extends LinearLayout {
 
         updateLayout();
 
-        mVideoSizeGroup = view.findViewById(R.id.video_size_group);
+        RadioGroup mVideoSizeGroup = view.findViewById(R.id.video_size_group);
         if (mVideoScale) {
             mVideoSizeGroup.check(R.id.video_size_scale);
         }else {
@@ -296,6 +303,7 @@ public class PlaySettingsView extends LinearLayout {
             }
         });
         mAudioCheckbox = view.findViewById(R.id.sound_checkbox);
+        mAudioCheckbox.setCompoundDrawables(soundDrawable,null,null,null);
         mAudioCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -427,7 +435,7 @@ public class PlaySettingsView extends LinearLayout {
         }
         mHandler.sendEmptyMessageDelayed(1, 5000);
 
-        int animRes = 0;
+        int animRes;
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             animRes = R.anim.kp_view_enter_left;
         }else {
@@ -459,7 +467,7 @@ public class PlaySettingsView extends LinearLayout {
             return;
         }
 
-        int animRes = 0;
+        int animRes;
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             animRes = R.anim.kp_view_exit_left;
         }else {
@@ -533,7 +541,7 @@ public class PlaySettingsView extends LinearLayout {
     }
 
     private static class TimeoutHandler extends Handler{
-        WeakReference<PlaySettingsView> ref = null;
+        WeakReference<PlaySettingsView> ref;
         private TimeoutHandler(PlaySettingsView obj) {
             super(Looper.getMainLooper());
             ref = new WeakReference<>(obj);

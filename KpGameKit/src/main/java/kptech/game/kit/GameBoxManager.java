@@ -16,7 +16,6 @@ import java.util.List;
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
 
-import kptech.game.kit.view.LoadingPageView;
 import kptech.lib.ad.AdManager;
 import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.analytic.Event;
@@ -53,8 +52,6 @@ public class GameBoxManager {
     private boolean isInited = false;
 
     private boolean devLoading = false;
-    private boolean mShowCustomerLoadingView;
-    private LoadingPageView mCustomerLoadingView;
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -82,12 +79,6 @@ public class GameBoxManager {
 
     private GameBoxManager(){
 //        this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
-    }
-
-
-    public void setLoadingView(boolean isShow,LoadingPageView loadingView){
-        mShowCustomerLoadingView = isShow;
-        mCustomerLoadingView = loadingView;
     }
 
     public static void setAppKey(String appKey) {
@@ -431,64 +422,16 @@ public class GameBoxManager {
 
     /**
      * 游戏列表获取，游戏列表支持分页获取。
-     * @param page
-     * @param limit
-     * @return
      */
     public List<GameInfo> queryGameList(int page, int limit) {
         if (mCorpID != null && !"".equals(mCorpID)){
-            List<GameInfo> list = RequestTask.queryGameList(mCorpID, page, limit);
-            return list;
+            return RequestTask.queryGameList(mCorpID, page, limit);
         }
         return null;
     }
 
     /**
-     * 根据gid获取运营平台配置的游戏
-     * @param gid
-     * @return
-     */
-    public GameInfo queryGame(int gid) {
-//        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
-//        if (manager == null){
-//            return null;
-//        }
-//
-//        GameInfo inf = null;
-//        com.yd.yunapp.gameboxlib.GameInfo gameInfo = manager.queryGame(gid);
-//        if (gameInfo !=null){
-//            inf = new GameInfo(gameInfo);
-//        }
-//        return inf;
-        return null;
-    }
-
-    /**
-     * 根据包名获取运营平台配置的游戏列表
-     * @param pkg
-     * @return
-     */
-    public List<GameInfo> queryGames(String pkg) {
-//        com.yd.yunapp.gameboxlib.GameBoxManager manager = getLibManager();
-//        if (manager == null){
-//            return null;
-//        }
-//
-//        List<GameInfo> list = null;
-//        List<com.yd.yunapp.gameboxlib.GameInfo> gameInfoArr = manager.queryGames(pkg);
-//        if (gameInfoArr!=null && gameInfoArr.size()>0){
-//            list = new ArrayList<>();
-//            for (int i = 0; i < gameInfoArr.size(); i++) {
-//                list.add(new GameInfo(gameInfoArr.get(i)));
-//            }
-//        }
-//        return list;
-        return null;
-    }
-
-    /**
      * 设置联运帐号用户唯一标识
-     * @param uid
      */
     public void setUniqueId(String uid){
         this.mUniqueId = uid;
@@ -496,19 +439,11 @@ public class GameBoxManager {
 
     /**
      * 获取当前联运帐号唯一标识
-     * @return
      */
     public String getUniqueId(){
         return this.mUniqueId;
     }
 
-    public boolean ismShowCustomerLoadingView() {
-        return mShowCustomerLoadingView;
-    }
-
-    public LoadingPageView getmCustomerLoadingView() {
-        return mCustomerLoadingView;
-    }
 
     public void setDevLoading(boolean devLoading) {
         this.devLoading = devLoading;

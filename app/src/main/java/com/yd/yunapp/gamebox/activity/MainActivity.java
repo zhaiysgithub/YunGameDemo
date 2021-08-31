@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
-        String APP_ID = mSp.getString("corpKey", null);
-//        String APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
+//        String APP_ID = mSp.getString("corpKey", null);
+        String APP_ID = "2VjRnvbceqz2A4B-46774a4d8aca1c1a";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -173,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
         }*/
-        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
-        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
             //使用 GID 登录游戏

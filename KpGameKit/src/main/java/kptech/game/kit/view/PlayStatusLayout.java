@@ -6,15 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.APIConstants;
 import kptech.game.kit.GameInfo;
-//import kptech.game.kit.analytic.Event;
-//import kptech.game.kit.analytic.EventCode;
-//import kptech.game.kit.analytic.MobclickAgent;
-//import kptech.game.kit.data.AccountTask;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.VersionUtils;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -38,25 +33,26 @@ public class PlayStatusLayout extends FrameLayout {
     public static final int STATUS_LOADING_START_GAME = 107;
     public static final int STATUS_LOADING_FINISHED = 108;
 
-    private LoadingPageView mLoadingView;
-    private PlayErrorView mErrorView;
-    private UserAuthView mAuthView;
+    private BdYonthLoadingView mLoadingView;
+    private BdYonthErrorView mErrorView;
+    private BdYonthAuthView mAuthView;
 
     private String iconUrl;
     private String downUrl;
     private String pkgName;
     private String gameName;
+    private int mErrorCode;
 
     public void setDownloadStatus(int status) {
-        if (mErrorView != null){
+        /*if (mErrorView != null){
             mErrorView.setDownloadStatus(status);
-        }
+        }*/
     }
 
     public void setProgress(int progress, String text) {
-        if (mErrorView != null){
+        /*if (mErrorView != null){
             mErrorView.setProgress(progress, text);
-        }
+        }*/
     }
 
     public interface ICallback{
@@ -102,7 +98,7 @@ public class PlayStatusLayout extends FrameLayout {
                 mErrorView.setGameInfo(info);
             }
             if (mAuthView != null){
-                mAuthView.setInfo(gameName, iconUrl);
+                mAuthView.setGameInfo(iconUrl, gameName);
             }
         }
     }
@@ -113,52 +109,59 @@ public class PlayStatusLayout extends FrameLayout {
         mErrorView = findViewById(viewid_error);
         mAuthView = findViewById(viewid_auth);
 
-        mErrorView.setClickListener(new PlayErrorView.ClickListener() {
+        mLoadingView.setOnLoadingCallback(new BdYonthLoadingView.OnLoadingCallback() {
             @Override
-            public void onBack() {
+            public void onBackClick() {
+                if (mCallback != null){
+                    mCallback.onClickFinish();
+                }
+            }
+        });
+
+        mErrorView.setOnErrorCallback(new BdYonthErrorView.OnErrorCallback() {
+            @Override
+            public void onBackClick() {
                 if (mCallback != null){
                     mCallback.onClickFinish();
                 }
             }
 
             @Override
-            public void onRetry() {
+            public void onReloadGame() {
                 if (mCallback != null){
                     mCallback.onClickReloadGame();
                 }
             }
 
             @Override
-            public void onDown(View view) {
+            public void onDownloadGame() {
                 if (mCallback != null){
                     mCallback.onClickDownloading();
                 }
             }
 
             @Override
-            public void onCopyInf() {
+            public void onCopyDeviceInf() {
                 if (mCallback != null){
                     mCallback.onClickCopyInf();
                 }
             }
         });
 
-
-        mAuthView.setOnAuthListener(new OnClickListener() {
+        mAuthView.setOnAuthCallback(new BdYonthAuthView.OnAuthCallback() {
             @Override
-            public void onClick(View view) {
+            public void onBackListener() {
+                if (mCallback != null){
+                    mCallback.onClickAuthReject();
+                }
+            }
+
+            @Override
+            public void onAuthListener() {
                 if(mCallback != null){
                     mCallback.onClickAuthPass();
                 }
                 hideUserAuthView();
-            }
-        });
-        mAuthView.setOnBackListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCallback != null){
-                    mCallback.onClickAuthReject();
-                }
             }
         });
 
@@ -183,7 +186,7 @@ public class PlayStatusLayout extends FrameLayout {
 //            mUnionUUID = unionUUID;
 //            mCorpID = corpId;
 
-            mAuthView.setInfo(gameName, iconUrl);
+            mAuthView.setGameInfo(iconUrl, gameName);
             mAuthView.setAnimation(AnimationUtil.moveToViewLocation());
             mAuthView.setVisibility(View.VISIBLE);
 
@@ -210,14 +213,26 @@ public class PlayStatusLayout extends FrameLayout {
         mLoadingView.setPausePro(false);
     }
 
+    public void setErrorCode(int errorCode){
+        this.mErrorCode = errorCode;
+    }
+
     public void setStatus(int status, String msg) {
         if (status  == STATUS_ERROR){
             if (mErrorView != null){
                 if (!mErrorView.isShown()){
                     mErrorView.setVisibility(VISIBLE);
                 }
-
-                mErrorView.setErrorText(msg);
+                int errorStatus = BdYonthErrorView.STATUS_LOAD_ERROR;
+                if (mErrorCode == APIConstants.ERROR_NO_DEVICE){
+                    errorStatus = BdYonthErrorView.STATUS_NO_DEVICE;
+                }else if(mErrorCode == APIConstants.ERROR_API_CALL_ERROR){
+                    errorStatus = BdYonthErrorView.STATUS_PAGE_ERROR;
+                }else if(mErrorCode == APIConstants.ERROR_DEVICE_EXPIRED ||
+                        mErrorCode == APIConstants.ERROR_DEVICE_OTHER_ERROR){
+                    errorStatus = BdYonthErrorView.STATUS_DEVICE_OFFLINE;
+                }
+                mErrorView.updateErrorStatus(errorStatus,msg);
             }
             if (mLoadingView != null && mLoadingView.isShown()){
                 mLoadingView.setVisibility(GONE);
@@ -283,24 +298,13 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                boolean showCustomerLoading = GameBoxManager.getInstance().ismShowCustomerLoadingView();
-                final LoadingPageView customerLoadignView = GameBoxManager.getInstance().getmCustomerLoadingView();
-                if (showCustomerLoading && customerLoadignView != null){
-                    loadingView = customerLoadignView;
-                }else{
-                    boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
-                    if (xiaoYuChannel){
-                        loadingView = new XiaoYuLoadingPage(context);
-                    }else{
-                        loadingView = new DefaultLoadingView(context);
-                    }
-                }
+                loadingView = new BdYonthLoadingView(context);
             }
             if (errorView == null) {
-                errorView = new PlayErrorView(context);
+                errorView = new BdYonthErrorView(context);
             }
             if (authView == null) {
-                authView = new UserAuthView(context);
+                authView = new BdYonthAuthView(context);
             }
 
             loadingView.setId(viewid_loading);

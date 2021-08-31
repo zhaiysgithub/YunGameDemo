@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,8 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-//import com.squareup.picasso.Picasso;
 
 import org.xutils.x;
 
@@ -37,10 +38,9 @@ public class ExitGameListDialog extends Dialog {
         void onClose();
     }
 
-    private Activity mContext;
-    private ListAdapter mAdapter;
+    private final Activity mContext;
 
-    private List<GameInfo> mGames;
+    private final List<GameInfo> mGames;
     private String mText;
 
 
@@ -59,7 +59,8 @@ public class ExitGameListDialog extends Dialog {
 
         mGames = new ArrayList<>();
         if (list!=null){
-            int len = this.mText!=null ? 3 : 6;
+//            int len = this.mText!=null ? 3 : 6;
+            int len = 4;
             for (int i = 0; i < list.size(); i++) {
                 if (i >= len){
                     break;
@@ -73,6 +74,13 @@ public class ExitGameListDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.kp_dialog_game_exit);
+
+        Window window = getWindow();
+        if (window != null){
+            window.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            window.setAttributes(attributes);
+        }
 
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,18 +102,18 @@ public class ExitGameListDialog extends Dialog {
         TextView gameTitle = findViewById(R.id.game_title);
         ViewGroup textLayout = findViewById(R.id.text_layout);
         TextView textView = findViewById(R.id.text);
-        if (this.mText != null){
+        if (this.mText != null && !mText.isEmpty()){
             textLayout.setVisibility(View.VISIBLE);
             textView.setText(this.mText);
-            gameTitle.setTextSize(13);
+            gameTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
         }else {
             textLayout.setVisibility(View.GONE);
-            gameTitle.setTextSize(17);
+            gameTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
         }
 
         RecyclerView recyclerView = findViewById(R.id.list);
 
-        int count = 3;
+        int count = 4;
         if (mGames.size() == 1){
             count = 1;
         }else if (mGames.size() == 2){
@@ -113,19 +121,17 @@ public class ExitGameListDialog extends Dialog {
         }
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), count));
-        mAdapter = new ListAdapter(mContext, mGames);
+        ListAdapter mAdapter = new ListAdapter(mContext, mGames);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-//                outRect.left = DisplayUtil.dip2px(getContext(),10);
-//                outRect.right = DisplayUtil.dip2px(getContext(),10);
-                outRect.top = DensityUtil.dip2px(getContext(),5);
-                outRect.bottom = DensityUtil.dip2px(getContext(),2);
+//                outRect.top = DensityUtil.dip2px(getContext(),5);
+//                outRect.bottom = DensityUtil.dip2px(getContext(),2);
             }
         });
 
-        setCanceledOnTouchOutside(false);
+//        setCanceledOnTouchOutside(false);
 
     }
 
@@ -151,8 +157,8 @@ public class ExitGameListDialog extends Dialog {
 
     class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private Activity mActivity;
-        private List<GameInfo> mList = null;
+        private final Activity mActivity;
+        private final List<GameInfo> mList;
 
         public ListAdapter(Activity context, List<GameInfo> list) {
             this.mActivity = context;
@@ -189,8 +195,8 @@ public class ExitGameListDialog extends Dialog {
 
         class ItemViewHolder extends RecyclerView.ViewHolder {
 
-            private ImageView mImageView;
-            private TextView mTitleText;
+            private final ImageView mImageView;
+            private final TextView mTitleText;
 
             public ItemViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -207,8 +213,14 @@ public class ExitGameListDialog extends Dialog {
                     imgUrl = gameInfo.iconUrl;
                 }
                 try {
-                    x.image().bind(mImageView,imgUrl);
-                }catch (Exception e){}
+                    if (imgUrl != null && !imgUrl.isEmpty()){
+                        x.image().bind(mImageView,imgUrl);
+                    }else {
+                        x.image().bind(mImageView,"res://" + R.mipmap.kp_game_icon_default);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
         }

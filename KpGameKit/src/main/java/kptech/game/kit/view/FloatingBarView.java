@@ -105,7 +105,7 @@ public class FloatingBarView extends SurfaceView implements SurfaceHolder.Callba
     private void updateView(int color) {
         mText.setText(mLastPing + "ms");
         mText.setTextColor(getContext().getResources().getColor(color));
-        mIcon.setImageResource(R.mipmap.kp_floating_bar_menu);
+        mIcon.setImageResource(R.mipmap.kp_game_set_menu);
 
         if (mDrawingThread != null) {
             mDrawingThread.draw();

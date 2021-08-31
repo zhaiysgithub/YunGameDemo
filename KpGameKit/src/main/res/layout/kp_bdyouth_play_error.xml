@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/kp_game_bg">
+
+    <ImageView
+        android:id="@+id/ivErrorBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="46dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/kp_game_back"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ivErrorPic"
+            android:layout_width="174dp"
+            android:layout_height="174dp"
+            android:scaleType="centerCrop"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tvErrorMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="啊哦，加载失败了"
+            android:textColor="#FFF"
+            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvErrorReload"
+            android:layout_width="77dp"
+            android:layout_height="22dp"
+            android:text="点击重试"
+            android:textSize="11sp"
+            android:textColor="#1F1F1F"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/kp_shape_reload"
+            tools:ignore="HardcodedText,SmallSp" />
+
+    </LinearLayout>
+
+</FrameLayout>

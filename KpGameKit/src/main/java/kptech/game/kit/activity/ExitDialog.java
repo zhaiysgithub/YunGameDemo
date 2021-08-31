@@ -3,10 +3,14 @@ package kptech.game.kit.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import kptech.game.kit.R;
+import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.VersionUtils;
 
 public class ExitDialog extends Dialog {
@@ -30,6 +34,13 @@ public class ExitDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.kp_dialog_exit);
 
+        Window window = getWindow();
+        if (window != null){
+            window.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            window.setAttributes(attributes);
+        }
+
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,22 +57,21 @@ public class ExitDialog extends Dialog {
             }
         });
 
-        TextView dialogTitle = findViewById(R.id.title);
+        /*TextView dialogTitle = findViewById(R.id.title);
         boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
         if (xiaoYuChannel){
             dialogTitle.setText(dialogMsgXiaoYu);
         }else {
             dialogTitle.setText(dialogMsgDefault);
-        }
+        }*/
 
-        TextView tv = findViewById(R.id.text);
+        /*TextView tv = findViewById(R.id.text);
         if (mText != null && !mText.isEmpty() && !xiaoYuChannel){
             tv.setVisibility(View.VISIBLE);
             tv.setText(mText);
         }else {
             tv.setVisibility(View.GONE);
-        }
-
+        }*/
 
     }
 
