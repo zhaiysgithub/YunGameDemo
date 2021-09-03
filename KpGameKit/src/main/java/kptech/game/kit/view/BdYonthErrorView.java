@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.manager.FastRepeatClickManager;
@@ -25,7 +27,7 @@ public class BdYonthErrorView extends FrameLayout {
     public static final int STATUS_PAGE_ERROR = -13;
 
     private OnErrorCallback mCallback;
-    private ImageView mIvErrorPic;
+    private LottieAnimationView mIvErrorPic;
     private TextView mTvShowErrorMsg;
 
     private int mCurrentStatus;
@@ -41,7 +43,7 @@ public class BdYonthErrorView extends FrameLayout {
     }
 
     private void initView(Context context) {
-        View view = inflate(context, R.layout.kp_bdyouth_play_error,this);
+        View view = inflate(context, R.layout.kp_bdyouth_play_error, this);
 
         ImageView mIvErrorBack = view.findViewById(R.id.ivErrorBack);
         mIvErrorPic = view.findViewById(R.id.ivErrorPic);
@@ -52,10 +54,10 @@ public class BdYonthErrorView extends FrameLayout {
         mIvErrorBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())){
+                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())) {
                     return;
                 }
-                if (mCallback != null){
+                if (mCallback != null) {
                     mCallback.onBackClick();
                 }
             }
@@ -64,10 +66,10 @@ public class BdYonthErrorView extends FrameLayout {
         mTvReload.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())){
+                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())) {
                     return;
                 }
-                if (mCallback != null){
+                if (mCallback != null) {
                     mCallback.onReloadGame();
                 }
             }
@@ -76,7 +78,7 @@ public class BdYonthErrorView extends FrameLayout {
         mIvErrorPic.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (mCallback != null){
+                if (mCallback != null) {
                     mCallback.onCopyDeviceInf();
                 }
                 return true;
@@ -92,30 +94,27 @@ public class BdYonthErrorView extends FrameLayout {
     /**
      * 更新页面
      */
-    public void updateErrorStatus(int status,String msg){
-        if (mCurrentStatus == status){
+    public void updateErrorStatus(int status, String msg) {
+        if (mCurrentStatus == status) {
             return;
         }
         mCurrentStatus = status;
-        switch (status){
+        switch (status) {
             case STATUS_LOAD_ERROR:
-                mIvErrorPic.setImageResource(R.mipmap.kp_game_error);
+            case STATUS_DEVICE_OFFLINE:
+                mIvErrorPic.setAnimation("lot_game_load_error.json");
                 mTvShowErrorMsg.setText("啊哦，加载失败了");
                 break;
             case STATUS_NO_DEVICE:
-                mIvErrorPic.setImageResource(R.mipmap.kp_game_nodevice);
+                mIvErrorPic.setAnimation("lot_game_no_device.json");
                 mTvShowErrorMsg.setText("啊哦，游戏太火了，云设备排队中");
                 break;
-            case STATUS_DEVICE_OFFLINE:
-                mIvErrorPic.setImageResource(R.mipmap.kp_game_error);
-                mTvShowErrorMsg.setText("啊哦，加载失败了");
-                break;
             case STATUS_PAGE_ERROR:
-                mIvErrorPic.setImageResource(R.mipmap.kp_game_error_other);
+                mIvErrorPic.setAnimation("lot_game_error.json");
                 mTvShowErrorMsg.setText("啊哦，页面异常");
                 break;
             default:
-                mIvErrorPic.setImageResource(R.mipmap.kp_game_error);
+                mIvErrorPic.setAnimation("lot_game_load_error.json");
                 mTvShowErrorMsg.setText(msg);
                 break;
         }
@@ -125,12 +124,12 @@ public class BdYonthErrorView extends FrameLayout {
 
     }
 
-    public void setOnErrorCallback(OnErrorCallback callback){
+    public void setOnErrorCallback(OnErrorCallback callback) {
         this.mCallback = callback;
     }
 
 
-    public interface OnErrorCallback{
+    public interface OnErrorCallback {
 
         void onBackClick();
 

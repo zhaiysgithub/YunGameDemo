@@ -13,7 +13,9 @@ public class ParamKey {
 
     public static final String GAME_AUTH_UNION_GID = "gameAuthUnionGid"; // gid 登录
 
-    public static final String GAME_ACTIVITY_ANIM_ENTER = "gameActivityEnterAnim"; //游戏页面启动进场动画
-    public static final String GAME_ACTIVITY_ANIM_EXIT = "gameActivityExitAnim"; //游戏页面关闭动画
+    //验签登录参数
+    public static final String GAME_AUTH_UNION_AK = "gameAuthUnionAK"; //AK值
+    public static final String GAME_AUTH_UNION_TS = "gameAuthUnionTs"; //TS值
+    public static final String GAME_AUTH_UNION_SIGN = "gameAuthUnionSign";//Sign值
 
 }

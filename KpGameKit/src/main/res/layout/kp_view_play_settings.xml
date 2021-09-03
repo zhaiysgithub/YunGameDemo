@@ -238,8 +238,10 @@
             android:gravity="center_vertical"
             >
             <TextView
-                android:layout_width="100dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="100dp"
+                android:maxWidth="200dp"
                 android:textColor="#a4a3a9"
                 android:text="云手机控制："/>
 
@@ -254,25 +256,30 @@
                     android:id="@+id/back_icon"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
+                    android:layout_centerVertical="true"
                     android:src="@mipmap/kp_game_mock_back"
                     tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/back_icon"
+                    android:layout_toEndOf="@+id/back_icon"
                     android:textColor="#FFFFFF"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="2dp"
                     android:gravity="center"
-                    android:text="后退"/>
+                    android:text="后退"
+                    tools:ignore="HardcodedText" />
 
                 <TextView
                     android:id="@+id/tv_padcode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:textColor="@color/common_white"
-                    android:layout_marginRight="5dp"
-                    android:text=""/>
+                    android:layout_marginEnd="5dp"
+                    android:layout_centerVertical="true"
+                    android:text=""
+                    tools:ignore="RelativeOverlap" />
             </RelativeLayout>
 
             <!--<LinearLayout-->

@@ -127,8 +127,9 @@ public class GameBox {
         if (!miniPkgVersion.isEmpty()){
             intent.putExtra(GamePlay.EXTRA_MINI_VERSION,miniPkgVersion);
         }
-        //TODO actvity 进入和退出动画
+
         activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.kp_activity_right_other_to_left,R.anim.kp_activity_self_to_left);
     }
 
     /**

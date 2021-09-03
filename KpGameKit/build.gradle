@@ -9,7 +9,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 26
-        versionName "1.2.1.26"
+        versionName "1.5.5.0"
     }
 
 
@@ -43,6 +43,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 //    implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.xutils:xutils:3.3.36'
+    //lottie 动画
+    implementation 'com.airbnb.android:lottie:3.4.4'
 
     //云通讯SDK
     implementation files('../kplib/libs/KpCKit-v1.0.9.jar')

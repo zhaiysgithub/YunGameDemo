@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -48,7 +47,6 @@ import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.download.DownloadTask;
-import kptech.game.kit.manager.FastRepeatClickManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
@@ -67,7 +65,6 @@ import kptech.lib.data.RequestGameInfoTask;
 import kptech.game.kit.msg.BaseMsgReceiver;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.MD5Util;
 import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
@@ -91,7 +88,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private static final int MSG_GAME_EXIT = 4;
 
     private ViewGroup mContentView;
-    private ImageView mVideoBack;
     private FrameLayout mVideoContainer;
     private FloatMenuView mMenuView;
 
@@ -121,6 +117,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private List<GameInfo> mExitGameList = null;
 
     private String mUnionUUID = null;
+    private String mAuthUnionAk;
+    private String mAuthUnionSign;
+    private String mAuthUnionTS;
     //暂存游戏声音开关的变量
     private boolean gameVoiceSwitchValue = false;
     //游戏是否正在运行
@@ -174,10 +173,16 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         View rootView = getLayoutInflater().inflate(R.layout.kp_activity_game_play, null);
         setContentView(rootView);
 
-        boolean isWifi = NetUtils.isWiFi(GamePlay.this);
-        if (!isWifi){
-            Toast.makeText(this,"非Wi-Fi环境，注意将消耗较多流量",Toast.LENGTH_SHORT).show();
+        boolean networkAvailable = NetUtils.isNetworkAvailable(GamePlay.this);
+        if (!networkAvailable){
+            Toast.makeText(this,"网络错误，请检查网络后再试",Toast.LENGTH_SHORT).show();
+        }else {
+            boolean isWifi = NetUtils.isWiFi(GamePlay.this);
+            if (!isWifi){
+                Toast.makeText(this,"非Wi-Fi环境，注意将消耗较多流量",Toast.LENGTH_SHORT).show();
+            }
         }
+
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -197,9 +202,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         fontTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_FONT, 5 * 60);
         backTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
 
+
         mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
+        mAuthUnionAk = mCustParams.get(ParamKey.GAME_AUTH_UNION_AK,"");
+        mAuthUnionSign = mCustParams.get(ParamKey.GAME_AUTH_UNION_SIGN, "");
+        mAuthUnionTS = mCustParams.get(ParamKey.GAME_AUTH_UNION_TS, "");
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
 
         String guidJson = mCustParams.get(ParamKey.GAME_AUTH_UNION_GID,null);
@@ -294,7 +303,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mRecordView.setCorpKey(mCorpID);
 
         mVideoContainer = findViewById(R.id.play_container);
-        mVideoBack = findViewById(R.id.ivGameBack);
 
         mFloatDownView = findViewById(R.id.float_down);
         mFloatDownView.setOnDownListener(new View.OnClickListener() {
@@ -305,15 +313,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
         });
 
-        mVideoBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())){
-                    return;
-                }
-                onBackPressed();
-            }
-        });
     }
 
     private synchronized void toggleDownload(GameInfo gameInfo) {
@@ -425,16 +424,16 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         if (mUnionUUID == null || mUnionUUID.isEmpty()){
                             //清除数据
                             ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
+                            ProferencesUtils.remove(GamePlay.this, cacheKey);
                         }else {
                             String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
-                            //比较数据
-                            if (authIdValue != null && !authIdValue.equals(mUnionUUID)){
+                            if(!mUnionUUID.equals(authIdValue)){
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
                             }
                         }
                     }
-
                     //启动游戏
                     startCloudPhone();
                 }
@@ -598,7 +597,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mPlayStatueView.setStatus(PlayStatusLayout.STATUS_LOADING_FINISHED, "游戏启动完成！");
             mPlayStatueView.setVisibility(View.GONE);
 
-            mVideoBack.setVisibility(View.VISIBLE);
             mMenuView.setVisibility(View.VISIBLE);
             mMenuView.setDeviceControl(mDeviceControl);
 
@@ -626,6 +624,12 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         finish();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.kp_activity_left_other_to_right,R.anim.kp_activity_self_to_right);
+    }
+
     /**
      * 显示错识页面
      *
@@ -638,7 +642,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
 
             mVideoContainer.setVisibility(View.GONE);
-            mVideoBack.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
 
@@ -664,11 +667,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
             mVideoContainer.removeAllViews();
             mVideoContainer.setVisibility(View.GONE);
-            mVideoBack.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
-
-
 
             mRecordView.reset();
             mRecordView.setVisibility(View.GONE);
@@ -923,18 +923,18 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return;
         }
 
-        List<String> lackedPermission = new ArrayList();
+        List<String> lackedPermission = new ArrayList<>();
         if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
-        if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+        /*if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
-        }
+        }*/
 
         if (lackedPermission.size() != 0) {
             String[] requestPermissions = new String[lackedPermission.size()];
@@ -1636,7 +1636,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
 
                 //调用接口发送授权数据
-                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_CHANNEL_UUID)
+                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_GT_API)
                         .setCorpKey(mCorpID)
                         .setCallback(new AccountTask.ICallback() {
                             @Override
@@ -1644,10 +1644,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                 //保存数据
 //                                String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
 //                                ProferencesUtils.setInt(GamePlay.this, key, 1);
+//
                                 ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
                             }
                         })
-                        .execute(mUnionUUID, mGameInfo.pkgName);
+                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);
 
 
                 if (ref != null && ref.get() != null) {

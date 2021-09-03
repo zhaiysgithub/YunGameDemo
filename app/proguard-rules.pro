@@ -87,4 +87,7 @@
     @org.xutils.view.annotation.Event <methods>;
 }
 
+#lottie
+
+-keep class com.airbnb.lottie.LottieAnimationView{*;}
 
