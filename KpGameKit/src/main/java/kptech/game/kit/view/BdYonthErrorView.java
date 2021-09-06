@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -45,23 +44,9 @@ public class BdYonthErrorView extends FrameLayout {
     private void initView(Context context) {
         View view = inflate(context, R.layout.kp_bdyouth_play_error, this);
 
-        ImageView mIvErrorBack = view.findViewById(R.id.ivErrorBack);
         mIvErrorPic = view.findViewById(R.id.ivErrorPic);
         mTvShowErrorMsg = view.findViewById(R.id.tvErrorMsg);
         TextView mTvReload = view.findViewById(R.id.tvErrorReload);
-
-
-        mIvErrorBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())) {
-                    return;
-                }
-                if (mCallback != null) {
-                    mCallback.onBackClick();
-                }
-            }
-        });
 
         mTvReload.setOnClickListener(new OnClickListener() {
             @Override

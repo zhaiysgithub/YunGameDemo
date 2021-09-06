@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
-import kptech.game.kit.manager.FastRepeatClickManager;
 import kptech.game.kit.utils.DensityUtil;
 
 public class BdYonthLoadingView extends LoadingPageView {
@@ -58,21 +56,8 @@ public class BdYonthLoadingView extends LoadingPageView {
 
         mLoadingAnimationView = view.findViewById(R.id.loading_animationView);
         mLoadingSeekBar = view.findViewById(R.id.loadingSeekbar);
-        ImageView mIvLoadingBack = view.findViewById(R.id.ivLoadingBack);
         mLoadingSeekBar.setMax(pbMax);
         lottieViewParams = (LinearLayout.LayoutParams) mLoadingAnimationView.getLayoutParams();
-
-        mIvLoadingBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick()) {
-                    return;
-                }
-                if (mCallback != null) {
-                    mCallback.onBackClick();
-                }
-            }
-        });
     }
 
     @SuppressLint("SetTextI18n")

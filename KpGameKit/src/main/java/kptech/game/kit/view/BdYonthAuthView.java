@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,22 +34,9 @@ public class BdYonthAuthView extends FrameLayout {
     private void initView(Context context) {
         View view = LayoutInflater.from(context).inflate(R.layout.kp_bdyouth_game_auth, this);
 
-        ImageView mAuthBack = view.findViewById(R.id.ivAuthBack);
         mAuthGameIcon = view.findViewById(R.id.ivAuthGameIcon);
         mAuthGameName = view.findViewById(R.id.tvAuthGameName);
         TextView mAuthLogin = view.findViewById(R.id.tvAuthLogin);
-
-        mAuthBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())){
-                    return;
-                }
-                if (mCallback != null){
-                    mCallback.onBackListener();
-                }
-            }
-        });
 
         mAuthLogin.setOnClickListener(new OnClickListener() {
             @Override

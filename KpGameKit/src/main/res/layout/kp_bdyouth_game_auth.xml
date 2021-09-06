@@ -6,23 +6,13 @@
     android:layout_height="match_parent"
     android:background="@mipmap/kp_game_bg">
 
-    <ImageView
-        android:id="@+id/ivAuthBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="46dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:src="@mipmap/kp_game_back"
-        tools:ignore="ContentDescription" />
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
 
         <kptech.game.kit.view.RoundImageView

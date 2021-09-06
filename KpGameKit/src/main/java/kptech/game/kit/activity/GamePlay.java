@@ -561,7 +561,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 if (mDeviceControl != null) {
                     mDeviceControl.stopGame();
                 }
-
+                mErrorCode = code;
                 showTimeoutDialog("网络不稳定，请检查网络配置。");
 
             } else {
@@ -820,6 +820,21 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private boolean showTimeoutDialog(String msg) {
         try {
+            if(mPlayStatueView != null){
+                if (mVideoContainer != null){
+                    mVideoContainer.setVisibility(View.GONE);
+                }
+                if (mMenuView != null){
+                    mMenuView.setVisibility(View.GONE);
+                }
+                if (mFloatDownView != null){
+                    mFloatDownView.setVisibility(View.GONE);
+                }
+                mPlayStatueView.setVisibility(View.VISIBLE);
+                mPlayStatueView.setErrorCode(mErrorCode);
+                mPlayStatueView.setStatus(PlayStatusLayout.STATUS_ERROR, msg);
+                return true;
+            }
             //关闭其他弹窗
             if (exitDialog != null && exitDialog.isShowing()){
                 exitDialog.dismiss();
@@ -868,6 +883,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         gameRunSuccess = false;
         gameVoiceSwitchValue = false;
+        //设备已断开
+        mErrorCode = APIConstants.ERROR_DEVICE_EXPIRED;
         //前台未操作超时
 //        if (type == 2) {
             showTimeoutDialog("您长时间未操作，游戏已释放。");

@@ -16,16 +16,6 @@
         android:visibility="gone">
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/ivGameBack"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:src="@mipmap/kp_game_back"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="9dp"
-        tools:ignore="ContentDescription"
-        android:visibility="gone"/>
-
     <kptech.game.kit.view.FloatMenuView
         android:id="@+id/float_menu"
         android:layout_width="match_parent"
