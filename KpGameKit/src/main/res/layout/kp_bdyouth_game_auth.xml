@@ -19,9 +19,9 @@
             android:id="@+id/ivAuthGameIcon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:scaleType="centerCrop"
-            android:background="@mipmap/kp_game_icon_default"
-            app:radius="10dp"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            app:radius="20dp"
             />
 
         <TextView
@@ -45,10 +45,10 @@
 
         <TextView
             android:id="@+id/tvAuthLogin"
-            android:layout_width="77dp"
-            android:layout_height="34dp"
+            android:layout_width="119dp"
+            android:layout_height="40dp"
             android:text="授权登录"
-            android:textSize="11sp"
+            android:textSize="16sp"
             android:textColor="#1F1F1F"
             android:gravity="center"
             android:textStyle="bold"

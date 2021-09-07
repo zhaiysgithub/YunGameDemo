@@ -13,10 +13,11 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:scaleType="centerCrop"
-        app:radius="13dp"
-        android:background="@mipmap/kp_game_icon_default"
+        app:radius="20dp"
+        android:background="@android:color/transparent"
         android:layout_gravity="center_horizontal"
         />
+    <!--android:background="@mipmap/kp_game_icon_default"-->
 
     <TextView
         android:id="@+id/title"

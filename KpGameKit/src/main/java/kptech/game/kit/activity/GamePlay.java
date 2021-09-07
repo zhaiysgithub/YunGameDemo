@@ -50,6 +50,7 @@ import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
+import kptech.game.kit.utils.MD5Util;
 import kptech.game.kit.utils.NetUtils;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
@@ -428,7 +429,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                             ProferencesUtils.remove(GamePlay.this, cacheKey);
                         }else {
                             String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
-                            if(!mUnionUUID.equals(authIdValue)){
+                            String uuidMd5Value = MD5Util.md5(mUnionUUID);
+                            if(!uuidMd5Value.equals(authIdValue)){
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
                             }
@@ -1662,7 +1664,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 //                                String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
 //                                ProferencesUtils.setInt(GamePlay.this, key, 1);
 //
-                                ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
+                                ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,MD5Util.md5(mUnionUUID));
                             }
                         })
                         .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);

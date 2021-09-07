@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:scaleType="fitXY"
-        app:radius="13dp"
-        android:background="@drawable/kp_icon_bg"
+        app:radius="20dp"
+        android:background="@android:color/transparent"
         android:layout_gravity="center_horizontal"
         />
 

@@ -21,7 +21,7 @@ public class Logger {
     private static final String TAG = "kpgamekit.";
 
     public static void info(String tag, String msg){
-        if (( level & LEVEL_INFO ) > 0 ){
+        if ( level >= LEVEL_INFO ){
             Log.i(TAG + tag, msg);
         }
     }

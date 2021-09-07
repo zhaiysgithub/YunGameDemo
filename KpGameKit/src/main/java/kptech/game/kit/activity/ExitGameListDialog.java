@@ -81,6 +81,7 @@ public class ExitGameListDialog extends Dialog {
             WindowManager.LayoutParams attributes = window.getAttributes();
             window.setAttributes(attributes);
         }
+        setCanceledOnTouchOutside(false);
 
         findViewById(R.id.exit_game).setOnClickListener(new View.OnClickListener() {
             @Override
