@@ -33,4 +33,8 @@ public class SharedKeys {
     public static final String KEY_ENV_KEY = "kp_kit_env";
 
     public static final String KEY_AUTH_ID = "kp_auth_id";
+    //非WIFI环境提示
+    public static final String KEY_MOBILE_ENV_TIPS = "key_mobile_env";
+    //WIFI首次切换到4G提示
+    public static final String KEY_WIFI_SWITCH_TO_MOBILE = "key_wifi_to_mobile_env";
 }

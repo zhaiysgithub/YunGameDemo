@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,8 +48,10 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
+import kptech.game.kit.dialog.ToastDialog;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.UserAuthManager;
+import kptech.game.kit.receiver.NetworkConnectChangedReceiver;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
 import kptech.game.kit.utils.MD5Util;
@@ -70,6 +74,8 @@ import kptech.game.kit.utils.ProferencesUtils;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
+
+import static kptech.lib.constants.SharedKeys.KEY_MOBILE_ENV_TIPS;
 
 
 public class GamePlay extends Activity implements APICallback<String>, IDeviceControl.PlayListener {
@@ -133,6 +139,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private MsgReceiver mMsgReceiver;
     //游戏相关的 broadcastReceiver
     private KPGameReceiver mKpGameReceiver;
+    private NetworkConnectChangedReceiver mNetChangeReceiver;
+    private ToastDialog mNetTipDialog;
 
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -174,16 +182,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         View rootView = getLayoutInflater().inflate(R.layout.kp_activity_game_play, null);
         setContentView(rootView);
 
-        boolean networkAvailable = NetUtils.isNetworkAvailable(GamePlay.this);
-        if (!networkAvailable){
-            Toast.makeText(this,"网络错误，请检查网络后再试",Toast.LENGTH_SHORT).show();
-        }else {
-            boolean isWifi = NetUtils.isWiFi(GamePlay.this);
-            if (!isWifi){
-                Toast.makeText(this,"非Wi-Fi环境，注意将消耗较多流量",Toast.LENGTH_SHORT).show();
-            }
-        }
-
+        regiserNetReceiver();
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
@@ -715,12 +714,78 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
+
+    private void regiserNetReceiver() {
+        mNetChangeReceiver = new NetworkConnectChangedReceiver(mNetWorkChangeListener);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetChangeReceiver,filter);
+    }
+
+    private final NetworkConnectChangedReceiver.OnNetworkChangeListener mNetWorkChangeListener = new NetworkConnectChangedReceiver.OnNetworkChangeListener() {
+        @Override
+        public void onNetworkChanged(int type, boolean isMobileNet, boolean isWifiChangeToMobileNet) {
+            try{
+                if (!isMobileNet){
+                    return;
+                }
+                String key = isWifiChangeToMobileNet ? SharedKeys.KEY_WIFI_SWITCH_TO_MOBILE : SharedKeys.KEY_MOBILE_ENV_TIPS;
+
+                String envTipCaheStr = ProferencesUtils.getString(GamePlay.this, key, "");
+                if (envTipCaheStr == null || envTipCaheStr.isEmpty()){
+                    showMobileNetToast(key);
+                }else {
+                    @SuppressLint("SimpleDateFormat")
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    final String today = sdf.format(new Date());
+                    JSONObject envTipsObj = new JSONObject(envTipCaheStr);
+                    if (envTipsObj.has(today)){
+                        int num = envTipsObj.getInt(today);
+                        if (num < 1){
+                            showMobileNetToast(key);
+                        }
+                    }else {
+                        showMobileNetToast(key);
+                    }
+                }
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private void showMobileNetToast(String key){
+        try{
+            if (mNetTipDialog == null){
+                mNetTipDialog = new ToastDialog(GamePlay.this);
+            }
+            mNetTipDialog.showDialog(key);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
+
+        if (mNetTipDialog != null){
+            mNetTipDialog.cancel();
+            mNetTipDialog = null;
+        }
         if (mKpGameReceiver != null){
             unregisterReceiver(mKpGameReceiver);
             mKpGameReceiver = null;
         }
+        if (mNetChangeReceiver != null){
+            unregisterReceiver(mNetChangeReceiver);
+            mNetChangeReceiver = null;
+        }
+
         super.onDestroy();
 
         try {
