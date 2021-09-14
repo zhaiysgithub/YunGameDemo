@@ -44,6 +44,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     public static final String ACTION_AUTH_THIRD_USER = "10";
     //检测 guid , token 有效性
     public static final String ACTION_AUTH_PLAT_EFFECT = "11";
+    public static final String ACTION_AUTH_GT_API = "12";
 
     public static final String SENDSMS_TYPE_PHONELOGIN = "4";
     public static final String SENDSMS_TYPE_REGIST = "1";
@@ -100,6 +101,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             ret = doLoginAuthByThird(params);
         }else if(mAction.equals(ACTION_AUTH_PLAT_EFFECT)){
             ret = doCheckPlatUserValid(params);
+        }else if(mAction.equals(ACTION_AUTH_GT_API)){
+            ret = doAuthGtApi(params);
         }
         return ret;
     }
@@ -129,6 +132,9 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("smsCodeId", params[2]);
         p.put("deviceid", mDeviceId);
         p.put("package", mPkgName);
+        //大账号测试
+        p.put("corpKey",mCorpKey);
+        p.put("usersign",params[3]);
         return request(p);
     }
 
@@ -231,6 +237,34 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         return request(map, Urls.HTTP_PLAT_KPUSER);
     }
 
+    /**
+     * 验签
+     */
+    private Map<String,Object> doAuthGtApi(Object... params){
+        Map<String,Object> map = new HashMap<>();
+        try{
+            if (params == null || params.length < 5){
+                return map;
+            }
+            map.put("f", "authlogin");
+            map.put("ak",params[0]);
+
+            JSONObject pJson = new JSONObject();
+            pJson.put("usersign",params[1]); //用户唯一标识
+            pJson.put("corpkey",params[2]);
+
+            map.put("p",pJson);
+            map.put("ts",params[3]); //客户端的时间值
+            map.put("sign",params[4]); //客户端验签值
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return requestStream(map,Urls.URL_GT_API);
+    }
+
+
 
     private Map<String,Object> request(Map<String, Object> params){
         return request(params,Urls.HTTP_URL);
@@ -310,6 +344,97 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         }
         return ret;
     }
+
+
+    private Map<String,Object> requestStream(Map<String, Object> params,String sepcUrl){
+        Map<String,Object> ret = new HashMap<>();
+
+        HttpURLConnection postConnection = null;
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+
+        try{
+            URL url = new URL(sepcUrl);
+            postConnection = (HttpURLConnection) url.openConnection();
+            postConnection.setRequestMethod("POST");
+            postConnection.setConnectTimeout(1000*10);
+            postConnection.setReadTimeout(1000*10);
+            postConnection.setDoInput(true);
+            postConnection.setDoOutput(true);
+
+            String postParms = new JSONObject(params).toString();
+
+            OutputStream outputStream = postConnection.getOutputStream();
+            outputStream.write(postParms.getBytes());//把参数发送过去.
+            outputStream.flush();
+
+            final StringBuilder buffer = new StringBuilder();
+            int code = postConnection.getResponseCode();
+            if (code == 200){
+                inputStream = postConnection.getInputStream();
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;//一行一行的读取
+                while ((line = bufferedReader.readLine()) != null) {
+                    buffer.append(line);//把一行数据拼接到buffer里
+                }
+                String retStr = buffer.toString();
+
+                Logger.info(TAG,"resp:" + retStr);
+
+                JSONObject jsonObject = new JSONObject(retStr);
+                int c = jsonObject.getInt("c");
+                if (c == 200){
+                    JSONObject dObj = jsonObject.getJSONObject("d");
+                    Iterator<String> keys = dObj.keys();
+                    while (keys.hasNext()){
+                        String k = keys.next();
+                        ret.put(k, dObj.get(k));
+                    }
+                } else {
+                    String m = jsonObject.getString("m");
+                    Logger.error(TAG,"resp msg:" + m);
+                    ret.put("error", m);
+                }
+            }else {
+                String msg = null;
+                try {
+                    inputStream = postConnection.getErrorStream();
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;//一行一行的读取
+                    while ((line = bufferedReader.readLine()) != null) {
+                        buffer.append(line);//把一行数据拼接到buffer里
+                    }
+                    msg = buffer.toString();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                Logger.error(TAG,"resp code:" + code + ", msg:" + msg);
+
+                ret.put("error", msg);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            ret.put("error", e.getMessage());
+        }finally {
+            try {
+                if(bufferedReader != null){
+                    bufferedReader.close();
+                }
+                if (inputStream != null){
+                    inputStream.close();
+                }
+                if (postConnection != null){
+                    postConnection.disconnect();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
 
     /**
      * 签名工具方法

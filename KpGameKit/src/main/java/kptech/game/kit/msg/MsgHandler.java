@@ -236,7 +236,8 @@ public class MsgHandler extends Handler {
 
     private void showLoginDialog(){
         //处理登录，判断是联运登录，还是本地登录
-        final String uninqueId = GameBoxManager.getInstance().getUniqueId();
+//        final String uninqueId = GameBoxManager.getInstance().getUniqueId();
+        final String uninqueId = "";
         if (uninqueId!=null && uninqueId.length() > 0){
             //联运帐号登录
             AccountActivity login = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);

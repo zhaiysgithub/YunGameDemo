@@ -116,7 +116,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private boolean mEnableExitGameAlert = false;
     private List<GameInfo> mExitGameList = null;
 
-    private String mUnionUUID = null;
+    public static String mUnionUUID = null;
+    private String mAuthUnionAk;
+    private String mAuthUnionSign;
+    private String mAuthUnionTS;
     //暂存游戏声音开关的变量
     private boolean gameVoiceSwitchValue = false;
     //游戏是否正在运行
@@ -192,6 +195,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
+        mAuthUnionAk = mCustParams.get(ParamKey.GAME_AUTH_UNION_AK,"");
+        mAuthUnionSign = mCustParams.get(ParamKey.GAME_AUTH_UNION_SIGN, "");
+        mAuthUnionTS = mCustParams.get(ParamKey.GAME_AUTH_UNION_TS, "");
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
 
         String guidJson = mCustParams.get(ParamKey.GAME_AUTH_UNION_GID,null);
@@ -394,12 +400,17 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     }
 
                     //判断是否需要显示授权界面
-                    if (mGameInfo.kpUnionGame == 1 && mUnionUUID != null) {
-                        String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
-                        int auth = ProferencesUtils.getIng(GamePlay.this, key, 0);
-                        if (auth == 0) {
-                            mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
-                            return;
+                    if (mGameInfo.kpUnionGame == 1) {
+                        if (mUnionUUID == null || mUnionUUID.isEmpty()){
+                            ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
+                            ProferencesUtils.remove(GamePlay.this, cacheKey);
+                        }else {
+                            String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
+                            if(!mUnionUUID.equals(authIdValue)){
+                                mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
+                                return;
+                            }
                         }
                     }
 
@@ -1592,22 +1603,52 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
 
                 //调用接口发送授权数据
-                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_CHANNEL_UUID)
+                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_GT_API)
                         .setCorpKey(mCorpID)
                         .setCallback(new AccountTask.ICallback() {
                             @Override
                             public void onResult(Map<String, Object> map) {
                                 //保存数据
-                                String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
-                                ProferencesUtils.setInt(GamePlay.this, key, 1);
+                                String errMsg = "";
+                                if (map == null || map.size() <= 0){
+                                    errMsg = "登录失败";
+                                }else if (map.containsKey("error")){
+                                    errMsg = map.get("error").toString();
+                                }
+                                try{
+                                    boolean noError = (errMsg == null || errMsg.isEmpty());
+                                    if (map != null && noError){
+                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
+                                        if (map.containsKey("guid")){
+                                            Object guid = map.get("guid");
+                                            if (guid != null){
+                                                Event.setGuid(guid+"");
+                                            }
+                                        }
+                                        if (map.containsKey("access_token")){
+                                            Object at =  map.get("access_token");
+                                            map.put("token", at);
+                                            map.remove("access_token");
+                                        }
+                                        if (mUnionUUID != null && mUnionUUID.length() > 0){
+                                            map.put("uninqueId",mUnionUUID);
+                                        }
+                                        JSONObject obj = new JSONObject(map);
+                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
+                                        ProferencesUtils.setString(GamePlay.this, cacheKey, obj.toString());
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                if (ref != null && ref.get() != null) {
+                                    ref.get().startCloudPhone();
+                                }
                             }
                         })
-                        .execute(mUnionUUID, mGameInfo.pkgName);
+                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);;
 
 
-                if (ref != null && ref.get() != null) {
-                    ref.get().startCloudPhone();
-                }
+
 
             } catch (Exception e) {
                 Logger.error(TAG, e);

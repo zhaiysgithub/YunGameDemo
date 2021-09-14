@@ -32,8 +32,14 @@ public class Urls {
     //检测 guid,token有效性
     public static final String HTTP_PLAT_KPUSER = "http://wxapp.kuaipantech.com/h5demo/Toc/kpuser.php";
 
+    //授权验签接口
+    public static final String URL_GT_API = "https://kpapi.kuaipantech.com/gtapi.php";
+
+    private static final String URL_BASE_TEST = "http://test-operation.kuaipantech.com";
+    private static final String URL_BASE_RELEASE = "https://wxapp.kuaipantech.com";
+
     public static String getEnvUrl(String url){
-        String BaseUrl = Env.isTestEnv() ? "http://test-operation.kuaipantech.com" : "https://wxapp.kuaipantech.com";
+        String BaseUrl = Env.isTestEnv() ? URL_BASE_TEST : URL_BASE_RELEASE;
         return BaseUrl + url;
     }
 
