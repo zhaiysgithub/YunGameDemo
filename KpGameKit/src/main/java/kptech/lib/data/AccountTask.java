@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import kptech.game.kit.BuildConfig;
+import kptech.game.kit.utils.DeviceUtils;
 import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.constants.Urls;
 import kptech.game.kit.utils.Logger;
@@ -49,6 +50,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
     public static final String SENDSMS_TYPE_PHONELOGIN = "4";
     public static final String SENDSMS_TYPE_REGIST = "1";
     public static final String SENDSMS_TYPE_UPDATEPSW = "2";
+    public static final String SENDSMS_TYPE_BINDPHONE = "3";
 
     private String mAction;
     private String mCorpKey;
@@ -133,7 +135,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
         p.put("deviceid", mDeviceId);
         p.put("package", mPkgName);
         //大账号测试
-        p.put("corpKey",mCorpKey);
+        p.put("corpkey",mCorpKey);
         p.put("usersign",params[3]);
         return request(p);
     }
@@ -246,7 +248,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             if (params == null || params.length < 5){
                 return map;
             }
-            map.put("f", "authlogin");
+//            map.put("f", "authlogin");
+            map.put("f", "dotest");
             map.put("ak",params[0]);
 
             JSONObject pJson = new JSONObject();
@@ -263,8 +266,6 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
 
         return requestStream(map,Urls.URL_GT_API);
     }
-
-
 
     private Map<String,Object> request(Map<String, Object> params){
         return request(params,Urls.HTTP_URL);

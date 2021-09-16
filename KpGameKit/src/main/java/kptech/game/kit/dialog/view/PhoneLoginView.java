@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.utils.ProferencesUtils;
@@ -176,7 +177,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
         mLoading = Loading.build(mActivity);
         mLoading.show();
 
-        String userSign = (GamePlay.mUnionUUID != null) ? GamePlay.mUnionUUID : "";
+        String userSign = GameBoxManager.getInstance().getUniqueId();
         new AccountTask(mActivity, AccountTask.ACTION_LOGIN_PHONE)
                 .setCorpKey(mCorpKey)
                 .setPkgName(mPkgName)

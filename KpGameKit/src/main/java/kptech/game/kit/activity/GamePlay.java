@@ -403,8 +403,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     if (mGameInfo.kpUnionGame == 1) {
                         if (mUnionUUID == null || mUnionUUID.isEmpty()){
                             ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
-                            String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
-                            ProferencesUtils.remove(GamePlay.this, cacheKey);
                         }else {
                             String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
                             if(!mUnionUUID.equals(authIdValue)){
@@ -1608,6 +1606,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         .setCallback(new AccountTask.ICallback() {
                             @Override
                             public void onResult(Map<String, Object> map) {
+                                ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
                                 //保存数据
                                 String errMsg = "";
                                 if (map == null || map.size() <= 0){
@@ -1618,7 +1617,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                 try{
                                     boolean noError = (errMsg == null || errMsg.isEmpty());
                                     if (map != null && noError){
-                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
+
                                         if (map.containsKey("guid")){
                                             Object guid = map.get("guid");
                                             if (guid != null){
@@ -1630,8 +1629,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                             map.put("token", at);
                                             map.remove("access_token");
                                         }
-                                        if (mUnionUUID != null && mUnionUUID.length() > 0){
-                                            map.put("uninqueId",mUnionUUID);
+                                        if (map.containsKey("phone")){
+                                            Object phone = map.get("phone");
+                                            map.put("userphone",phone);
                                         }
                                         JSONObject obj = new JSONObject(map);
                                         String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;

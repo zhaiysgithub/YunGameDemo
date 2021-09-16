@@ -33,6 +33,7 @@ import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
 import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
+import com.yd.yunapp.gamebox.utils.AppUtils;
 import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
 import org.xutils.x;
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText mPkgText;
     private MainModel mainModel;
     private SharedPreferences mSp = null;
+    private String APP_ID;
+    private String userSignValue;
 
 
 
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
         //测试appID
-        String APP_ID = mSp.getString("corpKey", null);
+        APP_ID = mSp.getString("corpKey", null);
 //        String APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
 
         TextView coprKey = findViewById(R.id.corpkey);
@@ -130,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
         String unionId = mSp.getString("unionId", null);
 
         if (enableAuth && unionId != null) {
-            params.put(ParamKey.GAME_AUTH_UNION_UUID, "test_" + unionId);
+            userSignValue = "test_" + unionId;
+            params.put(ParamKey.GAME_AUTH_UNION_UUID, userSignValue);
         }
 
         String fontStr = mSp.getString("fontTimeout", null);
@@ -165,6 +169,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
+        String timeStr = String.valueOf(System.currentTimeMillis());
+        params.put(ParamKey.GAME_AUTH_UNION_AK,AppUtils.SIGN_AK);
+        params.put(ParamKey.GAME_AUTH_UNION_TS,timeStr);
+        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr);
+        params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
 
         /*boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
         if (enableRealNameAuth){

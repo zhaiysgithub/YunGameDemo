@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 public class AppUtils {
+
+    public static final String SIGN_SK = "990911";
+    public static final String SIGN_AK = "test_13390kp";
 
     /**
      * 获取当前本地apk的版本
@@ -31,6 +37,42 @@ public class AppUtils {
             int labelRes = packageInfo.applicationInfo.labelRes;
             return context.getResources().getString(labelRes);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * 获取验签值
+     */
+    public static String getMd5Value(String openId,String corpKey,String time){
+
+        /*try {
+            String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes());
+            return new BigInteger(1, md.digest()).toString(16);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";*/
+
+        String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
+        try{
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(str.getBytes(StandardCharsets.UTF_8));
+            byte[] digest = md.digest();
+            StringBuilder sBuilder = new StringBuilder();
+            for (byte value : digest) {
+                final int b = value & 255;
+                if (b < 16) {
+                    sBuilder.append('0');
+                }
+                sBuilder.append(Integer.toHexString(b));
+            }
+            return sBuilder.toString();
+        }catch (Exception e){
             e.printStackTrace();
         }
         return "";
