@@ -105,7 +105,8 @@ public class MsgHandler extends Handler {
     }
 
     public String getCacheKey(){
-        return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + this.mPkgName;
+//        return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + this.mPkgName;
+        return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
     }
 
     @Override
@@ -137,10 +138,10 @@ public class MsgHandler extends Handler {
             String platform = loginData.containsKey("platform") ? loginData.get("platform").toString() : null;
             String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : null;
             String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
-            boolean uninqueIdisChanged = true;
-            if (gameUninqueId != null && gameUninqueId.equals(cacheUninqueId)){
-                uninqueIdisChanged = false;
+            if (gameUninqueId == null){
+                gameUninqueId = "";
             }
+            boolean uninqueIdisChanged = !gameUninqueId.equals(cacheUninqueId);
             //发送缓存数据
             if (guid!=null && token!=null && !uninqueIdisChanged){
 

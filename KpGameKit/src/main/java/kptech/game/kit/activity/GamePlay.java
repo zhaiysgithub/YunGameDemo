@@ -406,6 +406,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         }else {
                             String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
                             if(!mUnionUUID.equals(authIdValue)){
+                                ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
                             }
@@ -1634,7 +1635,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                             map.put("userphone",phone);
                                         }
                                         JSONObject obj = new JSONObject(map);
-                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
+                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
                                         ProferencesUtils.setString(GamePlay.this, cacheKey, obj.toString());
                                     }
                                 }catch (Exception e){
