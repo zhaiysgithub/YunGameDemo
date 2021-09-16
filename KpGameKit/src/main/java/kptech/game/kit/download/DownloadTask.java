@@ -567,7 +567,7 @@ public class DownloadTask extends Service {
 
 
     public void installAPk() {
-        if (this.mFilePath==null){
+        /*if (this.mFilePath==null){
             return;
         }
         File apkFile = new File(this.mFilePath);
@@ -602,7 +602,7 @@ public class DownloadTask extends Service {
             }
             intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
         }
-        startActivity(intent);
+        startActivity(intent);*/
     }
 
 

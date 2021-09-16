@@ -47,7 +47,6 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
-import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.dialog.ToastDialog;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.UserAuthManager;
@@ -55,7 +54,6 @@ import kptech.game.kit.receiver.NetworkConnectChangedReceiver;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
 import kptech.game.kit.utils.MD5Util;
-import kptech.game.kit.utils.NetUtils;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
 import kptech.lib.analytic.Event;
@@ -75,7 +73,6 @@ import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.view.FloatDownView;
 import kptech.game.kit.view.FloatMenuView;
 
-import static kptech.lib.constants.SharedKeys.KEY_MOBILE_ENV_TIPS;
 
 
 public class GamePlay extends Activity implements APICallback<String>, IDeviceControl.PlayListener {
@@ -103,8 +100,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private PlayStatusLayout mPlayStatueView;
 
     private FloatDownView mFloatDownView;
-
-    private HardwareManager mHardwareManager;
 
     private IDeviceControl mDeviceControl;
 
@@ -220,7 +215,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         initView(rootView);
         mMsgReceiver = new MsgReceiver(this);
-        mHardwareManager = new HardwareManager(this);
 
         try {
             //统计事件初始化
@@ -424,12 +418,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         if (mUnionUUID == null || mUnionUUID.isEmpty()){
                             //清除数据
                             ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
-                            String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + mGameInfo.pkgName;
-                            ProferencesUtils.remove(GamePlay.this, cacheKey);
                         }else {
                             String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
                             String uuidMd5Value = MD5Util.md5(mUnionUUID);
                             if(!uuidMd5Value.equals(authIdValue)){
+                                ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
                             }
@@ -503,14 +496,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mDeviceControl.registerSensorSamplerListener(new IDeviceControl.SensorSamplerListener() {
                 @Override
                 public void onSensorSamper(int sensor, int state) {
-//                if (sensor < 210) {
-//                    return;
-//                }
-                    Logger.info("GamePlay", "onSensorSamper = " + sensor + "  state = " + state);
-                    mHardwareManager.registerHardwareState(sensor, state);
+//                    Logger.info("GamePlay", "onSensorSamper = " + sensor + "  state = " + state);
                 }
             });
-            mHardwareManager.setDeviceControl(mDeviceControl);
 
             mDeviceControl.startGame(GamePlay.this, R.id.play_container, GamePlay.this);
 
@@ -825,11 +813,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mVideoContainer.removeAllViews();
             }
 
-            if (mHardwareManager != null) {
-                mHardwareManager.release();
-                mHardwareManager = null;
-            }
-
             unbindDownloadService();
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
@@ -1012,13 +995,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
-        /*if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-            lackedPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
-        }*/
+        }
 
         if (lackedPermission.size() != 0) {
             String[] requestPermissions = new String[lackedPermission.size()];
