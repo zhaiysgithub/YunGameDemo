@@ -136,14 +136,11 @@ public class MsgHandler extends Handler {
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
             String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
             String platform = loginData.containsKey("platform") ? loginData.get("platform").toString() : null;
-            String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : null;
-            String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
-            if (gameUninqueId == null){
-                gameUninqueId = "";
-            }
-            boolean uninqueIdisChanged = !gameUninqueId.equals(cacheUninqueId);
+            String phoneNum = loginData.containsKey("userphone") ? loginData.get("userphone").toString() : "";
+            //手机号码是否有效
+            boolean phoneNumIsVail = (phoneNum != null && phoneNum.length() > 0);
             //发送缓存数据
-            if (guid!=null && token!=null && !uninqueIdisChanged){
+            if (guid!=null && token!=null && phoneNumIsVail){
 
                 boolean isPlatform = platform != null && !platform.isEmpty();
                 if (isPlatform){
@@ -204,6 +201,11 @@ public class MsgHandler extends Handler {
                     map.put("token", at);
                     map.remove("access_token");
                 }
+                if (map.containsKey("phone")){
+                    Object phone = map.get("phone");
+                    map.put("userphone",phone);
+                }
+
                 if (uninqueId != null && uninqueId.length() > 0){
                     map.put("uninqueId",uninqueId);
                 }

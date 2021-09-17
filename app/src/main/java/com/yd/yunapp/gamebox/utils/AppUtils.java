@@ -12,6 +12,9 @@ public class AppUtils {
     public static final String SIGN_SK = "990911";
     public static final String SIGN_AK = "test_13390kp";
 
+    public static final String SIGN_SK_BD_YOUTH = "30ad7b36364ca133d5d496e74d18cc97";
+    public static final String SIGN_AK_BD_YOUTH = "08afbd881c7832dd013a8061675ce407";
+
     /**
      * 获取当前本地apk的版本
      */
@@ -45,7 +48,7 @@ public class AppUtils {
     /**
      * 获取验签值
      */
-    public static String getMd5Value(String openId,String corpKey,String time){
+    public static String getMd5Value(String openId,String corpKey,String time,String sk){
 
         /*try {
             String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
@@ -58,7 +61,7 @@ public class AppUtils {
         }
         return "";*/
 
-        String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
+        String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + sk;
         try{
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(str.getBytes(StandardCharsets.UTF_8));

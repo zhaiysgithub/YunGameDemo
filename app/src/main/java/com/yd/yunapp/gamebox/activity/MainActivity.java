@@ -169,10 +169,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
+        String akSign = AppUtils.SIGN_AK;
+        String skSign = AppUtils.SIGN_SK;
+        boolean isbdYouth = mSp.getBoolean("bdyouthkey",false);
+        if (isbdYouth){
+            akSign = AppUtils.SIGN_AK_BD_YOUTH;
+            skSign = AppUtils.SIGN_SK_BD_YOUTH;
+        }
+
         String timeStr = String.valueOf(System.currentTimeMillis());
-        params.put(ParamKey.GAME_AUTH_UNION_AK,AppUtils.SIGN_AK);
+        params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);
         params.put(ParamKey.GAME_AUTH_UNION_TS,timeStr);
-        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr);
+        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
         params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
 
         /*boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
