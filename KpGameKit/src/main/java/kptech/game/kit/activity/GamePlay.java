@@ -118,7 +118,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private boolean mEnableExitGameAlert = false;
     private List<GameInfo> mExitGameList = null;
 
-    private String mUnionUUID = null;
+    private static String mUnionUUID = null;
     private String mAuthUnionAk;
     private String mAuthUnionSign;
     private String mAuthUnionTS;
@@ -406,22 +406,15 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     }
 
                     //判断是否需要显示授权界面
-                    /*if (mGameInfo.kpUnionGame == 1 && mUnionUUID != null) {
-                        String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
-                        int auth = ProferencesUtils.getIng(GamePlay.this, key, 0);
-                        if (auth == 0) {
-                            mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
-                            return;
-                        }
-                    }*/
-                    if (mGameInfo.kpUnionGame == 1){
+                    if (mGameInfo.kpUnionGame == 1) {
+                        String cachedAuthId = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
                         if (mUnionUUID == null || mUnionUUID.isEmpty()){
-                            //清除数据
-                            ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            if (!cachedAuthId.isEmpty()){
+                                ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
+                                ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            }
                         }else {
-                            String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
-                            String uuidMd5Value = MD5Util.md5(mUnionUUID);
-                            if(!uuidMd5Value.equals(authIdValue)){
+                            if(!cachedAuthId.equals(mUnionUUID)){
                                 ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
@@ -851,6 +844,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             exitDialog.setOnExitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (mDeviceControl != null){
+                        mDeviceControl.stopGame();
+                    }
                     exitPlay();
                 }
             });
@@ -1705,18 +1701,52 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                             @Override
                             public void onResult(Map<String, Object> map) {
                                 //保存数据
-//                                String key = MD5Util.md5(mUnionUUID + mGameInfo.pkgName);
-//                                ProferencesUtils.setInt(GamePlay.this, key, 1);
-//
-                                ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,MD5Util.md5(mUnionUUID));
+                                String errMsg = "";
+                                if (map == null || map.size() <= 0){
+                                    errMsg = "登录失败";
+                                }else if (map.containsKey("error")){
+                                    errMsg = map.get("error").toString();
+                                }
+                                try{
+                                    boolean noError = (errMsg == null || errMsg.isEmpty());
+                                    if (map != null && noError){
+                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,MD5Util.md5(mUnionUUID));
+                                        if (map.containsKey("guid")){
+                                            Object guid = map.get("guid");
+                                            if (guid != null){
+                                                Event.setGuid(guid+"");
+                                            }
+                                        }
+                                        if (map.containsKey("access_token")){
+                                            Object at =  map.get("access_token");
+                                            map.put("token", at);
+                                            map.remove("access_token");
+                                        }
+                                        if (map.containsKey("phone")){
+                                            Object phone = map.get("phone");
+                                            map.put("userphone",phone);
+                                        }
+
+                                        if (mUnionUUID != null && mUnionUUID.length() > 0){
+                                            map.put("uninqueId",mUnionUUID);
+                                        }
+
+                                        JSONObject obj = new JSONObject(map);
+                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
+                                        ProferencesUtils.setString(GamePlay.this, cacheKey, obj.toString());
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                if (ref != null && ref.get() != null) {
+                                    ref.get().startCloudPhone();
+                                }
                             }
                         })
                         .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);
 
 
-                if (ref != null && ref.get() != null) {
-                    ref.get().startCloudPhone();
-                }
+
 
             } catch (Exception e) {
                 Logger.error(TAG, e);

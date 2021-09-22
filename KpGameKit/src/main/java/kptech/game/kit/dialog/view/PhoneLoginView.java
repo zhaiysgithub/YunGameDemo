@@ -25,10 +25,14 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.R;
+import kptech.game.kit.activity.GamePlay;
+import kptech.game.kit.utils.ProferencesUtils;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
+import kptech.lib.constants.SharedKeys;
 import kptech.lib.constants.Urls;
 import kptech.lib.data.AccountTask;
 import kptech.game.kit.dialog.WebViewActivity;
@@ -53,6 +57,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
     private String mCorpKey;
     private String mPkgName;
     private String mPadCode;
+    private String mUserSign;
 
     public interface OnLoginListener{
         void onLoginSuccess(Map<String, Object> map);
@@ -172,6 +177,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
         mLoading = Loading.build(mActivity);
         mLoading.show();
 
+        String userSign = GameBoxManager.getInstance().getUniqueId();
         new AccountTask(mActivity, AccountTask.ACTION_LOGIN_PHONE)
                 .setCorpKey(mCorpKey)
                 .setPkgName(mPkgName)
@@ -243,7 +249,7 @@ public class PhoneLoginView extends LinearLayout implements View.OnClickListener
                         }
                     }
                 })
-                .execute(phone, smsCode, smsCodeId);
+                .execute(phone, smsCode, smsCodeId, userSign);
     }
 
     private void getPhoneCode(){

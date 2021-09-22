@@ -136,15 +136,11 @@ public class MsgHandler extends Handler {
             String guid = loginData.containsKey("guid") ? loginData.get("guid").toString() : null;
             String token = loginData.containsKey("token") ? loginData.get("token").toString() : null;
             String platform = loginData.containsKey("platform") ? loginData.get("platform").toString() : null;
-            String cacheUninqueId = loginData.containsKey("uninqueId") ? loginData.get("uninqueId").toString() : "";
-            String gameUninqueId = GameBoxManager.getInstance().getUniqueId();
-            if (gameUninqueId == null){
-                gameUninqueId = "";
-            }
-            boolean uninqueIdIsChanged = !gameUninqueId.equals(cacheUninqueId);
-
+            String phoneNum = loginData.containsKey("userphone") ? loginData.get("userphone").toString() : "";
+            //手机号码是否有效
+            boolean phoneNumIsVail = (phoneNum != null && phoneNum.length() > 0);
             //发送缓存数据
-            if (guid!=null && token!=null && !uninqueIdIsChanged){
+            if (guid!=null && token!=null && phoneNumIsVail){
 
                 boolean isPlatform = platform != null && !platform.isEmpty();
                 if (isPlatform){
@@ -205,6 +201,11 @@ public class MsgHandler extends Handler {
                     map.put("token", at);
                     map.remove("access_token");
                 }
+                if (map.containsKey("phone")){
+                    Object phone = map.get("phone");
+                    map.put("userphone",phone);
+                }
+
                 if (uninqueId != null && uninqueId.length() > 0){
                     map.put("uninqueId",uninqueId);
                 }
@@ -240,85 +241,59 @@ public class MsgHandler extends Handler {
     }
 
     private void showLoginDialog(){
-        //处理登录，判断是联运登录，还是本地登录
-        final String uninqueId = GameBoxManager.getInstance().getUniqueId();
-        if (uninqueId!=null && uninqueId.length() > 0){
-            //联运帐号登录
-            AccountActivity login = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);
-            login.setCallback(new AccountActivity.OnLoginListener() {
-                @Override
-                public void onLoginSuccess(Map<String, Object> map) {
+        //处理登录，判断是联运登录，还是本地登录 此处将uid登录方式移除
+        if (mActivity == null || mActivity.isFinishing()){
+            //回调
+            if (mCallback!=null){
+                mCallback.onLogin(0, "页面参数错误", null);
+            }
+            return;
+        }
 
-                    //缓存数据
-                    cacheLoginData(map,uninqueId);
-
-                    //回调
-                    if (mCallback!=null){
-                        mCallback.onLogin(1, "", map);
+        //快盘帐号
+        systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
+        if (mLoginDialog!=null && mLoginDialog.isShowing()){
+            return;
+        }
+        //用户标识
+        final String authId = GameBoxManager.getInstance().getUniqueId();
+        mLoginDialog = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode, authId);
+        mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                mLoginDialog = null;
+                try {
+                    if (systemUi != -1 && mActivity != null){
+                        mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
                     }
+                }catch (Exception e){
+                    Logger.error("MsgHandler", e.getMessage());
                 }
+            }
+        });
+        mLoginDialog.setCallback(new AccountActivity.OnLoginListener() {
+            @Override
+            public void onLoginSuccess(Map<String, Object> map) {
 
-                @Override
-                public void onLoginFailed(String err) {
-                    //回调
-                    if (mCallback!=null){
-                        mCallback.onLogin(0, err, null);
-                    }
-                }
-            });
-            login.requestUidLogin(uninqueId);
-        }else {
-            if (mActivity == null || mActivity.isFinishing()){
+                //缓存数据
+                cacheLoginData(map,authId);
+
                 //回调
                 if (mCallback!=null){
-                    mCallback.onLogin(0, "页面参数错误", null);
+                    mCallback.onLogin(1, "", map);
                 }
-                return;
             }
 
-            //快盘帐号
-            systemUi = mActivity.getWindow().getDecorView().getSystemUiVisibility();
-            if (mLoginDialog!=null && mLoginDialog.isShowing()){
-                return;
+            @Override
+            public void onLoginFailed(String err) {
+                //回调
+                if (mCallback!=null){
+
+                    mCallback.onLogin(0, err, null);
+                }
             }
-            mLoginDialog = new AccountActivity(mActivity, mCorpId, mPkgName, mPadCode);
-            mLoginDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    mLoginDialog = null;
-                    try {
-                        if (systemUi != -1 && mActivity != null){
-                            mActivity.getWindow().getDecorView().setSystemUiVisibility(systemUi);
-                        }
-                    }catch (Exception e){
-                        Logger.error("MsgHandler", e.getMessage());
-                    }
-                }
-            });
-            mLoginDialog.setCallback(new AccountActivity.OnLoginListener() {
-                @Override
-                public void onLoginSuccess(Map<String, Object> map) {
-
-                    //缓存数据
-                    cacheLoginData(map,uninqueId);
-
-                    //回调
-                    if (mCallback!=null){
-                        mCallback.onLogin(1, "", map);
-                    }
-                }
-
-                @Override
-                public void onLoginFailed(String err) {
-                    //回调
-                    if (mCallback!=null){
-
-                        mCallback.onLogin(0, err, null);
-                    }
-                }
-            });
-            mLoginDialog.show();
-        }
+        });
+        mLoginDialog.show();
     }
 
     private void handlePay(String msg){

@@ -47,7 +47,6 @@ public class UserAuthManager {
     }
 
     private String getSPCacheKey(String pkgName) {
-//        return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE + pkgName;
         return SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
     }
 
