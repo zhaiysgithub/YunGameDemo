@@ -171,11 +171,6 @@ public class MainActivity extends AppCompatActivity {
         }
         String akSign = AppUtils.SIGN_AK;
         String skSign = AppUtils.SIGN_SK;
-        boolean isbdYouth = mSp.getBoolean("bdyouthkey",false);
-        if (isbdYouth){
-            akSign = AppUtils.SIGN_AK_BD_YOUTH;
-            skSign = AppUtils.SIGN_SK_BD_YOUTH;
-        }
 
         String timeStr = String.valueOf(System.currentTimeMillis());
         params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);
@@ -183,13 +178,6 @@ public class MainActivity extends AppCompatActivity {
         String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
         params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
 
-        /*boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
-        if (enableRealNameAuth){
-            mainModel.showRealNameAuthDialog(game,params);
-        }else{
-            //启动游戏
-            GameBox.getInstance().playGame(MainActivity.this, game, params);
-        }*/
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
         GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);

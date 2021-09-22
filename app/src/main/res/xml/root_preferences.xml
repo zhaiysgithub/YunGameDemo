@@ -27,16 +27,7 @@
             app:key="unionId"
             app:title="授权登录用户ID"
             app:useSimpleSummaryProvider="true" />
-        <!--<SwitchPreferenceCompat
-            app:key="enableRealNameAuth"
-            app:title="开启实名认证登录"
-            app:useSimpleSummaryProvider="true"/>
-            />-->
-        <SwitchPreferenceCompat
-            app:key="bdyouthkey"
-            app:title="百度青春版渠道"
-            app:useSimpleSummaryProvider="true"
-            />
+
         <SwitchPreferenceCompat
             app:key="enableGidLogin"
             app:title="Gid 登录"
