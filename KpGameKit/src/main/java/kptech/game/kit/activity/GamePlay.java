@@ -771,6 +771,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             exitDialog.setOnExitListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (mDeviceControl != null){
+                        mDeviceControl.stopGame();
+                    }
                     exitPlay();
                 }
             });
