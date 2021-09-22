@@ -401,11 +401,14 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
                     //判断是否需要显示授权界面
                     if (mGameInfo.kpUnionGame == 1) {
+                        String cachedAuthId = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
                         if (mUnionUUID == null || mUnionUUID.isEmpty()){
-                            ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            if (!cachedAuthId.isEmpty()){
+                                ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
+                                ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
+                            }
                         }else {
-                            String authIdValue = ProferencesUtils.getString(GamePlay.this, SharedKeys.KEY_AUTH_ID, "");
-                            if(!mUnionUUID.equals(authIdValue)){
+                            if(!cachedAuthId.equals(mUnionUUID)){
                                 ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
