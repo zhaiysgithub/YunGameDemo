@@ -171,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
         }
         String akSign = AppUtils.SIGN_AK;
         String skSign = AppUtils.SIGN_SK;
+        boolean isbdYouth = mSp.getBoolean("bdyouthkey",false);
+        if (isbdYouth){
+            akSign = AppUtils.SIGN_AK_BD_YOUTH;
+            skSign = AppUtils.SIGN_SK_BD_YOUTH;
+        }
 
         String timeStr = String.valueOf(System.currentTimeMillis());
         params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);

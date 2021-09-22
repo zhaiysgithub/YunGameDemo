@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -118,7 +119,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private boolean mEnableExitGameAlert = false;
     private List<GameInfo> mExitGameList = null;
 
-    private static String mUnionUUID = null;
+    private String mUnionUUID = null;
     private String mAuthUnionAk;
     private String mAuthUnionSign;
     private String mAuthUnionTS;
@@ -788,9 +789,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             } catch (Exception e) {
             }
 
-//        if (mGameDownloader!=null){
-//            mGameDownloader.removeCallback(this);
-//        }
+            //适配百度青春版 小米mix3返回偶现无法竖屏的问题
+            if (Build.VERSION.SDK_INT >= 27){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
 
             if (mExitGameList != null) {
                 mExitGameList.clear();

@@ -50,17 +50,6 @@ public class AppUtils {
      */
     public static String getMd5Value(String openId,String corpKey,String time,String sk){
 
-        /*try {
-            String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
-
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(str.getBytes());
-            return new BigInteger(1, md.digest()).toString(16);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return "";*/
-
         String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + sk;
         try{
             MessageDigest md = MessageDigest.getInstance("MD5");
