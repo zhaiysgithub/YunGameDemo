@@ -10,6 +10,17 @@
             app:title="CorpKey"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            app:key="inputCorpKey"
+            app:title="手动输入corpkey"
+            app:useSimpleSummaryProvider="true"
+            />
+
+        <EditTextPreference
+            app:dependency="inputCorpKey"
+            app:key="editCorpKey"
+            app:title="CorpKey"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

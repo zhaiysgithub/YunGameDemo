@@ -79,9 +79,14 @@ public class MainActivity extends AppCompatActivity {
         setTitle(mainModel.getTitleStr());
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        //测试appID
-        APP_ID = mSp.getString("corpKey", null);
-//        String APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
+        boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey",false);
+        if (enableInputCorpKey){
+            APP_ID = mSp.getString("editCorpKey","");
+        }else {
+            //测试appID
+            APP_ID = mSp.getString("corpKey", null);
+//            APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
+        }
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
