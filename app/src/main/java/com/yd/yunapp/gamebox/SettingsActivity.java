@@ -132,6 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (preference.getKey().equals("inputCorpKey") && preference instanceof SwitchPreferenceCompat){
                 SwitchPreferenceCompat enableInput = (SwitchPreferenceCompat)preference;
 
+                ((SettingsActivity)getActivity()).envChanged = true;
                 boolean isChecked = enableInput.isChecked();
                 Toast.makeText(getContext(),isChecked ? "您已打开手动输入corpKey" : "您已关闭手动输入corpKey",Toast.LENGTH_SHORT).show();
             }
