@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -29,7 +30,12 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.settings_activity);
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        corpKey = mSp.getString("corpKey", "");
+        boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey",false);
+        if (enableInputCorpKey){
+            corpKey = mSp.getString("editCorpKey","");
+        }else {
+            corpKey = mSp.getString("corpKey", "");
+        }
 
         mSp.edit().putBoolean("env", Env.isTestEnv()).commit();
 
@@ -52,7 +58,13 @@ public class SettingsActivity extends AppCompatActivity {
             setResult(102);
         }
         if (mSp != null){
-           String key = mSp.getString("corpKey", "");
+            String key;
+            boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey",false);
+            if (enableInputCorpKey){
+                key = mSp.getString("editCorpKey","");
+            }else {
+                key = mSp.getString("corpKey", "");
+            }
            if (!key.equals(corpKey)){
                setResult(102);
            }
@@ -116,6 +128,13 @@ public class SettingsActivity extends AppCompatActivity {
                     Env.setEnv(getContext(), Env.ENV_DEBUG);
                 }
                 ((SettingsActivity)getActivity()).envChanged = true;
+            }
+            if (preference.getKey().equals("inputCorpKey") && preference instanceof SwitchPreferenceCompat){
+                SwitchPreferenceCompat enableInput = (SwitchPreferenceCompat)preference;
+
+                ((SettingsActivity)getActivity()).envChanged = true;
+                boolean isChecked = enableInput.isChecked();
+                Toast.makeText(getContext(),isChecked ? "您已打开手动输入corpKey" : "您已关闭手动输入corpKey",Toast.LENGTH_SHORT).show();
             }
             return super.onPreferenceTreeClick(preference);
         }
