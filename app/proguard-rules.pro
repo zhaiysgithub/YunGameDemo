@@ -72,6 +72,23 @@
 
 -keep class kptech.game.kit.pass.** { *; }
 -keep class kptech.game.kit.pass.manager.** { *; }
+-keepattributes Signature,*Annotation*
+-keep public class org.xutils.** {
+    public protected *;
+}
+-keep public interface org.xutils.** {
+    public protected *;
+}
+-keepclassmembers class * extends org.xutils.** {
+    public protected *;
+}
+-keepclassmembers @org.xutils.db.annotation.* class * {*;}
+-keepclassmembers @org.xutils.http.annotation.* class * {*;}
+-keepclassmembers class * {
+    @org.xutils.view.annotation.Event <methods>;
+}
+
+
 
 -keep class kptech.game.kit.msg.ws.** { *; }
 

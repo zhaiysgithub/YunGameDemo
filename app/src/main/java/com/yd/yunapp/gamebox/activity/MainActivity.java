@@ -35,6 +35,8 @@ import com.kuaipan.game.demo.R;
 import com.yd.yunapp.gamebox.SettingsActivity;
 import com.yd.yunapp.gamebox.TestXiaoYuBean;
 import com.yd.yunapp.gamebox.model.MainModel;
+import com.yd.yunapp.gamebox.utils.AppUtils;
+import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
 import org.xutils.x;
 
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private String mCorpKey;
     private SwipeRefreshLayout mRefreshLayout;
     private View mLayoutProgress;
+    private String userSignValue;
+
 
 
     @SuppressLint("SetTextI18n")
@@ -84,9 +88,14 @@ public class MainActivity extends AppCompatActivity {
         mRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        //测试appID
-        mCorpKey = mSp.getString("corpKey", null);
-//        mCorpKey = "2VePUgHy1Az3tYy-ab2d1be8ac2ea91e";
+        boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey",false);
+        if (enableInputCorpKey){
+            mCorpKey = mSp.getString("editCorpKey","");
+        }else {
+            //测试appID
+            mCorpKey = mSp.getString("corpKey", null);
+//            APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append(mainModel.getVersionName());
@@ -162,7 +171,8 @@ public class MainActivity extends AppCompatActivity {
         String unionId = mSp.getString("unionId", null);
 
         if (enableAuth && unionId != null) {
-            params.put(ParamKey.GAME_AUTH_UNION_UUID, "test_" + unionId);
+            userSignValue = "test_" + unionId;
+            params.put(ParamKey.GAME_AUTH_UNION_UUID, userSignValue);
         }
 
         String fontStr = mSp.getString("fontTimeout", null);
@@ -197,16 +207,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             game.showAd = GameInfo.GAME_AD_SHOW_AUTO;
         }
+        String akSign = AppUtils.SIGN_AK;
+        String skSign = AppUtils.SIGN_SK;
 
-        /*boolean enableRealNameAuth = mSp.getBoolean("enableRealNameAuth", false);
-        if (enableRealNameAuth){
-            mainModel.showRealNameAuthDialog(game,params);
-        }else{
-            //启动游戏
-            GameBox.getInstance().playGame(MainActivity.this, game, params);
-        }*/
-//        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
-//        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
+        String timeStr = String.valueOf(System.currentTimeMillis());
+        params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);
+        params.put(ParamKey.GAME_AUTH_UNION_TS,timeStr);
+        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
+        params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
+
+        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
+        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
             //使用 GID 登录游戏

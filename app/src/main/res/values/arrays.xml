@@ -1,41 +1,35 @@
 <resources>
     <!-- Reply Preference -->
     <string-array name="debug_corpkey_entries">
-        <item>测试189分组 2VRGVbMHWvG3QG7-ce9daa229052103d</item>
         <item>测试141分组 2VNBkoZRnuR47H6-bcdbaaff2876a6dd</item>
         <item>测试135分组 2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>测试快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
-        <item>测试网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
 
     </string-array>
 
     <string-array name="debug_corpkey_values">
-        <item>2VRGVbMHWvG3QG7-ce9daa229052103d</item>
         <item>2VNBkoZRnuR47H6-bcdbaaff2876a6dd</item>
         <item>2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
         <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
-        <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
     </string-array>
 
     <!-- Reply Preference -->
     <string-array name="release_corpkey_entries">
-        <item>189分组 2OdzgzgxE9318vp-0bcf2c14c4104cf1</item>
         <item>141分组 2VNBksBXdUc1TH1-b1ffd9f268c0990c</item>
         <item>135分组 2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
-        <item>快盘 2OLuBOnPAGt12hN-64219e8c44e0efda</item>
-        <item>网易 2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>90分组 2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
+        <item>测试专用 2VoIpQbS97t42JY-75e25410aaabadd3</item>
+        <item>开发专用 2VoIpPwLCNJ2WPm-6cbcf6ed5f3c9d4f</item>
     </string-array>
 
     <string-array name="release_corpkey_values">
-        <item>2OdzgzgxE9318vp-0bcf2c14c4104cf1</item>
         <item>2VNBksBXdUc1TH1-b1ffd9f268c0990c</item>
         <item>2VCn9as7V4W2iLf-7c3cc41383c4e7ad</item>
-        <item>2OLuBOnPAGt12hN-64219e8c44e0efda</item>
-        <item>2OCYlwVwzqZ2R8m-d27d6a9c5c675a3b</item>
         <item>2VRdEJDJfLf1SPa-af503d118b0d1cd8</item>
+        <item>2VoIpQbS97t42JY-75e25410aaabadd3</item>
+        <item>2VoIpPwLCNJ2WPm-6cbcf6ed5f3c9d4f</item>
     </string-array>
 
 

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="手机号绑定"
+        android:textSize="15sp"
+        android:textColor="#333"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请绑定手机号，避免游戏账号数据丢失，下次可自动登录。"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="start|center_horizontal"
+        android:textSize="14sp"
+        android:textColor="#333"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/etPhoneBindPhoneNum"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/kp_dialog_edit_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="请输入手机号"
+        android:inputType="phone"
+        android:textSize="13sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:nextFocusForward="@id/phone_code"
+        android:imeOptions="actionDone"
+        tools:ignore="Autofill,HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etPhoneBindCode"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="@drawable/kp_dialog_edit_bg"
+            android:hint="请输入验证码"
+            android:inputType="phone"
+            android:textSize="13sp"
+            android:imeOptions="actionDone"
+            tools:ignore="HardcodedText"
+            android:importantForAutofill="no" />
+        <Button
+            android:id="@+id/btnPhoneBindCode"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/kp_btn_phone_code"
+            android:textColor="#ffffff"
+            android:textSize="13sp"
+            android:text="获取验证码"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPhoneBindSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@drawable/kp_dialog_btn_bg"
+        android:textSize="14sp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="确认"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvArgument"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#8B8A8A"
+        android:textSize="11sp"
+        android:text="阅读并同意《用户协议》和《隐私政策》"
+        tools:ignore="HardcodedText,SmallSp" />
+
+</LinearLayout>

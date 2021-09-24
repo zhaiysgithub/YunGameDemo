@@ -12,7 +12,7 @@ public class Logger {
     public static int LEVEL_INFO = 3;
     public static int LEVEL_DEBUG = 7;
 
-    private static int level = LEVEL_ERROR;
+    private static int level = LEVEL_INFO;
 
     public static void setLevel(int l){
         level = l;
@@ -21,7 +21,7 @@ public class Logger {
     private static final String TAG = "kpgamekit.";
 
     public static void info(String tag, String msg){
-        if (( level & LEVEL_INFO ) > 0 ){
+        if (level >= LEVEL_INFO ){
             Log.i(TAG + tag, msg);
         }
     }

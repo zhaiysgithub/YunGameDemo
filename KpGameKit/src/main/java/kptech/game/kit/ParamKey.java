@@ -14,4 +14,8 @@ public class ParamKey {
     public static final String GAME_AUTH_UNION_GID = "gameAuthUnionGid"; // gid 登录
 
     public static final String EXTRA_GAME_ICON = "extra.game.icon";
+
+    public static final String GAME_AUTH_UNION_AK = "gameAuthUnionAK"; //AK值
+    public static final String GAME_AUTH_UNION_TS = "gameAuthUnionTs"; //TS值
+    public static final String GAME_AUTH_UNION_SIGN = "gameAuthUnionSign";//Sign值
 }

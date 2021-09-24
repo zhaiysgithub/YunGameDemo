@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kptech.game.kit.R;
+import kptech.game.kit.dialog.view.PhoneBindView;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -35,12 +37,15 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
     String mCorpKey;
     String mCpId;
 
+    private RelativeLayout mTitleLayout;
     private PhoneLoginView mPhoneView;
     private PwdLoginView mPswView;
+    private PhoneBindView mPhoneBindView;
 
     private Activity mActivity;
     private String mPkgName;
     private String mPadCode;
+    private String mUninqueId;
 
     private Map<String, Object> mRetMap;
 
@@ -56,14 +61,14 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
         this.mOnDismissListener = listener;
     }
 
-    public AccountActivity(Activity context, String corpId, String pkgName, String padCode) {
+    public AccountActivity(Activity context, String corpId, String pkgName, String padCode, String uninqueId) {
         super(context, R.style.MyTheme_CustomDialog_Background);
         this.mActivity = context;
         this.mCorpKey = corpId;
         this.mPkgName = pkgName;
         this.mPadCode = padCode;
+        this.mUninqueId = uninqueId;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +85,26 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
             Logger.error(TAG,ex.getMessage());
         }
 
+        mTitleLayout = findViewById(R.id.layout_title);
+
         mPhoneView = findViewById(R.id.ph_login_view);
         mPhoneView.setCorpKey(mCorpKey, mPkgName, mPadCode);
 
         mPswView = findViewById(R.id.pw_login_view);
         mPswView.setCorpKey(mCorpKey, mPkgName, mPadCode);
+
+        mPhoneBindView = findViewById(R.id.ph_bind_view);
+        mPhoneBindView.setExtraDatas(mCorpKey,mPkgName,mPadCode,mUninqueId);
+
+        if (mUninqueId != null && !mUninqueId.isEmpty()){
+            mPhoneBindView.setVisibility(View.VISIBLE);
+            mTitleLayout.setVisibility(View.GONE);
+            mPhoneView.setVisibility(View.GONE);
+        }else {
+            mPhoneBindView.setVisibility(View.GONE);
+            mPhoneView.setVisibility(View.VISIBLE);
+            mTitleLayout.setVisibility(View.VISIBLE);
+        }
 
         findViewById(R.id.close).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +139,18 @@ public class AccountActivity extends Dialog implements View.OnClickListener {
                 mRetMap = map;
             }
 
+        });
+        mPhoneBindView.setOnPhoneBindListener(new PhoneBindView.OnPhoneBindListener() {
+            @Override
+            public void onPhoneBindSuccess(Map<String, Object> map) {
+                mRetMap = map;
+                dismiss();
+            }
+
+            @Override
+            public void onPhoneBindFailed(Map<String, Object> map) {
+                mRetMap = map;
+            }
         });
 
         setCanceledOnTouchOutside(false);

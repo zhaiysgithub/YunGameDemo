@@ -10,6 +10,17 @@
             app:title="CorpKey"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            app:key="inputCorpKey"
+            app:title="手动输入corpkey"
+            app:useSimpleSummaryProvider="true"
+            />
+
+        <EditTextPreference
+            app:dependency="inputCorpKey"
+            app:key="editCorpKey"
+            app:title="CorpKey"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 
@@ -27,11 +38,7 @@
             app:key="unionId"
             app:title="授权登录用户ID"
             app:useSimpleSummaryProvider="true" />
-        <!--<SwitchPreferenceCompat
-            app:key="enableRealNameAuth"
-            app:title="开启实名认证登录"
-            app:useSimpleSummaryProvider="true"/>
-            />-->
+
         <SwitchPreferenceCompat
             app:key="enableGidLogin"
             app:title="Gid 登录"
