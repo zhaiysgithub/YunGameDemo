@@ -248,8 +248,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             if (params == null || params.length < 5){
                 return map;
             }
-//            map.put("f", "authlogin");
-            map.put("f", "dotest");
+            map.put("f", "authlogin");
+//            map.put("f", "dotest");
             map.put("ak",params[0]);
 
             JSONObject pJson = new JSONObject();
@@ -259,6 +259,7 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             map.put("p",pJson);
             map.put("ts",params[3]); //客户端的时间值
             map.put("sign",params[4]); //客户端验签值
+            map.put("version",BuildConfig.VERSION_NAME);
 
         }catch (Exception e){
             e.printStackTrace();

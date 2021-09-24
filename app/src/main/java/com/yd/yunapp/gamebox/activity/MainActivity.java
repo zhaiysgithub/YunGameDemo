@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         String timeStr = String.valueOf(System.currentTimeMillis());
         params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);
         params.put(ParamKey.GAME_AUTH_UNION_TS,timeStr);
-        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
+        String signValue = AppUtils.getMd5Value(userSignValue, mCorpKey, timeStr,skSign);
         params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
 
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
@@ -225,10 +225,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
-            boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
-            if (enableGameDialog) {
-                mHandler.postDelayed(this::startShowDialog, 15 * 1000);
-            }
         }
     }
 
