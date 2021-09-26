@@ -248,8 +248,8 @@ public class AccountTask extends AsyncTask<Object, Void, Map<String,Object>> {
             if (params == null || params.length < 5){
                 return map;
             }
-//            map.put("f", "authlogin");
-            map.put("f", "dotest");
+            map.put("f", "authlogin");
+//            map.put("f", "dotest");
             map.put("ak",params[0]);
 
             JSONObject pJson = new JSONObject();
