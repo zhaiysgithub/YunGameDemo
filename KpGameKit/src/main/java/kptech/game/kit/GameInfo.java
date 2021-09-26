@@ -33,6 +33,7 @@ public class GameInfo implements Parcelable {
     public String iconUrl;
     public String coverUrl;
     public String downloadUrl;
+    public int localResId;
     public int playCount;
     public int totalTime;
     public int usedTime;
@@ -74,6 +75,7 @@ public class GameInfo implements Parcelable {
         this.iconUrl = var1.readString();
         this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
+        this.localResId = var1.readInt();
         this.enableDownload = var1.readInt();
         this.playCount = var1.readInt();
         this.totalTime = var1.readInt();
@@ -103,6 +105,7 @@ public class GameInfo implements Parcelable {
         var1.writeString(this.iconUrl);
         var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
+        var1.writeInt(this.localResId);
         var1.writeInt(this.enableDownload);
         var1.writeInt(this.playCount);
         var1.writeInt(this.totalTime);
