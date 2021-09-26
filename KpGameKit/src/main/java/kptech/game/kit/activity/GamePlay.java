@@ -408,7 +408,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                 ProferencesUtils.setString(GamePlay.this, SharedKeys.KEY_AUTH_ID,"");
                             }
                         }else {
-                            if(!cachedAuthId.equals(mUnionUUID)){
+                            String uuidMd5Value = MD5Util.md5(mUnionUUID);
+                            if(!cachedAuthId.equals(uuidMd5Value)){
                                 ProferencesUtils.remove(GamePlay.this,SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE);
                                 mHandler.sendEmptyMessage(MSG_SHOW_AUTH);
                                 return;
@@ -1623,7 +1624,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                 try{
                                     boolean noError = (errMsg == null || errMsg.isEmpty());
                                     if (map != null && noError){
-                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID,mUnionUUID);
+                                        String unionMd5Value = MD5Util.md5(mUnionUUID);
+                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID, unionMd5Value);
                                         if (map.containsKey("guid")){
                                             Object guid = map.get("guid");
                                             if (guid != null){
