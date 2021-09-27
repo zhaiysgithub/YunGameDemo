@@ -8,13 +8,8 @@ import android.widget.FrameLayout;
 
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
-//import kptech.game.kit.analytic.Event;
-//import kptech.game.kit.analytic.EventCode;
-//import kptech.game.kit.analytic.MobclickAgent;
-//import kptech.game.kit.data.AccountTask;
 import kptech.game.kit.utils.AnimationUtil;
 import kptech.game.kit.utils.Logger;
-import kptech.game.kit.utils.VersionUtils;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -42,10 +37,8 @@ public class PlayStatusLayout extends FrameLayout {
     private PlayErrorView mErrorView;
     private UserAuthView mAuthView;
 
-    private String iconUrl;
-    private String downUrl;
     private String pkgName;
-    private String gameName;
+    private GameInfo mGameInfo;
 
     public void setDownloadStatus(int status) {
         if (mErrorView != null){
@@ -88,11 +81,8 @@ public class PlayStatusLayout extends FrameLayout {
     }
 
     public void setGameInfo(GameInfo info){
-//        this.mGameInfo = info;
+        this.mGameInfo = info;
         if (info != null){
-            iconUrl = info.iconUrl;
-            downUrl = info.enableDownload == 1 ? info.downloadUrl : null;
-            gameName = info.name;
             pkgName = info.pkgName;
 
             if (mLoadingView != null){
@@ -102,7 +92,7 @@ public class PlayStatusLayout extends FrameLayout {
                 mErrorView.setGameInfo(info);
             }
             if (mAuthView != null){
-                mAuthView.setInfo(gameName, iconUrl);
+                mAuthView.setInfo(info);
             }
         }
     }
@@ -183,7 +173,7 @@ public class PlayStatusLayout extends FrameLayout {
 //            mUnionUUID = unionUUID;
 //            mCorpID = corpId;
 
-            mAuthView.setInfo(gameName, iconUrl);
+            mAuthView.setInfo(mGameInfo);
             mAuthView.setAnimation(AnimationUtil.moveToViewLocation());
             mAuthView.setVisibility(View.VISIBLE);
 
@@ -191,6 +181,7 @@ public class PlayStatusLayout extends FrameLayout {
                 //发送打点事件
                 MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_DISPLAY, pkgName ));
             }catch (Exception e){
+                e.printStackTrace();
             }
         }catch (Exception e){
             Logger.error(TAG, e.getMessage());
@@ -288,12 +279,7 @@ public class PlayStatusLayout extends FrameLayout {
                 if (showCustomerLoading && customerLoadignView != null){
                     loadingView = customerLoadignView;
                 }else{
-                    boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
-                    if (xiaoYuChannel){
-                        loadingView = new XiaoYuLoadingPage(context);
-                    }else{
-                        loadingView = new DefaultLoadingView(context);
-                    }
+                    loadingView = new DefaultLoadingView(context);
                 }
             }
             if (errorView == null) {

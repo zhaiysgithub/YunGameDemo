@@ -19,10 +19,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.squareup.picasso.Picasso;
+
+import org.xutils.x;
 
 import kptech.game.kit.R;
-import kptech.game.kit.dialog.RecordPublishPopup;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.utils.TToast;
@@ -174,8 +174,10 @@ public class RecordPublishView extends LinearLayout {
 
             mCoverImg.setVisibility(VISIBLE);
             try {
-                Picasso.with(getContext()).load(cover).into(mCoverImg);
-            }catch (Exception e){}
+                x.image().bind(mCoverImg,cover);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }else {
             mCoverImg.setVisibility(GONE);
         }

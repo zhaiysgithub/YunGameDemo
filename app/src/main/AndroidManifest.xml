@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.kuaipan.game.demo">
 
     <!--必要权限-->
@@ -37,38 +38,14 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <!--<activity-->
-            <!--android:name="com.kuaipan.game.demo.HomeActivity"-->
-            <!--android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"-->
-            <!--android:screenOrientation="portrait">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-        <!--<activity-->
-            <!--android:name="com.kuaipan.game.demo.GameRunningActivity"-->
-            <!--android:configChanges="screenSize|keyboardHidden|orientation"-->
-            <!--android:theme="@style/CloudPhone" />-->
-
-<!--        <activity-->
-<!--            android:name="com.yd.yunapp.gamebox.HorizontalHomeActivity"-->
-<!--            android:theme="@style/NoTitleFullscreen"-->
-<!--            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"-->
-<!--            >-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
         <activity
             android:name="com.yd.yunapp.gamebox.SettingsActivity"
             />
 
         <activity android:name="com.yd.yunapp.gamebox.activity.MainActivity"
-            android:configChanges="locale|layoutDirection|screenSize|keyboardHidden|orientation"
-            android:theme="@style/MainAppTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/MainAppTheme"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

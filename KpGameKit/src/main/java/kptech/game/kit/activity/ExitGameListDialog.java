@@ -15,9 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.squareup.picasso.Picasso;
-
+import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +148,7 @@ public class ExitGameListDialog extends Dialog {
     class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private Activity mActivity;
-        private List<GameInfo> mList = null;
+        private List<GameInfo> mList;
 
         public ListAdapter(Activity context, List<GameInfo> list) {
             this.mActivity = context;
@@ -197,18 +195,19 @@ public class ExitGameListDialog extends Dialog {
             }
 
             public void bindHolder(GameInfo gameInfo) {
-                mTitleText.setText(gameInfo.name);
-                String imgUrl;
-                if (mList.size() == 1 && gameInfo.coverUrl!=null){
-                    imgUrl = gameInfo.coverUrl;
-                }else {
-                    imgUrl = gameInfo.iconUrl;
-                }
                 try {
-                    Picasso.with(getContext()).load(imgUrl).into(mImageView);
-                }catch (Exception e){}
+                    mTitleText.setText(gameInfo.name);
+                    String imgUrl;
+                    if (mList.size() == 1 && gameInfo.coverUrl!=null){
+                        imgUrl = gameInfo.coverUrl;
+                    }else {
+                        imgUrl = gameInfo.iconUrl;
+                    }
+                    x.image().bind(mImageView,imgUrl);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-
         }
     }
 

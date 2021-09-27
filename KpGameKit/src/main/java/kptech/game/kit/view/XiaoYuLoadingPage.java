@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.squareup.picasso.Picasso;
+import org.xutils.x;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
@@ -75,10 +75,19 @@ public class XiaoYuLoadingPage extends LoadingPageView {
 
     @Override
     protected void setLoadingInfo(GameInfo gameInfo) {
-        mTvGameName.setText(gameInfo.name);
-        String iconUrl = gameInfo.iconUrl;
-        if (iconUrl != null && !iconUrl.isEmpty()) {
-            Picasso.with(getContext()).load(iconUrl).into(mRoundIcon);
+        try {
+            mTvGameName.setText(gameInfo.name);
+            String iconUrl = gameInfo.iconUrl;
+            int localResId = gameInfo.localResId;
+            if (localResId > 0){
+                mRoundIcon.setImageResource(localResId);
+            }else {
+                if (iconUrl != null && !iconUrl.isEmpty()) {
+                    x.image().bind(mRoundIcon,iconUrl);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

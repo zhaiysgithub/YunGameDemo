@@ -8,14 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
+import org.xutils.x;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
-import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.download.DownloadTask;
-import kptech.lib.analytic.Event;
 import kptech.game.kit.utils.StringUtil;
 
 public class PlayErrorView extends LinearLayout implements View.OnClickListener {
@@ -27,10 +23,6 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     private ViewGroup mErrorDownBtn;
 
     private GameInfo mGameInfo;
-
-//    private OnClickListener mBackListener;
-//    private OnClickListener mDownListener;
-//    private OnClickListener mRetryListener;
 
     private ClickListener mListener;
 
@@ -59,46 +51,41 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
         inflate(getContext(), R.layout.kp_view_play_error, this);
     }
 
-//    public void setOnBackListener(OnClickListener listener){
-//        this.mBackListener = listener;
-//    }
-//
-//    public void setOnDownListener(OnClickListener listener){
-//        this.mDownListener= listener;
-//    }
-//
-//    public void setOnRetryListener(OnClickListener listener){
-//        this.mRetryListener = listener;
-//    }
-
-
     public void setGameInfo(GameInfo info){
         mGameInfo = info;
     }
 
     public void setErrorText(String err) {
         mErrorText.setText(err);
-
-        if (this.mGameInfo!=null){
-            if (this.mGameInfo.iconUrl!=null && !"".equals(this.mGameInfo.iconUrl)){
-                try {
-                    Picasso.with(getContext()).load(this.mGameInfo.iconUrl).into(mGameIcon);
-                }catch (Exception e){}
-            }
-            if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
-                //显示下载按钮
-                mErrorDownBtn.setTag("down");
-                mErrorDownText.setText("下载游戏直接玩");
-            } else {
-                //显示重试按钮
+        try{
+            if (this.mGameInfo!=null){
+                int localResId = mGameInfo.localResId;
+                if (localResId > 0){
+                    mGameIcon.setImageResource(localResId);
+                }else {
+                    String iconUrl = mGameInfo.iconUrl;
+                    if (iconUrl != null && !iconUrl.isEmpty()){
+                        x.image().bind(mGameIcon,iconUrl);
+                    }
+                }
+                if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
+                    //显示下载按钮
+                    mErrorDownBtn.setTag("down");
+                    mErrorDownText.setText("下载游戏直接玩");
+                } else {
+                    //显示重试按钮
+                    mErrorDownBtn.setTag("reload");
+                    mErrorDownText.setText("重新加载游戏");
+                }
+            }else {
+                //隐藏按钮
                 mErrorDownBtn.setTag("reload");
-                mErrorDownText.setText("重新加载游戏");
+                mErrorDownBtn.setVisibility(View.GONE);
             }
-        }else {
-            //隐藏按钮
-            mErrorDownBtn.setTag("reload");
-            mErrorDownBtn.setVisibility(View.GONE);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     public void setProgress(int num, String text) {
@@ -146,6 +133,7 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
                         mListener.onCopyInf();
                     }
                 }catch (Exception e){
+                    e.printStackTrace();
                 }
                 return false;
             }
@@ -160,27 +148,17 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back){
-//            if (this.mBackListener != null){
-//                this.mBackListener.onClick(view);
-//            }
             if (this.mListener != null){
                 this.mListener.onBack();
             }
         }else if (view.getId() == R.id.error_down_layout) {
             if (view.getTag()!=null && view.getTag() instanceof String){
-                Event event = null;
                 String tag = (String) view.getTag();
                 if ("reload".equals(tag)){
-//                    if (this.mRetryListener != null){
-//                        this.mRetryListener.onClick(view);
-//                    }
                     if (this.mListener != null){
                         this.mListener.onRetry();
                     }
                 }else if("down".equals(tag)){
-//                    if (this.mDownListener != null){
-//                        this.mDownListener.onClick(view);
-//                    }
                     if (this.mListener != null){
                         this.mListener.onDown(view);
                     }
@@ -196,8 +174,5 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
         mGameInfo = null;
         mListener = null;
-//        mBackListener = null;
-//        mDownListener = null;
-//        mRetryListener = null;
     }
 }

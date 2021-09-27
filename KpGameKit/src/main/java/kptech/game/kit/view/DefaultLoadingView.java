@@ -2,26 +2,19 @@ package kptech.game.kit.view;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.lang.ref.WeakReference;
+import org.xutils.x;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
-import kptech.game.kit.utils.Logger;
 
 public class DefaultLoadingView extends LoadingPageView {
 
@@ -77,13 +70,13 @@ public class DefaultLoadingView extends LoadingPageView {
     protected void setLoadingInfo(GameInfo gameInfo) {
         try {
             mNameText.setText(gameInfo.name);
-            String iconUrl = gameInfo.iconUrl;
             int localResId = gameInfo.localResId;
             if (localResId > 0){
                 mIconImg.setImageResource(localResId);
             }else {
+                String iconUrl = gameInfo.iconUrl;
                 if (iconUrl != null && !iconUrl.isEmpty()) {
-                    Picasso.with(getContext()).load(iconUrl).into(mIconImg);
+                    x.image().bind(mIconImg,iconUrl);
                 }
             }
         }catch (Exception e){

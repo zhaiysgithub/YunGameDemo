@@ -44,15 +44,15 @@
             app:title="Gid 登录"
             app:useSimpleSummaryProvider="true"/>
 
-        <SwitchPreferenceCompat
+        <!--<SwitchPreferenceCompat
             app:key="enableGameDialog"
             app:title="游戏中弹窗"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true"/>-->
 
-        <SwitchPreferenceCompat
+        <!--<SwitchPreferenceCompat
             app:key="enableCustomerLoadign"
             app:title="自定义Loading页面"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true"/>-->
 
         <EditTextPreference
             app:key="fontTimeout"

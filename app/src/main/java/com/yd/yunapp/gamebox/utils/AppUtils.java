@@ -15,6 +15,10 @@ public class AppUtils {
     public static final String SIGN_SK_BD_YOUTH = "30ad7b36364ca133d5d496e74d18cc97";
     public static final String SIGN_AK_BD_YOUTH = "08afbd881c7832dd013a8061675ce407";
 
+    //微包上线使用的ak,sk (通用版本)
+    public static final String SIGN_SK_MINI_PKG = "f2eabc594b5d55ead9b97cab880dd8c8";
+    public static final String SIGN_AK_MINI_PKG = "2d893bd0a39f8bb35392be097b94fde8";
+
     /**
      * 获取当前本地apk的版本
      */

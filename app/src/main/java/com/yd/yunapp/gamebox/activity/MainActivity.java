@@ -192,10 +192,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //启动游戏
             GameBox.getInstance().playGame(MainActivity.this, game, params);
-            boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
+            /*boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
             if (enableGameDialog) {
                 mHandler.postDelayed(this::startShowDialog, 15 * 1000);
-            }
+            }*/
         }
     }
 
