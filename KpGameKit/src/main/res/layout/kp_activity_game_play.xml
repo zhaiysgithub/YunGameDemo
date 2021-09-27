@@ -15,6 +15,15 @@
         android:visibility="gone">
     </FrameLayout>
 
+    <!--透明蒙层-->
+    <View
+        android:id="@+id/view_transparent_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="@android:color/transparent"
+        android:visibility="gone"/>
+
     <kptech.game.kit.view.FloatMenuView
         android:id="@+id/float_menu"
         android:layout_width="match_parent"

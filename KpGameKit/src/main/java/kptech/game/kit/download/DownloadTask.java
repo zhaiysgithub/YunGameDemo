@@ -48,6 +48,9 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.StringUtil;
+import kptech.lib.analytic.Event;
+import kptech.lib.analytic.EventCode;
+import kptech.lib.analytic.MobclickAgent;
 
 /**
  * Created by yuandl on 2016-12-19.
@@ -485,6 +488,10 @@ public class DownloadTask extends Service {
         Log.i(TAG,"downloadPause");
         status = Status.PAUSE;
 
+        //下载暂停打点
+        Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP, mGameInfo != null ? mGameInfo.pkgName : "");
+        MobclickAgent.sendEvent(event);
+
         mRemoteViews.setTextViewText(R.id.bt, "下载");
         mRemoteViews.setTextViewText(R.id.tv_message, "已暂停");
         mNotificationManager.notify(NOTIFICATION_ID, mNotification);
@@ -509,6 +516,10 @@ public class DownloadTask extends Service {
         mRemoteViews.setTextViewText(R.id.tv_message, "下载失败");
         mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
+        //下载失败的打点
+        Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADERROR, mGameInfo != null ? mGameInfo.pkgName : "");
+        MobclickAgent.sendEvent(event);
+
         if (mDataCallback!=null){
             mDataCallback.onFail(err, mGameInfo.gid);
         }
@@ -525,6 +536,9 @@ public class DownloadTask extends Service {
         mRemoteViews.setTextViewText(R.id.tv_message, "下载完成");
         mNotificationManager.notify(NOTIFICATION_ID, mNotification);
 
+        //下载完成的打点
+        Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADCOMPLETE, mGameInfo != null ? mGameInfo.pkgName : "");
+        MobclickAgent.sendEvent(event);
         if (mDataCallback!=null){
             mDataCallback.onSuccess(filePath, mGameInfo.gid);
         }

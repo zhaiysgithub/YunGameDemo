@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -47,6 +48,7 @@ import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.download.DownloadTask;
+import kptech.game.kit.manager.FastRepeatClickManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
@@ -96,6 +98,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private PlayStatusLayout mPlayStatueView;
 
     private FloatDownView mFloatDownView;
+    //透明蒙层
+    private View mTransparentLayer;
 
     private HardwareManager mHardwareManager;
 
@@ -120,6 +124,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private String mAuthUnionAk;
     private String mAuthUnionSign;
     private String mAuthUnionTS;
+    //蒙层是否显示
+    private boolean mFrontLayerVis;
+    //下载按钮是否显示
+    private boolean mDownloadWidVis;
     //暂存游戏声音开关的变量
     private boolean gameVoiceSwitchValue = false;
     //游戏是否正在运行
@@ -164,7 +172,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        GameBox.sRefWatcher.watch(this);
         if (Env.isTestEnv()) {
             Toast.makeText(this, "Env test !!!", Toast.LENGTH_LONG).show();
         }
@@ -176,6 +183,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
+        setOrientation();
         if (getIntent().hasExtra(EXTRA_MINI_VERSION)){
             miniPkgVersion = getIntent().getStringExtra(EXTRA_MINI_VERSION);
         }
@@ -198,6 +206,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mAuthUnionAk = mCustParams.get(ParamKey.GAME_AUTH_UNION_AK,"");
         mAuthUnionSign = mCustParams.get(ParamKey.GAME_AUTH_UNION_SIGN, "");
         mAuthUnionTS = mCustParams.get(ParamKey.GAME_AUTH_UNION_TS, "");
+        mFrontLayerVis = mCustParams.get(ParamKey.GAME_OPT_LAYER_FRONT,false);
+        mDownloadWidVis = mCustParams.get(ParamKey.GAME_DOWNLOAD_WID_ENABLE, true);
         GameBoxManager.getInstance().setUniqueId(mUnionUUID);
 
         String guidJson = mCustParams.get(ParamKey.GAME_AUTH_UNION_GID,null);
@@ -239,6 +249,22 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         bindDownloadService(true);
 
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    private void setOrientation(){
+        if (mGameInfo != null){
+            int gameOrientation = mGameInfo.gameOrientation;
+            if (gameOrientation == 0){
+                if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                }
+            }else if (gameOrientation == 1){
+                if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            }
+        }
     }
 
     private void initView(View rootView) {
@@ -301,6 +327,26 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 toggleDownload(mGameInfo);
             }
         });
+
+        mTransparentLayer = findViewById(R.id.view_transparent_layer);
+        if (mFrontLayerVis){
+            mTransparentLayer.setVisibility(View.VISIBLE);
+            mTransparentLayer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (FastRepeatClickManager.getInstance().isFastDoubleClick(v.getId())){
+                        return;
+                    }
+                    mTransparentLayer.setVisibility(View.GONE);
+                    //开始执行下载
+                    toggleDownload(mGameInfo);
+                }
+            });
+        }else{
+            mTransparentLayer.setVisibility(View.GONE);
+            mTransparentLayer.setOnClickListener(null);
+        }
+
     }
 
     private synchronized void toggleDownload(GameInfo gameInfo) {
@@ -582,9 +628,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mMenuView.setDeviceControl(mDeviceControl);
 
             //显示下载按钮
-            if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameInfo.downloadUrl)) {
+            if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameInfo.downloadUrl) && mDownloadWidVis) {
                 mFloatDownView.setVisibility(View.VISIBLE);
                 mFloatDownView.startTimeoutLayout();
+            }else {
+                mFloatDownView.setVisibility(View.GONE);
             }
 
             requestExitGameList();
@@ -1352,6 +1400,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 return;
             }
         }
+        //发送开始下载的打点数据
+        Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTART, mGameInfo != null ? mGameInfo.pkgName : "");
+        MobclickAgent.sendEvent(event);
 
         Intent intent = new Intent(this, DownloadTask.class);
         intent.putExtra("action", "start");

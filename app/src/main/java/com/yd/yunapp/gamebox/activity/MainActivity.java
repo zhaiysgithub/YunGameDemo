@@ -83,10 +83,9 @@ public class MainActivity extends AppCompatActivity {
         if (enableInputCorpKey){
             APP_ID = mSp.getString("editCorpKey","");
         }else {
-            //测试appID
             APP_ID = mSp.getString("corpKey", null);
-//            APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
         }
+        APP_ID = "2VjOzOW8ijt2D8Z-e24d7242f0e661a9";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -183,6 +182,9 @@ public class MainActivity extends AppCompatActivity {
         String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
         params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
 
+//        params.put(ParamKey.GAME_DOWNLOAD_WID_ENABLE,false);
+        params.put(ParamKey.GAME_OPT_LAYER_FRONT,true);
+
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
         GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             mainModel.loginByGid(game);
         } else {
             //启动游戏
+//            game.gameOrientation = 0;
             GameBox.getInstance().playGame(MainActivity.this, game, params);
             /*boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
             if (enableGameDialog) {

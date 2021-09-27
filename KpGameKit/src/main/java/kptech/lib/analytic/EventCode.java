@@ -24,6 +24,8 @@ public class EventCode {
     public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP= "DATA_ACTIVITY_RECEIVE_DOWNLOADSTOP";
     //接收到下载出错
     public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADERROR = "DATA_ACTIVITY_RECEIVE_DOWNLOADERROR";
+    //接收到下载完成
+    public static final String DATA_ACTIVITY_RECEIVE_DOWNLOADCOMPLETE = "DATA_ACTIVITY_RECEIVE_DOWNLOADCOMPLETE";
 
     //接收到网易云游戏发送消息广播
     public static final String DATA_ACTIVITY_ONMESSAGE_NETEASE = "DATA_ACTIVITY_ONMESSAGE_NETEASE";
