@@ -44,22 +44,4 @@
         android:visibility="gone"
         />
 
-    <!--<kptech.game.kit.view.PlayErrorView
-        android:id="@+id/error_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-
-    <kptech.game.kit.view.UserAuthView
-        android:id="@+id/auth_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>-->
-
-    <!--<kptech.game.kit.view.PlaySettingsView-->
-        <!--android:id="@+id/setting_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:visibility="gone"/>-->
-
 </FrameLayout>

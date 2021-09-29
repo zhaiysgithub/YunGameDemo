@@ -16,7 +16,7 @@ import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
 
-public class DefaultLoadingView extends LoadingPageView {
+public class LoadingDefaultView extends LoadingPageView {
 
     private ProgressBar mLoadingPb;
     private TextView mLoadingText;
@@ -32,11 +32,11 @@ public class DefaultLoadingView extends LoadingPageView {
     };
 
 
-    public DefaultLoadingView(Context context) {
+    public LoadingDefaultView(Context context) {
         super(context);
     }
 
-    public DefaultLoadingView(Context context, AttributeSet attrs) {
+    public LoadingDefaultView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

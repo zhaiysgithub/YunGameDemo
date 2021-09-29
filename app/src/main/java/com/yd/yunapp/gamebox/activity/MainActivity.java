@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }else {
             APP_ID = mSp.getString("corpKey", null);
         }
-        APP_ID = "2VjOzOW8ijt2D8Z-e24d7242f0e661a9";
+//        APP_ID = "2VjOzOW8ijt2D8Z-e24d7242f0e661a9";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -186,7 +186,9 @@ public class MainActivity extends AppCompatActivity {
         params.put(ParamKey.GAME_OPT_LAYER_FRONT,true);
 
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
-        GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));
+        if (useCustomerLoadingView){
+            GameBoxManager.getInstance().setCusLoadingView(new CustomerLoadingView(this));
+        }
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
             //使用 GID 登录游戏
@@ -195,10 +197,6 @@ public class MainActivity extends AppCompatActivity {
             //启动游戏
 //            game.gameOrientation = 0;
             GameBox.getInstance().playGame(MainActivity.this, game, params);
-            /*boolean enableGameDialog = mSp.getBoolean("enableGameDialog", false);
-            if (enableGameDialog) {
-                mHandler.postDelayed(this::startShowDialog, 15 * 1000);
-            }*/
         }
     }
 

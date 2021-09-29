@@ -47,8 +47,11 @@ import kptech.game.kit.ParamKey;
 import kptech.game.kit.Params;
 import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
+import kptech.game.kit.callback.IGameObservable;
+import kptech.game.kit.callback.SimpleGameObservable;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.FastRepeatClickManager;
+import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
@@ -181,6 +184,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         View rootView = getLayoutInflater().inflate(R.layout.kp_activity_game_play, null);
         setContentView(rootView);
 
+        KpGameManager.instance().addObservable(mGameObserver);
+
         mCorpID = getIntent().getStringExtra(EXTRA_CORPID);
         mGameInfo = getIntent().getParcelableExtra(EXTRA_GAME);
         setOrientation();
@@ -274,7 +279,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         mPlayStatueView = new PlayStatusLayout.Builder(this)
                 .setGameInfo(mGameInfo)
                 .create();
-        mPlayStatueView.setCallback(new PlayStatusCallback(GamePlay.this));
         ((ViewGroup) rootView).addView(mPlayStatueView, 0);
 
         mMenuView = findViewById(R.id.float_menu);
@@ -330,7 +334,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mTransparentLayer = findViewById(R.id.view_transparent_layer);
         if (mFrontLayerVis){
-            mTransparentLayer.setVisibility(View.VISIBLE);
             mTransparentLayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -343,10 +346,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 }
             });
         }else{
-            mTransparentLayer.setVisibility(View.GONE);
             mTransparentLayer.setOnClickListener(null);
         }
-
     }
 
     private synchronized void toggleDownload(GameInfo gameInfo) {
@@ -626,6 +627,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mVideoContainer.setVisibility(View.VISIBLE);
             mMenuView.setVisibility(View.VISIBLE);
             mMenuView.setDeviceControl(mDeviceControl);
+            mTransparentLayer.setVisibility(mFrontLayerVis ? View.VISIBLE : View.GONE);
 
             //显示下载按钮
             if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameInfo.downloadUrl) && mDownloadWidVis) {
@@ -733,12 +735,152 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
+    private final IGameObservable mGameObserver = new SimpleGameObservable(){
+
+        @Override
+        public void onBackListener(boolean isExit) {
+            if (isExit){
+                if (GamePlay.this.isFinishing()){
+                    return;
+                }
+                exitPlay();
+            }
+        }
+
+        @Override
+        public void onReloadListener() {
+            try {
+                if (GamePlay.this.isFinishing()){
+                    return;
+                }
+                mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
+
+                //发送打点事件
+                Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo != null ? mGameInfo.pkgName : "");
+                event.setErrMsg(GamePlay.this.mErrorMsg);
+                if (mDeviceControl != null) {
+                    event.setPadcode(mDeviceControl.getPadcode());
+                }
+                HashMap<String,Object> ext = new HashMap<>();
+                ext.put("code", mErrorCode);
+                ext.put("msg", mErrorMsg);
+                event.setExt(ext);
+                MobclickAgent.sendEvent(event);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onCopyInfoListener(String info) {
+            if (GamePlay.this.isFinishing() || mDeviceControl == null){
+                return;
+            }
+            String copyStr = mDeviceControl.getDeviceInfo();
+            if (info != null && info.length() > 0){
+                copyStr = (copyStr + ";" + info);
+            }
+            StringUtil.copy(GamePlay.this,copyStr);
+        }
+
+        @Override
+        public void onDownloadListener() {
+            if (mGameInfo != null){
+                if (GamePlay.this.isFinishing()){
+                    return;
+                }
+                toggleDownload(mGameInfo);
+            }
+        }
+
+        @Override
+        public void onAuthListener(boolean isAuthPass) {
+
+            if (!isAuthPass){
+                //发送打点事件
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_CANCEL, mGameInfo != null ? mGameInfo.pkgName : ""));
+
+                exitPlay();
+                return;
+            }
+
+            if (mPlayStatueView != null){
+                mPlayStatueView.hideUserAuthView();
+            }
+            try{
+                //发送打点事件
+                MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_APPROVE, mGameInfo != null ? mGameInfo.pkgName : ""));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try{
+                if (GamePlay.this.isFinishing()){
+                    return;
+                }
+                //调用接口发送授权数据
+                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_GT_API)
+                        .setCorpKey(mCorpID)
+                        .setCallback(new AccountTask.ICallback() {
+                            @Override
+                            public void onResult(Map<String, Object> map) {
+                                //保存数据
+                                String errMsg = "";
+                                if (map == null || map.size() <= 0){
+                                    errMsg = "登录失败";
+                                }else if (map.containsKey("error")){
+                                    errMsg = map.get("error").toString();
+                                }
+                                try{
+                                    boolean noError = (errMsg == null || errMsg.isEmpty());
+                                    if (map != null && noError){
+                                        String unionMd5Value = MD5Util.md5(mUnionUUID);
+                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID, unionMd5Value);
+                                        if (map.containsKey("guid")){
+                                            Object guid = map.get("guid");
+                                            if (guid != null){
+                                                Event.setGuid(guid+"");
+                                            }
+                                        }
+                                        if (map.containsKey("access_token")){
+                                            Object at =  map.get("access_token");
+                                            map.put("token", at);
+                                            map.remove("access_token");
+                                        }
+                                        if (map.containsKey("phone")){
+                                            Object phone = map.get("phone");
+                                            map.put("userphone",phone);
+                                        }
+
+                                        if (mUnionUUID != null && mUnionUUID.length() > 0){
+                                            map.put("uninqueId",mUnionUUID);
+                                        }
+
+                                        JSONObject obj = new JSONObject(map);
+                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
+                                        ProferencesUtils.setString(GamePlay.this, cacheKey, obj.toString());
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                startCloudPhone();
+                            }
+                        })
+                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    };
+
     @Override
     protected void onDestroy() {
         if (mKpGameReceiver != null){
             unregisterReceiver(mKpGameReceiver);
             mKpGameReceiver = null;
         }
+        KpGameManager.instance().clearObservable();
         super.onDestroy();
 
         try {
@@ -1589,161 +1731,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mFloatDownView != null && mFloatDownView.isShown()) {
                 mFloatDownView.setProgress(progress, text);
             }
-        }
-    }
-
-    // 普通 loading 页面
-    private class PlayStatusCallback implements PlayStatusLayout.ICallback {
-
-        WeakReference<GamePlay> ref = null;
-
-        public PlayStatusCallback(GamePlay play) {
-            ref = new WeakReference<>(play);
-        }
-
-        @Override
-        public void onClickFinish() {
-            try {
-                if (ref != null && ref.get() != null) {
-                    ref.get().exitPlay();
-                }
-            } catch (Exception e) {
-                Logger.error(TAG, e);
-            }
-        }
-
-        @Override
-        public void onClickReloadGame() {
-            try {
-                if (ref != null && ref.get() != null) {
-                    ref.get().mHandler.sendEmptyMessage(MSG_RELOAD_GAME);
-                }
-
-                try {
-                    //发送打点事件
-                    Event event = Event.getEvent(EventCode.DATA_ACTIVITY_PLAYERROR_RELOAD, mGameInfo != null ? mGameInfo.pkgName : "");
-                    event.setErrMsg(GamePlay.this.mErrorMsg);
-                    if (mDeviceControl != null) {
-                        event.setPadcode(mDeviceControl.getPadcode());
-                    }
-                    HashMap ext = new HashMap();
-                    ext.put("code", mErrorCode);
-                    ext.put("msg", mErrorMsg);
-                    event.setExt(ext);
-                    MobclickAgent.sendEvent(event);
-                } catch (Exception e) {
-                }
-            } catch (Exception e) {
-                Logger.error(TAG, e);
-            }
-        }
-
-        @Override
-        public void onClickDownloading() {
-            try {
-                if (ref != null && ref.get() != null) {
-                    ref.get().toggleDownload(mGameInfo);
-                }
-            } catch (Exception e) {
-                Logger.error(TAG, e);
-            }
-        }
-
-        @Override
-        public void onClickAuthPass() {
-            try {
-                try {
-                    //发送打点事件
-                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_APPROVE, mGameInfo != null ? mGameInfo.pkgName : ""));
-                } catch (Exception e) {
-                    Logger.error(TAG, "onClickAuthPass:" + e.getMessage());
-                }
-
-                //调用接口发送授权数据
-                new AccountTask(GamePlay.this, AccountTask.ACTION_AUTH_GT_API)
-                        .setCorpKey(mCorpID)
-                        .setCallback(new AccountTask.ICallback() {
-                            @Override
-                            public void onResult(Map<String, Object> map) {
-                                //保存数据
-                                String errMsg = "";
-                                if (map == null || map.size() <= 0){
-                                    errMsg = "登录失败";
-                                }else if (map.containsKey("error")){
-                                    errMsg = map.get("error").toString();
-                                }
-                                try{
-                                    boolean noError = (errMsg == null || errMsg.isEmpty());
-                                    if (map != null && noError){
-                                        String unionMd5Value = MD5Util.md5(mUnionUUID);
-                                        ProferencesUtils.setString(GamePlay.this,SharedKeys.KEY_AUTH_ID, unionMd5Value);
-                                        if (map.containsKey("guid")){
-                                            Object guid = map.get("guid");
-                                            if (guid != null){
-                                                Event.setGuid(guid+"");
-                                            }
-                                        }
-                                        if (map.containsKey("access_token")){
-                                            Object at =  map.get("access_token");
-                                            map.put("token", at);
-                                            map.remove("access_token");
-                                        }
-                                        if (map.containsKey("phone")){
-                                            Object phone = map.get("phone");
-                                            map.put("userphone",phone);
-                                        }
-
-                                        if (mUnionUUID != null && mUnionUUID.length() > 0){
-                                            map.put("uninqueId",mUnionUUID);
-                                        }
-
-                                        JSONObject obj = new JSONObject(map);
-                                        String cacheKey = SharedKeys.KEY_GAME_USER_LOGIN_DATA_PRE;
-                                        ProferencesUtils.setString(GamePlay.this, cacheKey, obj.toString());
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                if (ref != null && ref.get() != null) {
-                                    ref.get().startCloudPhone();
-                                }
-                            }
-                        })
-                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);;
-
-
-
-
-            } catch (Exception e) {
-                Logger.error(TAG, e);
-            }
-        }
-
-        @Override
-        public void onClickAuthReject() {
-            try {
-                try {
-                    //发送打点事件
-                    MobclickAgent.sendEvent(Event.getEvent(EventCode.DATA_ACTIVITY_USERAUTH_CANCEL, mGameInfo != null ? mGameInfo.pkgName : ""));
-                } catch (Exception e) {
-                }
-
-                if (ref != null && ref.get() != null) {
-                    ref.get().exitPlay();
-                }
-            } catch (Exception e) {
-                Logger.error(TAG, "onClickAuthReject:" + e.getMessage());
-            }
-        }
-
-        @Override
-        public void onClickCopyInf() {
-            if (mDeviceControl != null){
-                String info = mDeviceControl.getDeviceInfo();
-                StringUtil.copy(GamePlay.this, info);
-                Toast.makeText(GamePlay.this, "info", Toast.LENGTH_SHORT).show();
-            }
-
         }
     }
 

@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    >
 
     <ImageButton
         android:id="@+id/btn_back"
@@ -39,17 +40,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
             />
-
-        <!--<Button-->
-            <!--android:id="@+id/btn_down"-->
-            <!--android:layout_width="170dp"-->
-            <!--android:layout_height="36dp"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:background="@drawable/game_play_btn"-->
-            <!--android:layout_marginTop="20dp"-->
-            <!--android:textSize="14sp"-->
-            <!--android:textColor="#FFFFFF"-->
-            <!--android:text="下载游戏直接玩"/>-->
 
         <FrameLayout
             android:id="@+id/error_down_layout"

@@ -4,22 +4,19 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.xutils.x;
 
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 
 
-public class UserAuthView extends LinearLayout implements View.OnClickListener {
+public class UserAuthView extends PlayAuthPageView implements View.OnClickListener {
+
     private ImageView mGameIcon;
     private TextView mGameName;
-
-
-    private OnClickListener mBackListener;
-    private OnClickListener mAuthListener;
 
     public UserAuthView(Context context) {
         super(context);
@@ -31,29 +28,23 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
         initView();
     }
 
-    private void initView() {
-        inflate(getContext(), R.layout.kp_view_user_auth, this);
+    @Override
+    protected View getAuthView() {
+        return null;
     }
-
-    public void setOnBackListener(OnClickListener listener){
-        this.mBackListener = listener;
-    }
-
-    public void setOnAuthListener(OnClickListener listener){
-        this.mAuthListener= listener;
-    }
-
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    protected int getAuthViewId() {
+        return R.layout.kp_view_user_auth;
+    }
 
+    @Override
+    protected void initView() {
         mGameIcon = findViewById(R.id.game_icon);
         mGameName = findViewById(R.id.game_name);
 
         findViewById(R.id.btn_back).setOnClickListener(this);
         findViewById(R.id.auth_btn).setOnClickListener(this);
-
     }
 
     @Override
@@ -64,19 +55,14 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back){
-            if (this.mBackListener != null){
-                this.mBackListener.onClick(view);
-            }
+            GameBoxManager.getInstance().setOnAuthClick(false);
         }else if (view.getId() == R.id.auth_btn) {
-
-
-            if (this.mAuthListener != null){
-                this.mAuthListener.onClick(view);
-            }
+            GameBoxManager.getInstance().setOnAuthClick(true);
         }
     }
 
-    public void setInfo(GameInfo gameInfo) {
+    @Override
+    public void setGameInfo(GameInfo gameInfo) {
         if (gameInfo == null){
             return;
         }
@@ -94,14 +80,5 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        mBackListener = null;
-        mAuthListener = null;
-
     }
 }

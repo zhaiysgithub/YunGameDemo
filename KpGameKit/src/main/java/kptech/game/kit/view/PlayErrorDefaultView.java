@@ -5,16 +5,21 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.xutils.x;
+
+import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.utils.StringUtil;
 
-public class PlayErrorView extends LinearLayout implements View.OnClickListener {
+public class PlayErrorDefaultView extends PlayErrorPageView implements View.OnClickListener {
 
     private TextView mErrorText;
     private ImageView mGameIcon;
@@ -24,37 +29,30 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
     private GameInfo mGameInfo;
 
-    private ClickListener mListener;
-
-    public interface ClickListener {
-        void onBack();
-        void onRetry();
-        void onDown(View view);
-        void onCopyInf();
-    }
-
-    public void setClickListener(ClickListener listener){
-        this.mListener = listener;
-    }
-
-    public PlayErrorView(Context context) {
+    public PlayErrorDefaultView(@NonNull Context context) {
         super(context);
-        initView();
     }
 
-    public PlayErrorView(Context context, AttributeSet attrs) {
+    public PlayErrorDefaultView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initView();
     }
 
-    private void initView() {
-        inflate(getContext(), R.layout.kp_view_play_error, this);
+    @Override
+    protected View getErrorView() {
+        return null;
     }
 
+    @Override
+    protected int getErrorLayoutRes() {
+        return R.layout.kp_view_play_error;
+    }
+
+    @Override
     public void setGameInfo(GameInfo info){
         mGameInfo = info;
     }
 
+    @Override
     public void setErrorText(String err) {
         mErrorText.setText(err);
         try{
@@ -88,11 +86,13 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
 
     }
 
+    @Override
     public void setProgress(int num, String text) {
         mErrorDownText.setText(text);
         mErrorDownPb.setProgress(num);
     }
 
+    @Override
     public void setDownloadStatus(int status){
         switch (status){
             case DownloadTask.STATUS_STARTED:
@@ -111,30 +111,22 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     }
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    protected void initView(View view) {
+        mGameIcon = view.findViewById(R.id.game_icon);
+        mErrorText = view.findViewById(R.id.error_text);
 
-        mGameIcon = findViewById(R.id.game_icon);
-        mErrorText = findViewById(R.id.error_text);
+        mErrorDownText = view.findViewById(R.id.error_down_text);
+        mErrorDownPb = view.findViewById(R.id.error_down_pb);
 
-        mErrorDownText = findViewById(R.id.error_down_text);
-        mErrorDownPb = findViewById(R.id.error_down_pb);
-
-        mErrorDownBtn = findViewById(R.id.error_down_layout);
+        mErrorDownBtn = view.findViewById(R.id.error_down_layout);
         mErrorDownBtn.setOnClickListener(this);
 
-        findViewById(R.id.btn_back).setOnClickListener(this);
+        view.findViewById(R.id.btn_back).setOnClickListener(this);
 
         mGameIcon.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                try {
-                    if (mListener != null){
-                        mListener.onCopyInf();
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                GameBoxManager.getInstance().setOnCopyInfoClick("");
                 return false;
             }
         });
@@ -148,20 +140,14 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.btn_back){
-            if (this.mListener != null){
-                this.mListener.onBack();
-            }
+            GameBoxManager.getInstance().setOnBackClick(true);
         }else if (view.getId() == R.id.error_down_layout) {
             if (view.getTag()!=null && view.getTag() instanceof String){
                 String tag = (String) view.getTag();
                 if ("reload".equals(tag)){
-                    if (this.mListener != null){
-                        this.mListener.onRetry();
-                    }
+                    GameBoxManager.getInstance().setOnReloadClick();
                 }else if("down".equals(tag)){
-                    if (this.mListener != null){
-                        this.mListener.onDown(view);
-                    }
+                    GameBoxManager.getInstance().setOnDownloadClick();
                 }
             }
         }
@@ -171,8 +157,6 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-
         mGameInfo = null;
-        mListener = null;
     }
 }

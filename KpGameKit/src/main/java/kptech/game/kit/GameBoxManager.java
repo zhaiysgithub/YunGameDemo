@@ -16,7 +16,10 @@ import java.util.List;
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
 
+import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.view.LoadingPageView;
+import kptech.game.kit.view.PlayAuthPageView;
+import kptech.game.kit.view.PlayErrorPageView;
 import kptech.lib.ad.AdManager;
 import kptech.lib.analytic.DeviceInfo;
 import kptech.lib.analytic.Event;
@@ -37,24 +40,20 @@ import kptech.game.kit.utils.ProferencesUtils;
 
 public class GameBoxManager {
 
-    private static final String TAG = "GameBoxManager";
-
     private static Application mApplication = null;
 
     public static String mCorpID = "";
 
-//    private Context context;
     private static volatile GameBoxManager box = null;
-//    private com.yd.yunapp.gameboxlib.GameBoxManager mLibManager;
     private String mUniqueId;
 
-//    private long TM_SDKINIT_START,TM_SDKINIT_END,TM_DEVICE_START,TM_DEVICE_END;
     private MillisecondsDuration mTimeDuration;
     private boolean isInited = false;
 
     private boolean devLoading = false;
-    private boolean mShowCustomerLoadingView;
-    private LoadingPageView mCustomerLoadingView;
+    private LoadingPageView mCusLoadingView;
+    private PlayErrorPageView mCusErrorView;
+    private PlayAuthPageView mCusAuthView;
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -81,13 +80,24 @@ public class GameBoxManager {
     }
 
     private GameBoxManager(){
-//        this.mLibManager = com.yd.yunapp.gameboxlib.GameBoxManager.getInstance(context);
     }
 
+    /**
+     * 设置自定义的loading页面
+     */
+    public void setCusLoadingView(LoadingPageView loadingView){
+        this.mCusLoadingView = loadingView;
+    }
 
-    public void setLoadingView(boolean isShow,LoadingPageView loadingView){
-        mShowCustomerLoadingView = isShow;
-        mCustomerLoadingView = loadingView;
+    /**
+     * 设置自定义的errorView
+     */
+    public void setCusErrorView(PlayErrorPageView errorView){
+        this.mCusErrorView = errorView;
+    }
+
+    public void setCusAuthView(PlayAuthPageView authView){
+        this.mCusAuthView = authView;
     }
 
     public static void setAppKey(String appKey) {
@@ -178,6 +188,7 @@ public class GameBoxManager {
             params.put("nettype", netStr);
             params.put("deviceId", DeviceInfo.getDeviceId(context));
         }catch (Exception e){
+            e.printStackTrace();
         }
         return params;
     }
@@ -265,13 +276,6 @@ public class GameBoxManager {
 
     private static String AK;
     private static String SK;
-    private static String CH;
-
-    public static void setAppInfo(String ak, String sk, String ch){
-        AK = ak;
-        SK = sk;
-        CH = ch;
-    }
 
     /**
      * 初始化gameBox
@@ -485,25 +489,49 @@ public class GameBoxManager {
 
     /**
      * 设置联运帐号用户唯一标识
-     * @param uid
      */
     public void setUniqueId(String uid){
         this.mUniqueId = uid;
     }
 
     /**
+     *
      * 获取当前联运帐号唯一标识
-     * @return
      */
     public String getUniqueId(){
         return this.mUniqueId;
     }
 
-    public boolean ismShowCustomerLoadingView() {
-        return mShowCustomerLoadingView;
+    public LoadingPageView getCustomerLoadingView() {
+        return mCusLoadingView;
     }
 
-    public LoadingPageView getmCustomerLoadingView() {
-        return mCustomerLoadingView;
+    public PlayErrorPageView getCusErrorView(){
+        return mCusErrorView;
     }
+
+    public PlayAuthPageView getCusAuthView(){
+        return mCusAuthView;
+    }
+
+    public void setOnBackClick(boolean isExit){
+        KpGameManager.instance().sendBackObserver(isExit);
+    }
+
+    public void setOnReloadClick(){
+        KpGameManager.instance().sendReloadObserver();
+    }
+
+    public void setOnDownloadClick(){
+        KpGameManager.instance().sendDownloadObserver();
+    }
+
+    public void setOnCopyInfoClick(String info){
+        KpGameManager.instance().sendCopyInfoObserver(info);
+    }
+
+    public void setOnAuthClick(boolean isAuthPass){
+        KpGameManager.instance().sendAuthObserver(isAuthPass);
+    }
+
 }
