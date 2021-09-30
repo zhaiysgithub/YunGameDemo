@@ -25,6 +25,12 @@
 
 
     <PreferenceCategory app:title="游戏设置">
+
+        <ListPreference
+            app:key="downloadControl"
+            app:title="下载速度控制"
+            app:useSimpleSummaryProvider="true"/>
+
         <SwitchPreferenceCompat
             app:key="enableAd"
             app:title="全部开启广告"

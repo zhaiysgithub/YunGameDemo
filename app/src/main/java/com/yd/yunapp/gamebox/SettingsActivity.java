@@ -100,6 +100,10 @@ public class SettingsActivity extends AppCompatActivity {
                 listPreference.setEntryValues(R.array.release_corpkey_values);
             }
 
+            ListPreference downloadPreference = findPreference("downloadControl");
+            downloadPreference.setEntries(R.array.game_download_entries);
+            downloadPreference.setEntryValues(R.array.game_download_values);
+
 //            findPreference("env").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 //                @Override
 //                public boolean onPreferenceChange(Preference preference, Object newValue) {

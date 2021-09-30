@@ -30,4 +30,17 @@
         <item>2VoIpQbS97t42JY-75e25410aaabadd3</item>
         <item>2VoIpPwLCNJ2WPm-6cbcf6ed5f3c9d4f</item>
     </string-array>
+
+    <!--下载速度控制-->
+    <string-array name="game_download_entries">
+        <item>高速下载 下载速度不做控制</item>
+        <item>中速下载 下载速度小于等于512kb/s</item>
+        <item>低速下载 下载速度小于等于256kb/s</item>
+    </string-array>
+
+    <string-array name="game_download_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

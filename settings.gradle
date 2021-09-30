@@ -1,3 +1,4 @@
 include ':kplib'
 include ':app', ':KpGameKit', ':NetQueue', ':kpinter', ':KpGameLibBaidu',':KpGameLibBaidu_154'
 //include ':KpGameAd' , ':KpGameLibRedfinger'
+include ':KpUtils'
