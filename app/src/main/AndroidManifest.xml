@@ -68,9 +68,7 @@
         <activity android:name="com.yd.yunapp.gamebox.activity.TransDialogActivity"
             android:theme="@style/AppTheme.HalfTransparent"
             />
-        <activity android:name="com.yd.yunapp.gamebox.activity.XiaoYuOtherActivity"
-            android:launchMode="singleTop"
-            />
+
     </application>
 
 </manifest>

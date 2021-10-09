@@ -15,7 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import org.xutils.x;
+import com.kptech.kputils.x;
 import java.util.ArrayList;
 import java.util.List;
 

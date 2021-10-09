@@ -3,9 +3,9 @@ package kptech.game.kit.download;
 import android.os.Handler;
 import android.os.Message;
 
-import org.xutils.common.Callback;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
+import com.kptech.kputils.common.Callback;
+import com.kptech.kputils.http.RequestParams;
+import com.kptech.kputils.x;
 
 import java.io.File;
 

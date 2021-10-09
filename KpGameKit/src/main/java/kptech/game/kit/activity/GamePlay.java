@@ -51,6 +51,7 @@ import kptech.game.kit.callback.IGameObservable;
 import kptech.game.kit.callback.SimpleGameObservable;
 import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.FastRepeatClickManager;
+import kptech.game.kit.manager.KpGameDownloadManger;
 import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.manager.UserAuthManager;
 import kptech.game.kit.utils.AppUtils;
@@ -143,6 +144,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private MsgReceiver mMsgReceiver;
     //游戏相关的 broadcastReceiver
     private KPGameReceiver mKpGameReceiver;
+    private KpGameDownloadManger downloadManger;
 
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -196,6 +198,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             try {
                 mCustParams = (Params) getIntent().getSerializableExtra(EXTRA_PARAMS);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         if (mCustParams == null) {
@@ -239,6 +242,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             cloneEvent.traceId = Event.getBaseTraceId();
             MobclickAgent.sendEvent(cloneEvent);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         //未获取到游戏信息
@@ -246,13 +250,13 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mHandler.sendMessage(Message.obtain(mHandler, MSG_SHOW_ERROR, "获取游戏信息失败"));
             return;
         }
+        downloadManger = KpGameDownloadManger.instance();
+        downloadManger.setGameInfo(mGameInfo);
         doGameReceiver();
 
         checkAndRequestPermission();
 
         Logger.info("GamePlay", "Activity Process，pid:" + android.os.Process.myPid());
-
-        bindDownloadService(true);
 
     }
 
@@ -328,7 +332,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             @Override
             public void onClick(View view) {
                 //普通下载
-                toggleDownload(mGameInfo);
+                toggleDownload();
             }
         });
 
@@ -342,7 +346,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     }
                     mTransparentLayer.setVisibility(View.GONE);
                     //开始执行下载
-                    toggleDownload(mGameInfo);
+                    toggleDownload();
                 }
             });
         }else{
@@ -350,17 +354,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
-    private synchronized void toggleDownload(GameInfo gameInfo) {
-
-        if (mDownloadStatus == DownloadTask.STATUS_STARTED) {
-            //判断是否是当前游戏
-            if (mDownloadId != gameInfo.gid) {
-                Toast.makeText(this, "其他游戏在下载中，请稍后在试", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            stopDownload();
-        } else {
-            startDownlad();
+    private synchronized void toggleDownload() {
+        if (downloadManger != null){
+            downloadManger.initDownload(GamePlay.this);
         }
     }
 
@@ -553,9 +549,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     @Override
     public void onAPICallback(String msg, int code) {
-//        if (msg != null) {
         Logger.info("GamePlay", "gameOnAPICallback, code = " + code + ", apiResult = " + msg);
-//        }
         try {
             if (code == APIConstants.AD_LOADING) {
                 if (!isFinishing() && mPlayStatueView != null) {
@@ -790,7 +784,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 if (GamePlay.this.isFinishing()){
                     return;
                 }
-                toggleDownload(mGameInfo);
+                toggleDownload();
             }
         }
 
@@ -1087,14 +1081,14 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return;
         }
 
-        List<String> lackedPermission = new ArrayList();
+        List<String> lackedPermission = new ArrayList<>();
         if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
 
-        if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+        /*if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
+        }*/
 
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);

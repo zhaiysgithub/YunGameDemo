@@ -26,4 +26,14 @@ public class SimpleGameObservable implements IGameObservable{
     public void onAuthListener(boolean isAuthPass) {
 
     }
+
+    @Override
+    public void updateDownloadStatus(int status, String url) {
+
+    }
+
+    @Override
+    public void updateDownloadProgress(long total, long current, String url) {
+
+    }
 }

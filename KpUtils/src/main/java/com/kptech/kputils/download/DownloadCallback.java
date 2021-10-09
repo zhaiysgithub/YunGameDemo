@@ -16,13 +16,16 @@ import java.lang.ref.WeakReference;
         Callback.Cancelable {
 
     private DownloadInfo downloadInfo;
+    private String downloadUrl;
     private WeakReference<DownloadViewHolder> viewHolderRef;
     private DownloadManager downloadManager;
     private boolean cancelled = false;
     private Cancelable cancelable;
+    private DownloadExtCallback mExtCallback;
 
-    public DownloadCallback(DownloadViewHolder viewHolder) {
+    public DownloadCallback(DownloadViewHolder viewHolder, DownloadExtCallback callback) {
         this.switchViewHolder(viewHolder);
+        this.mExtCallback = callback;
     }
 
     public boolean switchViewHolder(DownloadViewHolder viewHolder) {
@@ -35,7 +38,10 @@ import java.lang.ref.WeakReference;
                 }
             }
             this.downloadInfo = viewHolder.getDownloadInfo();
-            this.viewHolderRef = new WeakReference<DownloadViewHolder>(viewHolder);
+            this.viewHolderRef = new WeakReference<>(viewHolder);
+            if(downloadInfo != null){
+                downloadUrl = downloadInfo.getUrl();
+            }
         }
         return true;
     }
@@ -79,6 +85,9 @@ import java.lang.ref.WeakReference;
         try {
             downloadInfo.setState(DownloadState.STARTED);
             downloadManager.updateDownloadInfo(downloadInfo);
+            if (mExtCallback != null){
+                mExtCallback.onStarted(downloadUrl);
+            }
         } catch (DbException ex) {
             LogUtil.e(ex.getMessage(), ex);
         }
@@ -98,12 +107,19 @@ import java.lang.ref.WeakReference;
                     downloadInfo.setProgress((int) (current * 100 / total));
                 }
                 downloadManager.updateDownloadInfo(downloadInfo);
+                if (mExtCallback != null){
+                    mExtCallback.onProgress(total,current,downloadUrl);
+                }
             } catch (DbException ex) {
                 LogUtil.e(ex.getMessage(), ex);
             }
             DownloadViewHolder viewHolder = this.getViewHolder();
             if (viewHolder != null) {
                 viewHolder.onLoading(total, current);
+            }
+        }else {
+            if (mExtCallback != null){
+                mExtCallback.onPaused(downloadUrl);
             }
         }
     }
@@ -114,6 +130,9 @@ import java.lang.ref.WeakReference;
             try {
                 downloadInfo.setState(DownloadState.FINISHED);
                 downloadManager.updateDownloadInfo(downloadInfo);
+                if (mExtCallback != null){
+                    mExtCallback.onSuccess(result,downloadUrl);
+                }
             } catch (DbException ex) {
                 LogUtil.e(ex.getMessage(), ex);
             }
@@ -130,6 +149,9 @@ import java.lang.ref.WeakReference;
             try {
                 downloadInfo.setState(DownloadState.ERROR);
                 downloadManager.updateDownloadInfo(downloadInfo);
+                if (mExtCallback != null){
+                    mExtCallback.onError(ex != null ? ex.getMessage() : "" , downloadUrl);
+                }
             } catch (DbException e) {
                 LogUtil.e(e.getMessage(), e);
             }
@@ -146,6 +168,9 @@ import java.lang.ref.WeakReference;
             try {
                 downloadInfo.setState(DownloadState.STOPPED);
                 downloadManager.updateDownloadInfo(downloadInfo);
+                if (mExtCallback != null){
+                    mExtCallback.onCancelled(cex != null ? cex.getMessage() : "" , downloadUrl);
+                }
             } catch (DbException ex) {
                 LogUtil.e(ex.getMessage(), ex);
             }

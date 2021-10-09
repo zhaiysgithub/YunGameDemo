@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.xutils.x;
+import com.kptech.kputils.x;
 
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;

@@ -31,6 +31,12 @@
             app:title="下载速度控制"
             app:useSimpleSummaryProvider="true"/>
 
+        <ListPreference
+            app:key="downloadType"
+            app:title="下载模式"
+            app:useSimpleSummaryProvider="true"
+            />
+
         <SwitchPreferenceCompat
             app:key="enableAd"
             app:title="全部开启广告"

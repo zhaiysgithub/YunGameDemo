@@ -33,6 +33,7 @@ public final class DownloadManager {
     private long speedPriorityLow = SPEED_PRIORITY_LOW_DEFAULT;
 
     private static volatile DownloadManager instance;
+    private DownloadExtCallback mExtCallback;
 
     // 有效的值范围[1, RequestParams.MAX_FILE_LOAD_WORKER], 下载线程太多会影响图片加载.
 //    private final static int MAX_DOWNLOAD_THREAD = RequestParams.MAX_FILE_LOAD_WORKER - 3;
@@ -88,6 +89,21 @@ public final class DownloadManager {
         return instance;
     }
 
+    public String taskRunningUrl(){
+        if (downloadInfoList.size() == 0){
+            return "";
+        }
+        String ret = "";
+        for (DownloadInfo info : downloadInfoList){
+            DownloadState state = info.getState();
+            if (state != DownloadState.FINISHED){
+                ret = info.getUrl();
+                break;
+            }
+        }
+        return ret;
+    }
+
     /**
      * 删除数据库中无效的数据
      */
@@ -102,6 +118,10 @@ public final class DownloadManager {
             e.printStackTrace();
         }
 
+    }
+
+    public void setOnDownloadListener(DownloadExtCallback listener){
+        this.mExtCallback = listener;
     }
 
     public void updateSpeedPriority(long priorityNromal, long priorityLow){
@@ -127,6 +147,21 @@ public final class DownloadManager {
 
     public DownloadInfo getDownloadInfo(int index) {
         return downloadInfoList.get(index);
+    }
+
+    public DownloadInfo getDownloadInfo(String url){
+
+        if (url == null || url.isEmpty()){
+            return null;
+        }
+        DownloadInfo result = null;
+        for (DownloadInfo info : downloadInfoList){
+            if (info.getUrl().equals(url)){
+                result = info;
+                break;
+            }
+        }
+        return result;
     }
 
 
@@ -178,7 +213,7 @@ public final class DownloadManager {
         } else {
             viewHolder.update(downloadInfo);
         }
-        DownloadCallback callback = new DownloadCallback(viewHolder);
+        DownloadCallback callback = new DownloadCallback(viewHolder,mExtCallback);
         callback.setDownloadManager(this);
         callback.switchViewHolder(viewHolder);
         RequestParams params = new RequestParams(url);
@@ -265,4 +300,5 @@ public final class DownloadManager {
         stopDownload(downloadInfo);
         downloadInfoList.remove(downloadInfo);
     }
+
 }

@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.xutils.x;
+import com.kptech.kputils.x;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;

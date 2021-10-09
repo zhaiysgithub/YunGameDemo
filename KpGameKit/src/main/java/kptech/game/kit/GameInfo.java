@@ -16,6 +16,15 @@ public class GameInfo implements Parcelable {
     public static int GAME_AD_SHOW_ON = 1;    //显示广告
     public static int GAME_AD_SHOW_OFF = 2;    //关闭广告
 
+    //静默下载
+    public static String GAME_DOWNLOADTYPE_SILENT = "1";
+    //高速下载
+    public static String GAME_DOWNLOADSPEED_HIGH = "0";
+    //正常下载
+    public static String GAME_DOWNLOADSPEED_NORMAL = "1";
+    //低速下载
+    public static String GAME_DOWNLOADSPEED_LOW = "2";
+
 
 
     public static final Creator<GameInfo> CREATOR = new Creator<GameInfo>() {
@@ -34,6 +43,10 @@ public class GameInfo implements Parcelable {
     public String iconUrl;
     public String coverUrl;
     public String downloadUrl;
+    //0 高速下载 ， 1 普通下载 ， 2 低速下载
+    public String downloadSpeed;
+    //0 通知下载, 1 静默下载
+    public String downloadType;
     //横屏0，竖屏1
     public int gameOrientation = 1;
     public int localResId;
@@ -78,6 +91,8 @@ public class GameInfo implements Parcelable {
         this.iconUrl = var1.readString();
         this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
+        this.downloadSpeed = var1.readString();
+        this.downloadType = var1.readString();
         this.gameOrientation = var1.readInt();
         this.localResId = var1.readInt();
         this.enableDownload = var1.readInt();
@@ -109,6 +124,8 @@ public class GameInfo implements Parcelable {
         var1.writeString(this.iconUrl);
         var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
+        var1.writeString(this.downloadSpeed);
+        var1.writeString(this.downloadType);
         var1.writeInt(this.gameOrientation);
         var1.writeInt(this.localResId);
         var1.writeInt(this.enableDownload);

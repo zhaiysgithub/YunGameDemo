@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 30
-        versionName "1.2.1.30"
+        versionCode 31
+        versionName "1.2.1.31"
     }
 
 
@@ -41,7 +41,9 @@ dependencies {
     //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'org.xutils:xutils:3.3.36'
+//    implementation 'org.xutils:xutils:3.3.36'
+    implementation project(path: ':KpUtils')
+//    implementation files('../kplib/libs/kputils-v1.0.0.jar')
 
     //云通讯SDK
     implementation files('../kplib/libs/KpCKit-v1.0.9.jar')

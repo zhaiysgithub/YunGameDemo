@@ -26,4 +26,14 @@ public interface IGameObservable {
      * 授权回调
      */
     void onAuthListener(boolean isAuthPass);
+
+    /**
+     * 更新下载状态
+     */
+    void updateDownloadStatus(int status,String url);
+
+    /**
+     * 更新下载进度
+     */
+    void updateDownloadProgress(long total, long current, String url);
 }

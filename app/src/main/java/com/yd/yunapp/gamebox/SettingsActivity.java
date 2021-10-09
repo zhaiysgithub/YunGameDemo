@@ -104,6 +104,10 @@ public class SettingsActivity extends AppCompatActivity {
             downloadPreference.setEntries(R.array.game_download_entries);
             downloadPreference.setEntryValues(R.array.game_download_values);
 
+            ListPreference downloadTypePre = findPreference("downloadType");
+            downloadTypePre.setEntries(R.array.game_downloadtype_entries);
+            downloadTypePre.setEntryValues(R.array.game_downloadtype_values);
+
 //            findPreference("env").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 //                @Override
 //                public boolean onPreferenceChange(Preference preference, Object newValue) {

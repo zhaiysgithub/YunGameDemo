@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#333333"
-            android:text="标题"
+            android:text=""
             android:textSize="14sp" />
 
         <ProgressBar
@@ -73,7 +73,7 @@
                 android:textSize="11sp"
                 android:layout_toRightOf="@+id/tv_message"
                 android:textColor="#333333"
-                android:text="bb"/>
+                android:text=""/>
 
             <Button
                 android:id="@+id/bt"

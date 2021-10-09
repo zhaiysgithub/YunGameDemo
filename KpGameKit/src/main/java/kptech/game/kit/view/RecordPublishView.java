@@ -20,7 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 
-import org.xutils.x;
+import com.kptech.kputils.x;
 
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;

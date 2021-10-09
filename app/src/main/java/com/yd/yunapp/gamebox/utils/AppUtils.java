@@ -3,7 +3,12 @@ package com.yd.yunapp.gamebox.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
@@ -54,17 +59,6 @@ public class AppUtils {
      */
     public static String getMd5Value(String openId,String corpKey,String time,String sk){
 
-        /*try {
-            String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + SIGN_SK;
-
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(str.getBytes());
-            return new BigInteger(1, md.digest()).toString(16);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return "";*/
-
         String str = "corpkey=" + corpKey + "ts=" + time + "usersign=" + openId + sk;
         try{
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -84,5 +78,6 @@ public class AppUtils {
         }
         return "";
     }
+
 
 }

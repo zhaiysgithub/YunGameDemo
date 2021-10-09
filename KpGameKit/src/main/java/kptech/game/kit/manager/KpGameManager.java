@@ -68,4 +68,16 @@ public class KpGameManager {
         }
     }
 
+    public void sendDownloadStatus(int status,String url){
+        for (IGameObservable obs : mObservables) {
+            obs.updateDownloadStatus(status,url);
+        }
+    }
+
+    public void sendDownloadProgress(long total, long current, String url){
+        for (IGameObservable obs : mObservables){
+            obs.updateDownloadProgress(total, current, url);
+        }
+    }
+
 }

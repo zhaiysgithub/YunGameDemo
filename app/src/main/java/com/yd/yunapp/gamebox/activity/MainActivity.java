@@ -36,7 +36,6 @@ import com.yd.yunapp.gamebox.model.MainModel;
 import com.yd.yunapp.gamebox.utils.AppUtils;
 import com.yd.yunapp.gamebox.view.CustomerLoadingView;
 
-import org.xutils.x;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -72,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         mPkgText = findViewById(R.id.pkg);
         mGidText = findViewById(R.id.gid);
 
-        x.Ext.init(getApplication());
-        x.Ext.setDebug(BuildConfig.DEBUG); //输出debug日志，开启会影响性能
 
         mainModel = new MainModel(this);
         setTitle(mainModel.getTitleStr());
@@ -184,6 +181,10 @@ public class MainActivity extends AppCompatActivity {
 
 //        params.put(ParamKey.GAME_DOWNLOAD_WID_ENABLE,false);
         params.put(ParamKey.GAME_OPT_LAYER_FRONT,true);
+
+        //下载速度控制
+        game.downloadSpeed = mSp.getString("downloadControl","0");
+        game.downloadType = mSp.getString("downloadType","0");
 
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
         if (useCustomerLoadingView){

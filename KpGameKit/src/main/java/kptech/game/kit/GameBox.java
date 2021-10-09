@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
-import org.xutils.x;
+import com.kptech.kputils.x;
 
 import kptech.game.kit.activity.GamePlay;
 import kptech.game.kit.callback.OnAuthCallback;
@@ -29,10 +29,7 @@ public class GameBox {
     public Application mApplication = null;
     public String appKey = null;
 
-//    public static RefWatcher sRefWatcher;
-
     public static void init(@NonNull Application application, String appKey) {
-//        sRefWatcher = LeakCanary.install(application);
 
         if (box == null) {
             synchronized(GameBoxManager.class) {

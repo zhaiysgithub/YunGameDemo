@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.xutils.x;
+import com.kptech.kputils.x;
 
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
