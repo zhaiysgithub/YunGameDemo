@@ -3,19 +3,15 @@ package kptech.game.kit.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
@@ -25,11 +21,8 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 import org.json.JSONObject;
-
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,12 +42,10 @@ import kptech.game.kit.R;
 import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.callback.IGameObservable;
 import kptech.game.kit.callback.SimpleGameObservable;
-import kptech.game.kit.download.DownloadTask;
 import kptech.game.kit.manager.FastRepeatClickManager;
 import kptech.game.kit.manager.KpGameDownloadManger;
 import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.manager.UserAuthManager;
-import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.receiver.KPGameReceiver;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
@@ -252,6 +243,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
         downloadManger = KpGameDownloadManger.instance();
         downloadManger.setGameInfo(mGameInfo);
+        downloadManger.setShowInstallDialog(false);
         doGameReceiver();
 
         checkAndRequestPermission();
@@ -313,6 +305,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         }
                         MobclickAgent.sendEvent(event);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
 
@@ -354,9 +347,46 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
+    /**
+     * 处理下载逻辑
+     */
     private synchronized void toggleDownload() {
+        //验证权限
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_REQUEST_DOWNLOAD_PERMISSION);
+                return;
+            }
+        }
         if (downloadManger != null){
-            downloadManger.initDownload(GamePlay.this);
+            int state = downloadManger.getDownloadState(mGameInfo.downloadUrl);
+            switch (state){
+                case KpGameDownloadManger.STATE_STARTED:
+                    //暂停
+                    downloadManger.stopDownload(mGameInfo.downloadUrl);
+                    break;
+                case KpGameDownloadManger.STATE_FINISHED:
+                    //执行安装
+                    downloadManger.doInstallApk(GamePlay.this,mGameInfo.pkgName);
+                    break;
+                case KpGameDownloadManger.STATE_STOPPED:
+                    //继续下载
+                    downloadManger.continueDownload(GamePlay.this,mGameInfo);
+                    break;
+                case KpGameDownloadManger.STATE_WAITING:
+                    //初始化下载任务
+                    downloadManger.initDownload(GamePlay.this);
+                    break;
+                case KpGameDownloadManger.STATE_ERROR:
+                    //删除原文件重新下载
+                    downloadManger.delErrorFile(mGameInfo.downloadUrl);
+                    downloadManger.initDownload(GamePlay.this);
+                    break;
+                case KpGameDownloadManger.STATE_NONE:
+                    Logger.error(TAG,"下载出错，任务状态为NONE");
+                    break;
+            }
+
         }
     }
 
@@ -636,6 +666,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             try {
                 getWindow().getDecorView().setSystemUiVisibility(getSystemUi());
             } catch (Exception e) {
+                e.printStackTrace();
             }
 
         } catch (Exception e) {
@@ -651,8 +682,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     /**
      * 显示错识页面
-     *
-     * @param err
      */
     private void showError(String err) {
         try {
@@ -784,6 +813,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 if (GamePlay.this.isFinishing()){
                     return;
                 }
+                //授权或者错误页面点击下载
                 toggleDownload();
             }
         }
@@ -861,10 +891,22 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                                 startCloudPhone();
                             }
                         })
-                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);;
+                        .execute(mAuthUnionAk, mUnionUUID, mCorpID, mAuthUnionTS, mAuthUnionSign);
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        public void updateDownloadStatus(int status, String url) {
+            setDownloadStatus(status,url);
+        }
+
+        @Override
+        public void updateDownloadProgress(long total, long current, String url) {
+            double precent = Double.parseDouble(current + "") / Double.parseDouble(total + "");
+            int progress = (int) (precent * 100);
+            setDownloadProgress(progress, "" + progress + "%",url);
         }
     };
 
@@ -874,6 +916,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             unregisterReceiver(mKpGameReceiver);
             mKpGameReceiver = null;
         }
+        if (mGameInfo != null && mGameInfo.downloadUrl != null){
+            KpGameDownloadManger.instance().destroyService(GamePlay.this,mGameInfo.downloadUrl);
+        }
         KpGameManager.instance().clearObservable();
         super.onDestroy();
 
@@ -881,7 +926,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mDeviceControl != null) {
                 mDeviceControl.stopGame();
             }
-//            GameBoxManager.getInstance().exitQueue();
             gameVoiceSwitchValue = false;
             mRecordView = null;
             mMenuView.dismissMenuDialog();
@@ -893,12 +937,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 cloneEvent.traceId = Event.getBaseTraceId();
                 MobclickAgent.sendEvent(cloneEvent);
             } catch (Exception e) {
+                e.printStackTrace();
             }
-
-//        if (mGameDownloader!=null){
-//            mGameDownloader.removeCallback(this);
-//        }
-
             if (mExitGameList != null) {
                 mExitGameList.clear();
                 mExitGameList = null;
@@ -917,8 +957,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mHardwareManager.release();
                 mHardwareManager = null;
             }
-
-            unbindDownloadService();
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
@@ -1111,7 +1149,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             checkInitCloudPhoneSDK();
         } else if (requestCode == CODE_REQUEST_DOWNLOAD_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startDownlad();
+                toggleDownload();
             }
         }
     }
@@ -1151,8 +1189,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         return "";
     }
 
-    private int mDownloadStatus;
-    private int mDownloadId;
     int resizeWidth = 0;
     int resizeHeight = 0;
 
@@ -1272,6 +1308,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 event.setGamePkg(game.pkgName);
                 MobclickAgent.sendEvent(event);
             } catch (Exception e) {
+                e.printStackTrace();
             }
 
             //关闭换留窗显示
@@ -1298,8 +1335,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     /**
      * 显示挽留窗口
      *
-     * @param activity
-     * @return
      */
     public boolean showExitGameListDialog(Activity activity) {
         if (mExitGameList == null || mExitGameList.size() <= 0) {
@@ -1335,6 +1370,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_EXITBTN, mGameInfo.pkgName);
                         MobclickAgent.sendEvent(event);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -1347,6 +1383,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_CANCELBTN, mGameInfo.pkgName);
                         MobclickAgent.sendEvent(event);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -1361,6 +1398,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                         Event event = Event.getEvent(EventCode.DATA_DIALOG_EXITLIST_DISPLAY, mGameInfo.pkgName);
                         MobclickAgent.sendEvent(event);
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -1386,13 +1424,12 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     /**
      * 获取挽留窗显示次数
-     *
-     * @return
      */
     private int getExitShowNum() {
         //判断次数
         int num = 0;
         try {
+            @SuppressLint("SimpleDateFormat")
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             final String today = sdf.format(new Date());
             String str = ProferencesUtils.getString(this, KEY_EXIT_NUM, null);
@@ -1402,6 +1439,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return num;
     }
@@ -1411,6 +1449,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
      */
     private void addExitShowNum() {
         try {
+            @SuppressLint("SimpleDateFormat")
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             final String today = sdf.format(new Date());
             int num = getExitShowNum();
@@ -1500,6 +1539,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                             event.setExt(ext);
                             MobclickAgent.sendEvent(event);
                         } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -1527,185 +1567,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
-    // --------------------------------- 下载功能 -----------------------------
-    public void startDownlad() {
-        //验证权限
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_REQUEST_DOWNLOAD_PERMISSION);
-                return;
-            }
-        }
-        //发送开始下载的打点数据
-        Event event = Event.getEvent(EventCode.DATA_ACTIVITY_RECEIVE_DOWNLOADSTART, mGameInfo != null ? mGameInfo.pkgName : "");
-        MobclickAgent.sendEvent(event);
-
-        Intent intent = new Intent(this, DownloadTask.class);
-        intent.putExtra("action", "start");
-        intent.putExtra(DownloadTask.EXTRA_GAME, mGameInfo);
-        //android8.0以上通过startForegroundService启动service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
-
-        bindDownloadService(false);
-    }
-
-    private void stopDownload() {
-        Intent intent = new Intent(this, DownloadTask.class);
-        intent.putExtra("action", "stop");
-        intent.putExtra(DownloadTask.EXTRA_GAME, mGameInfo);
-        //android8.0以上通过startForegroundService启动service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
-    }
-
-    private DownloadServiceConnection connection;
-
-    private synchronized void bindDownloadService(boolean check) {
-        if (check && !AppUtils.isServiceRunning(this, DownloadTask.class.getName())) {
+    private void setDownloadStatus(int status, String url) {
+        if (url == null || url.isEmpty()){
             return;
         }
-
-        if (connection != null) {
-            return;
-        }
-
-        //判断是否是当前游戏
-        connection = new DownloadServiceConnection(this);
-        bindService(new Intent(this, DownloadTask.class), connection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void unbindDownloadService() {
-        try {
-            if (connection != null) {
-                unbindService(connection);
-                connection = null;
-            }
-        } catch (Exception e) {
-            Logger.error("GamePlay", e);
-        }
-    }
-
-    private static class DownloadServiceConnection implements ServiceConnection {
-        WeakReference<GamePlay> ref;
-
-        private DownloadServiceConnection(GamePlay activity) {
-            ref = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-
-            DownloadTask.DownloadBinder downloadBinder = (DownloadTask.DownloadBinder) service;
-            DownloadTask mService = downloadBinder.getService();
-            if (mService.isDownloading()) {
-                if (ref != null && ref.get() != null) {
-                    ref.get().updateDownloadStatus(DownloadTask.STATUS_STARTED, mService.getId());
-                }
-            }
-
-            mService.setDataCallback(new DownloadTask.DataCallback() {
-                @Override
-                public void onStart(int id) {
-                    Logger.info("GamePlay", "onStart: " + id);
-                    if (ref != null && ref.get() != null) {
-                        ref.get().updateDownloadStatus(DownloadTask.STATUS_STARTED, id);
-                    }
-                }
-
-                @Override
-                public void onPause(int id) {
-                    if (ref != null && ref.get() != null) {
-                        ref.get().updateDownloadStatus(DownloadTask.STATUS_STOPED, id);
-                    }
-                }
-
-                @Override
-                public void onSuccess(String filePath, int id) {
-                    Logger.info("GamePlay", "onSuccess: " + filePath);
-                    if (ref != null && ref.get() != null) {
-                        ref.get().updateDownloadStatus(DownloadTask.STATUS_FINISHED, id);
-                        ref.get().unbindDownloadService();
-                    }
-                }
-
-                @Override
-                public void onFail(String err, int id) {
-                    Logger.info("GamePlay", "onFail: " + err);
-                    if (ref != null && ref.get() != null) {
-                        ref.get().updateDownloadStatus(DownloadTask.STATUS_ERROR, id);
-                    }
-                }
-
-                @Override
-                public void onProgress(long total, long current, int id) {
-                    double precent = Double.parseDouble(current + "") / Double.parseDouble(total + "");
-                    int progress = (int) (precent * 100);
-                    Logger.info("GamePlay", "onDownloadProgress: " + progress + "%");
-                    if (ref != null && ref.get() != null) {
-                        ref.get().updateDownloadProgress(progress, "" + progress + "%", id);
-                    }
-                }
-
-                @Override
-                public void onStopService() {
-                    Logger.info("GamePlay", "onStopService");
-                    if (ref != null && ref.get() != null) {
-                        ref.get().unbindDownloadService();
-                    }
-                }
-
-                @Override
-                public void onInstallApkError(final String filePath, String msg) {
-                    if (ref == null || ref.get() == null) {
-                        return;
-                    }
-                    //Apk包解析错误，弹出提示窗口
-                    AlertDialog dialog = new AlertDialog.Builder(ref.get())
-                            .setTitle("安装包解析失败，删除后重新下载！")
-                            .setCancelable(true)
-                            .setPositiveButton("重新下载", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    //删除文件
-                                    File file = new File(filePath);
-                                    if (file.exists()) {
-                                        file.delete();
-                                    }
-                                    //重新下载
-                                    ref.get().startDownlad();
-                                }
-                            })
-                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .create();
-                    dialog.show();
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    }
-
-    private void updateDownloadStatus(int status, int gid) {
-        mDownloadStatus = status;
-        mDownloadId = gid;
-
-        if (mGameInfo != null && gid == mGameInfo.gid) {
+        if (mGameInfo != null && url.equals(mGameInfo.downloadUrl)) {
             if (mPlayStatueView != null && mPlayStatueView.isShown()) {
                 mPlayStatueView.setDownloadStatus(status);
             }
@@ -1716,8 +1582,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }
     }
 
-    private void updateDownloadProgress(int progress, String text, int gid) {
-        if (mGameInfo != null && gid == mGameInfo.gid) {
+    private void setDownloadProgress(int progress, String text, String url) {
+        if (url == null || url.isEmpty()){
+            return;
+        }
+        if (mGameInfo != null && url.equals(mGameInfo.downloadUrl)) {
             if (mPlayStatueView != null && mPlayStatueView.isShown()) {
                 mPlayStatueView.setProgress(progress, text);
             }

@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference;
     private DownloadManager downloadManager;
     private boolean cancelled = false;
     private Cancelable cancelable;
-    private DownloadExtCallback mExtCallback;
+    private final DownloadExtCallback mExtCallback;
 
     public DownloadCallback(DownloadViewHolder viewHolder, DownloadExtCallback callback) {
         this.switchViewHolder(viewHolder);

@@ -1,20 +1,13 @@
 package kptech.game.kit.view;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
-
-import java.lang.ref.WeakReference;
 
 import kptech.game.kit.R;
-import kptech.game.kit.activity.GamePlay;
-import kptech.game.kit.download.DownloadTask;
+import kptech.game.kit.manager.KpGameDownloadManger;
 
 public class FloatDownView extends FrameLayout {
 
@@ -48,15 +41,15 @@ public class FloatDownView extends FrameLayout {
 
     public void setDownloadStatus(int status){
         switch (status){
-            case DownloadTask.STATUS_STARTED:
+            case KpGameDownloadManger.STATE_STARTED:
                 mDownBtn.setProgress(0,"下载中...");
                 mDownBtn.setEnableTimeout(false);
                 break;
-            case DownloadTask.STATUS_ERROR:
+            case KpGameDownloadManger.STATE_ERROR:
                 mDownBtn.setProgress(0, "下载出错");
                 mDownBtn.setEnableTimeout(false);
                 break;
-            case DownloadTask.STATUS_FINISHED:
+            case KpGameDownloadManger.STATE_FINISHED:
                 mDownBtn.setProgress(0, "下载完成");
                 mDownBtn.setEnableTimeout(false);
                 break;

@@ -18,6 +18,10 @@ public class GameInfo implements Parcelable {
 
     //静默下载
     public static String GAME_DOWNLOADTYPE_SILENT = "1";
+    //通知下载
+    public static String GAME_DOWNLOADTYPE_SERVICE = "0";
+
+
     //高速下载
     public static String GAME_DOWNLOADSPEED_HIGH = "0";
     //正常下载

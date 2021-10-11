@@ -16,7 +16,7 @@ import com.kptech.kputils.x;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
-import kptech.game.kit.download.DownloadTask;
+import kptech.game.kit.manager.KpGameDownloadManger;
 import kptech.game.kit.utils.StringUtil;
 
 public class PlayErrorDefaultView extends PlayErrorPageView implements View.OnClickListener {
@@ -95,13 +95,13 @@ public class PlayErrorDefaultView extends PlayErrorPageView implements View.OnCl
     @Override
     public void setDownloadStatus(int status){
         switch (status){
-            case DownloadTask.STATUS_STARTED:
+            case KpGameDownloadManger.STATE_STARTED:
                 mErrorDownText.setText("下载中...");
                 break;
-            case DownloadTask.STATUS_ERROR:
+            case KpGameDownloadManger.STATE_ERROR:
                 mErrorDownText.setText("下载出错");
                 break;
-            case DownloadTask.STATUS_FINISHED:
+            case KpGameDownloadManger.STATE_FINISHED:
                 mErrorDownText.setText("下载完成");
                 break;
             default:

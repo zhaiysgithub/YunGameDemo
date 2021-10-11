@@ -9,13 +9,11 @@ import com.kptech.kputils.common.Callback;
 import com.kptech.kputils.common.util.IOUtil;
 import com.kptech.kputils.common.util.LogUtil;
 import com.kptech.kputils.common.util.ProcessLock;
-import com.kptech.kputils.config.DownloadSpeedConfig;
 import com.kptech.kputils.download.DownloadManager;
 import com.kptech.kputils.ex.FileLockedException;
 import com.kptech.kputils.ex.HttpException;
 import com.kptech.kputils.http.RequestParams;
 import com.kptech.kputils.http.request.UriRequest;
-import com.kptech.kputils.x;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -128,8 +126,8 @@ public class FileLoader extends Loader<File> {
             if (progressHandler != null && !progressHandler.updateProgress(total, current, true)) {
                 throw new Callback.CancelledException("download stopped!");
             }
-            //TODO 对文件下载进行速度控制
-            byte[] tmp = new byte[2048];
+//            int bufSize = DownloadManager.getInstance().getBufferSize();
+            byte[] tmp = new byte[2048]; //2kb
             int len;
             //上一次接收数据时间点
             long lastReceiveTime = System.currentTimeMillis();
@@ -151,30 +149,25 @@ public class FileLoader extends Loader<File> {
                         throw new Callback.CancelledException("download stopped!");
                     }
                 }
-
+                //接收这一次数据消耗的时间 (毫秒)
+                long curCostMillis = System.currentTimeMillis() - lastReceiveTime;
                 //控制下载速度
-                DownloadSpeedConfig speedConfig = x.getSpeedConfig();
-                if (speedConfig == DownloadSpeedConfig.SPEED_NORMAL){ //正常中速下载
-                    long speedNormal = DownloadManager.getInstance().getSpeedPriorityNormal();
-                    if (speedNormal > 0){
-                        if (current - lastReceiveData > speedNormal){
-                            dealDownloadSpeed(lastReceiveTime);
+                long speedPerSecond = DownloadManager.getInstance().getSpeedPerSecond();
 
-                            lastReceiveData = current;
-                            lastReceiveTime = System.currentTimeMillis();
+                if (speedPerSecond == DownloadManager.SPEED_PER_SECOND_H
+                        || speedPerSecond == DownloadManager.SPEED_PER_SECOND_M
+                        || speedPerSecond == DownloadManager.SPEED_PER_SECOND_L){ //每秒下载数据量
+
+                    //每接收10kb休眠一次
+                    if (current - lastReceiveData > 10 * 1024){
+                        long calDelayMillis = 1000 / (speedPerSecond / 10240) - curCostMillis;
+                        //延迟的毫秒数值
+                        if (calDelayMillis > 0){
+                            dealDownloadDelay(calDelayMillis);
                         }
                     }
-                }else if(speedConfig == DownloadSpeedConfig.SPEED_LOW){ //执行低速下载
-                    long speedLow = DownloadManager.getInstance().getSpeedPriorityLow();
-                    if (speedLow > 0){
-                        if (current - lastReceiveData > speedLow) {
-                            dealDownloadSpeed(lastReceiveTime);
-
-                            lastReceiveData = current;
-                            lastReceiveTime = System.currentTimeMillis();
-                        }
-                    }
-
+                    lastReceiveData = current;
+                    lastReceiveTime = System.currentTimeMillis();
                 }
 
             }
@@ -195,14 +188,11 @@ public class FileLoader extends Loader<File> {
         return autoRename(targetFile);
     }
 
-    private void dealDownloadSpeed(long lastReceiveTime) {
-        long receive_interval = System.currentTimeMillis() - lastReceiveTime;
-        if (receive_interval < 1000){
-            try{
-                Thread.sleep(1000 - receive_interval);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+    private void dealDownloadDelay(long delayMillis) {
+        try{
+            Thread.sleep(delayMillis);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

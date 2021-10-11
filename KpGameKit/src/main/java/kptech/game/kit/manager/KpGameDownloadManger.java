@@ -14,9 +14,7 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import com.kptech.kputils.download.DownloadExtCallback;
-import com.kptech.kputils.download.DownloadInfo;
 import com.kptech.kputils.download.DownloadManager;
-import com.kptech.kputils.download.DownloadState;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +32,7 @@ import kptech.lib.analytic.MobclickAgent;
 public class KpGameDownloadManger {
 
     private static final String TAG = "KpGameDownloadManger";
+    public static final int STATE_NONE = -1;
     public static final int STATE_WAITING = 0;
     public static final int STATE_STARTED = 1;
     public static final int STATE_FINISHED = 2;
@@ -43,6 +42,7 @@ public class KpGameDownloadManger {
     private final DownloadManager mDownloadInstance;
     private GameInfo mGameInfo;
     private boolean showInstallDialog = false;
+    private Intent downloadIntent;
 
     private KpGameDownloadManger() {
         mDownloadInstance = DownloadManager.getInstance();
@@ -58,6 +58,7 @@ public class KpGameDownloadManger {
 
     public void setGameInfo(GameInfo gameInfo) {
         this.mGameInfo = gameInfo;
+        //TODO 设置下载速度
     }
 
     /**
@@ -80,7 +81,7 @@ public class KpGameDownloadManger {
             return;
         }
         String runningUrl = mDownloadInstance.taskRunningUrl();
-        if (runningUrl != null) {
+        if (runningUrl != null && !runningUrl.isEmpty()) {
             if (runningUrl.equals(mGameInfo.downloadUrl)) {
                 //暂停
                 stopDownload(runningUrl);
@@ -94,22 +95,25 @@ public class KpGameDownloadManger {
         String downloadType = mGameInfo.downloadType;
         if (!GameInfo.GAME_DOWNLOADTYPE_SILENT.equals(downloadType)) {
             //开服务通知栏下载
-            Intent intent = new Intent(context, DownloadService.class);
-            intent.putExtra(DownloadService.EXTRA_GAME, mGameInfo);
+            downloadIntent = new Intent(context, DownloadService.class);
+            downloadIntent.putExtra(DownloadService.EXTRA_GAME, mGameInfo);
             //android8.0以上通过startForegroundService启动service
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent);
+                context.startForegroundService(downloadIntent);
             } else {
-                context.startService(intent);
+                context.startService(downloadIntent);
             }
         } else {
-            //开始静默下载
-            startDownload(context, mGameInfo);
+            //继续静默下载
+            continueDownload(context, mGameInfo);
         }
 
     }
 
-    public void startDownload(Context context, GameInfo info) {
+    /**
+     * 继续执行下载
+     */
+    public void continueDownload(Context context, GameInfo info) {
         if (mDownloadInstance == null || info == null){
             return;
         }
@@ -122,7 +126,11 @@ public class KpGameDownloadManger {
             doInstallApk(context,originPkgName);
             return;
         }
-        mDownloadInstance.startDownload(url, originPkgName, getSavedPath(originPkgName));
+        try{
+            mDownloadInstance.startDownload(url, originPkgName, savedPath);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -139,7 +147,7 @@ public class KpGameDownloadManger {
 
 //        return "/sdcard/download/" + originPkgName + ".apk";
         String dirPath = Environment.getExternalStorageDirectory().getPath();
-        String savedPath = dirPath + originPkgName + ".apk";
+        String savedPath = dirPath + "/" + originPkgName + ".apk";
         Logger.info(TAG, "dirPath=" + dirPath + ";savedPath=" + savedPath);
         return savedPath;
 
@@ -156,20 +164,26 @@ public class KpGameDownloadManger {
     }
 
     /**
+     * 销毁服务
+     */
+    public void destroyService(Context context,String url){
+        stopDownload(url);
+        if (context != null && downloadIntent != null){
+            context.stopService(downloadIntent);
+        }
+    }
+
+    /**
      * 获取当前文件的下载状态
      * @param url 文件下载地址
      */
     public int getDownloadState(String url) {
         if (mDownloadInstance == null || url == null || url.isEmpty()) {
-            return STATE_WAITING;
+            return STATE_NONE;
         }
-        DownloadInfo downloadInfo = mDownloadInstance.getDownloadInfo(url);
-        if (downloadInfo != null) {
-            DownloadState state = downloadInfo.getState();
-            return state.value();
-        } else {
-            return STATE_WAITING;
-        }
+        int downloadState = mDownloadInstance.getDownloadInfoState(url);
+
+        return (downloadState == -1) ? STATE_WAITING : downloadState;
     }
 
     /**
@@ -284,6 +298,12 @@ public class KpGameDownloadManger {
         context.startActivity(intent);
     }
 
+    public void delErrorFile(String downloadUrl){
+        if (mDownloadInstance == null ||downloadUrl == null || downloadUrl.isEmpty()){
+            return;
+        }
+        mDownloadInstance.removeDownload(downloadUrl);
+    }
 
     private final DownloadExtCallback mDownloadListener = new DownloadExtCallback() {
         @Override
@@ -317,8 +337,7 @@ public class KpGameDownloadManger {
             MobclickAgent.sendEvent(event);
 
             KpGameManager.instance().sendDownloadStatus(STATE_FINISHED, url);
-            //关闭下载的服务
-            
+
         }
 
         @Override

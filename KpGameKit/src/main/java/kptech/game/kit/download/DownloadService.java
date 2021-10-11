@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
@@ -53,6 +55,7 @@ public class DownloadService extends Service {
     private String mDownloadUrl;
     private RemoteViewGameIconTask mGameIconTask;
     private KpGameDownloadManger mKpDownloadManager;
+    private NotifyBroadcastReceiver mNotifyReceiver;
 
     @Override
     public void onCreate() {
@@ -107,8 +110,7 @@ public class DownloadService extends Service {
         //通知栏
         startForeground(NOTIFICATION_ID, mNotification);
 
-        //TODO 注册关闭服务的监听
-        mKpDownloadManager.startDownload(this,mGameInfo);
+        mKpDownloadManager.continueDownload(this,mGameInfo);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -146,13 +148,14 @@ public class DownloadService extends Service {
         }
     }
 
+
     private void registerBroadCast() {
-        NotifyBroadcastReceiver receiver = new NotifyBroadcastReceiver(this);
+        mNotifyReceiver = new NotifyBroadcastReceiver(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(BROADCAST_ACTION_CLICK);
         filter.addAction(BROADCAST_ACTION_CLICKCLOSE);
 
-        registerReceiver(receiver, filter);
+        registerReceiver(mNotifyReceiver, filter);
     }
 
     /**
@@ -270,7 +273,7 @@ public class DownloadService extends Service {
 
     private void downloadStart() {
         try{
-            KpGameDownloadManger.instance().startDownload(this,mGameInfo);
+            KpGameDownloadManger.instance().continueDownload(this,mGameInfo);
             if (mRemoteViews != null){
                 mRemoteViews.setTextViewText(R.id.tv_name, mGameInfo.name);
                 mRemoteViews.setTextViewText(R.id.bt, "暂停");
@@ -397,18 +400,61 @@ public class DownloadService extends Service {
 
         @Override
         public void updateDownloadStatus(int status, String url) {
-            super.updateDownloadStatus(status, url);
+            switch (status){
+                case KpGameDownloadManger.STATE_WAITING:
+                    break;
+                case KpGameDownloadManger.STATE_STARTED:
+                    downloadStart();
+                    break;
+                case KpGameDownloadManger.STATE_FINISHED:
+                    showInstallApk();
+                    break;
+                case KpGameDownloadManger.STATE_STOPPED:
+                    downloadPause();
+                    break;
+                case KpGameDownloadManger.STATE_ERROR:
+                    downloadFail();
+                    break;
+            }
         }
 
         @Override
         public void updateDownloadProgress(long total, long current, String url) {
-            super.updateDownloadProgress(total, current, url);
+            if (mDownloadUrl.equals(url)){
+                updateProgress(total, current);
+            }
         }
     };
+
+    //延时刷新通知栏
+    private long lastTime = 0;
+    /**
+     * 下载更改进度
+     * @param total   总大小
+     * @param current 当前已下载大小
+     */
+    private void updateProgress(long total, long current) {
+        Log.i(TAG,"updateProgress: " + current);
+
+        int result = Math.round((float) current / (float) total * 100);
+
+        //降低更新频率
+        long curTime = new Date().getTime();
+        if(curTime - lastTime > 1000 || total == current){
+            mRemoteViews.setTextViewText(R.id.tv_size, StringUtil.formatSize(current) + "/" + StringUtil.formatSize(total));
+            mRemoteViews.setProgressBar(R.id.pb, 100, result, false);
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+            lastTime = curTime;
+            Log.i(TAG,"-----------------updateProgress: " + result);
+        }
+    }
 
     @Override
     public void onDestroy() {
         KpGameManager.instance().removeObservable(mObservable);
+        if (mNotifyReceiver != null){
+            unregisterReceiver(mNotifyReceiver);
+        }
         super.onDestroy();
     }
 }

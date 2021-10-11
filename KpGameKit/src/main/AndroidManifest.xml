@@ -48,10 +48,13 @@
 
         <activity android:name="kptech.game.kit.dialog.WebViewActivity"  />
 
-        <service
+        <!--<service
             android:name="kptech.game.kit.download.DownloadTask"
             android:enabled="true" android:exported="true"
-            />
+            />-->
+        <service android:name="kptech.game.kit.download.DownloadService"
+            android:enabled="true"
+            android:exported="false"/>
         <provider
             android:name=".provider.FileProviderAdapter"
             android:authorities="${applicationId}.fileProvider"

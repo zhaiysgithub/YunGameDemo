@@ -26,11 +26,14 @@ public final class DownloadManager {
         // 注册DownloadState在数据库中的值类型映射
         ColumnConverterFactory.registerColumnConverter(DownloadState.class, new DownloadStateConverter());
     }
-    public static long SPEED_PRIORITY_NORMAL_DEFAULT = 512 * 1024;
-    public static long SPEED_PRIORITY_LOW_DEFAULT = 216 * 1024;
 
-    private long speedPriorityNormal = SPEED_PRIORITY_NORMAL_DEFAULT;
-    private long speedPriorityLow = SPEED_PRIORITY_LOW_DEFAULT;
+    public static long SPEED_PER_SECOND_H = 2 * 1024 * 1024;
+    public static long SPEED_PER_SECOND_M = 1024 * 1024;
+    public static long SPEED_PER_SECOND_L = 512 * 1024;
+
+    //每秒下载的数据量 （大于2M不限速）
+    private long speedDataPerSecond = SPEED_PER_SECOND_H + 1;
+
 
     private static volatile DownloadManager instance;
     private DownloadExtCallback mExtCallback;
@@ -42,6 +45,7 @@ public final class DownloadManager {
     private DbManager db;
     private final Executor executor = new PriorityExecutor(MAX_DOWNLOAD_THREAD, true);
     private final List<DownloadInfo> downloadInfoList = new ArrayList<>();
+    //异常数据处理
     private final List<DownloadInfo> delDownloadInfoList = new ArrayList<>();
     private final ConcurrentHashMap<DownloadInfo, DownloadCallback>
             callbackMap = new ConcurrentHashMap<DownloadInfo, DownloadCallback>(2);
@@ -89,6 +93,23 @@ public final class DownloadManager {
         return instance;
     }
 
+
+    public int getBufferSize() {
+        if (speedDataPerSecond > SPEED_PER_SECOND_H){  //不限速
+            return 2048;  //2kb
+        }else if(speedDataPerSecond > SPEED_PER_SECOND_M){ //限速每秒下载2M
+            return 8192;  //8kb
+        }else if (speedDataPerSecond > SPEED_PER_SECOND_L){ //限速每秒下载1M
+            return 6144;  //6kb
+        }else {
+            return 6144;  // 6kb  限速每秒下载512kb
+        }
+
+    }
+
+    /**
+     * 正在下载的任务
+     */
     public String taskRunningUrl(){
         if (downloadInfoList.size() == 0){
             return "";
@@ -96,7 +117,7 @@ public final class DownloadManager {
         String ret = "";
         for (DownloadInfo info : downloadInfoList){
             DownloadState state = info.getState();
-            if (state != DownloadState.FINISHED){
+            if (state != DownloadState.FINISHED && state != DownloadState.WAITING){
                 ret = info.getUrl();
                 break;
             }
@@ -120,21 +141,22 @@ public final class DownloadManager {
 
     }
 
+    /**
+     * 对外提供的接口
+     */
     public void setOnDownloadListener(DownloadExtCallback listener){
         this.mExtCallback = listener;
     }
 
-    public void updateSpeedPriority(long priorityNromal, long priorityLow){
-        speedPriorityNormal = priorityNromal;
-        speedPriorityLow = priorityLow;
+    /**
+     * 设置限速值 （每秒下载的数据量值）单位 byte
+     */
+    public void updateSpeedPerSecond(long speedPerSecond){
+        this.speedDataPerSecond = speedPerSecond;
     }
 
-    public long getSpeedPriorityNormal(){
-        return speedPriorityNormal;
-    }
-
-    public long getSpeedPriorityLow(){
-        return speedPriorityLow;
+    public long getSpeedPerSecond(){
+        return speedDataPerSecond;
     }
 
     public void updateDownloadInfo(DownloadInfo info) throws DbException {
@@ -149,31 +171,46 @@ public final class DownloadManager {
         return downloadInfoList.get(index);
     }
 
+    /**
+     * 通过下载地址查找对应的下载对象
+     */
     public DownloadInfo getDownloadInfo(String url){
 
-        if (url == null || url.isEmpty()){
+        if (db == null){
             return null;
         }
-        DownloadInfo result = null;
-        for (DownloadInfo info : downloadInfoList){
-            if (info.getUrl().equals(url)){
-                result = info;
-                break;
-            }
-        }
-        return result;
-    }
-
-
-    public synchronized void startDownload(String url, String originPkgName, String savedPath){
-        try {
-            startDownload(url,originPkgName,savedPath,true,true,null);
+        DownloadInfo downloadInfo = null;
+        try{
+            downloadInfo = db.selector(DownloadInfo.class).where("url", "=" , url).findFirst();
         }catch (Exception e){
             e.printStackTrace();
         }
+        return downloadInfo;
     }
 
-    public synchronized void startDownload(String url, String label, String savePath,
+    /**
+     * 通过下载地址获取当前对象的状态信息
+     */
+    public int getDownloadInfoState(String url){
+        DownloadInfo downloadInfo = getDownloadInfo(url);
+        if (downloadInfo != null){
+            return downloadInfo.getState().value();
+        }else {
+            return -1;
+        }
+    }
+
+    /**
+     * 开始下载
+     */
+    public synchronized void startDownload(String url, String originPkgName, String savedPath) throws DbException {
+        startDownload(url,originPkgName,savedPath,true,true,null);
+    }
+
+    /**
+     * 开始下载
+     */
+    private synchronized void startDownload(String url, String label, String savePath,
                                            boolean autoResume, boolean autoRename,
                                            DownloadViewHolder viewHolder) throws DbException {
 
@@ -242,28 +279,9 @@ public final class DownloadManager {
         if (infoUrl == null || infoUrl.isEmpty()){
             return;
         }
-        for(DownloadInfo info : downloadInfoList){
-            String url = info.getUrl();
-            if (infoUrl.equals(url)){
-                stopDownload(info);
-                break;
-            }
-        }
-    }
-
-    /**
-     * 继续下载
-     */
-    public void resumeDownload(String infoUrl){
-        if (infoUrl == null || infoUrl.isEmpty()){
-            return;
-        }
-        for (DownloadInfo info : downloadInfoList){
-            String url = info.getUrl();
-            if (infoUrl.equals(url)){
-                startDownload(info.getUrl(),info.getLabel(),info.getFileSavePath());
-                break;
-            }
+        DownloadInfo info = getDownloadInfo(infoUrl);
+        if (info != null){
+            stopDownload(info);
         }
     }
 
@@ -288,17 +306,24 @@ public final class DownloadManager {
         }
     }
 
-    public void removeDownload(int index) throws DbException {
-        DownloadInfo downloadInfo = downloadInfoList.get(index);
-        db.delete(downloadInfo);
-        stopDownload(downloadInfo);
-        downloadInfoList.remove(index);
-    }
-
     public void removeDownload(DownloadInfo downloadInfo) throws DbException {
         db.delete(downloadInfo);
         stopDownload(downloadInfo);
         downloadInfoList.remove(downloadInfo);
+    }
+
+    /**
+     * 删除下载的数据
+     */
+    public void removeDownload(String downloadUrl){
+        try {
+            DownloadInfo downloadInfo = getDownloadInfo(downloadUrl);
+            if (downloadInfo != null){
+                removeDownload(downloadInfo);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

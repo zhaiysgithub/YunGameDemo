@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.kptech.kputils.common.TaskController;
 import com.kptech.kputils.common.task.TaskControllerImpl;
-import com.kptech.kputils.config.DownloadSpeedConfig;
 import com.kptech.kputils.db.DbManagerImpl;
 import com.kptech.kputils.ex.DbException;
 import com.kptech.kputils.http.HttpManagerImpl;
@@ -27,10 +26,6 @@ public final class x {
 
     public static boolean isDebug() {
         return Ext.debug;
-    }
-
-    public static DownloadSpeedConfig getSpeedConfig(){
-        return Ext.speedConfig;
     }
 
     public static Application app() {
@@ -77,7 +72,6 @@ public final class x {
         private static HttpManager httpManager;
         private static ImageManager imageManager;
         private static ViewInjector viewInjector;
-        private static DownloadSpeedConfig speedConfig = DownloadSpeedConfig.SPEED_HIGH;
 
         private Ext() {
         }
@@ -91,10 +85,6 @@ public final class x {
 
         public static void setDebug(boolean debug) {
             Ext.debug = debug;
-        }
-
-        public static void setSpeedConfig(DownloadSpeedConfig speedConfig){
-            Ext.speedConfig = speedConfig;
         }
 
         public static void setTaskController(TaskController taskController) {
