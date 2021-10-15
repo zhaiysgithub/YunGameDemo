@@ -430,18 +430,12 @@ public class PlaySettingsView extends LinearLayout {
         }
         mHandler.sendEmptyMessageDelayed(1, 5000);
 
-        ViewGroup.LayoutParams layoutParams = getLayoutParams();
         int animRes = 0;
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             animRes = R.anim.kp_view_enter_left;
         }else {
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             animRes = R.anim.kp_view_enter_bottom;
         }
-        setLayoutParams(layoutParams);
 
         Animation animation = AnimationUtils.loadAnimation(getContext(), animRes);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -509,7 +503,7 @@ public class PlaySettingsView extends LinearLayout {
         updateLayout();
     }
 
-    private int curOrientation = 0;
+    private int curOrientation = -1;
     private void updateLayout(){
         if (curOrientation == this.getResources().getConfiguration().orientation){
             return;
