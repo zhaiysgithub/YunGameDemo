@@ -169,7 +169,8 @@ import java.lang.ref.WeakReference;
                 downloadInfo.setState(DownloadState.STOPPED);
                 downloadManager.updateDownloadInfo(downloadInfo);
                 if (mExtCallback != null){
-                    mExtCallback.onCancelled(cex != null ? cex.getMessage() : "" , downloadUrl);
+                    mExtCallback.onPaused(downloadUrl);
+//                    mExtCallback.onCancelled(cex != null ? cex.getMessage() : "" , downloadUrl);
                 }
             } catch (DbException ex) {
                 LogUtil.e(ex.getMessage(), ex);

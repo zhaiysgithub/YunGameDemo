@@ -21,4 +21,10 @@
 
     <color name="common_font_gray">#A6A6A6</color>
     <color name="common_line_gray">#EDEDED</color>
+
+    <color name="kp_color_999">#999</color>
+    <color name="kp_color_333">#333</color>
+    <color name="kp_color_666">#666</color>
+    <color name="kp_color_ddd">#ddd</color>
+    <color name="kp_color_cfff">#ccffffff</color>
 </resources>

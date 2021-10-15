@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 
 import java.io.Closeable;
 import java.io.File;
@@ -111,6 +112,10 @@ public class AppUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static boolean isScreenPortrait(Context context){
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
 }

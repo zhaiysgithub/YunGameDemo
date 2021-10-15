@@ -110,7 +110,7 @@ public class DownloadService extends Service {
         //通知栏
         startForeground(NOTIFICATION_ID, mNotification);
 
-        mKpDownloadManager.continueDownload(this,mGameInfo);
+        mKpDownloadManager.continueDownload(mGameInfo);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -238,13 +238,18 @@ public class DownloadService extends Service {
     }
 
     private void downloadStopService() {
-        KpGameDownloadManger.instance().stopDownload(mDownloadUrl);
+        if (mKpDownloadManager != null){
+            mKpDownloadManager.stopDownload(mDownloadUrl);
+        }
         mNotificationManager.cancel(NOTIFICATION_ID);
         stopSelf();
     }
 
     private void dealNotifyClick() {
-        int state = KpGameDownloadManger.instance().getDownloadState(mDownloadUrl);
+        if (mKpDownloadManager == null){
+            return;
+        }
+        int state = mKpDownloadManager.getDownloadState(mDownloadUrl);
         switch (state) {
             case KpGameDownloadManger.STATE_STARTED: //下载中
                 downloadPause();
@@ -273,7 +278,10 @@ public class DownloadService extends Service {
 
     private void downloadStart() {
         try{
-            KpGameDownloadManger.instance().continueDownload(this,mGameInfo);
+            if (mKpDownloadManager == null){
+                return;
+            }
+            mKpDownloadManager.continueDownload(mGameInfo);
             if (mRemoteViews != null){
                 mRemoteViews.setTextViewText(R.id.tv_name, mGameInfo.name);
                 mRemoteViews.setTextViewText(R.id.bt, "暂停");
@@ -295,12 +303,16 @@ public class DownloadService extends Service {
         if (mNotificationManager != null){
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
         }
-        KpGameDownloadManger.instance().doInstallApk(DownloadService.this,mGameInfo.pkgName);
+        /*if (mKpDownloadManager != null){
+            mKpDownloadManager.doInstallApk(DownloadService.this,mGameInfo.pkgName);
+        }*/
     }
 
     private void downloadPause() {
         try{
-            KpGameDownloadManger.instance().stopDownload(mDownloadUrl);
+            if (mKpDownloadManager != null){
+                mKpDownloadManager.stopDownload(mDownloadUrl);
+            }
             if (mRemoteViews != null){
                 mRemoteViews.setTextViewText(R.id.bt, "下载");
                 mRemoteViews.setTextViewText(R.id.tv_message, "已暂停");

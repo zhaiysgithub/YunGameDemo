@@ -16,6 +16,7 @@ import java.util.List;
 import com.kptach.lib.inter.game.IGameBoxManager;
 import com.kptach.lib.inter.game.IGameCallback;
 
+import kptech.game.kit.callback.IPlayStateListener;
 import kptech.game.kit.manager.KpGameManager;
 import kptech.game.kit.view.LoadingPageView;
 import kptech.game.kit.view.PlayAuthPageView;
@@ -54,6 +55,8 @@ public class GameBoxManager {
     private LoadingPageView mCusLoadingView;
     private PlayErrorPageView mCusErrorView;
     private PlayAuthPageView mCusAuthView;
+    //试玩状态监听
+    private IPlayStateListener mStateListener;
 
     private static boolean mDebug = false;
     public static void setDebug(boolean debug){
@@ -82,10 +85,21 @@ public class GameBoxManager {
     private GameBoxManager(){
     }
 
+
+    /**
+     * 注册游戏试玩状态监听
+     */
+    public void registerPlayStateListener(IPlayStateListener stateListener){
+        this.mStateListener = stateListener;
+    }
+
+    public IPlayStateListener getStateListener() {
+        return mStateListener;
+    }
     /**
      * 设置自定义的loading页面
      */
-    public void setCusLoadingView(LoadingPageView loadingView){
+    public void setLoadingView(LoadingPageView loadingView){
         this.mCusLoadingView = loadingView;
     }
 

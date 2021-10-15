@@ -21,16 +21,6 @@ public class GameInfo implements Parcelable {
     //通知下载
     public static String GAME_DOWNLOADTYPE_SERVICE = "0";
 
-
-    //高速下载
-    public static String GAME_DOWNLOADSPEED_HIGH = "0";
-    //正常下载
-    public static String GAME_DOWNLOADSPEED_NORMAL = "1";
-    //低速下载
-    public static String GAME_DOWNLOADSPEED_LOW = "2";
-
-
-
     public static final Creator<GameInfo> CREATOR = new Creator<GameInfo>() {
         public GameInfo createFromParcel(Parcel var1) {
             return new GameInfo(var1);

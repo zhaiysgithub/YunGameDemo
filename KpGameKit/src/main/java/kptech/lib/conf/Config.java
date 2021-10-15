@@ -2,6 +2,7 @@ package kptech.lib.conf;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import kptech.game.kit.utils.Logger;
@@ -88,6 +89,40 @@ public class Config {
            ProferencesUtils.setBoolean(mContext,"conRecoverCloudData", configRecoverCloudData.equals("1"));
         } catch (Exception e){
             Logger.error(TAG, "配置云存档参数 Error: " + e.getMessage());
+        }
+
+        try {
+            //下载限速的配置信息
+            /*{
+                {"downloadConfig":{"packageName":"aaa,bbb,ccc","speedDataBuf":"2-1-0.5,2-1-0.5,2-1-0.5"}}
+            }*/
+            boolean delDownConfig = false;
+            boolean hasDownConfig = dObj.has("downloadConfig");
+            if(hasDownConfig){
+                String downConfigJsonStr = dObj.optString("downloadConfig");
+                JSONObject downConfigObj = new JSONObject(downConfigJsonStr);
+
+                String pkgStr = downConfigObj.optString("packageName");
+                String dataBufStr = downConfigObj.optString("speedDataBuf");
+
+                String[] pkgArr = pkgStr.split(",");
+                String[] dataBufArr = dataBufStr.split(",");
+
+                if (pkgArr == null || dataBufArr == null || pkgArr.length != dataBufArr.length){//数据配置异常
+                    delDownConfig = true;
+                }else {
+                    ProferencesUtils.setString(mContext,SharedKeys.KEY_GAME_DOWN_PKG, pkgStr);
+                    ProferencesUtils.setString(mContext, SharedKeys.KEY_GAME_DOWN_DATABUF, dataBufStr);
+                }
+            }else {
+                delDownConfig = true;
+            }
+            if (delDownConfig){
+                ProferencesUtils.remove(mContext,SharedKeys.KEY_GAME_DOWN_PKG);
+                ProferencesUtils.remove(mContext,SharedKeys.KEY_GAME_DOWN_DATABUF);
+            }
+        }catch (Exception e){
+            Logger.error(TAG, "游戏下载配置 Error: " + e.getMessage());
         }
     }
 

@@ -18,6 +18,15 @@ public class DensityUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
+
+    /**
+     * px 转 sp
+     */
+    public static int px2sp(Context context, float pxValue) {
+        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+
+    }
     /**
      * 获得屏幕宽度
      *

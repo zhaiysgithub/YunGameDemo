@@ -33,4 +33,7 @@ public class SharedKeys {
     public static final String KEY_ENV_KEY = "kp_kit_env";
 
     public static final String KEY_AUTH_ID = "kp_auth_id";
+
+    public static final String KEY_GAME_DOWN_PKG = "gameDownPkgName";
+    public static final String KEY_GAME_DOWN_DATABUF = "gameDownDataBuf";
 }

@@ -1,5 +1,7 @@
 package com.kptech.kputils.download;
 
+import android.util.Log;
+
 import com.kptech.kputils.DbManager;
 import com.kptech.kputils.common.Callback;
 import com.kptech.kputils.common.task.PriorityExecutor;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.logging.Logger;
 
 /**
  * Author: wyouflf
@@ -27,12 +30,15 @@ public final class DownloadManager {
         ColumnConverterFactory.registerColumnConverter(DownloadState.class, new DownloadStateConverter());
     }
 
+    //限速 - 高速下载 2M/s
     public static long SPEED_PER_SECOND_H = 2 * 1024 * 1024;
+    //限速 - 中速下载 1M/s
     public static long SPEED_PER_SECOND_M = 1024 * 1024;
+    //限速 - 低速下载 512/s
     public static long SPEED_PER_SECOND_L = 512 * 1024;
 
     //每秒下载的数据量 （大于2M不限速）
-    private long speedDataPerSecond = SPEED_PER_SECOND_H + 1;
+    private long speedDataPerSecond = SPEED_PER_SECOND_H + 1024;
 
 
     private static volatile DownloadManager instance;
@@ -48,13 +54,14 @@ public final class DownloadManager {
     //异常数据处理
     private final List<DownloadInfo> delDownloadInfoList = new ArrayList<>();
     private final ConcurrentHashMap<DownloadInfo, DownloadCallback>
-            callbackMap = new ConcurrentHashMap<DownloadInfo, DownloadCallback>(2);
+            callbackMap = new ConcurrentHashMap<>(2);
 
     private DownloadManager() {
         DbManager.DaoConfig daoConfig = new DbManager.DaoConfig()
                 .setDbName("download")
                 .setDbVersion(1);
         try {
+            delDownloadInfoList.clear();
             db = x.getDb(daoConfig);
             List<DownloadInfo> infoList = db.selector(DownloadInfo.class).findAll();
             if (infoList != null && infoList.size() > 0) {
@@ -64,11 +71,18 @@ public final class DownloadManager {
                         delDownloadInfoList.add(info);
                         continue;
                     }
-                    File file = new File(fileSavePath);
-                    if (!file.exists()){
+                    File file = new File(fileSavePath);  //源文件错误
+                    if (!file.exists() || file.length() < 2048){
                         delDownloadInfoList.add(info);
                         continue;
                     }
+
+                    File tmpFile = new File(fileSavePath + ".tmp");  //临时文件错误
+                    if (!tmpFile.exists() || tmpFile.length() < 2048){
+                        delDownloadInfoList.add(info);
+                        continue;
+                    }
+
                     if (info.getState().value() < DownloadState.FINISHED.value()) {
                         info.setState(DownloadState.STOPPED);
                     }
@@ -94,35 +108,16 @@ public final class DownloadManager {
     }
 
 
-    public int getBufferSize() {
-        if (speedDataPerSecond > SPEED_PER_SECOND_H){  //不限速
-            return 2048;  //2kb
-        }else if(speedDataPerSecond > SPEED_PER_SECOND_M){ //限速每秒下载2M
-            return 8192;  //8kb
-        }else if (speedDataPerSecond > SPEED_PER_SECOND_L){ //限速每秒下载1M
-            return 6144;  //6kb
-        }else {
-            return 6144;  // 6kb  限速每秒下载512kb
+    public long getSleepReceiveBuffer(){
+        if (speedDataPerSecond > SPEED_PER_SECOND_H){//超速下载，不限制
+            return -1;
+        }else if(speedDataPerSecond > (SPEED_PER_SECOND_M - 1024)){ //高速下载 每接收48kb计算一次时间
+            return 48 * 1024;
+        }else if(speedDataPerSecond > (SPEED_PER_SECOND_L - 1024)){ //中速下载  每接收24kb计算一次时间
+            return 24 * 1024;
+        }else { //每接收2kb计算一次时间
+            return 2048;
         }
-
-    }
-
-    /**
-     * 正在下载的任务
-     */
-    public String taskRunningUrl(){
-        if (downloadInfoList.size() == 0){
-            return "";
-        }
-        String ret = "";
-        for (DownloadInfo info : downloadInfoList){
-            DownloadState state = info.getState();
-            if (state != DownloadState.FINISHED && state != DownloadState.WAITING){
-                ret = info.getUrl();
-                break;
-            }
-        }
-        return ret;
     }
 
     /**
@@ -151,8 +146,13 @@ public final class DownloadManager {
     /**
      * 设置限速值 （每秒下载的数据量值）单位 byte
      */
-    public void updateSpeedPerSecond(long speedPerSecond){
-        this.speedDataPerSecond = speedPerSecond;
+    public void updateSpeedPerSecond(boolean isSpeedLimit, long PerSecondBuf){
+        if (isSpeedLimit){
+            this.speedDataPerSecond = PerSecondBuf;
+        }else {
+            this.speedDataPerSecond = (SPEED_PER_SECOND_H + 1024);
+        }
+
     }
 
     public long getSpeedPerSecond(){
@@ -167,9 +167,6 @@ public final class DownloadManager {
         return downloadInfoList.size();
     }
 
-    public DownloadInfo getDownloadInfo(int index) {
-        return downloadInfoList.get(index);
-    }
 
     /**
      * 通过下载地址查找对应的下载对象
@@ -197,6 +194,18 @@ public final class DownloadManager {
             return downloadInfo.getState().value();
         }else {
             return -1;
+        }
+    }
+
+    /**
+     * 获取当前进度
+     */
+    public int getDownloadProgress(String url){
+        DownloadInfo downloadInfo = getDownloadInfo(url);
+        if (downloadInfo != null){
+            return downloadInfo.getProgress();
+        }else {
+            return 0;
         }
     }
 
@@ -285,24 +294,10 @@ public final class DownloadManager {
         }
     }
 
-    public void stopDownload(int index) {
-        DownloadInfo downloadInfo = downloadInfoList.get(index);
-        stopDownload(downloadInfo);
-    }
-
     public void stopDownload(DownloadInfo downloadInfo) {
         Callback.Cancelable cancelable = callbackMap.get(downloadInfo);
         if (cancelable != null) {
             cancelable.cancel();
-        }
-    }
-
-    public void stopAllDownload() {
-        for (DownloadInfo downloadInfo : downloadInfoList) {
-            Callback.Cancelable cancelable = callbackMap.get(downloadInfo);
-            if (cancelable != null) {
-                cancelable.cancel();
-            }
         }
     }
 

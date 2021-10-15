@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="376dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/kp_dialog_playdown_bg"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="边玩边下"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/ivDel"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@mipmap/kp_ic_dialog_close"
+        tools:ignore="ContentDescription"
+        />
+
+    <RelativeLayout
+        android:id="@+id/layoutProgress"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/tvTitle">
+
+        <kptech.game.kit.view.CircularProgressView
+            android:id="@+id/circularProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            app:backColor="#666"
+            app:backWidth="3dp"
+            app:progColor="#FF8400"
+            app:progWidth="3dp"
+            app:progress="0" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/ivDownStatusIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/kp_ic_dialog_download"
+                tools:ignore="ContentDescription" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDownload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="下载中"
+                    android:textStyle="bold"
+                    android:textColor="#FFF"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tvSlash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/"
+                    android:textColor="#939393"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    tools:ignore="HardcodedText,SmallSp" />
+
+                <TextView
+                    android:id="@+id/tvStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂停"
+                    android:textSize="10sp"
+                    android:textColor="#939393"
+                    android:visibility="gone"
+                    tools:ignore="HardcodedText,SmallSp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProgress"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFF"
+        android:textSize="14sp"
+        android:layout_marginBottom="29dp"
+        android:layout_centerHorizontal="true"
+        tools:ignore="RelativeOverlap"
+        tools:text="正在高速下载，已下载25%…" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="32dp"
+        android:layout_below="@id/tvDesc"
+        android:orientation="horizontal"
+        android:layout_marginEnd="28dp">
+
+        <LinearLayout
+            android:id="@+id/layoutDownloadLimit"
+            android:layout_width="154dp"
+            android:layout_height="44dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/kp_download_limit_enable"
+            tools:ignore="UselessParent">
+
+            <TextView
+                android:id="@+id/tvTextLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="慢慢下载"
+                android:textSize="14sp"
+                android:textColor="#333"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvTextLimitDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="试玩体验优先"
+                android:textSize="11sp"
+                android:textColor="#666"
+                tools:ignore="HardcodedText,SmallSp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layoutDownloadFull"
+            android:layout_width="154dp"
+            android:layout_height="44dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/kp_download_full_enable"
+            tools:ignore="UselessParent">
+
+            <TextView
+                android:id="@+id/tvTextFull"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全速下载"
+                android:textSize="14sp"
+                android:textColor="#FFF"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvTextFullDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="快速体验完整版"
+                android:textSize="11sp"
+                android:textColor="#FFF"
+                tools:ignore="HardcodedText,SmallSp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

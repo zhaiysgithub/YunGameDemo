@@ -29,6 +29,7 @@ import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBoxManager;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
+import kptech.game.kit.utils.AppUtils;
 import kptech.game.kit.utils.DensityUtil;
 import kptech.game.kit.utils.StringUtil;
 import kptech.game.kit.env.Env;
@@ -178,9 +179,11 @@ public class PlaySettingsView extends LinearLayout {
         }
     }
 
+
     @SuppressLint("SetTextI18n")
     private void initView() {
         View view = inflate(getContext(), R.layout.kp_view_play_settings, this);
+
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -427,12 +430,18 @@ public class PlaySettingsView extends LinearLayout {
         }
         mHandler.sendEmptyMessageDelayed(1, 5000);
 
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
         int animRes = 0;
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             animRes = R.anim.kp_view_enter_left;
         }else {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             animRes = R.anim.kp_view_enter_bottom;
         }
+        setLayoutParams(layoutParams);
 
         Animation animation = AnimationUtils.loadAnimation(getContext(), animRes);
         animation.setAnimationListener(new Animation.AnimationListener() {

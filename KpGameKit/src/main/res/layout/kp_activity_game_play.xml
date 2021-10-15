@@ -26,8 +26,8 @@
 
     <kptech.game.kit.view.FloatMenuView
         android:id="@+id/float_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone" />
 
     <kptech.game.kit.view.FloatDownView

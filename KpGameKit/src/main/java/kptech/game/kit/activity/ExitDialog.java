@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import kptech.game.kit.R;
-import kptech.game.kit.utils.VersionUtils;
 
 public class ExitDialog extends Dialog {
 
@@ -47,15 +46,10 @@ public class ExitDialog extends Dialog {
         });
 
         TextView dialogTitle = findViewById(R.id.title);
-        boolean xiaoYuChannel = VersionUtils.isXiaoYuChannel();
-        if (xiaoYuChannel){
-            dialogTitle.setText(dialogMsgXiaoYu);
-        }else {
-            dialogTitle.setText(dialogMsgDefault);
-        }
+        dialogTitle.setText(dialogMsgDefault);
 
         TextView tv = findViewById(R.id.text);
-        if (mText != null && !mText.isEmpty() && !xiaoYuChannel){
+        if (mText != null && !mText.isEmpty()){
             tv.setVisibility(View.VISIBLE);
             tv.setText(mText);
         }else {

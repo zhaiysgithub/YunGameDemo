@@ -31,9 +31,14 @@ public class PlayStatusLayout extends FrameLayout {
     public static final int STATUS_LOADING_AD_PAUSE = 105;
     public static final int STATUS_LOADING_RECOVER_GAMEINFO = 106;
     public static final int STATUS_LOADING_START_GAME = 107;
-    public static final int STATUS_LOADING_FINISHED = 108;
+    public static final int STATUS_LOADING_ERROR_STOP = 108;
+    //游戏中错误
+    public static final int STATUS_GAME_RUNNING_ERROR = 109;
+    public static final int STATUS_LOADING_FINISHED = 110;
 
-    private LoadingPageView mLoadingView;
+//    private LoadingPageView mLoadingView;
+    //微包定制的loading页面
+    private GameMiniLoadingView mLoadingView;
     private PlayErrorPageView mErrorView;
     private PlayAuthPageView mAuthView;
 
@@ -92,10 +97,27 @@ public class PlayStatusLayout extends FrameLayout {
         mAuthView.onFinishInflate();
         mErrorView.onFinishInflate();
         mLoadingView.onFinishInflate();
+
+        mLoadingView.setOnMiniLoadListener(mMiniLoadListener);
     }
 
-//    private String mUnionUUID;
-//    private String mCorpID;
+    private final GameMiniLoadingView.OnMiniLoadListener mMiniLoadListener = new GameMiniLoadingView.OnMiniLoadListener() {
+        @Override
+        public void onDownloadClick(String msg) {
+            //显示下载页面开始执行下载
+            setStatus(STATUS_ERROR, msg);
+
+        }
+
+        @Override
+        public void onGameRetryClick() {
+            if (mLoadingView != null){
+                mLoadingView.updateMiniDialogView(false, "",true);
+            }
+            GameBoxManager.getInstance().setOnReloadClick();
+        }
+    };
+
     /**
      * 显示授权界面
      */
@@ -107,8 +129,6 @@ public class PlayStatusLayout extends FrameLayout {
                 return;
             }
 
-//            mUnionUUID = unionUUID;
-//            mCorpID = corpId;
 
             mAuthView.setGameInfo(mGameInfo);
             mAuthView.setAnimation(AnimationUtil.moveToViewLocation());
@@ -160,6 +180,12 @@ public class PlayStatusLayout extends FrameLayout {
                     mLoadingView.setPausePro(true);
                 }else if (status == STATUS_LOADING_START_GAME){
                     mLoadingView.setPausePro(false);
+                }else if(status == STATUS_LOADING_ERROR_STOP){
+                    mLoadingView.setPausePro(true);
+                    mLoadingView.updateMiniDialogView(true, msg,true);
+                }else if(status == STATUS_GAME_RUNNING_ERROR){
+                    mLoadingView.setPausePro(true);
+                    mLoadingView.updateMiniDialogView(true, msg,false);
                 }
 
                 mLoadingView.updateLoadingText(msg);
@@ -211,12 +237,13 @@ public class PlayStatusLayout extends FrameLayout {
         public PlayStatusLayout create(){
 
             if (loadingView == null){
-                final LoadingPageView customerLoadignView = GameBoxManager.getInstance().getCustomerLoadingView();
+                /*final LoadingPageView customerLoadignView = GameBoxManager.getInstance().getCustomerLoadingView();
                 if (customerLoadignView != null){
                     loadingView = customerLoadignView;
                 }else{
                     loadingView = new LoadingDefaultView(context);
-                }
+                }*/
+                loadingView = new GameMiniLoadingView(context);
             }
             if (errorView == null) {
                 final PlayErrorPageView cusErrorView = GameBoxManager.getInstance().getCusErrorView();

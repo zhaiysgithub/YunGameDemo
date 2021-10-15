@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private String userSignValue;
 
 
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +75,13 @@ public class MainActivity extends AppCompatActivity {
         setTitle(mainModel.getTitleStr());
 
         mSp = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey",false);
-        if (enableInputCorpKey){
-            APP_ID = mSp.getString("editCorpKey","");
-        }else {
+        boolean enableInputCorpKey = mSp.getBoolean("inputCorpKey", false);
+        if (enableInputCorpKey) {
+            APP_ID = mSp.getString("editCorpKey", "");
+        } else {
             APP_ID = mSp.getString("corpKey", null);
         }
-//        APP_ID = "2VjOzOW8ijt2D8Z-e24d7242f0e661a9";
+//        APP_ID = "2VsKgeUeR1V1KoX-ac6cf0dab3bfff5c";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -174,21 +173,22 @@ public class MainActivity extends AppCompatActivity {
         String skSign = AppUtils.SIGN_SK;
 
         String timeStr = String.valueOf(System.currentTimeMillis());
-        params.put(ParamKey.GAME_AUTH_UNION_AK,akSign);
-        params.put(ParamKey.GAME_AUTH_UNION_TS,timeStr);
-        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr,skSign);
-        params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
+        params.put(ParamKey.GAME_AUTH_UNION_AK, akSign);
+        params.put(ParamKey.GAME_AUTH_UNION_TS, timeStr);
+        String signValue = AppUtils.getMd5Value(userSignValue, APP_ID, timeStr, skSign);
+        params.put(ParamKey.GAME_AUTH_UNION_SIGN, signValue);
 
 //        params.put(ParamKey.GAME_DOWNLOAD_WID_ENABLE,false);
-        params.put(ParamKey.GAME_OPT_LAYER_FRONT,true);
+        params.put(ParamKey.GAME_OPT_LAYER_FRONT, false);
 
         //下载速度控制
-        game.downloadSpeed = mSp.getString("downloadControl","0");
-        game.downloadType = mSp.getString("downloadType","0");
+        game.downloadSpeed = mSp.getString("downloadControl", "0");
+        game.downloadType = mSp.getString("downloadType", "1");
+        game.gameOrientation = 0;
 
-        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
-        if (useCustomerLoadingView){
-            GameBoxManager.getInstance().setCusLoadingView(new CustomerLoadingView(this));
+        boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign", false);
+        if (useCustomerLoadingView) {
+            GameBoxManager.getInstance().setLoadingView(new CustomerLoadingView(this));
         }
         boolean enableGidLogin = mSp.getBoolean("enableGidLogin", false);
         if (enableGidLogin) {
@@ -324,15 +324,15 @@ public class MainActivity extends AppCompatActivity {
         //"KP_Cloud_Game_Play_StartActivity"
         Intent intent = new Intent();
         intent.setAction("KP_Cloud_Game_Play_StartActivity");
-        intent.putExtra("className","com.yd.yunapp.gamebox.activity.TransDialogActivity");
+        intent.putExtra("className", "com.yd.yunapp.gamebox.activity.TransDialogActivity");
 
         Bundle bundle = new Bundle();
-        bundle.putString("abc","123");
+        bundle.putString("abc", "123");
         TestXiaoYuBean xiaoYuBean = new TestXiaoYuBean();
         xiaoYuBean.code = "000";
         xiaoYuBean.msg = "xiaoyu";
-        bundle.putSerializable("xiaoyuBundle",xiaoYuBean);
-        intent.putExtra("bundleData",bundle);
+        bundle.putSerializable("xiaoyuBundle", xiaoYuBean);
+        intent.putExtra("bundleData", bundle);
 
         sendBroadcast(intent);
     }

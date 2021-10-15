@@ -78,6 +78,12 @@ public class APIConstants {
     public static final int PAD_KEY_HOME = 1;//GamePadKey.GAMEPAD_HOME.getKey();
     public static final int PAD_KEY_BACK = 2;//GamePadKey.GAMEPAD_BACK.getKey();
 
+    public static final int CODE_SDK_INIT_SUCCESS = 111;
+    public static final int CODE_SDK_INIT_FAIL = 112;
+    public static final int CODE_GAME_GET_INFO = 113;
+    public static final int CODE_GAME_START_AUTH = 114;
+    public static final int CODE_DEVICE_START_CONN = 115;
+
     public APIConstants() {
     }
 

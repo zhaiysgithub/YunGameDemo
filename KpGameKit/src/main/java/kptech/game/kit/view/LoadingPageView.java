@@ -90,6 +90,7 @@ public abstract class LoadingPageView extends FrameLayout {
                 mHandler.sendMessageDelayed(Message.obtain(mHandler, 0, (int)(mPro + 50)), 3000);
             }else {
                 //计算延时时间
+
                 mHandler.sendEmptyMessageDelayed(0, 100);
             }
 
@@ -149,7 +150,7 @@ public abstract class LoadingPageView extends FrameLayout {
 //                pro = (int) (pbMax * 0.70);
 //                break;
             case PlayStatusLayout.STATUS_LOADING_FINISHED:
-                pro = (int) (pbMax * 0.98);
+                pro = (int) (pbMax * 0.99);
                 break;
         }
         mPro = pro;
@@ -182,7 +183,7 @@ public abstract class LoadingPageView extends FrameLayout {
             if (what == 0) {
                 if (msg.obj != null) {
                     int obj = (int) msg.obj;
-                    if (obj > sPro) {
+                    if (obj > sPro || obj == 0) {
                         sPro = obj;
                     }
                 } else {

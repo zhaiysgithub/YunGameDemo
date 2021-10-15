@@ -35,23 +35,27 @@ public class FloatDownView extends FrameLayout {
 
     public void setProgress(int num, String text){
         if (mDownBtn!=null){
-            mDownBtn.setProgress(num, text);
+            mDownBtn.setProgress(num, "下载" + text);
         }
     }
 
     public void setDownloadStatus(int status){
         switch (status){
             case KpGameDownloadManger.STATE_STARTED:
-                mDownBtn.setProgress(0,"下载中...");
-                mDownBtn.setEnableTimeout(false);
+//                mDownBtn.setProgress(0,"下载中...");
+//                mDownBtn.setEnableTimeout(false);
                 break;
             case KpGameDownloadManger.STATE_ERROR:
                 mDownBtn.setProgress(0, "下载出错");
                 mDownBtn.setEnableTimeout(false);
                 break;
             case KpGameDownloadManger.STATE_FINISHED:
-                mDownBtn.setProgress(0, "下载完成");
+                mDownBtn.setProgress(0, "立即安装");
                 mDownBtn.setEnableTimeout(false);
+                break;
+            case KpGameDownloadManger.STATE_STOPPED:
+//                mDownBtn.setProgress(0, "已暂停");
+//                mDownBtn.setEnableTimeout(false);
                 break;
             default:
                 mDownBtn.setProgress(0, "边玩边下");

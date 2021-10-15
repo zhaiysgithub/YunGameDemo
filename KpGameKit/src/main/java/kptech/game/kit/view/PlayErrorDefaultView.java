@@ -54,6 +54,8 @@ public class PlayErrorDefaultView extends PlayErrorPageView implements View.OnCl
 
     @Override
     public void setErrorText(String err) {
+        //开始下载
+        GameBoxManager.getInstance().setOnDownloadClick();
         mErrorText.setText(err);
         try{
             if (this.mGameInfo!=null){

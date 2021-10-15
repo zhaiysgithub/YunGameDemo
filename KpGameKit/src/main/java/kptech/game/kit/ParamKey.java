@@ -20,4 +20,5 @@ public class ParamKey {
     public static final String GAME_OPT_LAYER_FRONT = "gameOptLayerFront";// 显示蒙层在视频上面
     public static final String GAME_DOWNLOAD_WID_ENABLE = "gameDownloadWidgetEnable";// 下载按钮是否显示
 
+
 }

@@ -68,7 +68,7 @@ public class FileLoader extends Loader<File> {
     }
 
     protected File load(final InputStream in) throws Throwable {
-        File targetFile = null;
+        File targetFile;
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
@@ -111,7 +111,7 @@ public class FileLoader extends Loader<File> {
 
             // 开始下载
             long current = 0;
-            FileOutputStream fileOutputStream = null;
+            FileOutputStream fileOutputStream;
             if (isAutoResume) {
                 current = targetFileLen;
                 fileOutputStream = new FileOutputStream(targetFile, true);
@@ -126,7 +126,6 @@ public class FileLoader extends Loader<File> {
             if (progressHandler != null && !progressHandler.updateProgress(total, current, true)) {
                 throw new Callback.CancelledException("download stopped!");
             }
-//            int bufSize = DownloadManager.getInstance().getBufferSize();
             byte[] tmp = new byte[2048]; //2kb
             int len;
             //上一次接收数据时间点
@@ -149,27 +148,33 @@ public class FileLoader extends Loader<File> {
                         throw new Callback.CancelledException("download stopped!");
                     }
                 }
-                //接收这一次数据消耗的时间 (毫秒)
-                long curCostMillis = System.currentTimeMillis() - lastReceiveTime;
-                //控制下载速度
+                //控制下载速度 （动态）
                 long speedPerSecond = DownloadManager.getInstance().getSpeedPerSecond();
+                //接收数据量控制 (动态)
+                long sleepReceiveBuffer = DownloadManager.getInstance().getSleepReceiveBuffer();
 
-                if (speedPerSecond == DownloadManager.SPEED_PER_SECOND_H
-                        || speedPerSecond == DownloadManager.SPEED_PER_SECOND_M
-                        || speedPerSecond == DownloadManager.SPEED_PER_SECOND_L){ //每秒下载数据量
+                if (speedPerSecond <= DownloadManager.SPEED_PER_SECOND_H && sleepReceiveBuffer > 0){ //限速处理
+                    //接收这一次数据消耗的时间 (毫秒)
+                    long curCostMillis = System.currentTimeMillis() - lastReceiveTime;
+                    //计算休眠时间
+                    if (current - lastReceiveData > sleepReceiveBuffer){
 
-                    //每接收10kb休眠一次
-                    if (current - lastReceiveData > 10 * 1024){
-                        long calDelayMillis = 1000 / (speedPerSecond / 10240) - curCostMillis;
+                        long divMil = speedPerSecond / sleepReceiveBuffer;
+                        if (divMil < 1){
+                            divMil = 1;
+                        }
+                        long calDelayMillis = 1000 / divMil - curCostMillis;
                         //延迟的毫秒数值
-                        if (calDelayMillis > 0){
+                        if (calDelayMillis > 0 && calDelayMillis < 1000){
                             dealDownloadDelay(calDelayMillis);
                         }
-                    }
-                    lastReceiveData = current;
-                    lastReceiveTime = System.currentTimeMillis();
-                }
 
+                        lastReceiveData = current;
+                        lastReceiveTime = System.currentTimeMillis();
+                    }
+
+
+                }
             }
             bos.flush();
             // 处理[下载逻辑2.a](见文件头doc)
@@ -190,6 +195,7 @@ public class FileLoader extends Loader<File> {
 
     private void dealDownloadDelay(long delayMillis) {
         try{
+            LogUtil.d("dealDownloadDelay:" + delayMillis);
             Thread.sleep(delayMillis);
         }catch (Exception e){
             e.printStackTrace();
@@ -199,7 +205,7 @@ public class FileLoader extends Loader<File> {
     @Override
     public File load(final UriRequest request) throws Throwable {
         ProcessLock processLock = null;
-        File result = null;
+        File result;
         try {
 
             // 处理[下载逻辑1](见文件头doc)
