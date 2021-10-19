@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    >
+
+    <TextView
+        android:id="@+id/tvTips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="检测到当前处于WiFi网络环境，为您自动下载完整游戏内容！"
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:background="@drawable/kp_shape_net_tips"
+        android:textSize="13sp"
+        android:layout_gravity="center"
+        android:paddingStart="20dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="15dp"
+        tools:ignore="HardcodedText" />
+
+</FrameLayout>

@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import java.lang.ref.WeakReference;
 
 import kptech.game.kit.R;
+import kptech.game.kit.manager.KpGameDownloadManger;
 import kptech.game.kit.utils.DensityUtil;
 
 
@@ -38,6 +39,8 @@ public class FloatingDownBtn extends FrameLayout {
     private ImageView mSmallImg;
 
     private OnClickListener mListener;
+    //下载状态
+    private int mDownStatus;
 
     public FloatingDownBtn(Context context) {
         super(context);
@@ -91,6 +94,9 @@ public class FloatingDownBtn extends FrameLayout {
             lp.width = DensityUtil.dip2px(getContext(),90);
             lp.height = DensityUtil.dip2px(getContext(),30);
         }else {
+            if (mDownStatus <= KpGameDownloadManger.STATE_STARTED){
+                return;
+            }
             stopTimeout();
 
             //显示小按钮
@@ -136,6 +142,10 @@ public class FloatingDownBtn extends FrameLayout {
     public void setProgress(int num, String text){
         mProgressBar.setProgress(num);
         mTextView.setText(text);
+    }
+
+    public void setDownloadStatus(int status){
+        this.mDownStatus = status;
     }
 
     private boolean mEnableTimeout = true;

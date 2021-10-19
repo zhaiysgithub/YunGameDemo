@@ -110,7 +110,7 @@ public class DownloadService extends Service {
         //通知栏
         startForeground(NOTIFICATION_ID, mNotification);
 
-        mKpDownloadManager.continueDownload(mGameInfo);
+        mKpDownloadManager.continueDownload(this,mGameInfo);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -281,7 +281,7 @@ public class DownloadService extends Service {
             if (mKpDownloadManager == null){
                 return;
             }
-            mKpDownloadManager.continueDownload(mGameInfo);
+            mKpDownloadManager.continueDownload(DownloadService.this,mGameInfo);
             if (mRemoteViews != null){
                 mRemoteViews.setTextViewText(R.id.tv_name, mGameInfo.name);
                 mRemoteViews.setTextViewText(R.id.bt, "暂停");

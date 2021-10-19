@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             APP_ID = mSp.getString("corpKey", null);
         }
-//        APP_ID = "2VsKgeUeR1V1KoX-ac6cf0dab3bfff5c";
+        APP_ID = "2VoWpqWYorv48fw-36f606eb64fd27fc";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         game.downloadSpeed = mSp.getString("downloadControl", "0");
         game.downloadType = mSp.getString("downloadType", "1");
         game.gameOrientation = 0;
+        game.downloadType = "1"; //静默下载
 
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign", false);
         if (useCustomerLoadingView) {

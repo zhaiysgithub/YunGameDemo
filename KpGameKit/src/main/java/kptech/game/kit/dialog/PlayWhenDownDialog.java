@@ -48,16 +48,16 @@ public class PlayWhenDownDialog extends Dialog {
     private RelativeLayout mLayoutProgress;
     private CircularProgressView mProgressView;
     private TextView mTvDownload;
-    private TextView mTvStop;
+//    private TextView mTvStop;
     private TextView mTvDesc;
-    private TextView mTvSlash;
+//    private TextView mTvSlash;
     private TextView mTvLimit, mTvLimitDesc, mTvFull, mTvFullDesc;
     private ImageView mIvDownStatusIcon;
     private LinearLayout mLayoutDownLimit;
     private LinearLayout mLayoutDownFull;
     private IPlayWhenDownListener mListener;
     private KpGameDownloadManger mDownloadManager;
-    private int px28, px24, px20;
+    private int px26, px28, px20;
     private int color_999, color_333, color_666, color_ddd, color_cfff;
     private Drawable mLimitEnableSelected, mDisableDrawable, mFullEnableSelected;
 
@@ -129,13 +129,29 @@ public class PlayWhenDownDialog extends Dialog {
         }
         if (mDownloadManager != null) {
             boolean speedLimitEnable = mDownloadManager.isSpeedLimitEnable();
-            if (speedLimitEnable) {
-                mTvDesc.setText("正在低速下载，已下载" + proValue + "...");
-            } else {
-                mTvDesc.setText("正在高速下载，已下载" + proValue + "...");
+            String downingDesc = getDowningDesc(progress,speedLimitEnable);
+            mTvDesc.setText(downingDesc);
+        }
+    }
+
+    /**
+     * 显示的文字描述
+     */
+    private String getDowningDesc(int progress,boolean isSpeedLimit){
+
+        if (isWifi){
+            if (isSpeedLimit){
+                return "正在低速下载，解锁完整游戏内容";
+            }else {
+                return "正在高速下载，解锁完整游戏内容";
+            }
+        }else {
+            if (isSpeedLimit){
+                return "正在低速下载，已下载" + progress + "%...";
+            }else {
+                return "正在高速下载，已下载" + progress + "%...";
             }
         }
-
     }
 
     private void initView() {
@@ -143,9 +159,9 @@ public class PlayWhenDownDialog extends Dialog {
         mLayoutProgress = findViewById(R.id.layoutProgress);
         mProgressView = findViewById(R.id.circularProgress);
         mTvDownload = findViewById(R.id.tvDownload);
-        mTvStop = findViewById(R.id.tvStop);
+//        mTvStop = findViewById(R.id.tvStop);
         mTvDesc = findViewById(R.id.tvDesc);
-        mTvSlash = findViewById(R.id.tvSlash);
+//        mTvSlash = findViewById(R.id.tvSlash);
         mTvLimit = findViewById(R.id.tvTextLimit);
         mIvDownStatusIcon = findViewById(R.id.ivDownStatusIcon);
         mTvLimitDesc = findViewById(R.id.tvTextLimitDesc);
@@ -165,8 +181,8 @@ public class PlayWhenDownDialog extends Dialog {
         color_ddd = getContext().getResources().getColor(R.color.kp_color_ddd);
         //白色80%透明度
         color_cfff = getContext().getResources().getColor(R.color.kp_color_cfff);
+        px26 = DensityUtil.px2sp(getContext(), 26);
         px28 = DensityUtil.px2sp(getContext(), 28);
-        px24 = DensityUtil.px2sp(getContext(), 24);
         px20 = DensityUtil.px2sp(getContext(), 20);
         mLimitEnableSelected = ContextCompat.getDrawable(getContext(), R.drawable.kp_sel_down_limit_tv);
         mFullEnableSelected = ContextCompat.getDrawable(getContext(), R.drawable.kp_sel_down_full_tv);
@@ -174,7 +190,7 @@ public class PlayWhenDownDialog extends Dialog {
         if (isWifi) {
             mTvDownload.setTextColor(Color.WHITE);
         }
-        mTvSlash.setTextColor(color_999);
+//        mTvSlash.setTextColor(color_999);
         int state = mDownloadManager.getDownloadState(mGameInfo.downloadUrl);
         updateDownStatus(state);
     }
@@ -202,22 +218,25 @@ public class PlayWhenDownDialog extends Dialog {
                 mProgressView.setProgress(progress);
 //                mTvStop.setVisibility(View.GONE);
 //                mTvSlash.setVisibility(View.GONE);
-//                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, px28);
+                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, px28);
                 mTvDownload.setText(progress + "%");
 //                mTvDownload.setTextColor(Color.WHITE);
                 break;
             case KpGameDownloadManger.STATE_STARTED: //下载中
                 mIvDownStatusIcon.setImageResource(R.mipmap.kp_ic_dialog_download);
+                mProgressView.setProgress(progress);
 //                mTvStop.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvSlash.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvDownload.setTextColor(Color.WHITE);
-//                int tvSizeDownStarted = isWifi ? px28 : px24;
-//                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownStarted);
+                int tvSizeDownStarted = isWifi ? px28 : px26;
+                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownStarted);
                 if (!isWifi) {
-                    mTvDownload.setText("下载中");
-                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
-                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
-                    mTvStop.setTextColor(color_999);
+                    mTvDownload.setText("暂停下载");
+//                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
+//                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
+//                    mTvStop.setTextColor(color_999);
+                }else {
+                    mTvDownload.setText(progress + "%");
                 }
                 break;
             case KpGameDownloadManger.STATE_STOPPED: //暂停
@@ -226,13 +245,15 @@ public class PlayWhenDownDialog extends Dialog {
 //                mTvStop.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvSlash.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvDownload.setTextColor(isWifi ? Color.WHITE : color_999);
-//                int tvSizeDownStoped = isWifi ? px28 : px20;
-//                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownStoped);
+                int tvSizeDownStoped = isWifi ? px28 : px26;
+                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownStoped);
                 if (!isWifi) {
-                    mTvDownload.setText("已暂停");
-                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px24);
-                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px24);
-                    mTvStop.setTextColor(Color.WHITE);
+                    mTvDownload.setText("继续下载");
+//                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px24);
+//                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px24);
+//                    mTvStop.setTextColor(Color.WHITE);
+                }else {
+                    mTvDownload.setText(progress + "%");
                 }
                 break;
             case KpGameDownloadManger.STATE_FINISHED: //下载完成
@@ -242,22 +263,25 @@ public class PlayWhenDownDialog extends Dialog {
 //                mTvSlash.setVisibility(View.GONE);
                 mTvLimitDesc.setVisibility(View.GONE);
                 mTvFullDesc.setVisibility(View.GONE);
-//                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, px28);
+                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, px28);
                 mTvDownload.setText("100%");
 //                mTvDownload.setTextColor(Color.WHITE);
                 break;
             case KpGameDownloadManger.STATE_ERROR://错误
                 mIvDownStatusIcon.setImageResource(R.mipmap.kp_ic_dialog_error);
+                mProgressView.setProgress(progress);
 //                mTvStop.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvSlash.setVisibility(isWifi ? View.GONE : View.VISIBLE);
 //                mTvDownload.setTextColor(isWifi ? Color.WHITE : color_999);
-//                int tvSizeDownError = isWifi ? px28 : px24;
-//                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownError);
+                int tvSizeDownError = isWifi ? px28 : px26;
+                mTvDownload.setTextSize(TypedValue.COMPLEX_UNIT_SP, tvSizeDownError);
                 if (!isWifi) {
-                    mTvDownload.setText("继续下载");
-                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
-                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
-                    mTvStop.setTextColor(color_999);
+                    mTvDownload.setText("点击重试");
+//                    mTvSlash.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
+//                    mTvStop.setTextSize(TypedValue.COMPLEX_UNIT_SP, px20);
+//                    mTvStop.setTextColor(color_999);
+                }else {
+                    mTvDownload.setText(progress + "%");
                 }
                 break;
             default:
@@ -277,7 +301,7 @@ public class PlayWhenDownDialog extends Dialog {
                 mLayoutDownFull.setBackground(mFullEnableSelected);
                 mTvFull.setTextColor(Color.WHITE);
                 mTvFullDesc.setTextColor(color_cfff);
-                mTvDesc.setText("边玩边下，解锁无损画质完整游戏内容");
+                mTvDesc.setText("边玩边下，解锁完整游戏内容");
                 break;
             case KpGameDownloadManger.STATE_STARTED:
                 //设置按钮
@@ -297,12 +321,7 @@ public class PlayWhenDownDialog extends Dialog {
                     mTvFullDesc.setTextColor(color_ddd);
                 }
                 int progress = mDownloadManager.getDownloadProgress(mDownloadUrl);
-                String showDesc;
-                if (speedLimitEnable){
-                    showDesc = "正在低速下载，已下载" + progress + "%...";
-                }else {
-                    showDesc = "正在高速下载，已下载" + progress + "%...";
-                }
+                String showDesc = getDowningDesc(progress, speedLimitEnable);
                 mTvDesc.setText(showDesc);
                 break;
             case KpGameDownloadManger.STATE_STOPPED:
@@ -351,7 +370,7 @@ public class PlayWhenDownDialog extends Dialog {
                 mDownloadManager.initDownload(getContext());
             } else if (state == KpGameDownloadManger.STATE_ERROR || state == KpGameDownloadManger.STATE_STOPPED) {
                 //继续下载
-                mDownloadManager.continueDownload(mGameInfo);
+                mDownloadManager.continueDownload(getContext(),mGameInfo);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -391,7 +410,7 @@ public class PlayWhenDownDialog extends Dialog {
                         case KpGameDownloadManger.STATE_STOPPED: //暂停
                         case KpGameDownloadManger.STATE_ERROR: //错误
                             msg = "继续下载";
-                            mDownloadManager.continueDownload(mGameInfo);
+                            mDownloadManager.continueDownload(getContext(),mGameInfo);
                             notifyProgressUI(state);
                             break;
                         default:

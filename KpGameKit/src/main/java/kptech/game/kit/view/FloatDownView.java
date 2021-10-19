@@ -35,11 +35,16 @@ public class FloatDownView extends FrameLayout {
 
     public void setProgress(int num, String text){
         if (mDownBtn!=null){
-            mDownBtn.setProgress(num, "下载" + text);
+            if (num < 100){
+                mDownBtn.setProgress(num, "下载" + text);
+            }else {
+                mDownBtn.setProgress(0, "立即安装");
+            }
         }
     }
 
     public void setDownloadStatus(int status){
+        mDownBtn.setDownloadStatus(status);
         switch (status){
             case KpGameDownloadManger.STATE_STARTED:
 //                mDownBtn.setProgress(0,"下载中...");

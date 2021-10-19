@@ -23,6 +23,7 @@ import java.util.List;
 import kptech.game.kit.GameInfo;
 import kptech.game.kit.dialog.PlayWhenDownDialog;
 import kptech.game.kit.download.DownloadService;
+import kptech.game.kit.utils.Logger;
 import kptech.game.kit.utils.NetUtils;
 import kptech.game.kit.utils.StringUtil;
 import kptech.lib.analytic.Event;
@@ -132,7 +133,7 @@ public class KpGameDownloadManger {
                     }
                 } else {
                     //继续静默下载
-                    continueDownload(mGameInfo);
+                    continueDownload(context,mGameInfo);
                 }
             }
         }catch (Exception e){
@@ -144,14 +145,14 @@ public class KpGameDownloadManger {
     /**
      * 继续执行下载
      */
-    public void continueDownload(GameInfo info) {
+    public void continueDownload(Context context,GameInfo info) {
         if (mDownloadInstance == null || info == null) {
             return;
         }
         try {
             String url = info.downloadUrl;
             String originPkgName = info.pkgName;
-            String savedPath = getSavedPath(originPkgName);
+            String savedPath = getSavedPath(context,originPkgName);
             mDownloadInstance.startDownload(url, originPkgName, savedPath);
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,10 +162,16 @@ public class KpGameDownloadManger {
     /**
      * 获取文件下载路径
      */
-    public String getSavedPath(String originPkgName) {
-        String dirPath = Environment.getExternalStorageDirectory().getPath();
-        return dirPath + "/download/" + originPkgName + ".apk";
-
+    public String getSavedPath(Context context,String originPkgName) {
+//        String dirPath = Environment.getExternalStorageDirectory().getPath();
+//        return dirPath + "/download/" + originPkgName + ".apk";
+        File downloadFile = context.getExternalFilesDir("download");
+        if (!downloadFile.exists()){
+            downloadFile.mkdir();
+        }
+        File apkFile = new File(downloadFile,originPkgName + ".apk");
+        Logger.info(TAG,"apkFile:" + apkFile.getAbsolutePath());
+        return apkFile.getAbsolutePath();
     }
 
     /**
@@ -210,7 +217,7 @@ public class KpGameDownloadManger {
             return 0;
         }
         int porgress = mDownloadInstance.getDownloadProgress(url);
-        if (porgress > 0 && porgress < 100){
+        if (porgress > 0 && porgress <= 100){
             return porgress;
         }else {
             return 0;
@@ -293,7 +300,7 @@ public class KpGameDownloadManger {
      * 执行安装流程
      */
     public void doInstallApk(Context context, String pkgName) {
-        String savedPath = getSavedPath(pkgName);
+        String savedPath = getSavedPath(context,pkgName);
         File apkFile = new File(savedPath);
         if (!apkFile.exists()) {
             return;
@@ -306,25 +313,30 @@ public class KpGameDownloadManger {
      */
     private void startInstallApk(Context context, File apkFile) {
 
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            String authority = context.getPackageName() + ".fileProvider";
-            Uri apkUri = FileProvider.getUriForFile(context, authority, apkFile);
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        } else {
-            //如果没有设置SDCard写权限，或者没有sdcard,apk文件保存在内存中，需要授予权限才能安装
-            try {
-                String[] command = {"chmod", "777", apkFile.toString()};
-                ProcessBuilder builder = new ProcessBuilder(command);
-                builder.start();
-            } catch (IOException ignored) {
+        try{
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                String authority = context.getPackageName() + ".fileProvider";
+                Uri apkUri = FileProvider.getUriForFile(context, authority, apkFile);
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+            } else {
+                //如果没有设置SDCard写权限，或者没有sdcard,apk文件保存在内存中，需要授予权限才能安装
+                try {
+                    String[] command = {"chmod", "777", apkFile.toString()};
+                    ProcessBuilder builder = new ProcessBuilder(command);
+                    builder.start();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+                intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
             }
-            intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+            context.startActivity(intent);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        context.startActivity(intent);
     }
 
     public void delErrorFile(String downloadUrl) {

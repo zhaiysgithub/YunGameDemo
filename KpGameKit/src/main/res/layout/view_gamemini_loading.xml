@@ -85,7 +85,7 @@
         <!--下载，重新加载-->
         <LinearLayout
             android:id="@+id/layoutMiniLoadError"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginStart="28dp"
             android:layout_marginEnd="28dp"
@@ -95,7 +95,7 @@
 
             <FrameLayout
                 android:id="@+id/layoutMiniDown"
-                android:layout_width="0dp"
+                android:layout_width="154dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_marginEnd="12dp"
@@ -127,7 +127,7 @@
 
             <TextView
                 android:id="@+id/tvMiniRetry"
-                android:layout_width="0dp"
+                android:layout_width="154dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"

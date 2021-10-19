@@ -8,7 +8,7 @@
         android:indeterminateOnly="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:progressDrawable="@drawable/kp_down_pb_bg"
+        android:progressDrawable="@drawable/kp_download_btn_bg"
         android:max="100"
         android:progress="0"
         android:visibility="visible"/>
@@ -30,9 +30,11 @@
         android:id="@+id/down_img"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:scaleType="center"
-        android:src="@mipmap/kp_game_play_down_icon"
-        android:background="@drawable/kp_down_pb_bg"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/kp_mini_down_scale"
         android:visibility="gone"/>
+
+    <!--android:src="@mipmap/kp_game_play_down_icon"
+        android:background="@drawable/kp_down_pb_bg"-->
 
 </FrameLayout>

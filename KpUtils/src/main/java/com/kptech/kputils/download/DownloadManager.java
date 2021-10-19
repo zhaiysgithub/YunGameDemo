@@ -83,9 +83,11 @@ public final class DownloadManager {
                         continue;
                     }
 
-                    if (info.getState().value() < DownloadState.FINISHED.value()) {
+                    if (info.getState().value() < DownloadState.FINISHED.value()
+                            || info.getState().value() == DownloadState.ERROR.value()) {
                         info.setState(DownloadState.STOPPED);
                     }
+
                     downloadInfoList.add(info);
                 }
             }

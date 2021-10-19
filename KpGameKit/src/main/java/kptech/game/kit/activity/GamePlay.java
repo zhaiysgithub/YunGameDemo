@@ -43,7 +43,6 @@ import kptech.game.kit.activity.hardware.HardwareManager;
 import kptech.game.kit.callback.IGameObservable;
 import kptech.game.kit.callback.IPlayStateListener;
 import kptech.game.kit.callback.SimpleGameObservable;
-import kptech.game.kit.dialog.PlayWhenDownDialog;
 import kptech.game.kit.manager.FastRepeatClickManager;
 import kptech.game.kit.manager.KpGameDownloadManger;
 import kptech.game.kit.manager.KpGameManager;
@@ -53,6 +52,7 @@ import kptech.game.kit.utils.GameUtils;
 import kptech.game.kit.utils.NetUtils;
 import kptech.game.kit.view.FloatRecordView;
 import kptech.game.kit.view.PlayStatusLayout;
+import kptech.game.kit.view.ToastNetDialog;
 import kptech.lib.analytic.Event;
 import kptech.lib.analytic.EventCode;
 import kptech.lib.analytic.MobclickAgent;
@@ -147,6 +147,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private boolean connIsWifi;
     //处理playSuccess执行多次的问题
     private boolean isFirstWifiToggleDown = true;
+    private ToastNetDialog mNetTipDialog;
 
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
 
@@ -709,8 +710,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameDownUrl) && mDownloadWidVis) {
                 mFloatDownView.setVisibility(View.VISIBLE);
                 mFloatDownView.startTimeoutLayout();
-                int state = KpGameDownloadManger.instance().getDownloadState(mGameInfo.downloadUrl);
-                mFloatDownView.setDownloadStatus(state);
+//                int state = KpGameDownloadManger.instance().getDownloadState(mGameInfo.downloadUrl);
+//                mFloatDownView.setDownloadStatus(state);
             }else {
                 mFloatDownView.setVisibility(View.GONE);
             }
@@ -725,15 +726,31 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (isFirstWifiToggleDown && connIsWifi && GameInfo.GAME_DOWNLOADTYPE_SILENT.equals(mGameInfo.downloadType)){
                 isFirstWifiToggleDown = false;
                 downloadManger.setSpeedLimitEnable(false);
-                Toast.makeText(GamePlay.this, "检测到当前处于wifi环境，为您自动下载完整游戏内容！",Toast.LENGTH_SHORT).show();
+                showCenterToast();
                 //wifi环境下自动执行静默下载
                 toggleDownload();
+                if (mFloatDownView != null){
+                    int progress = downloadManger.getDownloadProgress(mGameInfo.downloadUrl);
+                    mFloatDownView.setProgress(progress,"" + progress + "%");
+                }
             }
 
         } catch (Exception e) {
             gameRunSuccess = false;
             Logger.error(TAG, e.getMessage());
         }
+    }
+
+    private void showCenterToast(){
+        try{
+            if (mNetTipDialog == null){
+                mNetTipDialog = new ToastNetDialog(GamePlay.this);
+            }
+            mNetTipDialog.showDialog();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     private void exitPlay() {
@@ -987,6 +1004,10 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     @Override
     protected void onDestroy() {
+        if (mNetTipDialog != null){
+            mNetTipDialog.cancel();
+            mNetTipDialog = null;
+        }
         if (mKpGameReceiver != null){
             unregisterReceiver(mKpGameReceiver);
             mKpGameReceiver = null;
@@ -1664,23 +1685,28 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         if (url == null || url.isEmpty()){
             return;
         }
-        if (mGameInfo != null && url.equals(mGameDownUrl)) {
-            if (downloadManger != null){
-                downloadManger.notifyDownloadState(status);
-            }
+        try{
+            if (mGameInfo != null && url.equals(mGameDownUrl)) {
+                if (downloadManger != null){
+                    downloadManger.notifyDownloadState(status);
+                }
 
-            if (mPlayStatueView != null && mPlayStatueView.isShown()) {
-                mPlayStatueView.setDownloadStatus(status);
-            }
+                if (mPlayStatueView != null && mPlayStatueView.isShown()) {
+                    mPlayStatueView.setDownloadStatus(status);
+                }
 
-            if (mFloatDownView != null && mFloatDownView.isShown()) {
-                mFloatDownView.setDownloadStatus(status);
-            }
+                if (mFloatDownView != null && mFloatDownView.isShown()) {
+                    mFloatDownView.setDownloadStatus(status);
+                }
 
             /*if (status == KpGameDownloadManger.STATE_FINISHED && downloadManger != null){
                 downloadManger.doInstallApk(GamePlay.this, mGameInfo.pkgName);
             }*/
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     private void setDownloadProgress(int progress, String text, String url) {
@@ -1688,11 +1714,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             return;
         }
         if (mGameInfo != null && url.equals(mGameDownUrl)) {
-            if (mPlayStatueView != null && mPlayStatueView.isShown()) {
+            if (mPlayStatueView != null/* && mPlayStatueView.isShown()*/) {
                 mPlayStatueView.setProgress(progress, text);
             }
 
-            if (mFloatDownView != null && mFloatDownView.isShown()) {
+            if (mFloatDownView != null/* && mFloatDownView.isShown()*/) {
                 mFloatDownView.setProgress(progress, text);
             }
         }
