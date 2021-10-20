@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;

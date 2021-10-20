@@ -710,8 +710,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameDownUrl) && mDownloadWidVis) {
                 mFloatDownView.setVisibility(View.VISIBLE);
                 mFloatDownView.startTimeoutLayout();
-//                int state = KpGameDownloadManger.instance().getDownloadState(mGameInfo.downloadUrl);
-//                mFloatDownView.setDownloadStatus(state);
             }else {
                 mFloatDownView.setVisibility(View.GONE);
             }
@@ -722,16 +720,31 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 e.printStackTrace();
             }
 
-
+            //已经下载的进度
+            int progress = downloadManger.getDownloadProgress(mGameDownUrl);
+            //当前游戏的下载状态
+            int state = downloadManger.getDownloadState(mGameDownUrl);
+            boolean continueDownload = (progress > 2 && progress < 100); //大于2%小于100% （继续下载）
+            if (state == KpGameDownloadManger.STATE_FINISHED){
+                downloadManger.showPlayWhenDownDialog(GamePlay.this,connIsWifi);
+            }else {
+                if (continueDownload){
+                    if (mFloatDownView != null){
+                        mFloatDownView.setProgress(progress,"" + progress + "%");
+                    }
+                    toggleDownload();
+                }
+            }
+            //wifi情况下的静默下载
             if (isFirstWifiToggleDown && connIsWifi && GameInfo.GAME_DOWNLOADTYPE_SILENT.equals(mGameInfo.downloadType)){
                 isFirstWifiToggleDown = false;
                 downloadManger.setSpeedLimitEnable(false);
-                showCenterToast();
-                //wifi环境下自动执行静默下载
-                toggleDownload();
-                if (mFloatDownView != null){
-                    int progress = downloadManger.getDownloadProgress(mGameInfo.downloadUrl);
-                    mFloatDownView.setProgress(progress,"" + progress + "%");
+
+                if (state != KpGameDownloadManger.STATE_FINISHED){
+                    showCenterToast();
+                }
+                if (!continueDownload){ //从头自动下载
+                    toggleDownload();
                 }
             }
 
@@ -799,6 +812,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
      */
     private void reloadGame() {
         try {
+            isFirstWifiToggleDown = true;
             mVideoContainer.removeAllViews();
             mVideoContainer.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);

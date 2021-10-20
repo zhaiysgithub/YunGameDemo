@@ -60,7 +60,7 @@ public class FloatDownView extends FrameLayout {
                 break;
             case KpGameDownloadManger.STATE_STOPPED:
 //                mDownBtn.setProgress(0, "已暂停");
-//                mDownBtn.setEnableTimeout(false);
+                mDownBtn.setEnableTimeout(false);
                 break;
             default:
                 mDownBtn.setProgress(0, "边玩边下");

@@ -29,6 +29,7 @@ import kptech.game.kit.utils.StringUtil;
  */
 public class GameMiniLoadingView extends LoadingPageView{
 
+    private ImageView miniCover;
     private ImageView miniProTitle;
     private LoadingSeekBar miniLoadSeekbar;
     private TextView miniProValue;
@@ -58,6 +59,7 @@ public class GameMiniLoadingView extends LoadingPageView{
     @Override
     protected void inflateView() {
         View view = inflate(getContext(), R.layout.view_gamemini_loading, this);
+        miniCover = view.findViewById(R.id.ivMiniCover);
         miniProTitle = view.findViewById(R.id.ivMiniProTitle);
         miniLoadSeekbar = view.findViewById(R.id.seekbarMiniLoading);
         miniProValue = view.findViewById(R.id.tvMiniProValue);
@@ -163,13 +165,22 @@ public class GameMiniLoadingView extends LoadingPageView{
         if (gameInfo == null){
             return;
         }
-        String downloadUrl = gameInfo.downloadUrl;
-        int enableDownload = gameInfo.enableDownload;
-        if (enableDownload == 1 && !StringUtil.isEmpty(downloadUrl)){
-            miniLayoutDown.setVisibility(View.VISIBLE);
-        }else {
-            miniLayoutDown.setVisibility(View.GONE);
+        try{
+            int gameLoadingCover = gameInfo.gameLoadingCover;
+            if (gameLoadingCover > 0){
+                miniCover.setImageResource(gameLoadingCover);
+            }
+            String downloadUrl = gameInfo.downloadUrl;
+            int enableDownload = gameInfo.enableDownload;
+            if (enableDownload == 1 && !StringUtil.isEmpty(downloadUrl)){
+                miniLayoutDown.setVisibility(View.VISIBLE);
+            }else {
+                miniLayoutDown.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     @Override

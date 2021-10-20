@@ -1,6 +1,5 @@
 package com.kptech.kputils.download;
 
-import android.util.Log;
 
 import com.kptech.kputils.DbManager;
 import com.kptech.kputils.common.Callback;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.logging.Logger;
 
 /**
  * Author: wyouflf
@@ -73,12 +71,6 @@ public final class DownloadManager {
                     }
                     File file = new File(fileSavePath);  //源文件错误
                     if (!file.exists() || file.length() < 2048){
-                        delDownloadInfoList.add(info);
-                        continue;
-                    }
-
-                    File tmpFile = new File(fileSavePath + ".tmp");  //临时文件错误
-                    if (!tmpFile.exists() || tmpFile.length() < 2048){
                         delDownloadInfoList.add(info);
                         continue;
                     }

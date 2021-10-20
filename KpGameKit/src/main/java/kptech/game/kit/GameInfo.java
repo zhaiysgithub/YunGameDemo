@@ -37,6 +37,8 @@ public class GameInfo implements Parcelable {
     public String iconUrl;
     public String coverUrl;
     public String downloadUrl;
+    //loading页面的背景图
+    public int gameLoadingCover;
     //0 高速下载 ， 1 普通下载 ， 2 低速下载
     public String downloadSpeed;
     //0 通知下载, 1 静默下载
@@ -86,6 +88,7 @@ public class GameInfo implements Parcelable {
         this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
         this.downloadSpeed = var1.readString();
+        this.gameLoadingCover = var1.readInt();
         this.downloadType = var1.readString();
         this.gameOrientation = var1.readInt();
         this.localResId = var1.readInt();
@@ -119,6 +122,7 @@ public class GameInfo implements Parcelable {
         var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
         var1.writeString(this.downloadSpeed);
+        var1.writeInt(this.gameLoadingCover);
         var1.writeString(this.downloadType);
         var1.writeInt(this.gameOrientation);
         var1.writeInt(this.localResId);
