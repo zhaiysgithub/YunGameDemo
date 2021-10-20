@@ -328,6 +328,7 @@ public class HWDeviceControl implements IDeviceControl {
                     mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
                     return;
                 }*/
+                String retMsg = "onNotify,state=" + state + ";msg=" + msg;
                 switch (state){
                     case HWStateCode.code_connecting:
                     case HWStateCode.code_reconnecting_success:
@@ -380,24 +381,24 @@ public class HWDeviceControl implements IDeviceControl {
                         }
                         break;
                     case HWStateCode.code_set_resolution_success:
-                        mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS);
+                        mCallback.onGameCallback(retMsg, APIConstants.SWITCH_GAME_RESOLUTION_SUCCESS);
                         break;
                     case HWStateCode.code_set_resolution_error:
-                        mCallback.onGameCallback(msg, APIConstants.SWITCH_GAME_RESOLUTION_ERROR);
+                        mCallback.onGameCallback(retMsg, APIConstants.SWITCH_GAME_RESOLUTION_ERROR);
                         break;
                     case HWStateCode.code_verify_parameter_missing:
                     case HWStateCode.code_verify_parameter_invalid:
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_AUTH);
+                        mCallback.onGameCallback(retMsg, APIConstants.ERROR_AUTH);
                         break;
                     case HWStateCode.code_invalid_operation:
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_OTHER);
+                        mCallback.onGameCallback(retMsg, APIConstants.ERROR_OTHER);
                         break;
                     case HWStateCode.code_server_unreachable: //服务不可用
-                        mCallback.onGameCallback(msg, APIConstants.ERROR_NETWORK);
+                        mCallback.onGameCallback(retMsg, APIConstants.ERROR_NETWORK);
                         break;
                     default:
                         if (mCallback != null){
-                            mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                            mCallback.onGameCallback(retMsg, APIConstants.ERROR_SDK_INNER);
                         }
                         break;
                 }
