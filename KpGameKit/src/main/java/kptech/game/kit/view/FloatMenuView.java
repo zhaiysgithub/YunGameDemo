@@ -5,12 +5,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 
 public class FloatMenuView extends FrameLayout implements View.OnClickListener {
-
-    private static final String TAG = "FloatMenuView";
 
     private FloatingBarView mMenuIcon;
     private PlaySettingsView mSettingsView;
@@ -28,7 +27,6 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 //    private View mMenuDialogContentView;
 //    private DeviceControl mDeviceControl;
 //    private boolean mAudioSwitch = true;
-    public boolean mVideoScale = false;
 //
 //    private int systemUiVisibility = -1;
 //
@@ -237,8 +235,8 @@ public class FloatMenuView extends FrameLayout implements View.OnClickListener {
 //        }
 //    }
 //
-    public void setDeviceControl(IDeviceControl deviceControl) {
-        mSettingsView.setDeviceControl(deviceControl);
+    public void setDeviceControl(IDeviceControl deviceControl, GameInfo gameInfo) {
+        mSettingsView.setDeviceControl(deviceControl, gameInfo);
 //        mDeviceControl = deviceControl;
 //
 //        if (mDeviceControl!=null){

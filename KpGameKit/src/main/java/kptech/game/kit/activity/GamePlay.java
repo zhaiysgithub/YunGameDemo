@@ -329,7 +329,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         });
 
         mTransparentLayer = findViewById(R.id.view_transparent_layer);
-        if (mFrontLayerVis){
+        /*if (mFrontLayerVis){
             mTransparentLayer.setVisibility(View.VISIBLE);
             mTransparentLayer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -345,7 +345,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         }else{
             mTransparentLayer.setVisibility(View.GONE);
             mTransparentLayer.setOnClickListener(null);
-        }
+        }*/
 
     }
 
@@ -625,7 +625,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
             mVideoContainer.setVisibility(View.VISIBLE);
             mMenuView.setVisibility(View.VISIBLE);
-            mMenuView.setDeviceControl(mDeviceControl);
+            mMenuView.setDeviceControl(mDeviceControl,mGameInfo);
 
             //显示下载按钮
             if (mGameInfo != null && mGameInfo.enableDownload == 1 && !StringUtil.isEmpty(mGameInfo.downloadUrl) && mDownloadWidVis) {
@@ -1065,8 +1065,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     resizeHeight = (int) (screenWidth / videoScale);
                 }
             }
-
-            resizeVideoContainer(mMenuView.mVideoScale);
+            //是否按比例显示
+            boolean videoScale = (mGameInfo.gameVideoScale == 1);
+            resizeVideoContainer(videoScale);
         } catch (Exception e) {
             Logger.error(TAG, e.getMessage());
         }
@@ -1115,7 +1116,11 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        resizeVideoContainer(mMenuView.mVideoScale);
+        if (mGameInfo != null){
+            boolean scale = (mGameInfo.gameVideoScale == 1);
+            resizeVideoContainer(scale);
+        }
+
     }
 
 

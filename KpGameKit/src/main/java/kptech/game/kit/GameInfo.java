@@ -54,6 +54,8 @@ public class GameInfo implements Parcelable {
     public int recoverCloudData = 1;
     //同步云手机信息等待时间， -1使用全局默认值， -2不等待返回，-3不同步数据
     public int mockSleepTime = -1;
+    //视频是否全屏显示，0全屏，1按比例显示
+    public int gameVideoScale = 0;
 
     public String enterRemind;  //游戏启动后，显示的公告提醒
     public String exitRemind;   //退出游戏时，显示的公告提醒
@@ -78,6 +80,7 @@ public class GameInfo implements Parcelable {
         this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
         this.gameOrientation = var1.readInt();
+        this.gameVideoScale = var1.readInt();
         this.localResId = var1.readInt();
         this.enableDownload = var1.readInt();
         this.playCount = var1.readInt();
@@ -109,6 +112,7 @@ public class GameInfo implements Parcelable {
         var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
         var1.writeInt(this.gameOrientation);
+        var1.writeInt(this.gameVideoScale);
         var1.writeInt(this.localResId);
         var1.writeInt(this.enableDownload);
         var1.writeInt(this.playCount);

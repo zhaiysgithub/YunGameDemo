@@ -27,6 +27,7 @@ import java.lang.ref.WeakReference;
 import kptech.game.kit.APIConstants;
 import kptech.game.kit.BuildConfig;
 import kptech.game.kit.GameBoxManager;
+import kptech.game.kit.GameInfo;
 import kptech.game.kit.IDeviceControl;
 import kptech.game.kit.R;
 import kptech.game.kit.utils.DensityUtil;
@@ -37,6 +38,7 @@ import kptech.lib.conf.RecordScreenConfig;
 public class PlaySettingsView extends LinearLayout {
 
     private IDeviceControl mDeviceControl;
+    private GameInfo mGameInfo;
     private int mSize = 0;
 
     private ViewGroup mLayout;
@@ -52,7 +54,6 @@ public class PlaySettingsView extends LinearLayout {
 
     private String mVideoQuality;
     private boolean mAudioSwitch;
-    public boolean mVideoScale = false;
     private String showApkVersion = "V:" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE;
 
     long verTime;
@@ -119,8 +120,16 @@ public class PlaySettingsView extends LinearLayout {
         }
     }
 
-    public void setDeviceControl(IDeviceControl deviceControl) {
+    public void setDeviceControl(IDeviceControl deviceControl, GameInfo gameInfo) {
         mDeviceControl = deviceControl;
+        mGameInfo = gameInfo;
+        if (mGameInfo != null){
+            if (mGameInfo.gameVideoScale == 1) {
+                mVideoSizeGroup.check(R.id.video_size_scale);
+            }else {
+                mVideoSizeGroup.check(R.id.video_size_full);
+            }
+        }
         if (mDeviceControl != null){
             initAudioEnable();
             initVideoQuality();
@@ -257,7 +266,11 @@ public class PlaySettingsView extends LinearLayout {
         updateLayout();
 
         mVideoSizeGroup = view.findViewById(R.id.video_size_group);
-        if (mVideoScale) {
+        boolean isScale = true;
+        if (mGameInfo != null){
+            isScale = (mGameInfo.gameVideoScale == 1);
+        }
+        if (isScale) {
             mVideoSizeGroup.check(R.id.video_size_scale);
         }else {
             mVideoSizeGroup.check(R.id.video_size_full);
@@ -268,9 +281,18 @@ public class PlaySettingsView extends LinearLayout {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 lastOptTime = System.currentTimeMillis();
 
-                if (mOnVideoScaleListener!=null){
-                    mVideoScale = checkedId==R.id.video_size_scale ? true : false;
-                    mOnVideoScaleListener.onScale(mVideoScale);
+                try{
+                    if (mOnVideoScaleListener!=null){
+                        boolean checkedScale = (checkedId==R.id.video_size_scale);
+                        int videoScaleValue = checkedScale ? 1 : 0;
+                        if (videoScaleValue == mGameInfo.gameVideoScale){
+                            return;
+                        }
+                        mGameInfo.gameVideoScale = videoScaleValue;
+                        mOnVideoScaleListener.onScale(checkedScale);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         });
