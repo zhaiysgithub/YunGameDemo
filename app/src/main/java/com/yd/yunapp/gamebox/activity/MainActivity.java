@@ -85,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
         }else {
             APP_ID = mSp.getString("corpKey", null);
         }
-//        APP_ID = "2VjOzOW8ijt2D8Z-e24d7242f0e661a9";
-        APP_ID = "2VseXB1Uhii3tE5-acca4e2950a30df3";
 
         TextView coprKey = findViewById(R.id.corpkey);
         if (APP_ID == null) {
