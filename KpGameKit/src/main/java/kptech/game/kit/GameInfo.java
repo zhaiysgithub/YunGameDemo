@@ -41,6 +41,8 @@ public class GameInfo implements Parcelable {
     public String kpGameId;
     //下载开关
     public int enableDownload = 1;
+    //测试环境0， 正式环境1
+    public int gameEnvValue;
     public int showAd = GAME_AD_SHOW_AUTO;
     //自动本地IMEI\AndroidID到云设备，0不添加，1添加
 //    public int addMockInfo = 1;
@@ -75,6 +77,7 @@ public class GameInfo implements Parcelable {
         this.iconUrl = var1.readString();
         this.coverUrl = var1.readString();
         this.downloadUrl = var1.readString();
+        this.gameEnvValue = var1.readInt();
         this.enableDownload = var1.readInt();
         this.playCount = var1.readInt();
         this.totalTime = var1.readInt();
@@ -104,6 +107,7 @@ public class GameInfo implements Parcelable {
         var1.writeString(this.iconUrl);
         var1.writeString(this.coverUrl);
         var1.writeString(this.downloadUrl);
+        var1.writeInt(this.gameEnvValue);
         var1.writeInt(this.enableDownload);
         var1.writeInt(this.playCount);
         var1.writeInt(this.totalTime);

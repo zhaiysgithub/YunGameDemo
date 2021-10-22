@@ -89,7 +89,20 @@ public class GameBoxManager {
     }
 
     public boolean isGameBoxManagerInited(){
-        return this.isInited;
+        if (!isInited){  //未初始化
+            return false;
+        }
+        try{
+            String pass3CorpKey = ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_PAAS3CORPKEY,null);
+            if (pass3CorpKey != null && !pass3CorpKey.isEmpty()){  //paas3.0
+                return true;
+            }else {
+                return (AK != null && SK != null); //百度2.0
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public synchronized void init(Application application, String appKey, APICallback<String> callback){
@@ -376,6 +389,8 @@ public class GameBoxManager {
         String pass3CorpKey = ProferencesUtils.getString(mApplication, SharedKeys.KEY_GAME_APP_PAAS3CORPKEY,null);
         if (pass3CorpKey != null && !pass3CorpKey.isEmpty()){
             sdkParams.put("params_key_pass3CorpKey",pass3CorpKey);
+            //区分pass3使用的是测试环境还是正式环境
+            sdkParams.put("params_env_isTest",(0 == inf.gameEnvValue));
         }
 
         IGameBoxManager gameBoxManager = GameBoxManagerFactory.getGameBoxManager(inf.useSDK, mApplication, sdkParams);
