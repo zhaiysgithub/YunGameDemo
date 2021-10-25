@@ -58,6 +58,8 @@ public class GameInfo implements Parcelable {
     public String exitRemind;   //退出游戏时，显示的公告提醒
 
     public SdkType useSDK = SdkType.DEFAULT; //SDK类型，0使用红手指，1使用百度
+    //错误页面是否需要显示下载按钮,0 显示， 1 不显示, 默认显示
+    public int errorShowDownUi = 0;
 
     public enum SdkType{
         DEFAULT,
@@ -89,6 +91,7 @@ public class GameInfo implements Parcelable {
         this.ext = var1.readHashMap(HashMap.class.getClassLoader());
         String useSdk = var1.readString();
         this.useSDK = SdkType.valueOf(useSdk);
+        this.errorShowDownUi = var1.readInt();
     }
 
     public int getEffectTime() {
@@ -118,6 +121,7 @@ public class GameInfo implements Parcelable {
         var1.writeInt(this.recoverCloudData);
         var1.writeMap(this.ext);
         var1.writeString(this.useSDK.name());
+        var1.writeInt(this.errorShowDownUi);
     }
 
 

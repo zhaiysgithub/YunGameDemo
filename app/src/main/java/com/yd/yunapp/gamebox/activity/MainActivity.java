@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         params.put(ParamKey.GAME_AUTH_UNION_SIGN,signValue);
         //测试环境
 //        game.gameEnvValue = 0;
+//        game.errorShowDownUi = 1;
 
         boolean useCustomerLoadingView = mSp.getBoolean("enableCustomerLoadign",false);
         GameBoxManager.getInstance().setLoadingView(useCustomerLoadingView,new CustomerLoadingView(this));

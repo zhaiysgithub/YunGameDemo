@@ -95,14 +95,23 @@ public class PlayErrorView extends LinearLayout implements View.OnClickListener 
                 e.printStackTrace();
             }
 
-            if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
-                //显示下载按钮
-                mErrorDownBtn.setTag("down");
-                mErrorDownText.setText("下载游戏直接玩");
-            } else {
+            int errorShowDownUi = mGameInfo.errorShowDownUi;
+            boolean notShowDownUi = (1 == errorShowDownUi);
+
+            if (notShowDownUi){
                 //显示重试按钮
                 mErrorDownBtn.setTag("reload");
                 mErrorDownText.setText("重新加载游戏");
+            }else {
+                if (!StringUtil.isEmpty(mGameInfo.downloadUrl) && mGameInfo.enableDownload == 1){
+                    //显示下载按钮
+                    mErrorDownBtn.setTag("down");
+                    mErrorDownText.setText("下载游戏直接玩");
+                } else {
+                    //显示重试按钮
+                    mErrorDownBtn.setTag("reload");
+                    mErrorDownText.setText("重新加载游戏");
+                }
             }
         }else {
             //隐藏按钮
