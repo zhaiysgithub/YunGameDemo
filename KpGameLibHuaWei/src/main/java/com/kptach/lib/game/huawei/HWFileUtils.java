@@ -32,7 +32,7 @@ public class HWFileUtils {
     // 获取CPU名字
     public static String getCpuName() {
         String cpuAbi;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             String[] cpuAbis = Build.SUPPORTED_ABIS;
 //            boolean contains = Arrays.asList(cpuAbis).contains("arm64-v8a");
 //            cpuAbi = contains ? "arm64-v8a" : "armeabi-v7a";

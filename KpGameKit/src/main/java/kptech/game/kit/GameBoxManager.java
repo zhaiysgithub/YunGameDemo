@@ -60,6 +60,8 @@ public class GameBoxManager {
         //Logger
         if (!debug){
             Logger.setLevel(Logger.LEVEL_ERROR);
+        }else {
+            Logger.setLevel(Logger.LEVEL_DEBUG);
         }
 
     }

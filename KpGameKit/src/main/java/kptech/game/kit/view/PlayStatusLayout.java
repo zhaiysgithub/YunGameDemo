@@ -46,6 +46,7 @@ public class PlayStatusLayout extends FrameLayout {
     private String downUrl;
     private String pkgName;
     private String gameName;
+    private GameInfo mGameInfo;
 
     public void setDownloadStatus(int status) {
         if (mErrorView != null){
@@ -88,7 +89,7 @@ public class PlayStatusLayout extends FrameLayout {
     }
 
     public void setGameInfo(GameInfo info){
-//        this.mGameInfo = info;
+        this.mGameInfo = info;
         if (info != null){
             iconUrl = info.iconUrl;
             downUrl = info.enableDownload == 1 ? info.downloadUrl : null;
@@ -102,7 +103,7 @@ public class PlayStatusLayout extends FrameLayout {
                 mErrorView.setGameInfo(info);
             }
             if (mAuthView != null){
-                mAuthView.setInfo(gameName, iconUrl);
+                mAuthView.setInfo(info);
             }
         }
     }
@@ -183,7 +184,7 @@ public class PlayStatusLayout extends FrameLayout {
 //            mUnionUUID = unionUUID;
 //            mCorpID = corpId;
 
-            mAuthView.setInfo(gameName, iconUrl);
+            mAuthView.setInfo(mGameInfo);
             mAuthView.setAnimation(AnimationUtil.moveToViewLocation());
             mAuthView.setVisibility(View.VISIBLE);
 
@@ -255,7 +256,6 @@ public class PlayStatusLayout extends FrameLayout {
         private View errorView;
         private View authView;
         private GameInfo gameInfo;
-        private int iconResId;
 
         public Builder(Context context) {
             this.context = context;
@@ -281,11 +281,6 @@ public class PlayStatusLayout extends FrameLayout {
             return this;
         }
 
-        public Builder setIconResId(int resId){
-            this.iconResId = resId;
-            return this;
-        }
-
         public PlayStatusLayout create(){
 
             if (loadingView == null){
@@ -300,17 +295,14 @@ public class PlayStatusLayout extends FrameLayout {
                     }else{
 
                         loadingView = new DefaultLoadingView(context);
-                        if (iconResId > 0){
-                            ((DefaultLoadingView)loadingView).setLocalResIcon(iconResId);
-                        }
                     }
                 }
             }
             if (errorView == null) {
-                errorView = new PlayErrorView(context, iconResId);
+                errorView = new PlayErrorView(context);
             }
             if (authView == null) {
-                authView = new UserAuthView(context, iconResId);
+                authView = new UserAuthView(context);
             }
 
             loadingView.setId(viewid_loading);

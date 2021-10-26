@@ -111,7 +111,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
     private int mErrorCode = -1;
     private String mErrorMsg = null;
     private String miniPkgVersion;
-    private int iconResId;
 
     private Params mCustParams;
 
@@ -194,7 +193,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         backTimeout = mCustParams.get(ParamKey.GAME_OPT_TIMEOUT_BACK, 3 * 60);
 
         mEnableExitGameAlert = mCustParams.get(ParamKey.GAME_OPT_EXIT_GAMELIST, true);
-        iconResId = mCustParams.get(ParamKey.EXTRA_GAME_ICON, 0);
 
         mUnionUUID = mCustParams.get(ParamKey.GAME_AUTH_UNION_UUID, null);
         mAuthUnionAk = mCustParams.get(ParamKey.GAME_AUTH_UNION_AK,"");
@@ -249,7 +247,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         mPlayStatueView = new PlayStatusLayout.Builder(this)
                 .setGameInfo(mGameInfo)
-                .setIconResId(iconResId)
                 .create();
         mPlayStatueView.setCallback(new PlayStatusCallback(GamePlay.this));
         int childCount = ((ViewGroup) rootView).getChildCount();
@@ -660,9 +657,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             mRecordView.setVisibility(View.GONE);
 
             GameBoxManager.getInstance().setDevLoading(false);
-            if (mDeviceControl != null){
+            /*if (mDeviceControl != null){
                 mDeviceControl.stopGame();
-            }
+            }*/
 
             checkAndRequestPermission();
 
@@ -861,14 +858,12 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
         gameRunSuccess = false;
         gameVoiceSwitchValue = false;
-        //前台未操作超时
-//        if (type == 2) {
-            showTimeoutDialog("您长时间未操作，游戏已释放。");
-            if (mDeviceControl != null) {
-                mDeviceControl.stopGame();
-            }
-            return true;
-//        }
+        //未操作超时
+        showTimeoutDialog("您长时间未操作，游戏已释放。");
+        if (mDeviceControl != null) {
+            mDeviceControl.stopGame();
+        }
+        return true;
 
 //        exitPlay();
 //        Toast.makeText(this, String.format("[%s]无操作超时 %ds 退出！", type == 1 ? "后台" : "前台", timeout / 1000), Toast.LENGTH_LONG).show();
@@ -1515,7 +1510,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mPlayStatueView.setDownloadStatus(status);
             }
 
-            if (mFloatDownView != null && mFloatDownView.isShown()) {
+            if (mFloatDownView != null) {
                 mFloatDownView.setDownloadStatus(status);
             }
         }
@@ -1527,7 +1522,7 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                 mPlayStatueView.setProgress(progress, text);
             }
 
-            if (mFloatDownView != null && mFloatDownView.isShown()) {
+            if (mFloatDownView != null) {
                 mFloatDownView.setProgress(progress, text);
             }
         }

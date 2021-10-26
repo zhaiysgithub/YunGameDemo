@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
     }
 
     buildTypes {
@@ -26,7 +26,7 @@ android {
 dependencies {
 //    implementation project(path: ':kpinter')
     implementation 'kptech.game.kit:kpinter:1.0.4'
-    implementation files('libs/KpCKit-v2.0.0.jar')
+    implementation files('libs/KpCKit-v2.0.3.jar')
 }
 
 task makeJar(type: Jar) {
@@ -34,7 +34,7 @@ task makeJar(type: Jar) {
     delete "build/libs/${jar_name}"
     archiveName("${jar_name}")
     from(project.zipTree('build/intermediates/aar_main_jar/release/classes.jar'));
-    from (project.zipTree('libs/KpCKit-v2.0.0.jar'))
+    from (project.zipTree('libs/KpCKit-v2.0.3.jar'))
     destinationDir(file('build/lib'))
 }
 makeJar.dependsOn(build)

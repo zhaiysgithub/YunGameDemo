@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 
 import com.huawei.cloudgame.api.CloudGameManager;
 import com.huawei.cloudgame.api.CloudGameParas;
+import com.huawei.cloudgame.api.ICloudGame;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameBoxManager;
@@ -23,6 +24,7 @@ public class HWGameBoxManager implements IGameBoxManager {
 //    private HWLoadLibHelper mLibHelper;
     public static int soVersion = 1;
     private HashMap<String, Object> params;
+    private ICloudGame iCloudGame;
     @Override
     public void initLib(Application application, HashMap params, IGameCallback<String> callback) {
 
@@ -61,19 +63,20 @@ public class HWGameBoxManager implements IGameBoxManager {
     }
 
     private void startInitCloudGameManager(Context context){
-        CloudGameManager.CreateCloudGameInstance().enableDebugLog(true);
+        if (iCloudGame != null){
+            iCloudGame.enableDebugLog(false);
 
 
-        HWCloudGameUtils.setDebug(true);
+            HWCloudGameUtils.setDebug(true);
 
-        boolean tabletDevice = (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
-                Configuration.SCREENLAYOUT_SIZE_LARGE;
-        HWCloudGameUtils.info("DevType", "isDevPad = " + tabletDevice);
-        CloudGameManager.CreateCloudGameInstance().init(context
-                , tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
+            boolean tabletDevice = (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
+                    Configuration.SCREENLAYOUT_SIZE_LARGE;
+            iCloudGame.init(context, tabletDevice ? CloudGameParas.DevType.DEV_PAD : CloudGameParas.DevType.DEV_PHONE);
 
-        //是否使用真机输入法
-        CloudGameManager.CreateCloudGameInstance().enableRemoteIME(true);
+            //是否使用真机输入法
+            iCloudGame.enableRemoteIME(true);
+        }
+
     }
 
     @Override
@@ -85,12 +88,6 @@ public class HWGameBoxManager implements IGameBoxManager {
         HWDeviceControl instance = null;
         //创建 deviceControl
         try{
-            /*String pkgName = "";
-
-            JSONObject obj = new JSONObject(gameInf);
-            if (obj.has("pkgName")){
-                pkgName = obj.optString("pkgName");
-            }*/
             if (callback == null){
                 return;
             }
@@ -105,9 +102,13 @@ public class HWGameBoxManager implements IGameBoxManager {
                     callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);
                 }
             });*/
-
+            if (iCloudGame != null){
+                iCloudGame.deinit();
+                CloudGameManager.cloudGameObj = null;
+            }
+            iCloudGame = CloudGameManager.CreateCloudGameInstance();
             startInitCloudGameManager(activity.getApplicationContext());
-            instance = new HWDeviceControl(params);
+            instance = new HWDeviceControl(params,iCloudGame);
             callback.onGameCallback(instance, APIConstants.APPLY_DEVICE_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();

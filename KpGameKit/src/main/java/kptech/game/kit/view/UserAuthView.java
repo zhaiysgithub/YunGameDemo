@@ -9,21 +9,20 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import kptech.game.kit.GameInfo;
 import kptech.game.kit.R;
 
 
 public class UserAuthView extends LinearLayout implements View.OnClickListener {
     private ImageView mGameIcon;
     private TextView mGameName;
-    private int mIconResId;
 
 
     private OnClickListener mBackListener;
     private OnClickListener mAuthListener;
 
-    public UserAuthView(Context context, int iconResId) {
+    public UserAuthView(Context context) {
         super(context);
-        this.mIconResId = iconResId;
         initView();
     }
 
@@ -77,12 +76,15 @@ public class UserAuthView extends LinearLayout implements View.OnClickListener {
         }
     }
 
-    public void setInfo(String name, String iconUrl) {
-        mGameName.setText(name);
+    public void setInfo(GameInfo info) {
+
         try{
-            if (mIconResId > 0){
-                Picasso.with(getContext()).load(mIconResId).into(mGameIcon);
+            mGameName.setText(info.name);
+            int gameIconRes = info.gameIconRes;
+            if (gameIconRes > 0){
+                mGameIcon.setImageResource(gameIconRes);
             }else {
+                String iconUrl = info.iconUrl;
                 if (iconUrl != null && !"".equals(iconUrl)){
                     Picasso.with(getContext()).load(iconUrl).into(mGameIcon);
                 }

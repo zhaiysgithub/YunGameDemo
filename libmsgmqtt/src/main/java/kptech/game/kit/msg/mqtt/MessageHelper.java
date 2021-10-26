@@ -117,7 +117,7 @@ public class MessageHelper implements IMessageHelper, Messager.ICallback {
     }
 
     @Override
-    public void onMessage(String topic, String msg) {
+    public void onMessage(String msg) {
         if (callbackRef != null && callbackRef.get() != null){
             callbackRef.get().onEvent(MessageEvent.onMessage,1, msg);
 

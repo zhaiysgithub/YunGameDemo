@@ -154,6 +154,7 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
             JSONObject jsonObj = new JSONObject(map);
             data = jsonObj.toString();
         }
+        Logger.info(TAG,"onLogin:" + data);
         helper.sendMessage(MessageAction.Login, code, err, data);
     }
 
@@ -213,13 +214,19 @@ public class MsgManager implements IMessageCallback, MsgHandler.ICallback {
     public void onMessageReceived(MessageAction event, String data) {
         switch (event){
             case Login:
-                mHandler.sendEmptyMessage(MsgHandler.MSG_LOGIN);
+                if (mHandler != null){
+                    mHandler.sendEmptyMessage(MsgHandler.MSG_LOGIN);
+                }
                 break;
             case Logout:
-                mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
+                if (mHandler != null){
+                    mHandler.sendEmptyMessage(MsgHandler.MSG_LOGOUT);
+                }
                 break;
             case Pay:
-                mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY, data));
+                if (mHandler != null){
+                    mHandler.sendMessage(Message.obtain(mHandler,MsgHandler.MSG_PAY, data));
+                }
                 break;
             case Exit:
                 if (mReceiverRef!=null && mReceiverRef.get()!=null){

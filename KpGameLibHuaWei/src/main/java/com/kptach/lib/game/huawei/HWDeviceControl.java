@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.huawei.cloudgame.api.CloudGameManager;
 import com.huawei.cloudgame.api.CloudGameParas;
+import com.huawei.cloudgame.api.ICloudGame;
 import com.kptach.lib.inter.game.APIConstants;
 import com.kptach.lib.inter.game.IDeviceControl;
 import com.kptach.lib.inter.game.IGameCallback;
@@ -31,7 +32,7 @@ public class HWDeviceControl implements IDeviceControl {
     private String hwDeviceId;
     private int hwDirection;
     private final HashMap<String, String> sdkParams = new HashMap<>();
-    private boolean sdkIsRelease = true;
+    private boolean sdkIsRelease;
     private IGameCallback<String> mCallback;
     private PlayListener mPlayListener;
     private ViewGroup mViewgroup;
@@ -42,10 +43,15 @@ public class HWDeviceControl implements IDeviceControl {
     private String touchTimeOut;
     private String availablePlayTime;
     private final int []screenSize = new int[2];
+    private ICloudGame iCloudGame;
 
-    public HWDeviceControl(HashMap<String, Object> params) {
+    public HWDeviceControl(HashMap<String, Object> params, ICloudGame cloudGame) {
+        sdkIsRelease = true;
         //默认取消静音
-        CloudGameManager.CreateCloudGameInstance().unmute();
+        this.iCloudGame = cloudGame;
+        if (iCloudGame != null){
+            iCloudGame.unmute();
+        }
         iSoundUnMute = true;
         sdkParams.clear();
         parseParams(params);
@@ -96,6 +102,11 @@ public class HWDeviceControl implements IDeviceControl {
                     if (sdkParams.containsKey("available_playtime")){
                         availablePlayTime = sdkParams.get("available_playtime");
                     }
+
+                    ///////
+                    //测试前台 60s , 后台 30S
+//                    sdkParams.put("touch_timeout", "60");
+//                    sdkParams.put("game_timeout", "30");
                 }
 //                String detailStr = getDetailStr();
 //                HWCloudGameUtils.info(TAG,detailStr);
@@ -125,8 +136,13 @@ public class HWDeviceControl implements IDeviceControl {
             screenSize[1] = height;
             setResolution(videoResolution);
             setVideoDisplayMode(true);
-            CloudGameManager.CreateCloudGameInstance().startCloudApp(activity, viewGroup, sdkParams);
-//            callback.onGameCallback("startCloudApp", APIConstants.CONNECT_DEVICE_SUCCESS);
+
+            if (iCloudGame != null){
+                iCloudGame.startCloudApp(activity, viewGroup, sdkParams);
+            }else {
+                callback.onGameCallback("iCloudGame == null", APIConstants.ERROR_CONNECT_DEVICE);
+                return;
+            }
             callback.onGameCallback("startCloudApp", APIConstants.GAME_LOADING);
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,7 +164,10 @@ public class HWDeviceControl implements IDeviceControl {
         }else if(resolution == CloudGameParas.Resolution.DISPLAY_540P){
             mediaConfigMap.put("bitrate", Integer.toString(1800000));
         }
-        CloudGameManager.CreateCloudGameInstance().setMediaConfig(mediaConfigMap);
+        if (iCloudGame != null){
+            iCloudGame.setMediaConfig(mediaConfigMap);
+        }
+
     }
 
 
@@ -157,15 +176,22 @@ public class HWDeviceControl implements IDeviceControl {
         try{
             if (!sdkIsRelease){
                 sdkIsRelease = true;
-                CloudGameManager.CreateCloudGameInstance().exitCloudApp();
-                CloudGameManager.CreateCloudGameInstance().deinit();
+                if (iCloudGame != null){
+                    iCloudGame.exitCloudApp();
+//                    iCloudGame.deinit();
+                    iCloudGame = null;
+                    CloudGameManager.cloudGameObj = null;
+                }
             }
-
-            if (mCallback != null){
-                mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
-            }
+            sendReleaseMsg();
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void sendReleaseMsg(){
+        if (mCallback != null){
+            mCallback.onGameCallback("game release success" , APIConstants.RELEASE_SUCCESS);
         }
     }
 
@@ -236,12 +262,15 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public void setAudioSwitch(boolean b) {
+        if (iCloudGame == null){
+            return;
+        }
         if (iSoundUnMute != b) {
             iSoundUnMute = b;
             if (b) {
-                CloudGameManager.CreateCloudGameInstance().unmute(); //取消静音
+                iCloudGame.unmute(); //取消静音
             } else {
-                CloudGameManager.CreateCloudGameInstance().mute(); //静音
+                iCloudGame.mute(); //静音
             }
         }
     }
@@ -290,7 +319,10 @@ public class HWDeviceControl implements IDeviceControl {
         this.videoResolution = resolution;
         HWCloudGameUtils.info("setResolution:" + resolution.name());
         setMediaConfig(videoResolution);
-        CloudGameManager.CreateCloudGameInstance().setResolution(resolution);
+        if (iCloudGame != null){
+            iCloudGame.setResolution(resolution);
+        }
+
     }
 
     /*public String getHSdkVersion() {
@@ -305,13 +337,18 @@ public class HWDeviceControl implements IDeviceControl {
 
     @Override
     public void setVideoDisplayMode(boolean isFill) {
-        CloudGameManager.CreateCloudGameInstance().setDisplayMode(isFill ? CloudGameParas.DisplayMode.DISPLAY_MODE_FILL : CloudGameParas.DisplayMode.DISPLAY_MODE_FIT);
+        if (iCloudGame != null){
+            iCloudGame.setDisplayMode(isFill ? CloudGameParas.DisplayMode.DISPLAY_MODE_FILL : CloudGameParas.DisplayMode.DISPLAY_MODE_FIT);
+        }
 
     }
 
     private void registerListener(){
         //注册状态监听
-        CloudGameManager.CreateCloudGameInstance().registerCloudAppStateListener((state, msg) -> {
+        if (iCloudGame == null){
+            return;
+        }
+        iCloudGame.registerCloudAppStateListener((state, msg) -> {
 
             HWCloudGameUtils.info("onNotify","state=" + state + ";msg=" + msg);
             if (mCallback == null || mActivity == null || mViewgroup == null){
@@ -322,13 +359,14 @@ public class HWDeviceControl implements IDeviceControl {
                 if (mActivity.isFinishing()){
                     return;
                 }
-                /*int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
+                String retMsg = "onNotify,state=" + state + ";msg=" + msg;
+                int stateIndex = Arrays.binarySearch(HWStateCode.errorCodeArray, state);
                 if (stateIndex >= 0){
                     //SDK游戏内部报错
-                    mCallback.onGameCallback(msg, APIConstants.ERROR_SDK_INNER);
+                    mCallback.onGameCallback(retMsg, APIConstants.ERROR_SDK_INNER);
+                    sendReleaseMsg();
                     return;
-                }*/
-                String retMsg = "onNotify,state=" + state + ";msg=" + msg;
+                }
                 switch (state){
                     case HWStateCode.code_connecting:
                     case HWStateCode.code_reconnecting_success:
@@ -356,11 +394,12 @@ public class HWDeviceControl implements IDeviceControl {
                         break;
                     case HWStateCode.code_switch_background_timeout://切换后台超时
                         try{
-                            if (mPlayListener != null){
+                            if (mPlayListener != null && !sdkIsRelease){
                                 sdkIsRelease = true;
                                 long noOpsTime = Long.parseLong(gameTimeout);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
                             }
+                            sendReleaseMsg();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -371,11 +410,12 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_notouch_timeout:
                         //前台无操作超时
                         try{
-                            if (mPlayListener != null){
+                            if (mPlayListener != null && !sdkIsRelease){
                                 sdkIsRelease = true;
                                 long noOpsTime = Long.parseLong(touchTimeOut);
                                 mPlayListener.onNoOpsTimeout(2,noOpsTime);
                             }
+                            sendReleaseMsg();
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -396,23 +436,18 @@ public class HWDeviceControl implements IDeviceControl {
                     case HWStateCode.code_server_unreachable: //服务不可用
                         mCallback.onGameCallback(retMsg, APIConstants.ERROR_NETWORK);
                         break;
-                    default:
-                        if (mCallback != null){
-                            mCallback.onGameCallback(retMsg, APIConstants.ERROR_SDK_INNER);
-                        }
-                        break;
                 }
             });
 
         });
 
         //注册云游戏数据监听
-        CloudGameManager.CreateCloudGameInstance().registerCloudAppDataListener((bytes, length) -> {
+        iCloudGame.registerCloudAppDataListener((bytes, length) -> {
             //TODO
             HWCloudGameUtils.info("onRecvCloudGameData","bytes=" + new String(bytes, StandardCharsets.UTF_8) + ";length=" + length);
         });
         //游戏画面方向变化监听器  获取游戏画面方向的变化
-        CloudGameManager.CreateCloudGameInstance().registerOnOrientationChangeListener(orientation -> {
+        iCloudGame.registerOnOrientationChangeListener(orientation -> {
             //1、横屏 0、竖屏
             HWCloudGameUtils.info("onOrientationChange","orientation=" + orientation);
             int oriParams = 1;
@@ -431,7 +466,7 @@ public class HWDeviceControl implements IDeviceControl {
         });
 
         //统计数据监听  每相隔5S数据监听
-        CloudGameManager.CreateCloudGameInstance().registerStatDataListener(statData -> {
+        iCloudGame.registerStatDataListener(statData -> {
 
 //            HWCloudGameUtils.info("onReceiveStatData","statData=" + statData);
             if (mActivity != null && mViewgroup != null){
@@ -444,7 +479,7 @@ public class HWDeviceControl implements IDeviceControl {
 
                         //网络延迟
                         if (mPlayListener != null){
-                            int rtt = CloudGameManager.CreateCloudGameInstance().getRtt();
+                            int rtt = iCloudGame.getRtt();
 //                            HWCloudGameUtils.info("onReceiveStatData","rtt=" + rtt);
                             if (rtt < 1){
                                 rtt = 1;
