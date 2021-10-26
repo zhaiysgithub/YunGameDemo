@@ -624,7 +624,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
             if (isFinishing()) {
                 return;
             }
-
 //            mVideoContainer.setVisibility(View.GONE);
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
@@ -646,7 +645,6 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         try {
 
 //            mVideoContainer.setVisibility(View.GONE);
-            mVideoContainer.removeAllViews();
             mMenuView.setVisibility(View.GONE);
             mFloatDownView.setVisibility(View.GONE);
 

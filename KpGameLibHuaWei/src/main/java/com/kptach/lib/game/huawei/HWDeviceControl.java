@@ -178,7 +178,7 @@ public class HWDeviceControl implements IDeviceControl {
                 sdkIsRelease = true;
                 if (iCloudGame != null){
                     iCloudGame.exitCloudApp();
-//                    iCloudGame.deinit();
+                    iCloudGame.deinit();
                     iCloudGame = null;
                     CloudGameManager.cloudGameObj = null;
                 }

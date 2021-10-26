@@ -113,6 +113,7 @@ public class HWGameBoxManager implements IGameBoxManager {
         }catch (Exception e){
             e.printStackTrace();
             if (instance != null){
+                iCloudGame = null;
                 instance.stopGame();
             }
             callback.onGameCallback(null, APIConstants.ERROR_APPLY_DEVICE);

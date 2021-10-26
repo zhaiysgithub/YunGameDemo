@@ -89,7 +89,7 @@ dependencies {
         implementation files('libs/passv3-support-v1.0.3.jar')
         //华为游戏库
 //        implementation project(path: ':KpGameLibHuaWei')
-        implementation files('libs/KpGameLib-HW-v1.0.5.jar')
+        implementation files('libs/KpGameLib-HW-v1.0.6.jar')
         //百度游戏库
 //        implementation project(path: ':KpGameLibBDSdk3.0')
 //        implementation 'kptech.game.kit:libbd3:1.0.0'

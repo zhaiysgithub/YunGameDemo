@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             mCorpKey = mSp.getString("corpKey", null);
 //            APP_ID = "2VeV4QHgtjh2H7E-40cf9808ad9c3d5b";
         }
-        mCorpKey = "2Vsn87BkjYE2ZaA-9c39cb22d89aae56";
+//        mCorpKey = "2Vsn87BkjYE2ZaA-9c39cb22d89aae56";
 
         StringBuilder sb = new StringBuilder();
         sb.append(mainModel.getVersionName());
