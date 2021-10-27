@@ -107,6 +107,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
 
     private GameInfo mGameInfo;
     private String mCorpID;
+    //视频是否默认缩放的值
+    private int videoDefaultScaleValue;
 
     private long fontTimeout = 5 * 60;
     private long backTimeout = 3 * 60;
@@ -186,6 +188,9 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
         setOrientation();
         if (getIntent().hasExtra(EXTRA_MINI_VERSION)){
             miniPkgVersion = getIntent().getStringExtra(EXTRA_MINI_VERSION);
+        }
+        if (mGameInfo != null){
+            videoDefaultScaleValue = mGameInfo.gameVideoScale;
         }
         if (getIntent().hasExtra(EXTRA_PARAMS)) {
             try {
@@ -440,6 +445,8 @@ public class GamePlay extends Activity implements APICallback<String>, IDeviceCo
                     } catch (Exception e) {
                         Logger.error("GamePlay", e.getMessage());
                     }
+                    //重置默认的视频缩放值
+                    mGameInfo.gameVideoScale = videoDefaultScaleValue;
 
                     if (mPlayStatueView != null) {
                         mPlayStatueView.setGameInfo(mGameInfo);

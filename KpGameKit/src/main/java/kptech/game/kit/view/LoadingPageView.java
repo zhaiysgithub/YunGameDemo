@@ -182,7 +182,7 @@ public abstract class LoadingPageView extends FrameLayout {
             if (what == 0) {
                 if (msg.obj != null) {
                     int obj = (int) msg.obj;
-                    if (obj > sPro) {
+                    if (obj > sPro || obj == 0) {
                         sPro = obj;
                     }
                 } else {

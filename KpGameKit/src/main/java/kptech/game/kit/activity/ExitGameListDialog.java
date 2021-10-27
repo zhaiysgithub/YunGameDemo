@@ -198,7 +198,8 @@ public class ExitGameListDialog extends Dialog {
                 try {
                     mTitleText.setText(gameInfo.name);
                     String imgUrl;
-                    if (mList.size() == 1 && gameInfo.coverUrl!=null){
+                    String coverUrl = gameInfo.coverUrl;
+                    if (coverUrl != null && !coverUrl.isEmpty()){
                         imgUrl = gameInfo.coverUrl;
                     }else {
                         imgUrl = gameInfo.iconUrl;
