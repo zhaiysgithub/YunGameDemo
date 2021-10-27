@@ -84,11 +84,12 @@ public class MsgManager implements Messager.ICallback, MsgHandler.ICallback {
     }
 
     public static void stop(){
+        try{
+            Messager.getInstance().close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         try {
-            if (Messager.getInstance().isConnected()){
-                Messager.getInstance().close();
-            }
-
             if (mMsgManager!=null){
                 Messager.getInstance().removeCallback(mMsgManager);
                 mMsgManager.destory();
